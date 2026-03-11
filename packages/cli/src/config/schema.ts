@@ -16,8 +16,25 @@ export const WOLConfig = z.object({
 export const GatewayConfig = z.object({
   port: z.number().int().default(18789),
   bind: z.enum(["tailscale", "loopback", "lan"]).default("tailscale"),
+  /** Stored key name in OS keychain (never plaintext token) */
   auth_token_key: z.string().optional(),
+  /** Resolved token — populated at runtime from keychain, never written to disk */
+  gateway_token: z.string().optional(),
 });
+
+/** Model provider config — persisted to TJConfig, API keys stored in keychain */
+export const ProviderConfig = z.object({
+  kind: z.enum(["anthropic", "openai", "ollama", "lmstudio", "custom"]),
+  /** Model id, e.g. "claude-sonnet-4-6" or "llama3.2" */
+  model: z.string(),
+  /** Base URL — required for ollama/lmstudio/custom */
+  base_url: z.string().optional(),
+  /** Keychain key where the API key is stored (e.g. "tj-anthropic-key") */
+  api_key_keychain_key: z.string().optional(),
+  /** Display alias shown in status output */
+  alias: z.string().optional(),
+});
+export type ProviderConfig = z.infer<typeof ProviderConfig>;
 
 export const NodeConfig = z.object({
   role: NodeRole,
@@ -26,6 +43,8 @@ export const NodeConfig = z.object({
   persona: z.string().optional(),
   tailscale_hostname: z.string(),
   tailscale_ip: z.string(),
+  /** Provider config for this node's agent */
+  provider: ProviderConfig.optional(),
 });
 
 export const PeerNodeConfig = NodeConfig.extend({
@@ -35,6 +54,13 @@ export const PeerNodeConfig = NodeConfig.extend({
   windows_autologin_configured: z.boolean().optional(),
   wol: WOLConfig.optional(),
   gateway: GatewayConfig.optional(),
+  /** Gateway port (convenience shorthand for gateway.port) */
+  gateway_port: z.number().int().default(18789),
+  /** Gateway token — loaded from keychain at runtime, not stored in config */
+  gateway_token: z.string().optional(),
+  wol_enabled: z.boolean().optional(),
+  wol_mac: z.string().optional(),
+  wol_broadcast: z.string().optional(),
 });
 
 export const PairState = z.object({
@@ -58,9 +84,38 @@ export const TJConfig = z.object({
   peer_node: PeerNodeConfig,
   pair: PairState.optional(),
   protocol: ProtocolConfig.optional(),
+  /** Gateway port for this node (convenience shorthand) */
+  gateway_port: z.number().int().default(18789),
+  /** Last confirmed heartbeat from peer (ISO datetime) */
+  last_heartbeat: z.string().datetime().optional(),
   openclaw: z.object({
     session_tom: z.string().optional(),
     session_jerry: z.string().optional(),
+    /** Path to openclaw.json on this machine */
+    config_path: z.string().optional(),
   }).optional(),
 });
 export type TJConfig = z.infer<typeof TJConfig>;
+
+/** Helper: build a ProviderConfig with sensible defaults for a given kind */
+export function buildProviderConfig(
+  kind: ProviderConfig["kind"],
+  model?: string,
+  opts?: { baseUrl?: string; apiKeyKeychainKey?: string; alias?: string },
+): ProviderConfig {
+  const defaults: Record<ProviderConfig["kind"], { model: string; alias: string; base_url?: string }> = {
+    anthropic: { model: "claude-sonnet-4-6", alias: "Claude Sonnet" },
+    openai:    { model: "gpt-4o-mini", alias: "GPT-4o Mini" },
+    ollama:    { model: "llama3.2", alias: "Llama 3.2 (local)", base_url: "http://localhost:11434" },
+    lmstudio:  { model: "local-model", alias: "LM Studio (local)", base_url: "http://localhost:1234/v1" },
+    custom:    { model: "custom", alias: "Custom", base_url: "http://localhost:8080/v1" },
+  };
+  const d = defaults[kind];
+  return {
+    kind,
+    model: model ?? d.model,
+    base_url: opts?.baseUrl ?? d.base_url,
+    api_key_keychain_key: opts?.apiKeyKeychainKey,
+    alias: opts?.alias ?? d.alias,
+  };
+}
