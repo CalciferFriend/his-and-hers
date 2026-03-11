@@ -73,7 +73,7 @@ export async function wakeAgent(opts: WakeOptions): Promise<WakeResult> {
       finish({ ok: false, error: "timeout" });
     }, timeoutMs);
 
-    ws.on("message", (raw) => {
+    ws.on("message", (raw: import("ws").RawData) => {
       let msg: Record<string, unknown>;
       try {
         msg = JSON.parse(raw.toString());
@@ -159,11 +159,11 @@ export async function wakeAgent(opts: WakeOptions): Promise<WakeResult> {
       }
     });
 
-    ws.on("error", (err) => {
+    ws.on("error", (err: Error) => {
       finish({ ok: false, error: err.message });
     });
 
-    ws.on("close", (code) => {
+    ws.on("close", (code: number) => {
       if (!resolved) {
         finish({ ok: false, error: `connection closed: ${code}` });
       }

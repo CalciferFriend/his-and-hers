@@ -1,7 +1,28 @@
 // Protocol schemas
 export {
   TJMessage,
-  TJMessageType,
+  TJTaskMessage,
+  TJResultMessage,
+  TJHeartbeatMessage,
+  TJHandoffMessage,
+  TJWakeMessage,
+  TJErrorMessage,
+  TJTaskPayload,
+  TJResultPayload,
+  TJHeartbeatPayload,
+  TJHandoffPayload,
+  TJWakePayload,
+  TJErrorPayload,
+  isTaskMessage,
+  isResultMessage,
+  isHeartbeatMessage,
+  isHandoffMessage,
+  isWakeMessage,
+  isErrorMessage,
+  createTaskMessage,
+  createResultMessage,
+  createHeartbeatMessage,
+  createWakeMessage,
   TJHandoff,
   TJHeartbeat,
   TJPair,
@@ -32,3 +53,18 @@ export type { PeerAllowlist } from "./trust/allowlist.ts";
 export { checkGatewayHealth } from "./gateway/health.ts";
 export { getBindAddress } from "./gateway/bind.ts";
 export type { BindMode } from "./gateway/bind.ts";
+export { wakeAgent } from "./gateway/wake.ts";
+export type { WakeOptions, WakeResult } from "./gateway/wake.ts";
+export {
+  buildSocatCommand,
+  buildSystemdService,
+  isSocatInstalled,
+  buildNetshPortProxyCommand,
+  buildNetshPortProxyRemoveCommand,
+  addWindowsLoopbackProxy,
+  isWindowsLoopbackProxyInstalled,
+} from "./gateway/proxy.ts";
+export type { ProxyConfig } from "./gateway/proxy.ts";
+
+// Routing heuristics
+export { suggestRouting } from "./routing.ts";

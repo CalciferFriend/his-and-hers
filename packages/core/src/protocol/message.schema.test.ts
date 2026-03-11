@@ -145,6 +145,7 @@ describe("TJMessage discriminated union", () => {
       task_id: taskId,
       output: "llama3.2",
       success: true,
+      artifacts: [],
     });
     expect(msg.done).toBe(true);
   });

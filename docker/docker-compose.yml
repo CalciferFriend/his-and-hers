@@ -1,0 +1,86 @@
+# docker-compose.yml — tom-and-jerry Tom node
+#
+# Spin up a Tom (orchestrator) node with one command.
+# Jerry (executor) is expected to be a real machine — typically a Windows PC
+# with GPU — so no compose service is defined for it.
+#
+# Quick start:
+#   cp docker/.env.example docker/.env
+#   # Edit docker/.env with your keys
+#   docker compose -f docker/docker-compose.yml up -d
+
+name: tom-and-jerry
+
+services:
+  tom:
+    build:
+      context: ..
+      dockerfile: docker/tom/Dockerfile
+    image: calcifer-ai/tom:latest
+    container_name: tom
+    restart: unless-stopped
+
+    # Tailscale needs host network or special cap to route properly.
+    # cap_add gives it the tun device; network_mode host gives it
+    # direct network access so Tailscale IP binds are reachable.
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    devices:
+      - /dev/net/tun
+
+    environment:
+      # Required
+      TS_AUTHKEY: "${TS_AUTHKEY}"
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY}"
+
+      # Optional — Tom identity
+      TOM_NAME: "${TOM_NAME:-Tom}"
+      TOM_EMOJI: "${TOM_EMOJI:-🐱}"
+      TOM_MODEL: "${TOM_MODEL:-claude-sonnet-4-6}"
+      TOM_GATEWAY_PORT: "${TOM_GATEWAY_PORT:-18789}"
+      TOM_GATEWAY_TOKEN: "${TOM_GATEWAY_TOKEN:-}"  # generated on first boot if empty
+
+      # Jerry peer (fill in after `tj onboard` on Jerry)
+      JERRY_TAILSCALE_HOSTNAME: "${JERRY_TAILSCALE_HOSTNAME:-}"
+      JERRY_TAILSCALE_IP: "${JERRY_TAILSCALE_IP:-}"
+      JERRY_GATEWAY_PORT: "${JERRY_GATEWAY_PORT:-18789}"
+      JERRY_GATEWAY_TOKEN: "${JERRY_GATEWAY_TOKEN:-}"
+      JERRY_SSH_USER: "${JERRY_SSH_USER:-}"
+
+      # Wake-on-LAN (optional)
+      JERRY_WOL_ENABLED: "${JERRY_WOL_ENABLED:-false}"
+      JERRY_WOL_MAC: "${JERRY_WOL_MAC:-}"
+      JERRY_WOL_BROADCAST: "${JERRY_WOL_BROADCAST:-}"
+
+    volumes:
+      # Persist Tailscale state so re-runs don't burn new auth keys
+      - tailscale-state:/var/lib/tailscale
+
+      # Persist OpenClaw and TJ configs across container restarts
+      - tom-openclaw:/root/.openclaw
+      - tom-tj-config:/root/.tom-and-jerry
+
+      # Mount SSH key for peer access (create with: ssh-keygen -t ed25519)
+      # Uncomment and adjust path:
+      # - ./ssh/id_ed25519:/root/.ssh/id_ed25519:ro
+      # - ./ssh/id_ed25519.pub:/root/.ssh/id_ed25519.pub:ro
+
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:${TOM_GATEWAY_PORT:-18789}/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 90s
+      retries: 3
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  tailscale-state:
+  tom-openclaw:
+  tom-tj-config:

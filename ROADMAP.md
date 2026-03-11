@@ -59,11 +59,11 @@
 - [ ] Current model + cost tracking
 - [ ] WOL capability indicator
 
-### 2f. Docker Tom template (Calcifer)
-- [ ] `Dockerfile` for Tom node (Alpine + Node + OpenClaw + tom-and-jerry)
-- [ ] `docker-compose.yml` with env-var config
-- [ ] One-liner: `docker run -e ANTHROPIC_API_KEY=... calciferAI/tom`
-- [ ] Auto-registers with Tailscale on first boot
+### 2f. Docker Tom template (Calcifer) ✅ (2026-03-11)
+- [x] `Dockerfile` for Tom node (Alpine + Node + OpenClaw + tom-and-jerry)
+- [x] `docker-compose.yml` with env-var config
+- [x] One-liner: `docker run -e ANTHROPIC_API_KEY=... calcifierai/tom`
+- [x] Auto-registers with Tailscale on first boot (entrypoint.sh)
 
 ### 2g. TJMessage discriminated union (both)
 - [ ] `TJTaskMessage`, `TJResultMessage`, `TJHeartbeatMessage` typed envelopes
