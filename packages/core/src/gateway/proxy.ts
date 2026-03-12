@@ -1,7 +1,7 @@
 /**
  * gateway/proxy.ts
  *
- * Tailscale↔Loopback TCP proxy helpers for Tom (Linux) and Jerry (Windows).
+ * Tailscale↔Loopback TCP proxy helpers for H1 (Linux) and H2 (Windows).
  *
  * ## The Problem
  *
@@ -11,12 +11,12 @@
  *
  * ## Solutions by role
  *
- * ### Tom (Linux) — gateway binds to loopback, proxy exposes Tailscale
+ * ### H1 (Linux) — gateway binds to loopback, proxy exposes Tailscale
  *
- *   Keep Tom's gateway on loopback. Run a socat proxy that listens on the
+ *   Keep H1's gateway on loopback. Run a socat proxy that listens on the
  *   Tailscale interface and forwards to loopback.
  *
- *   Jerry                                      Tom
+ *   H2                                      H1
  *   ─────                                      ───
  *   ws://tom-tailscale-ip:18789 ─ Tailscale ─► socat (tailscale IF:18789)
  *                                                   │ forwards
@@ -25,16 +25,16 @@
  *   Persistent via systemd user service. See buildSystemdService().
  *   Command: socat TCP-LISTEN:18789,bind=<tailscaleIP>,reuseaddr,fork TCP:127.0.0.1:18789
  *
- * ### Jerry (Windows) — gateway binds to Tailscale, proxy exposes loopback
+ * ### H2 (Windows) — gateway binds to Tailscale, proxy exposes loopback
  *
- *   Jerry's gateway binds to the Tailscale IP so Tom can reach it.
+ *   H2's gateway binds to the Tailscale IP so H1 can reach it.
  *   But the local OpenClaw TUI connects to ws://127.0.0.1:18789 — which
  *   isn't listening — so the TUI fails to open.
  *
  *   Fix: Windows netsh portproxy (built-in, registry-persistent, no extra tools).
  *   Routes loopback:18789 → tailscale-ip:18789, making the TUI work locally.
  *
- *   TUI (local)                                Jerry gateway
+ *   TUI (local)                                H2 gateway
  *   ───────────                                ─────────────
  *   127.0.0.1:18789 ─► netsh portproxy ──────► tailscale-ip:18789
  *
@@ -49,8 +49,8 @@
  *
  *   Role   | Gateway binds to | Proxy direction          | Tool
  *   ────── | ──────────────── | ─────────────────────── | ──────────────
- *   Tom    | loopback         | tailscale → loopback    | socat (Linux)
- *   Jerry  | tailscale        | loopback → tailscale    | netsh (Windows)
+ *   H1    | loopback         | tailscale → loopback    | socat (Linux)
+ *   H2  | tailscale        | loopback → tailscale    | netsh (Windows)
  */
 
 import { exec } from "child_process";
@@ -59,7 +59,7 @@ import { promisify } from "util";
 const execAsync = promisify(exec);
 
 export interface ProxyConfig {
-  /** Tom's Tailscale IP (e.g. 100.116.25.69) */
+  /** H1's Tailscale IP (e.g. 100.116.25.69) */
   tailscaleIP: string;
   /** Port to listen on and forward to (default: 18789) */
   port?: number;
@@ -91,7 +91,7 @@ export function buildSystemdService(config: ProxyConfig): string {
   const socatBin = "/usr/bin/socat"; // override with which() result at install time
   const cmd = buildSocatCommand(config).replace(/^socat/, socatBin);
   return `[Unit]
-Description=Tom Tailscale→Loopback Gateway Proxy (port ${port})
+Description=H1 Tailscale→Loopback Gateway Proxy (port ${port})
 After=network.target tailscaled.service openclaw-gateway.service
 Requires=openclaw-gateway.service
 
@@ -118,13 +118,13 @@ export async function isSocatInstalled(): Promise<boolean> {
   }
 }
 
-// ─── Windows (Jerry) helpers ─────────────────────────────────────────────────
+// ─── Windows (H2) helpers ─────────────────────────────────────────────────
 
 /**
  * Returns the netsh portproxy command that makes the OpenClaw TUI work locally
- * on a Jerry node whose gateway is bound to a Tailscale IP.
+ * on a H2 node whose gateway is bound to a Tailscale IP.
  *
- * Problem: Jerry binds its gateway to <tailscaleIP>:18789 so Tom can reach it.
+ * Problem: H2 binds its gateway to <tailscaleIP>:18789 so H1 can reach it.
  * The local OpenClaw TUI always connects to ws://127.0.0.1:18789 — which isn't
  * listening — so the TUI fails to open on the same machine.
  *
@@ -132,7 +132,7 @@ export async function isSocatInstalled(): Promise<boolean> {
  * registry across reboots — no scheduled task or service needed.
  *
  * @example
- * // Run once (elevated prompt on Jerry):
+ * // Run once (elevated prompt on H2):
  * const cmd = buildNetshPortProxyCommand({ tailscaleIP: "100.119.44.38" });
  * // netsh interface portproxy add v4tov4 listenaddress=127.0.0.1 listenport=18789 connectaddress=100.119.44.38 connectport=18789
  */

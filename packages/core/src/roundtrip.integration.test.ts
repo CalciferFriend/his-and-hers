@@ -1,17 +1,17 @@
 /**
  * roundtrip.integration.test.ts
  *
- * End-to-end integration tests for the Tom → Jerry → Tom task round-trip,
+ * End-to-end integration tests for the H1 → H2 → H1 task round-trip,
  * exercising the full pipeline without real Tailscale or OpenClaw connections:
  *
- *   1. Tom builds a HHTaskMessage (createTaskMessage)
- *   2. Tom starts a result webhook server (startResultServer)
- *   3. "Jerry" (a mock client) POSTs a ResultWebhookPayload back to Tom
- *   4. Tom's webhook resolves with the result
+ *   1. H1 builds a HHTaskMessage (createTaskMessage)
+ *   2. H1 starts a result webhook server (startResultServer)
+ *   3. "H2" (a mock client) POSTs a ResultWebhookPayload back to H1
+ *   4. H1's webhook resolves with the result
  *   5. TaskResult is validated: tokens, duration, output, cost_usd
  *
  * Also covers:
- *   - Routing decisions for task → jerry-local / cloud
+ *   - Routing decisions for task → h2-local / cloud
  *   - Context summary generation
  *   - Budget estimation from token counts
  *   - Retry guard logic (cronRetryDecision)
@@ -70,7 +70,7 @@ async function httpPost(
 }
 
 const TOM = "tom-node";
-const JERRY = "jerry-node";
+const JERRY = "h2-node";
 const TOKEN = "integration-test-token";
 
 // ─── 1. Protocol: task message creation ──────────────────────────────────────
@@ -168,11 +168,11 @@ describe("HHResultMessage creation and validation", () => {
 
 // ─── 3. Webhook round-trip (real loopback HTTP) ───────────────────────────────
 
-describe("Round-trip: Tom webhook server ↔ Jerry POST", () => {
-  it("Jerry posts result, Tom webhook resolves", async () => {
+describe("Round-trip: H1 webhook server ↔ H2 POST", () => {
+  it("H2 posts result, H1 webhook resolves", async () => {
     const taskId = "round-trip-test-" + Date.now();
 
-    // Tom starts result server
+    // H1 starts result server
     const handle = await startResultServer({
       taskId,
       token: TOKEN,
@@ -182,7 +182,7 @@ describe("Round-trip: Tom webhook server ↔ Jerry POST", () => {
 
     expect(handle.url).toMatch(/^http:\/\/127\.0\.0\.1:\d+\/result/);
 
-    // Jerry posts back (runs concurrently — server waits for POST)
+    // H2 posts back (runs concurrently — server waits for POST)
     const jerryPayload: ResultWebhookPayload = {
       task_id: taskId,
       output: "All done! Result: 42.",
@@ -245,7 +245,7 @@ describe("Round-trip: Tom webhook server ↔ Jerry POST", () => {
     handle.close();
   }, 10_000);
 
-  it("server times out if Jerry never responds", async () => {
+  it("server times out if H2 never responds", async () => {
     const taskId = "timeout-test-" + Date.now();
     const handle = await startResultServer({
       taskId,
@@ -261,9 +261,9 @@ describe("Round-trip: Tom webhook server ↔ Jerry POST", () => {
 // ─── 4. Routing decisions ─────────────────────────────────────────────────────
 
 describe("routeTask: heuristic routing", () => {
-  it("routes image-gen task to jerry-local", () => {
+  it("routes image-gen task to h2-local", () => {
     const d = routeTask("Generate an image of a dragon breathing fire");
-    expect(d.hint).toBe("jerry-local");
+    expect(d.hint).toBe("h2-local");
   });
 
   it("routes calendar lookup to cloud", () => {
@@ -276,9 +276,9 @@ describe("routeTask: heuristic routing", () => {
     expect(d.hint).toBe("cloud");
   });
 
-  it("routes Ollama task to jerry-local", () => {
+  it("routes Ollama task to h2-local", () => {
     const d = routeTask("Run this through Ollama and summarize");
-    expect(d.hint).toBe("jerry-local");
+    expect(d.hint).toBe("h2-local");
   });
 
   it("falls back to cloud for unknown task", () => {
@@ -309,19 +309,19 @@ describe("routeTask: capability-aware routing", () => {
     notes: null,
   };
 
-  it("routes image task to jerry-local when peer has image-gen skill", () => {
+  it("routes image task to h2-local when peer has image-gen skill", () => {
     const d = routeTask("Generate a painting of a sunset", baseCaps);
-    expect(d.hint).toBe("jerry-local");
+    expect(d.hint).toBe("h2-local");
   });
 
-  it("routes transcription to jerry-local when peer has transcription skill", () => {
+  it("routes transcription to h2-local when peer has transcription skill", () => {
     const d = routeTask("Transcribe this audio file using whisper", baseCaps);
-    expect(d.hint).toBe("jerry-local");
+    expect(d.hint).toBe("h2-local");
   });
 
-  it("routes Ollama task to jerry-local with suggested model", () => {
+  it("routes Ollama task to h2-local with suggested model", () => {
     const d = routeTask("Run this with Ollama", baseCaps);
-    expect(d.hint).toBe("jerry-local");
+    expect(d.hint).toBe("h2-local");
     expect(d.suggested_model).toBe("llama3.2");
   });
 
@@ -344,7 +344,7 @@ describe("routeTask: capability-aware routing", () => {
       "Analyze the architecture of this codebase step by step and generate a refactoring plan",
       latentCaps,
     );
-    expect(d.hint).toBe("jerry-latent");
+    expect(d.hint).toBe("h2-latent");
     expect(d.latent_codec).toBe("vw-qwen3vl2b-v1");
   });
 });

@@ -1,11 +1,11 @@
 ---
 title: Apple M2/M3 Mac
-description: Set up a Jerry node on an Apple Silicon Mac — excellent inference performance with unified memory.
+description: Set up a H2 node on an Apple Silicon Mac — excellent inference performance with unified memory.
 ---
 
-# Jerry Profile — Apple M2/M3 Mac (macOS)
+# H2 Profile — Apple M2/M3 Mac (macOS)
 
-Apple Silicon Macs are excellent Jerry nodes — unified memory means the GPU and
+Apple Silicon Macs are excellent H2 nodes — unified memory means the GPU and
 CPU share the same fast RAM pool. An M2 with 16 GB can run 13B models comfortably.
 An M3 Max with 128 GB can run 70B+ models.
 
@@ -78,8 +78,8 @@ npm install -g openclaw
 npm install -g his-and-hers
 
 # Run wizard
-tj onboard
-# → Role: Jerry
+hh onboard
+# → Role: H2
 # → Provider: Ollama (auto-detected)
 ```
 
@@ -95,8 +95,8 @@ tailscale up --authkey tskey-auth-...
 ### 5. Advertise capabilities
 
 ```bash
-tj capabilities advertise
-tj capabilities show
+hh capabilities advertise
+hh capabilities show
 ```
 
 Expected output:
@@ -161,7 +161,7 @@ python main.py --force-fp16
 
 Advertise the image-gen skill once ComfyUI is running:
 ```bash
-tj capabilities advertise --notes "SDXL via ComfyUI, Metal backend"
+hh capabilities advertise --notes "SDXL via ComfyUI, Metal backend"
 ```
 
 ---
@@ -193,7 +193,7 @@ OLLAMA_GPU_OVERHEAD=0 ollama run llama3.2
 ollama run llama3.2 --ctx-size 2048
 ```
 
-**Gateway not reachable from Tom:**
+**Gateway not reachable from H1:**
 ```bash
 # Check Tailscale IP
 tailscale ip
@@ -207,5 +207,5 @@ openclaw gateway status
 ## See also
 
 - [Hardware overview](/hardware/overview) — compare with other profiles
-- [`tj capabilities`](/reference/capabilities) — scan, advertise, fetch
-- [Sending tasks](/guide/sending-tasks) — `tj send` flags and options
+- [`hh capabilities`](/reference/capabilities) — scan, advertise, fetch
+- [Sending tasks](/guide/sending-tasks) — `hh send` flags and options

@@ -1,12 +1,12 @@
 /**
- * commands/peers.ts — `tj peers`
+ * commands/peers.ts — `hh peers`
  *
  * List all configured peer nodes and their current reachability status.
  *
  * Usage:
- *   tj peers              — list peers with cached capability info
- *   tj peers --ping       — live reachability check for each peer
- *   tj peers --json       — machine-readable output
+ *   hh peers              — list peers with cached capability info
+ *   hh peers --ping       — live reachability check for each peer
+ *   hh peers --json       — machine-readable output
  *
  * The primary peer is marked with ★. Additional peers from peer_nodes[]
  * are listed in declaration order.
@@ -39,7 +39,7 @@ export async function peers(opts: PeersOptions = {}) {
   const config = await loadConfig();
 
   if (!config) {
-    p.log.error("No configuration found. Run `tj onboard` first.");
+    p.log.error("No configuration found. Run `hh onboard` first.");
     process.exitCode = 1;
     return;
   }
@@ -101,8 +101,8 @@ export async function peers(opts: PeersOptions = {}) {
   }
 
   p.log.info("");
-  p.log.info(pc.dim(`Use ${pc.italic("tj send --peer <name> <task>")} to target a specific peer.`));
-  p.log.info(pc.dim(`Use ${pc.italic("tj send --auto <task>")} to auto-select by capability.`));
+  p.log.info(pc.dim(`Use ${pc.italic("hh send --peer <name> <task>")} to target a specific peer.`));
+  p.log.info(pc.dim(`Use ${pc.italic("hh send --auto <task>")} to auto-select by capability.`));
 
   p.outro("Done");
 }

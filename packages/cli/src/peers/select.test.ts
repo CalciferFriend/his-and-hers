@@ -6,7 +6,7 @@ import type { TJConfig } from "../config/schema.ts";
 
 function makePeer(name: string, ip: string, emoji = "🤖") {
   return {
-    role: "jerry" as const,
+    role: "h2" as const,
     name,
     emoji,
     tailscale_hostname: `${name.toLowerCase()}.tailnet`,
@@ -26,7 +26,7 @@ function makeConfig(extraPeers?: typeof PRIMARY[]): TJConfig {
   return {
     version: "0.1.0",
     this_node: {
-      role: "tom",
+      role: "h1",
       name: "Calcifer",
       emoji: "🔥",
       tailscale_hostname: "calcifer.tailnet",

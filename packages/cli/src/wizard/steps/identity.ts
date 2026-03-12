@@ -11,7 +11,7 @@ export async function stepIdentity(ctx: Partial<WizardContext>): Promise<Partial
       name: () =>
         p.text({
           message: "Agent name for this node",
-          placeholder: role === "tom" ? "Calcifer" : "GLaDOS",
+          placeholder: role === "h1" ? "Calcifer" : "GLaDOS",
           validate: (v) => {
             if (!v.trim()) return "Name is required";
           },

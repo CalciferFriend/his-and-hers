@@ -4,7 +4,7 @@ layout: home
 hero:
   name: "his-and-hers"
   text: "Two agents. Separate machines."
-  tagline: One command to wire them. Tom orchestrates. Jerry executes. They never meet but they build things together.
+  tagline: One command to wire them. H1 orchestrates. H2 executes. They never meet but they build things together.
   image:
     src: /hero.svg
     alt: his-and-hers
@@ -26,53 +26,53 @@ features:
 
   - icon: 🛌
     title: Wake on demand
-    details: Jerry sleeps when idle. Tom wakes him via Wake-on-LAN when a task arrives. No idle GPU cost, no always-on power draw. Works across subnets via Magic Packet.
+    details: H2 sleeps when idle. H1 wakes him via Wake-on-LAN when a task arrives. No idle GPU cost, no always-on power draw. Works across subnets via Magic Packet.
 
   - icon: 🧠
     title: Capability-aware routing
-    details: Jerry advertises what it can do — GPU, VRAM, Ollama models, custom skills. Tom routes tasks automatically. Image gen goes to the RTX. Embeddings go to the Pi. Code goes to the Coder model.
+    details: H2 advertises what it can do — GPU, VRAM, Ollama models, custom skills. H1 routes tasks automatically. Image gen goes to the RTX. Embeddings go to the Pi. Code goes to the Coder model.
 
   - icon: 🐳
     title: Docker-native
-    details: Pre-built Docker images for Tom (Alpine), Jerry CPU (Debian), Jerry CUDA (NVIDIA), and Jerry ARM64 (Raspberry Pi 5). One `docker run` and you're pairing.
+    details: Pre-built Docker images for H1 (Alpine), H2 CPU (Debian), H2 CUDA (NVIDIA), and H2 ARM64 (Raspberry Pi 5). One `docker run` and you're pairing.
 
   - icon: 💰
     title: Budget tracking
-    details: Every task is costed. `tj budget --week` shows your spend per node, per model, per day. Lightweight tasks auto-route to local models. API calls only when needed.
+    details: Every task is costed. `hh budget --week` shows your spend per node, per model, per day. Lightweight tasks auto-route to local models. API calls only when needed.
 
   - icon: 🌐
     title: Community registry
-    details: Publish your node card to the community registry with `tj publish`. Discover other setups with `tj discover`. See what people are building and how they're running their Jerrys.
+    details: Publish your node card to the community registry with `hh publish`. Discover other setups with `hh discover`. See what people are building and how they're running their Jerrys.
 ---
 
 ## How it looks
 
 ```bash
-# On your always-on machine (Tom)
+# On your always-on machine (H1)
 $ npx his-and-hers
-✔ Role: Tom (orchestrator)
+✔ Role: H1 (orchestrator)
 ✔ Name: Calcifer 🔥
 ✔ Provider: Anthropic → claude-sonnet-4-6
-✔ Jerry's Tailscale IP: 100.64.0.42
+✔ H2's Tailscale IP: 100.64.0.42
 ✔ SSH user: nick, key: ~/.ssh/id_ed25519
 ✔ Wake-on-LAN: AA:BB:CC:DD:EE:FF → 255.255.255.255
 ✔ Gateway bound to loopback:3737
-✔ Jerry config pushed via SSH
+✔ H2 config pushed via SSH
 ✔ Round-trip test: 218ms ✓
 
-Everything's wired. Run `tj send` to give Jerry something to do.
+Everything's wired. Run `hh send` to give H2 something to do.
 
-# Send Jerry a task
-$ tj send "generate a landing page hero image for his-and-hers, dark theme, two robots"
-🌙 Jerry is asleep — sending Magic Packet...
-⏳ Waiting for Jerry to boot (up to 90s)...
-✓ Jerry online (62s) — forwarding task...
-✓ Task queued: task_01j8fzq... — use `tj logs --follow` to watch
+# Send H2 a task
+$ hh send "generate a landing page hero image for his-and-hers, dark theme, two robots"
+🌙 H2 is asleep — sending Magic Packet...
+⏳ Waiting for H2 to boot (up to 90s)...
+✓ H2 online (62s) — forwarding task...
+✓ Task queued: task_01j8fzq... — use `hh logs --follow` to watch
 
 # Check status
-$ tj status
+$ hh status
 ┌─────────────────────────────────────────────────┐
-│  Tom: Calcifer 🔥        Jerry: GLaDOS 🤖        │
+│  H1: Calcifer 🔥        H2: GLaDOS 🤖        │
 │  aws:us-east-1           home-pc                 │
 │  claude-sonnet-4-6       RTX 3070 Ti (8 GB)      │
 │  ✓ Tailscale reachable   ✓ Gateway healthy        │
@@ -81,7 +81,7 @@ $ tj status
 └─────────────────────────────────────────────────┘
 ```
 
-## Pick your Jerry
+## Pick your H2
 
 <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin: 2rem 0">
   <a href="/hardware/pi5" style="flex: 1; min-width: 200px; padding: 1.5rem; border: 1px solid var(--vp-c-divider); border-radius: 8px; text-decoration: none; color: inherit">

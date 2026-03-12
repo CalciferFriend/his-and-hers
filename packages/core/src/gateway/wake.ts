@@ -45,7 +45,7 @@ export interface WakeResult {
  * Wake a remote OpenClaw agent by injecting a system event into its active session.
  *
  * @example
- * // Tom (Calcifer) sends a task to Jerry (GLaDOS)
+ * // H1 (Calcifer 🔥) sends a task to H2 (GLaDOS 🤖)
  * const result = await wakeAgent({
  *   url: "ws://100.119.44.38:18789",
  *   token: process.env.GLADOS_GATEWAY_TOKEN!,

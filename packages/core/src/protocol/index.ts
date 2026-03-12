@@ -7,8 +7,8 @@ export {
   TJWakeMessage,
   TJErrorMessage,
   HHLatentMessage,
-  TJTaskPayload,
-  TJResultPayload,
+  HHTaskPayload,
+  HHResultPayload,
   HHHeartbeatPayload,
   HHHandoffPayload,
   TJWakePayload,
@@ -31,4 +31,4 @@ export {
 } from "./message.schema.ts";
 export { HHHandoff } from "./handoff.schema.ts";
 export { HHHeartbeat } from "./heartbeat.schema.ts";
-export { TJPair } from "./pair.schema.ts";
+export { HHPair } from "./pair.schema.ts";

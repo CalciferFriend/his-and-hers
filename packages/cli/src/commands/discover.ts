@@ -1,20 +1,20 @@
 /**
- * tj discover — browse and search the community node registry.
+ * hh discover — browse and search the community node registry.
  *
  * Searches GitHub Gists tagged "his-and-hers-node" (i.e. those published
- * with `tj publish`). Filters by role, GPU, provider, skills, and OS.
+ * with `hh publish`). Filters by role, GPU, provider, skills, and OS.
  *
  * Examples:
- *   tj discover                        # list recent nodes
- *   tj discover --role jerry           # Jerry nodes only
- *   tj discover --gpu cuda             # CUDA GPU nodes
- *   tj discover --skill image-gen      # nodes with image generation
- *   tj discover --provider ollama      # Ollama-powered nodes
- *   tj discover --os windows           # Windows nodes
- *   tj discover --json                 # machine-readable output
+ *   hh discover                        # list recent nodes
+ *   hh discover --role h2           # H2 nodes only
+ *   hh discover --gpu cuda             # CUDA GPU nodes
+ *   hh discover --skill image-gen      # nodes with image generation
+ *   hh discover --provider ollama      # Ollama-powered nodes
+ *   hh discover --os windows           # Windows nodes
+ *   hh discover --json                 # machine-readable output
  */
 
-import type { TJNodeCard } from "./publish.ts";
+import type { HHNodeCard } from "./publish.ts";
 
 const GIST_SEARCH_URL =
   "https://api.github.com/gists/public?per_page=100&description=his-and-hers";
@@ -44,15 +44,15 @@ async function fetchGistList(token?: string): Promise<GistSummary[]> {
   return (await res.json()) as GistSummary[];
 }
 
-async function fetchCardFromGist(gist: GistSummary, token?: string): Promise<TJNodeCard | null> {
-  const cardFile = gist.files["tj-node-card.json"];
+async function fetchCardFromGist(gist: GistSummary, token?: string): Promise<HHNodeCard | null> {
+  const cardFile = gist.files["hh-node-card.json"];
   if (!cardFile) return null;
   try {
     const headers: Record<string, string> = { "User-Agent": "his-and-hers-cli" };
     if (token) headers["Authorization"] = `Bearer ${token}`;
     const res = await fetch(cardFile.raw_url, { headers });
     if (!res.ok) return null;
-    return (await res.json()) as TJNodeCard;
+    return (await res.json()) as HHNodeCard;
   } catch {
     return null;
   }
@@ -60,8 +60,8 @@ async function fetchCardFromGist(gist: GistSummary, token?: string): Promise<TJN
 
 // ─── Display helpers ──────────────────────────────────────────────────────────
 
-function cardSummary(card: TJNodeCard, gist: GistSummary): string {
-  const emoji = card.emoji ?? (card.role === "tom" ? "🐱" : "🐭");
+function cardSummary(card: HHNodeCard, gist: GistSummary): string {
+  const emoji = card.emoji ?? (card.role === "h1" ? "🐱" : "🐭");
   const gpu = card.capabilities?.gpu?.name
     ? ` · GPU: ${card.capabilities.gpu.name}${card.capabilities.gpu.vram_gb ? ` (${card.capabilities.gpu.vram_gb}GB)` : ""}`
     : "";
@@ -84,7 +84,7 @@ function cardSummary(card: TJNodeCard, gist: GistSummary): string {
 // ─── Filter helpers ───────────────────────────────────────────────────────────
 
 function matchesFilter(
-  card: TJNodeCard,
+  card: HHNodeCard,
   filters: {
     role?: string;
     gpu?: string;
@@ -138,12 +138,12 @@ export async function discover(opts: {
   const tjGists = gists.filter(
     (g) =>
       g.description?.includes("[his-and-hers]") &&
-      g.files["tj-node-card.json"],
+      g.files["hh-node-card.json"],
   );
 
   if (tjGists.length === 0) {
     if (!opts.json) {
-      console.log("No nodes published yet. Be the first! Run `tj publish`.");
+      console.log("No nodes published yet. Be the first! Run `hh publish`.");
     } else {
       console.log("[]");
     }
@@ -151,7 +151,7 @@ export async function discover(opts: {
   }
 
   // Fetch cards in parallel (cap at 10 concurrent)
-  const results: Array<{ card: TJNodeCard; gist: GistSummary }> = [];
+  const results: Array<{ card: HHNodeCard; gist: GistSummary }> = [];
   const chunks = [];
   for (let i = 0; i < tjGists.length; i += 10) {
     chunks.push(tjGists.slice(i, i + 10));
@@ -163,7 +163,7 @@ export async function discover(opts: {
         return card ? { card, gist: g } : null;
       }),
     );
-    results.push(...fetched.filter(Boolean) as Array<{ card: TJNodeCard; gist: GistSummary }>);
+    results.push(...fetched.filter(Boolean) as Array<{ card: HHNodeCard; gist: GistSummary }>);
   }
 
   // Apply filters
@@ -189,9 +189,9 @@ export async function discover(opts: {
     return;
   }
 
-  // Sort: jerry first (more interesting hardware), then by updated_at desc
+  // Sort: h2 first (more interesting hardware), then by updated_at desc
   filtered.sort((a, b) => {
-    if (a.card.role !== b.card.role) return a.card.role === "jerry" ? -1 : 1;
+    if (a.card.role !== b.card.role) return a.card.role === "h2" ? -1 : 1;
     return b.gist.updated_at.localeCompare(a.gist.updated_at);
   });
 
@@ -223,5 +223,5 @@ export async function discover(opts: {
   }
 
   console.log(`─────────────────────────────────────────────────`);
-  console.log(`Want to be in this list? Run \`tj publish\`.`);
+  console.log(`Want to be in this list? Run \`hh publish\`.`);
 }

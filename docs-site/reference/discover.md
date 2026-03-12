@@ -1,18 +1,18 @@
 ---
-title: "tj discover"
-description: Browse and filter community Jerry nodes from the public registry.
+title: "hh discover"
+description: Browse and filter community H2 nodes from the public registry.
 ---
 
-# `tj discover` — Reference
+# `hh discover` — Reference
 
-Browse community Jerry nodes published to the public registry.
+Browse community H2 nodes published to the public registry.
 
 ---
 
 ## Synopsis
 
 ```bash
-tj discover [flags]
+hh discover [flags]
 ```
 
 ---
@@ -36,34 +36,34 @@ tj discover [flags]
 ### Default
 
 ```bash
-$ tj discover
+$ hh discover
 
 his-and-hers community nodes  (registry: github gist)
 Updated: 2m ago · 47 nodes total
 
 #  Name           OS        GPU                   Skills                    WOL
 ── ────────────── ───────── ───────────────────── ───────────────────────── ────
-1  jerry-beast    linux     RTX 4090 · 24 GB      inference:70b, image-gen  ✓
+1  h2-beast    linux     RTX 4090 · 24 GB      inference:70b, image-gen  ✓
 2  mymac          macos     M2 Pro · 32 GB        ollama, gpu-inference     –
-3  jerry-pi-farm  linux     CPU only (Pi 5)       embeddings, summarize     –
+3  h2-pi-farm  linux     CPU only (Pi 5)       embeddings, summarize     –
 4  workstation    windows   RTX 3070 Ti · 8 GB    ollama, gpu-inference     ✓
 5  studio-beast   linux     RTX 4090 · 24 GB      inference:70b, image-gen  ✓
 ...
 
-Run `tj discover --json` for full details.
+Run `hh discover --json` for full details.
 ```
 
 ### With filters
 
 ```bash
-$ tj discover --skill image-gen --wol
+$ hh discover --skill image-gen --wol
 
 his-and-hers community nodes  (registry: github gist)
 Filtered: skill=image-gen, wol=true · 12 matches
 
 #  Name          OS       GPU                   Skills                    WOL
 ── ───────────── ──────── ───────────────────── ───────────────────────── ────
-1  jerry-beast   linux    RTX 4090 · 24 GB      inference:70b, image-gen  ✓
+1  h2-beast   linux    RTX 4090 · 24 GB      inference:70b, image-gen  ✓
 2  studio-beast  linux    RTX 4090 · 24 GB      inference:70b, image-gen  ✓
 3  workstation   windows  RTX 3070 Ti · 8 GB    ollama, gpu-inference     ✓
 ...
@@ -74,14 +74,14 @@ Filtered: skill=image-gen, wol=true · 12 matches
 ## JSON output
 
 ```bash
-$ tj discover --skill image-gen --limit 2 --json
+$ hh discover --skill image-gen --limit 2 --json
 ```
 
 ```json
 [
   {
     "id": "gist:abc123",
-    "name": "jerry-beast",
+    "name": "h2-beast",
     "os": "linux",
     "gpu": {
       "name": "NVIDIA GeForce RTX 4090",
@@ -116,8 +116,8 @@ $ tj discover --skill image-gen --limit 2 --json
 
 ## How it works
 
-`tj discover` queries the public community registry stored as GitHub Gists.
-Nodes are published anonymously via [`tj publish`](/reference/publish) — no
+`hh discover` queries the public community registry stored as GitHub Gists.
+Nodes are published anonymously via [`hh publish`](/reference/publish) — no
 personal information is included unless you add it in `--description`.
 
 Results are cached locally for 5 minutes to avoid hammering the GitHub API.
@@ -126,11 +126,11 @@ Results are cached locally for 5 minutes to avoid hammering the GitHub API.
 
 ## Node card fields
 
-Each node in the registry is a `TJNodeCard`:
+Each node in the registry is a `HHNodeCard`:
 
 | Field | Description |
 |-------|-------------|
-| `name` | Node name (set during `tj onboard`) |
+| `name` | Node name (set during `hh onboard`) |
 | `os` | Operating system (`linux`, `windows`, `macos`) |
 | `gpu` | GPU name, VRAM, backend |
 | `skill_tags` | Capability tags (e.g. `image-gen`, `inference:70b`) |
@@ -143,6 +143,6 @@ Each node in the registry is a `TJNodeCard`:
 
 ## See also
 
-- [`tj publish`](/reference/publish) — publish your node to the registry
-- [`tj capabilities`](/reference/capabilities) — manage local capability profile
-- [`tj pair`](/reference/pair) — pair with another node you find here
+- [`hh publish`](/reference/publish) — publish your node to the registry
+- [`hh capabilities`](/reference/capabilities) — manage local capability profile
+- [`hh pair`](/reference/pair) — pair with another node you find here

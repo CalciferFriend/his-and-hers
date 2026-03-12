@@ -1,6 +1,6 @@
 # Install on Linux / macOS
 
-Detailed setup guide for Tom (and Jerry) on Linux or macOS. If you just want the 5-minute version, see [Quickstart](/guide/quickstart).
+Detailed setup guide for H1 (and H2) on Linux or macOS. If you just want the 5-minute version, see [Quickstart](/guide/quickstart).
 
 ---
 
@@ -74,7 +74,7 @@ openclaw gateway status
 
 ```bash
 npm install -g his-and-hers
-tj --version
+hh --version
 ```
 
 ---
@@ -82,39 +82,39 @@ tj --version
 ## 5 — Run the setup wizard
 
 ```bash
-tj onboard
+hh onboard
 ```
 
 The wizard will ask:
 
-1. **Role** — Tom (orchestrator) or Jerry (executor). See [Roles](/guide/roles).
+1. **Role** — H1 (orchestrator) or H2 (executor). See [Roles](/guide/roles).
 2. **Name + emoji** — e.g. `Calcifer 🔥`
 3. **LLM provider** — cloud API key or local Ollama
 4. **Peer connection** — Tailscale IP, SSH user, key path
-5. **Wake-on-LAN** — Jerry's MAC address (optional, Jerry only)
-6. **Gateway binding** — loopback for Tom, Tailscale IP for Jerry
+5. **Wake-on-LAN** — H2's MAC address (optional, H2 only)
+6. **Gateway binding** — loopback for H1, Tailscale IP for H2
 
 ### What the wizard creates
 
 ```
 ~/.his-and-hers/
-  tj.json                 ← main config (0o600 permissions)
+  hh.json                 ← main config (0o600 permissions)
   peers/
-    jerry-home.json       ← one file per peer
+    h2-home.json       ← one file per peer
   tasks/                  ← task state (created on first send)
   context/                ← conversation context per peer
-  capabilities.json       ← this node's capabilities (Jerry)
-  peer-capabilities.json  ← cached peer capabilities (Tom)
+  capabilities.json       ← this node's capabilities (H2)
+  peer-capabilities.json  ← cached peer capabilities (H1)
 ```
 
 ---
 
-## 6 — Autostart (Tom on Linux)
+## 6 — Autostart (H1 on Linux)
 
 Create a systemd service so the gateway restarts on boot:
 
 ```bash
-sudo tee /etc/systemd/system/tj-gateway.service << 'EOF'
+sudo tee /etc/systemd/system/hh-gateway.service << 'EOF'
 [Unit]
 Description=his-and-hers gateway (OpenClaw)
 After=network-online.target tailscaled.service
@@ -133,8 +133,8 @@ WantedBy=multi-user.target
 EOF
 
 sudo systemctl daemon-reload
-sudo systemctl enable --now tj-gateway
-sudo systemctl status tj-gateway
+sudo systemctl enable --now hh-gateway
+sudo systemctl status hh-gateway
 ```
 
 Replace `YOUR_USERNAME` and the Node path (`which openclaw` to find the right path).
@@ -161,9 +161,9 @@ cat > ~/Library/LaunchAgents/com.his-and-hers.gateway.plist << 'EOF'
   <key>KeepAlive</key>
   <true/>
   <key>StandardOutPath</key>
-  <string>/tmp/tj-gateway.log</string>
+  <string>/tmp/hh-gateway.log</string>
   <key>StandardErrorPath</key>
-  <string>/tmp/tj-gateway.err</string>
+  <string>/tmp/hh-gateway.err</string>
 </dict>
 </plist>
 EOF
@@ -177,7 +177,7 @@ launchctl list | grep his-and-hers
 ## 7 — Verify the connection
 
 ```bash
-tj status
+hh status
 ```
 
 Expected output:
@@ -185,10 +185,10 @@ Expected output:
 ```
 his-and-hers v0.5.2
 
-Tom  ✓ gateway healthy   127.0.0.1:3737
+H1  ✓ gateway healthy   127.0.0.1:3737
      ✓ Tailscale up      100.x.y.z
 
-Jerry (jerry-home)
+H2 (h2-home)
      ✓ Tailscale reachable  100.a.b.c
      ✓ gateway healthy      100.a.b.c:3737
      ✓ last heartbeat       12s ago
@@ -197,27 +197,27 @@ Jerry (jerry-home)
 Budget (today): $0.00 cloud / $0.00 local
 ```
 
-If anything shows ✗, run `tj doctor` for a detailed diagnosis.
+If anything shows ✗, run `hh doctor` for a detailed diagnosis.
 
 ---
 
 ## 8 — Send your first task
 
 ```bash
-tj send "what is the Tailscale IP of this node?"
+hh send "what is the Tailscale IP of this node?"
 ```
 
 Watch the task live:
 
 ```bash
-tj logs --follow
+hh logs --follow
 ```
 
 ---
 
-## Ollama setup (Jerry on Linux)
+## Ollama setup (H2 on Linux)
 
-If Jerry is on Linux with a GPU:
+If H2 is on Linux with a GPU:
 
 ```bash
 # Install Ollama
@@ -236,7 +236,7 @@ ollama pull mistral            # 7B, best quality/speed
 ollama pull nomic-embed-text   # embeddings
 ```
 
-Then run `tj capabilities advertise` to register your GPU and models with Tom.
+Then run `hh capabilities advertise` to register your GPU and models with H1.
 
 ---
 
@@ -249,7 +249,7 @@ Check npm global bin is in PATH: `npm config get prefix` → add `<prefix>/bin` 
 Run `sudo tailscale up` and re-authenticate if the key expired.
 
 **SSH permission denied**
-Verify your public key is in Jerry's `~/.ssh/authorized_keys`. Check permissions: `chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys`.
+Verify your public key is in H2's `~/.ssh/authorized_keys`. Check permissions: `chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys`.
 
 **Gateway not starting**
-Check logs: `journalctl -u tj-gateway -f` (Linux) or `cat /tmp/tj-gateway.err` (macOS).
+Check logs: `journalctl -u hh-gateway -f` (Linux) or `cat /tmp/hh-gateway.err` (macOS).

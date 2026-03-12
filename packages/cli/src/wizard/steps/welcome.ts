@@ -18,7 +18,7 @@ async function checkCommand(cmd: string, args: string[]): Promise<string | null>
 
 export async function stepWelcome(ctx: Partial<WizardContext>): Promise<Partial<WizardContext>> {
   p.note(
-    `This wizard will configure this machine as a Tom (orchestrator) or Jerry (executor) node,\n` +
+    `This wizard will configure this machine as a H1 (orchestrator) or H2 (executor) node,\n` +
     `then pair it with a machine running the other role.\n\n` +
     `Both machines must have Tailscale installed and connected to the same tailnet.`,
     "Welcome to his-and-hers"

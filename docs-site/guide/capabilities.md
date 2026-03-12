@@ -1,23 +1,23 @@
 # Capability Routing
 
-Jerry advertises what it can do — GPU, models, skills. Tom uses that profile to automatically route tasks to the right peer without you specifying it.
+H2 advertises what it can do — GPU, models, skills. H1 uses that profile to automatically route tasks to the right peer without you specifying it.
 
 ---
 
 ## How it works
 
-1. **Jerry scans** its hardware and software: `tj capabilities scan`
-2. **Jerry advertises** the profile to Tom: `tj capabilities advertise`
-3. **Tom caches** the profile: `~/.his-and-hers/peer-capabilities.json`
-4. **Tom routes** using `routeTask()`: picks the best peer for each task based on keywords and capability tags
+1. **H2 scans** its hardware and software: `hh capabilities scan`
+2. **H2 advertises** the profile to H1: `hh capabilities advertise`
+3. **H1 caches** the profile: `~/.his-and-hers/peer-capabilities.json`
+4. **H1 routes** using `routeTask()`: picks the best peer for each task based on keywords and capability tags
 
-This happens automatically on Jerry startup. You don't need to configure it manually.
+This happens automatically on H2 startup. You don't need to configure it manually.
 
 ---
 
 ## What gets scanned
 
-Jerry's capability scanner probes:
+H2's capability scanner probes:
 
 | Source | Data collected |
 |--------|---------------|
@@ -37,7 +37,7 @@ Jerry's capability scanner probes:
 ### Scan (probe without saving)
 
 ```bash
-tj capabilities scan
+hh capabilities scan
 ```
 
 Output:
@@ -56,37 +56,37 @@ Whisper: not found
 Skill tags: ollama, gpu-inference
 ```
 
-### Advertise (scan + save + notify Tom)
+### Advertise (scan + save + notify H1)
 
 ```bash
-tj capabilities advertise
+hh capabilities advertise
 ```
 
 This:
 1. Runs the scan
 2. Writes `~/.his-and-hers/capabilities.json`
-3. POSTs the profile to Tom's `/capabilities` endpoint (Tom caches it)
+3. POSTs the profile to H1's `/capabilities` endpoint (H1 caches it)
 
-Run this on Jerry startup (the startup batch script / systemd unit includes it by default).
+Run this on H2 startup (the startup batch script / systemd unit includes it by default).
 
-### Fetch (pull Jerry's profile to Tom)
+### Fetch (pull H2's profile to H1)
 
 ```bash
-# Run on Tom
-tj capabilities fetch
-# → Fetched capabilities from jerry-home (100.x.y.z)
+# Run on H1
+hh capabilities fetch
+# → Fetched capabilities from h2-home (100.x.y.z)
 ```
 
-Tom can also fetch the profile via the `/capabilities` endpoint on Jerry's gateway.
+H1 can also fetch the profile via the `/capabilities` endpoint on H2's gateway.
 
 ### Show (display cached profile)
 
 ```bash
-# On Jerry: show this node's profile
-tj capabilities show
+# On H2: show this node's profile
+hh capabilities show
 
-# On Tom: show a peer's cached profile
-tj capabilities show --peer jerry-home
+# On H1: show a peer's cached profile
+hh capabilities show --peer h2-home
 ```
 
 Output:
@@ -116,14 +116,14 @@ Output:
 ### Route preview (see where a task would go)
 
 ```bash
-tj capabilities route "generate a product image"
-# → Routing decision: jerry-home (skill: gpu-inference, SDXL capable)
+hh capabilities route "generate a product image"
+# → Routing decision: h2-home (skill: gpu-inference, SDXL capable)
 
-tj capabilities route "summarize this document"
-# → Routing decision: jerry-pi (skill: summarize, available, low cost)
+hh capabilities route "summarize this document"
+# → Routing decision: h2-pi (skill: summarize, available, low cost)
 
-tj capabilities route "run 70B inference"
-# → Routing decision: jerry-beast (24 GB VRAM, llama3:70b available)
+hh capabilities route "run 70B inference"
+# → Routing decision: h2-beast (24 GB VRAM, llama3:70b available)
 ```
 
 ---
@@ -153,7 +153,7 @@ Routing keywords and the skill tags they match:
 
 ## Skill tags
 
-Jerry's skill tags are auto-generated from detected capabilities:
+H2's skill tags are auto-generated from detected capabilities:
 
 | Tag | When set |
 |-----|---------|
@@ -170,7 +170,7 @@ Jerry's skill tags are auto-generated from detected capabilities:
 ### Adding custom tags
 
 ```bash
-tj capabilities advertise --tags "my-custom-skill,finetune"
+hh capabilities advertise --tags "my-custom-skill,finetune"
 # → Appended to skill_tags in capabilities.json
 ```
 
@@ -180,29 +180,29 @@ Or edit `~/.his-and-hers/capabilities.json` directly and re-advertise.
 
 ## Auto-refresh
 
-Jerry's capabilities auto-refresh on startup. To manually refresh when you install a new model:
+H2's capabilities auto-refresh on startup. To manually refresh when you install a new model:
 
 ```bash
-# On Jerry — after pulling a new model
+# On H2 — after pulling a new model
 ollama pull llava:13b
-tj capabilities advertise
-# → Tom now knows about llava:13b and will route vision tasks here
+hh capabilities advertise
+# → H1 now knows about llava:13b and will route vision tasks here
 ```
 
 ---
 
 ## Multiple Jerrys
 
-With multiple peers, Tom picks the best available:
+With multiple peers, H1 picks the best available:
 
 ```bash
-$ tj capabilities route "generate an image"
+$ hh capabilities route "generate an image"
 → Checking peers...
-  jerry-home (RTX 3070 Ti, ComfyUI): ✓ online, image-gen
-  jerry-beast (RTX 4090, ComfyUI):   ✗ offline (WOL configured)
-  jerry-pi (Pi 5, no GPU):           ✓ online, no image-gen
+  h2-home (RTX 3070 Ti, ComfyUI): ✓ online, image-gen
+  h2-beast (RTX 4090, ComfyUI):   ✗ offline (WOL configured)
+  h2-pi (Pi 5, no GPU):           ✓ online, no image-gen
 
-→ Routing to: jerry-home
+→ Routing to: h2-home
   Reason: online + image-gen skill
 ```
 

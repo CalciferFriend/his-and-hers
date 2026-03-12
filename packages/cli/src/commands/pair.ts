@@ -14,13 +14,13 @@ export async function pair(options: { code: string }) {
 
   const config = await loadConfig();
   if (!config) {
-    p.log.error("No configuration found on this machine. Run `tj onboard` first.");
+    p.log.error("No configuration found on this machine. Run `hh onboard` first.");
     process.exit(1);
   }
 
   // Verify pairing code against stored hash
   if (!config.pair?.pairing_code_hash) {
-    p.log.error("No pairing code hash found in config. Run `tj onboard` on the Tom node first.");
+    p.log.error("No pairing code hash found in config. Run `hh onboard` on the H1 node first.");
     process.exit(1);
   }
 
@@ -31,7 +31,7 @@ export async function pair(options: { code: string }) {
 
   if (!valid) {
     spinner.stop(`${pc.red("✗")} Invalid pairing code.`);
-    p.log.error("The code does not match. Get a fresh code from the Tom node by running `tj onboard`.");
+    p.log.error("The code does not match. Get a fresh code from the H1 node by running `hh onboard`.");
     process.exit(1);
   }
 
@@ -82,7 +82,7 @@ export async function pair(options: { code: string }) {
   if (allPassed) {
     p.log.success("Pairing verified — both nodes are connected and healthy.");
   } else {
-    p.log.warn("Pairing saved but some connectivity checks failed. Run `tj doctor` for diagnostics.");
+    p.log.warn("Pairing saved but some connectivity checks failed. Run `hh doctor` for diagnostics.");
   }
 
   p.note(

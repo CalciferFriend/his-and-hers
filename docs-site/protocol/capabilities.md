@@ -1,23 +1,23 @@
 ---
-title: TJCapabilityReport Schema
-description: How Jerry nodes advertise their hardware and skills to Tom.
+title: HHCapabilityReport Schema
+description: How H2 nodes advertise their hardware and skills to H1.
 ---
 
-# TJCapabilityReport Schema
+# HHCapabilityReport Schema
 
-`TJCapabilityReport` describes a Jerry node's hardware, installed models, and
-capability tags. Tom caches this report to make routing decisions without
-needing to interrogate Jerry on every task.
+`HHCapabilityReport` describes a H2 node's hardware, installed models, and
+capability tags. H1 caches this report to make routing decisions without
+needing to interrogate H2 on every task.
 
 ---
 
 ## TypeScript interface
 
 ```typescript
-interface TJCapabilityReport {
+interface HHCapabilityReport {
   version: string;              // Schema version (semver)
   node: string;                 // Node name
-  role: "jerry";                // Always "jerry" — Tom doesn't advertise capabilities
+  role: "h2";                // Always "jerry" — H1 doesn't advertise capabilities
   hardware: string | null;      // Hardware profile identifier (e.g. "rtx-4090")
   os: string;                   // "linux" | "win32" | "darwin"
   gpu: TJGpuInfo | null;        // GPU details, or null if CPU-only
@@ -58,7 +58,7 @@ interface TJServices {
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `version` | `string` | ✓ | Schema version, e.g. `"0.1.0"` |
-| `node` | `string` | ✓ | Node name (from `tj.json`) |
+| `node` | `string` | ✓ | Node name (from `hh.json`) |
 | `role` | `"jerry"` | ✓ | Always `"jerry"` |
 | `hardware` | `string \| null` | – | Profile ID: `"pi5"`, `"rtx-3070-ti"`, `"rtx-4090"`, `"m2-mac"`, or `null` |
 | `os` | `string` | ✓ | OS platform: `"linux"`, `"win32"`, `"darwin"` |
@@ -66,8 +66,8 @@ interface TJServices {
 | `ollama_running` | `boolean` | ✓ | Whether Ollama is reachable at `localhost:11434` |
 | `ollama_models` | `TJOllamaModel[]` | ✓ | Models returned by `GET /api/tags` |
 | `services` | `TJServices` | ✓ | Detected inference services |
-| `skill_tags` | `string[]` | ✓ | Tags Tom uses for routing decisions |
-| `custom_notes` | `string \| null` | – | Free-form notes from `tj capabilities advertise --notes` |
+| `skill_tags` | `string[]` | ✓ | Tags H1 uses for routing decisions |
+| `custom_notes` | `string \| null` | – | Free-form notes from `hh capabilities advertise --notes` |
 | `timestamp` | `string` | ✓ | ISO 8601 datetime of last capability scan |
 
 ### TJGpuInfo
@@ -98,7 +98,7 @@ The capability scanner automatically assigns skill tags based on detected hardwa
 | `summarize` | Any model is running (sufficient for summarization tasks) |
 | `chat:small` | Only 3B or smaller models detected |
 
-Custom tags can be added with `tj capabilities advertise --tags "finetune,custom-skill"`.
+Custom tags can be added with `hh capabilities advertise --tags "finetune,custom-skill"`.
 
 ---
 
@@ -107,7 +107,7 @@ Custom tags can be added with `tj capabilities advertise --tags "finetune,custom
 ```json
 {
   "version": "0.1.0",
-  "node": "jerry-beast",
+  "node": "h2-beast",
   "role": "jerry",
   "hardware": "rtx-4090",
   "os": "linux",
@@ -143,7 +143,7 @@ Custom tags can be added with `tj capabilities advertise --tags "finetune,custom
 ```json
 {
   "version": "0.1.0",
-  "node": "jerry-pi",
+  "node": "h2-pi",
   "role": "jerry",
   "hardware": "pi5",
   "os": "linux",
@@ -171,13 +171,13 @@ Custom tags can be added with `tj capabilities advertise --tags "finetune,custom
 
 | Location | Description |
 |----------|-------------|
-| `~/.his-and-hers/capabilities.json` | Jerry's own capability report (written by `tj capabilities advertise`) |
-| `~/.his-and-hers/peer-capabilities-<name>.json` | Tom's cached copy of a peer's report (written by `tj capabilities fetch`) |
+| `~/.his-and-hers/capabilities.json` | H2's own capability report (written by `hh capabilities advertise`) |
+| `~/.his-and-hers/peer-capabilities-<name>.json` | H1's cached copy of a peer's report (written by `hh capabilities fetch`) |
 
 ---
 
 ## See also
 
-- [`tj capabilities`](/reference/capabilities) — CLI commands: scan, advertise, fetch, route
+- [`hh capabilities`](/reference/capabilities) — CLI commands: scan, advertise, fetch, route
 - [Protocol overview](/protocol/overview) — where capability reports fit in the message flow
 - [Hardware overview](/hardware/overview) — hardware profiles and capability tag reference

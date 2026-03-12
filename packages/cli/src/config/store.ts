@@ -4,10 +4,10 @@ import { join } from "node:path";
 import { TJConfig, type ProviderConfig } from "./schema.ts";
 
 const CONFIG_DIR = join(homedir(), ".his-and-hers");
-const CONFIG_PATH = join(CONFIG_DIR, "tj.json");
+const CONFIG_PATH = join(CONFIG_DIR, "hh.json");
 
 /**
- * Load config from ~/.his-and-hers/tj.json
+ * Load config from ~/.his-and-hers/hh.json
  * Returns null if not found or invalid.
  */
 export async function loadConfig(): Promise<TJConfig | null> {
@@ -20,7 +20,7 @@ export async function loadConfig(): Promise<TJConfig | null> {
 }
 
 /**
- * Save config to ~/.his-and-hers/tj.json with restrictive permissions (0600).
+ * Save config to ~/.his-and-hers/hh.json with restrictive permissions (0600).
  * Never writes API keys — those stay in the OS keychain.
  */
 export async function saveConfig(config: TJConfig): Promise<void> {
@@ -38,7 +38,7 @@ export async function saveConfig(config: TJConfig): Promise<void> {
  */
 export async function patchConfig(patch: Partial<TJConfig>): Promise<TJConfig> {
   const existing = await loadConfig();
-  if (!existing) throw new Error("No config found — run tj onboard first");
+  if (!existing) throw new Error("No config found — run hh onboard first");
   const merged = TJConfig.parse({ ...existing, ...patch });
   await saveConfig(merged);
   return merged;

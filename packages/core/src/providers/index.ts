@@ -54,7 +54,7 @@ export const PROVIDER_DEFAULTS: Record<ProviderKind, Partial<ProviderConfig>> = 
 
 /**
  * Build the OpenClaw agent config block for this provider.
- * Written to the node's openclaw.json during `tj onboard`.
+ * Written to the node's openclaw.json during `hh onboard`.
  */
 export function buildOpenClawProviderConfig(provider: ProviderConfig): object {
   const base = {
@@ -96,7 +96,7 @@ export function buildOpenClawProviderConfig(provider: ProviderConfig): object {
 
 /**
  * Check if Ollama is running locally and list available models.
- * Useful during onboarding to let Jerry auto-detect what's available.
+ * Useful during onboarding to let H2 auto-detect what's available.
  */
 export async function detectOllamaModels(
   baseUrl = "http://localhost:11434",
@@ -119,7 +119,7 @@ export async function detectOllamaModels(
  *
  * This is a simple heuristic — Phase 3 will make this smarter.
  */
-export type RoutingHint = "tom-cloud" | "jerry-local" | "jerry-cloud";
+export type RoutingHint = "tom-cloud" | "h2-local" | "h2-cloud";
 
 export function suggestRouting(task: string): RoutingHint {
   const lower = task.toLowerCase();
@@ -128,5 +128,5 @@ export function suggestRouting(task: string): RoutingHint {
     "fine-tune", "train", "embed", "inference", "diffusion", "whisper",
   ];
   const isHeavy = heavyKeywords.some((kw) => lower.includes(kw));
-  return isHeavy ? "jerry-local" : "tom-cloud";
+  return isHeavy ? "h2-local" : "tom-cloud";
 }

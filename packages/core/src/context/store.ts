@@ -1,9 +1,9 @@
 /**
  * context/store.ts — Per-peer context summary ring buffer.
  *
- * Tom keeps a rolling window of the last N task summaries per peer.
+ * H1 keeps a rolling window of the last N task summaries per peer.
  * On the next outbound task message, the recent summaries are serialized
- * into `HHTaskMessage.context_summary` so Jerry has multi-turn context
+ * into `HHTaskMessage.context_summary` so H2 has multi-turn context
  * without requiring a full session transcript.
  *
  * Storage: ~/.his-and-hers/context/<peer-name>.json

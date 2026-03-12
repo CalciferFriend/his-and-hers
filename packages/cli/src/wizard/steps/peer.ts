@@ -4,7 +4,7 @@ import { pingPeer, testSSH } from "@his-and-hers/core";
 import { isCancelled, type WizardContext } from "../context.ts";
 
 export async function stepPeer(ctx: Partial<WizardContext>): Promise<Partial<WizardContext>> {
-  const peerRole = ctx.role === "tom" ? "Jerry (executor)" : "Tom (orchestrator)";
+  const peerRole = ctx.role === "h1" ? "H2 (executor)" : "H1 (orchestrator)";
 
   p.log.info(`Now let's configure the remote ${peerRole} node.`);
 
@@ -13,7 +13,7 @@ export async function stepPeer(ctx: Partial<WizardContext>): Promise<Partial<Wiz
       peerTailscaleHostname: () =>
         p.text({
           message: `Tailscale hostname of the ${peerRole} machine`,
-          placeholder: ctx.role === "tom" ? "glados" : "calcifer-aws",
+          placeholder: ctx.role === "h1" ? "glados" : "calcifer-aws",
           validate: (v) => {
             if (!v.trim()) return "Tailscale hostname is required";
           },
@@ -30,7 +30,7 @@ export async function stepPeer(ctx: Partial<WizardContext>): Promise<Partial<Wiz
       peerSSHUser: () =>
         p.text({
           message: `SSH username on the ${peerRole} machine`,
-          placeholder: ctx.role === "tom" ? "Nic" : "ubuntu",
+          placeholder: ctx.role === "h1" ? "Nic" : "ubuntu",
           validate: (v) => {
             if (!v.trim()) return "SSH user is required";
           },
@@ -71,7 +71,7 @@ export async function stepPeer(ctx: Partial<WizardContext>): Promise<Partial<Wiz
   const peerReachable = await pingPeer(answers.peerTailscaleIP);
   if (!peerReachable) {
     spinner.stop(`${pc.yellow("!")} Peer not reachable via Tailscale — it may be offline.`);
-    p.log.warn("If this is the Jerry node and it's a sleeping machine, that's expected. We'll configure WOL next.");
+    p.log.warn("If this is the H2 node and it's a sleeping machine, that's expected. We'll configure WOL next.");
   } else {
     spinner.stop(`${pc.green("✓")} Peer reachable via Tailscale.`);
 

@@ -7,8 +7,8 @@ export {
   HHHandoffMessage,
   TJWakeMessage,
   TJErrorMessage,
-  TJTaskPayload,
-  TJResultPayload,
+  HHTaskPayload,
+  HHResultPayload,
   HHHeartbeatPayload,
   HHHandoffPayload,
   TJWakePayload,
@@ -25,7 +25,7 @@ export {
   createWakeMessage,
   HHHandoff,
   HHHeartbeat,
-  TJPair,
+  HHPair,
 } from "./protocol/index.ts";
 
 // Transport layer
@@ -110,7 +110,7 @@ export type { ContextEntry, SummarizeInput } from "./context/index.ts";
 
 // Capability registry
 export {
-  TJCapabilityReport,
+  HHCapabilityReport,
   TJGPUInfo,
   TJOllamaInfo,
   TJSkillTag,

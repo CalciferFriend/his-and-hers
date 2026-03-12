@@ -1,19 +1,19 @@
 # Wake-on-LAN
 
-Wake-on-LAN (WOL) lets Tom boot Jerry remotely by sending a Magic Packet over the network. When Jerry is sleeping or shut down, Tom wakes it, waits for the gateway to come online, then dispatches the task.
+Wake-on-LAN (WOL) lets H1 boot H2 remotely by sending a Magic Packet over the network. When H2 is sleeping or shut down, H1 wakes it, waits for the gateway to come online, then dispatches the task.
 
-This is optional but highly recommended — it means Jerry can stay off 23 hours a day and only run when needed.
+This is optional but highly recommended — it means H2 can stay off 23 hours a day and only run when needed.
 
 ---
 
 ## How it works
 
-1. Tom checks if Jerry's gateway is reachable (HTTP GET to `http://jerry-ip:3737/health`)
-2. If unreachable: Tom sends a UDP Magic Packet to Jerry's MAC address
-3. If Jerry is on the same subnet: broadcast to `255.255.255.255:9`
-4. If Jerry is on a different subnet (typical): the packet goes via router port forward
-5. Tom polls Jerry's Tailscale reachability every 2s, up to 60 attempts (2 minutes)
-6. Once Jerry's gateway responds healthy, Tom dispatches the task
+1. H1 checks if H2's gateway is reachable (HTTP GET to `http://h2-ip:3737/health`)
+2. If unreachable: H1 sends a UDP Magic Packet to H2's MAC address
+3. If H2 is on the same subnet: broadcast to `255.255.255.255:9`
+4. If H2 is on a different subnet (typical): the packet goes via router port forward
+5. H1 polls H2's Tailscale reachability every 2s, up to 60 attempts (2 minutes)
+6. Once H2's gateway responds healthy, H1 dispatches the task
 
 ---
 
@@ -100,7 +100,7 @@ Replace `eth0` with your actual interface name (`ip link` to list them).
 
 ---
 
-## Step 4 — Find Jerry's MAC address
+## Step 4 — Find H2's MAC address
 
 ```powershell
 # Windows
@@ -123,16 +123,16 @@ Note the MAC address. It looks like `D8:5E:D3:04:18:B4` (6 hex pairs).
 
 ## Step 5 — Configure your router
 
-If Tom and Jerry are on the **same subnet** (e.g. both on `192.168.1.x`): no router config needed. Tom can broadcast directly.
+If H1 and H2 are on the **same subnet** (e.g. both on `192.168.1.x`): no router config needed. H1 can broadcast directly.
 
-If Tom is on a **different subnet or network** (e.g. Tom is a cloud VM, or they're on different VLANs):
+If H1 is on a **different subnet or network** (e.g. H1 is a cloud VM, or they're on different VLANs):
 
-1. Give Jerry a **static DHCP lease** based on MAC address (in your router admin panel)
-2. Set up a **UDP port 9 forward** to Jerry's static IP
+1. Give H2 a **static DHCP lease** based on MAC address (in your router admin panel)
+2. Set up a **UDP port 9 forward** to H2's static IP
 
 In most consumer routers:
 - Find "Port Forwarding" or "Virtual Servers"
-- Add rule: Protocol=UDP, External Port=9, Internal IP=Jerry's IP, Internal Port=9
+- Add rule: Protocol=UDP, External Port=9, Internal IP=H2's IP, Internal Port=9
 
 ### Alternative: directed broadcast
 
@@ -150,18 +150,18 @@ Some routers allow directed broadcasts (e.g. `192.168.1.255`). If yours does:
 
 ---
 
-## Step 6 — Tell Tom about WOL
+## Step 6 — Tell H1 about WOL
 
-During `tj onboard`, you'll be prompted for:
-- Jerry's MAC address
+During `hh onboard`, you'll be prompted for:
+- H2's MAC address
 - Broadcast IP or router IP
 - WOL port (default 9)
 
-Or update manually in `~/.his-and-hers/peers/jerry-home.json`:
+Or update manually in `~/.his-and-hers/peers/h2-home.json`:
 
 ```json
 {
-  "name": "jerry-home",
+  "name": "h2-home",
   "tailscale_ip": "100.x.y.z",
   "wol": {
     "enabled": true,
@@ -176,54 +176,54 @@ Or update manually in `~/.his-and-hers/peers/jerry-home.json`:
 
 ## Test WOL
 
-From Tom's machine, with Jerry off:
+From H1's machine, with H2 off:
 
 ```bash
 # Send Magic Packet and wait for gateway
-tj wake --wait
+hh wake --wait
 
 # Watch what happens
-tj wake --wait --verbose
+hh wake --wait --verbose
 # → Sending magic packet to D8:5E:D3:04:18:B4 via 192.168.1.1:9
-# → Polling Jerry gateway... (attempt 1/60)
-# → Polling Jerry gateway... (attempt 8/60)
-# → Jerry gateway healthy. Boot took 42s.
+# → Polling H2 gateway... (attempt 1/60)
+# → Polling H2 gateway... (attempt 8/60)
+# → H2 gateway healthy. Boot took 42s.
 ```
 
 ---
 
-## WOL with `tj send`
+## WOL with `hh send`
 
-WOL is transparent when sending tasks. If Jerry is asleep, Tom wakes it automatically:
+WOL is transparent when sending tasks. If H2 is asleep, H1 wakes it automatically:
 
 ```bash
-tj send "run the test suite"
-# → Jerry is offline — sending magic packet
-# → Waiting for Jerry to wake (up to 120s)...
-# → Jerry online — dispatching task
+hh send "run the test suite"
+# → H2 is offline — sending magic packet
+# → Waiting for H2 to wake (up to 120s)...
+# → H2 online — dispatching task
 ```
 
-To skip WOL and fail fast if Jerry is offline:
+To skip WOL and fail fast if H2 is offline:
 
 ```bash
-tj send "quick task" --no-wol
-# → Jerry unreachable and --no-wol set — aborting
+hh send "quick task" --no-wol
+# → H2 unreachable and --no-wol set — aborting
 ```
 
 ---
 
 ## Troubleshooting
 
-**Jerry doesn't wake**
+**H2 doesn't wake**
 
 1. Confirm WOL is enabled in BIOS (re-enter and check)
 2. Confirm the NIC power management settings are correct
 3. Test with a standalone WOL tool first: [wakeonlan](https://github.com/jpoliv/wakeonlan) on Linux/macOS
 4. Check that your router is forwarding UDP port 9
-5. Make sure Jerry was properly **shut down** (not restarted) after enabling BIOS WOL — some boards only enable WOL after a full power cycle
+5. Make sure H2 was properly **shut down** (not restarted) after enabling BIOS WOL — some boards only enable WOL after a full power cycle
 
 ```bash
-# Test from Tom with wakeonlan tool (Linux/macOS)
+# Test from H1 with wakeonlan tool (Linux/macOS)
 brew install wakeonlan   # macOS
 # or: sudo apt install wakeonlan
 
@@ -232,7 +232,7 @@ wakeonlan -i JERRY_BROADCAST_IP D8:5E:D3:04:18:B4
 
 **Tailscale up but gateway not ready**
 
-Jerry's OS is awake but the gateway hasn't started yet. Increase the `wol_timeout_seconds` in Tom's config (default: 120).
+H2's OS is awake but the gateway hasn't started yet. Increase the `wol_timeout_seconds` in H1's config (default: 120).
 
 **WOL works once but not on subsequent boots**
 

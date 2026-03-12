@@ -1,27 +1,27 @@
 /**
  * gateway/result-server.ts
  *
- * Lightweight HTTP server Tom (Calcifer) starts when waiting for a result.
- * Jerry (GLaDOS) POSTs to this endpoint when a task completes — eliminating
- * the polling latency of `tj send --wait`.
+ * Lightweight HTTP server H1 (Calcifer 🔥) starts when waiting for a result.
+ * H2 (GLaDOS 🤖) POSTs to this endpoint when a task completes — eliminating
+ * the polling latency of `hh send --wait`.
  *
  * ## How it works
  *
- *   Tom                                          Jerry
+ *   H1                                          H2
  *   ─────                                        ─────
- *   tj send --wait  →  starts result server       receives wakeAgent msg
+ *   hh send --wait  →  starts result server       receives wakeAgent msg
  *   POST /result (port auto-selected)             processes task
  *   ←── delivery URL included in wake msg        calls: POST <tom-webhook-url>/result
  *   server receives result, resolves              closes its task state, done
  *
  * ## Security
  *   - One-time server: closes after the first valid delivery (or timeout)
- *   - Token-authenticated: every request must include X-TJ-Token header
+ *   - Token-authenticated: every request must include X-HH-Token header
  *   - Task ID bound: only accepts a result for the specific task that started it
  *   - Loopback + Tailscale only: port is only bound to 0.0.0.0 if no tailscale IP
  *
  * ## Fallback
- *   If Jerry doesn't support webhooks (older version), the caller falls back
+ *   If H2 doesn't support webhooks (older version), the caller falls back
  *   to the standard polling path. See `startResultServerWithFallback()`.
  */
 
@@ -43,7 +43,7 @@ export interface ResultWebhookPayload {
 export interface ResultServerOptions {
   /** Task ID to accept a result for (rejects mismatched IDs) */
   taskId: string;
-  /** Shared secret — must match in X-TJ-Token header */
+  /** Shared secret — must match in X-HH-Token header */
   token: string;
   /** Bind address (default: 0.0.0.0 — change to Tailscale IP for production) */
   bindAddress?: string;
@@ -54,7 +54,7 @@ export interface ResultServerOptions {
 }
 
 export interface ResultServerHandle {
-  /** Full URL Jerry should POST to, e.g. http://100.116.25.69:38791/result */
+  /** Full URL H2 should POST to, e.g. http://100.116.25.69:38791/result */
   url: string;
   /** Actual port the server is listening on */
   port: number;
@@ -76,7 +76,7 @@ export interface ResultServerHandle {
  *   token: localGatewayToken,
  *   bindAddress: "100.116.25.69",
  * });
- * // Include server.url in the wake message sent to Jerry
+ * // Include server.url in the wake message sent to H2
  * // Then await the result:
  * const result = await server.waitForResult();
  */
@@ -114,7 +114,7 @@ export async function startResultServer(opts: ResultServerOptions): Promise<Resu
       }
 
       // Token authentication
-      const incoming = req.headers["x-tj-token"];
+      const incoming = req.headers["x-hh-token"];
       if (!incoming || incoming !== token) {
         res.writeHead(401, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ error: "unauthorized" }));
@@ -191,22 +191,22 @@ export async function startResultServer(opts: ResultServerOptions): Promise<Resu
 
 /**
  * Parses a result webhook URL from a wake message.
- * Jerry uses this to extract the callback URL included by Tom.
+ * H2 uses this to extract the callback URL included by H1.
  *
  * Wake message format (after task text):
  *   ...
- *   TJ-Result-Webhook: http://100.116.25.69:38791/result
+ *   HH-Result-Webhook: http://100.116.25.69:38791/result
  *
  * @returns webhook URL, or null if not present
  */
 export function parseWebhookUrl(wakeText: string): string | null {
-  const match = wakeText.match(/TJ-Result-Webhook:\s*(https?:\/\/\S+)/);
+  const match = wakeText.match(/HH-Result-Webhook:\s*(https?:\/\/\S+)/);
   return match?.[1] ?? null;
 }
 
 /**
- * Build a result delivery HTTP request — used by Jerry (GLaDOS) to push results
- * back to Tom without polling.
+ * Build a result delivery HTTP request — used by H2 (GLaDOS 🤖) to push results
+ * back to H1 without polling.
  *
  * @example
  * const ok = await deliverResultWebhook(
@@ -228,7 +228,7 @@ export async function deliverResultWebhook(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-TJ-Token": token,
+        "X-HH-Token": token,
       },
       body: JSON.stringify(payload),
       signal: controller.signal,

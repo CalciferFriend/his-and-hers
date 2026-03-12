@@ -1,7 +1,7 @@
 /**
- * peers/select.ts — Peer selection utilities for multi-Jerry setups.
+ * peers/select.ts — Peer selection utilities for multi-H2 setups.
  *
- * When a Tom node has multiple peers configured (`peer_node` + `peer_nodes[]`),
+ * When a H1 node has multiple peers configured (`peer_node` + `peer_nodes[]`),
  * these helpers resolve which peer to use for a given send operation.
  *
  * Selection strategy:
@@ -97,7 +97,7 @@ export async function selectBestPeer(config: TJConfig, task: string): Promise<Pe
 
     // Load cached capabilities (non-blocking — file may not exist)
     // Note: loadPeerCapabilities() reads the single cached peer report;
-    // in a multi-Jerry setup each peer's capability file is namespaced by the
+    // in a multi-H2 setup each peer's capability file is namespaced by the
     // capabilities store path — for now we gracefully skip scoring on cache miss.
     const caps = await loadPeerCapabilities().catch(() => null);
 
@@ -116,7 +116,7 @@ export async function selectBestPeer(config: TJConfig, task: string): Promise<Pe
           score += 3;
         }
       }
-      // Skill tag matching (field is `skills` in TJCapabilityReport)
+      // Skill tag matching (field is `skills` in HHCapabilityReport)
       if (caps.skills && caps.skills.length > 0) {
         for (const tag of caps.skills) {
           if (taskLower.includes(tag.toLowerCase())) {

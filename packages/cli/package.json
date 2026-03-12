@@ -1,7 +1,7 @@
 {
   "name": "@his-and-hers/cli",
   "version": "0.1.0",
-  "description": "The `tj` CLI \u2014 onboard wizard, pairing, status, wake, and task delegation",
+  "description": "The `hh` CLI \u2014 onboard wizard, pairing, status, wake, and task delegation",
   "type": "module",
   "license": "MIT",
   "repository": {

@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { TJCapabilityReport, UNKNOWN_CAPABILITIES } from "./registry.schema.ts";
+import { HHCapabilityReport, UNKNOWN_CAPABILITIES } from "./registry.schema.ts";
 import { routeTask } from "../routing.ts";
 
-describe("TJCapabilityReport schema", () => {
+describe("HHCapabilityReport schema", () => {
   it("parses a minimal report with defaults", () => {
-    const report = TJCapabilityReport.parse({
+    const report = HHCapabilityReport.parse({
       node: "GLaDOS",
       platform: "windows",
     });
@@ -17,7 +17,7 @@ describe("TJCapabilityReport schema", () => {
   });
 
   it("parses a full GPU report", () => {
-    const report = TJCapabilityReport.parse({
+    const report = HHCapabilityReport.parse({
       node: "GLaDOS",
       platform: "windows",
       gpu: {
@@ -50,7 +50,7 @@ describe("TJCapabilityReport schema", () => {
 
 describe("latent fields", () => {
   it("parses with latent_codecs populated", () => {
-    const report = TJCapabilityReport.parse({
+    const report = HHCapabilityReport.parse({
       node: "GLaDOS",
       latent_codecs: ["vw-qwen3vl2b-v1", "vw-llama3-v1"],
       latent_support: true,
@@ -59,7 +59,7 @@ describe("latent fields", () => {
   });
 
   it("parses with kv_compatible_models populated", () => {
-    const report = TJCapabilityReport.parse({
+    const report = HHCapabilityReport.parse({
       node: "GLaDOS",
       kv_compatible_models: ["llama-3.1-70b", "qwen2.5-72b"],
       latent_support: true,
@@ -68,12 +68,12 @@ describe("latent fields", () => {
   });
 
   it("latent_support defaults to false", () => {
-    const report = TJCapabilityReport.parse({ node: "GLaDOS" });
+    const report = HHCapabilityReport.parse({ node: "GLaDOS" });
     expect(report.latent_support).toBe(false);
   });
 
   it("latent_support can be set to true", () => {
-    const report = TJCapabilityReport.parse({
+    const report = HHCapabilityReport.parse({
       node: "GLaDOS",
       latent_support: true,
       latent_codecs: ["vw-qwen3vl2b-v1"],
@@ -82,7 +82,7 @@ describe("latent fields", () => {
   });
 
   it('"latent-comm" is a valid TJSkillTag', () => {
-    const report = TJCapabilityReport.parse({
+    const report = HHCapabilityReport.parse({
       node: "GLaDOS",
       skills: ["latent-comm"],
     });
@@ -97,7 +97,7 @@ describe("latent fields", () => {
 });
 
 describe("capability-aware routing", () => {
-  const peerWithGPU = TJCapabilityReport.parse({
+  const peerWithGPU = HHCapabilityReport.parse({
     node: "GLaDOS",
     platform: "windows",
     gpu: { available: true, name: "RTX 3070 Ti", vram_gb: 8, backend: "cuda" },
@@ -110,26 +110,26 @@ describe("capability-aware routing", () => {
     wol_enabled: true,
   });
 
-  const peerNoGPU = TJCapabilityReport.parse({
+  const peerNoGPU = HHCapabilityReport.parse({
     node: "WeakBox",
     platform: "linux",
   });
 
-  it("routes image task to jerry when peer has image-gen skill", () => {
+  it("routes image task to h2 when peer has image-gen skill", () => {
     const d = routeTask("generate an image of a sunset", peerWithGPU);
-    expect(d.hint).toBe("jerry-local");
+    expect(d.hint).toBe("h2-local");
     expect(d.reason).toContain("image-gen");
   });
 
-  it("routes transcription to jerry when peer has transcription skill", () => {
+  it("routes transcription to h2 when peer has transcription skill", () => {
     const d = routeTask("transcribe this audio file", peerWithGPU);
-    expect(d.hint).toBe("jerry-local");
+    expect(d.hint).toBe("h2-local");
     expect(d.reason).toContain("transcription");
   });
 
-  it("routes ollama task to jerry with model suggestion", () => {
+  it("routes ollama task to h2 with model suggestion", () => {
     const d = routeTask("run llama and summarize this", peerWithGPU);
-    expect(d.hint).toBe("jerry-local");
+    expect(d.hint).toBe("h2-local");
     expect(d.suggested_model).toBe("llama3.2");
   });
 
@@ -140,14 +140,14 @@ describe("capability-aware routing", () => {
 
   it("routes image to cloud when peer has no image-gen skill", () => {
     const d = routeTask("generate an image of a cat", peerNoGPU);
-    // Heuristic fallback: jerry-local by keyword BUT peer has no GPU
+    // Heuristic fallback: h2-local by keyword BUT peer has no GPU
     // so falls back to cloud
     expect(d.hint).toBe("cloud");
   });
 
   it("uses heuristics when no peer capabilities are provided", () => {
     const d = routeTask("render a video", null);
-    expect(d.hint).toBe("jerry-local");
+    expect(d.hint).toBe("h2-local");
     expect(d.reason).toContain("keyword");
   });
 
@@ -157,16 +157,16 @@ describe("capability-aware routing", () => {
   });
 });
 
-describe("TJCapabilityReport latent fields (Phase 6)", () => {
+describe("HHCapabilityReport latent fields (Phase 6)", () => {
   it("defaults latent_codecs and kv_compatible_models to empty arrays", () => {
-    const report = TJCapabilityReport.parse({ node: "Jerry", platform: "windows" });
+    const report = HHCapabilityReport.parse({ node: "H2", platform: "windows" });
     expect(report.latent_codecs).toEqual([]);
     expect(report.kv_compatible_models).toEqual([]);
   });
 
   it("accepts latent_codecs and kv_compatible_models", () => {
-    const report = TJCapabilityReport.parse({
-      node: "Jerry",
+    const report = HHCapabilityReport.parse({
+      node: "H2",
       platform: "windows",
       latent_codecs: ["vw-qwen3vl2b-v1", "vw-llama3vl-v1"],
       kv_compatible_models: ["llama3.2", "qwen2.5-72b"],
@@ -182,7 +182,7 @@ describe("TJCapabilityReport latent fields (Phase 6)", () => {
 });
 
 describe("latent routing (Phase 6)", () => {
-  const peerWithVisionWormhole = TJCapabilityReport.parse({
+  const peerWithVisionWormhole = HHCapabilityReport.parse({
     node: "GLaDOS",
     platform: "windows",
     gpu: { available: true, name: "RTX 3070 Ti", vram_gb: 8, backend: "cuda" },
@@ -190,7 +190,7 @@ describe("latent routing (Phase 6)", () => {
     kv_compatible_models: [],
   });
 
-  const peerWithKVCache = TJCapabilityReport.parse({
+  const peerWithKVCache = HHCapabilityReport.parse({
     node: "GLaDOS",
     platform: "windows",
     gpu: { available: true, name: "RTX 3070 Ti", vram_gb: 8, backend: "cuda" },
@@ -198,7 +198,7 @@ describe("latent routing (Phase 6)", () => {
     kv_compatible_models: ["llama3.2", "codellama"],
   });
 
-  const peerNoLatent = TJCapabilityReport.parse({
+  const peerNoLatent = HHCapabilityReport.parse({
     node: "GLaDOS",
     platform: "windows",
     gpu: { available: true, name: "RTX 3070 Ti", vram_gb: 8, backend: "cuda" },
@@ -206,16 +206,16 @@ describe("latent routing (Phase 6)", () => {
     skills: ["ollama", "gpu-inference"],
   });
 
-  it("routes complex reasoning tasks to jerry-latent via Vision Wormhole", () => {
+  it("routes complex reasoning tasks to h2-latent via Vision Wormhole", () => {
     const d = routeTask("reason step by step through this complex math proof", peerWithVisionWormhole);
-    expect(d.hint).toBe("jerry-latent");
+    expect(d.hint).toBe("h2-latent");
     expect(d.latent_codec).toBe("vw-qwen3vl2b-v1");
     expect(d.reason).toContain("Vision Wormhole");
   });
 
-  it("routes complex tasks to jerry-latent via KV cache path", () => {
+  it("routes complex tasks to h2-latent via KV cache path", () => {
     const d = routeTask("analyze and refactor this large codebase architecture", peerWithKVCache);
-    expect(d.hint).toBe("jerry-latent");
+    expect(d.hint).toBe("h2-latent");
     expect(d.kv_model).toBe("llama3.2");
     expect(d.reason).toContain("LatentMAS");
   });
@@ -234,12 +234,12 @@ describe("latent routing (Phase 6)", () => {
   it("falls back to text routing when peer has no latent capability", () => {
     const d = routeTask("reason step by step through this complex proof deduce the answer", peerNoLatent);
     // No latent caps — routes to ollama/cloud
-    expect(d.hint).not.toBe("jerry-latent");
+    expect(d.hint).not.toBe("h2-latent");
   });
 
   it("routes multi-step code generation to latent", () => {
     const d = routeTask("generate a complete module with classes for this complex design pattern", peerWithVisionWormhole);
-    expect(d.hint).toBe("jerry-latent");
+    expect(d.hint).toBe("h2-latent");
   });
 
   it("RoutingDecision has latent_codec field only on latent routes", () => {

@@ -1,12 +1,12 @@
 # Gateway Configuration
 
-The OpenClaw gateway is the HTTP server that receives tasks and returns results. Tom and Jerry each run one. The configuration differs — Tom's gateway is private (loopback-only), Jerry's gateway is network-accessible (Tailscale IP).
+The OpenClaw gateway is the HTTP server that receives tasks and returns results. H1 and H2 each run one. The configuration differs — H1's gateway is private (loopback-only), H2's gateway is network-accessible (Tailscale IP).
 
 ---
 
 ## What the gateway does
 
-- Receives `HHMessage` POSTs from Tom (Jerry side) or user CLI (Tom side)
+- Receives `HHMessage` POSTs from H1 (H2 side) or user CLI (H1 side)
 - Verifies the gateway token on each request
 - Forwards tasks to the OpenClaw agent runtime
 - Returns results synchronously or via polling
@@ -16,20 +16,20 @@ The gateway is not a web server in the traditional sense — it's a local HTTP i
 
 ---
 
-## Tom's gateway — loopback binding
+## H1's gateway — loopback binding
 
-Tom's gateway binds to `127.0.0.1:3737`. It's only accessible from the same machine. The `tj` CLI communicates with it locally.
+H1's gateway binds to `127.0.0.1:3737`. It's only accessible from the same machine. The `hh` CLI communicates with it locally.
 
-Tom never exposes its gateway to the network — it initiates outbound connections to Jerry, not the other way around.
+H1 never exposes its gateway to the network — it initiates outbound connections to H2, not the other way around.
 
 ```
-Tom machine:
-  127.0.0.1:3737 ← tj CLI, agent workflows
+H1 machine:
+  127.0.0.1:3737 ← hh CLI, agent workflows
 ```
 
 ### Config
 
-In `~/.his-and-hers/tj.json`:
+In `~/.his-and-hers/hh.json`:
 
 ```json
 {
@@ -42,18 +42,18 @@ In `~/.his-and-hers/tj.json`:
 }
 ```
 
-The token is generated during `tj onboard`. Don't share it — it's the only auth layer on the gateway.
+The token is generated during `hh onboard`. Don't share it — it's the only auth layer on the gateway.
 
 ---
 
-## Jerry's gateway — Tailscale binding
+## H2's gateway — Tailscale binding
 
-Jerry's gateway binds to its Tailscale IP (e.g. `100.x.y.z:3737`). Only nodes on the same Tailscale network can reach it.
+H2's gateway binds to its Tailscale IP (e.g. `100.x.y.z:3737`). Only nodes on the same Tailscale network can reach it.
 
 ```
-Jerry machine:
-  100.x.y.z:3737 ← Tom (over Tailscale WireGuard tunnel)
-  127.0.0.1:3737 ← local tools, tj CLI
+H2 machine:
+  100.x.y.z:3737 ← H1 (over Tailscale WireGuard tunnel)
+  127.0.0.1:3737 ← local tools, hh CLI
 ```
 
 ### Config
@@ -65,7 +65,7 @@ Jerry machine:
     "bind": "100.x.y.z",
     "port": 3737,
     "token": "RANDOM_64_CHAR_HEX",
-    "allowed_peers": ["100.tom.ip.here"]
+    "allowed_peers": ["100.h1.ip.here"]
   }
 }
 ```
@@ -79,11 +79,11 @@ Jerry machine:
 Default is 3737. To use a different port:
 
 ```bash
-tj onboard --reconfigure-gateway
+hh onboard --reconfigure-gateway
 # → Enter gateway port: 4242
 ```
 
-Or edit `tj.json` directly and restart:
+Or edit `hh.json` directly and restart:
 
 ```bash
 openclaw gateway stop
@@ -94,10 +94,10 @@ On Windows: if you changed the port, update the Firewall rule too:
 
 ```powershell
 # Remove old rule
-Remove-NetFirewallRule -DisplayName "Tom-and-Jerry Gateway"
+Remove-NetFirewallRule -DisplayName "His-and-Hers Gateway"
 
 # Add new rule for the new port
-New-NetFirewallRule -DisplayName "Tom-and-Jerry Gateway" `
+New-NetFirewallRule -DisplayName "His-and-Hers Gateway" `
   -Direction Inbound -Protocol TCP -LocalPort 4242 -Action Allow
 ```
 
@@ -105,9 +105,9 @@ New-NetFirewallRule -DisplayName "Tom-and-Jerry Gateway" `
 
 ## Gateway token
 
-The token authenticates Tom's requests to Jerry. It's a 64-character hex string generated during `tj onboard`. It's stored in the OS keychain, not in plain text config files.
+The token authenticates H1's requests to H2. It's a 64-character hex string generated during `hh onboard`. It's stored in the OS keychain, not in plain text config files.
 
-Tom includes the token in every request:
+H1 includes the token in every request:
 
 ```http
 POST http://100.x.y.z:3737/task
@@ -115,13 +115,13 @@ Authorization: Bearer <token>
 Content-Type: application/json
 ```
 
-Jerry verifies it before processing. Wrong token → 401. Right token, wrong peer IP (if allowlist set) → 403.
+H2 verifies it before processing. Wrong token → 401. Right token, wrong peer IP (if allowlist set) → 403.
 
 ### Regenerating the token
 
 ```bash
-tj onboard --regenerate-token
-# → New token generated, synced to Jerry via SSH
+hh onboard --regenerate-token
+# → New token generated, synced to H2 via SSH
 ```
 
 ---
@@ -146,43 +146,43 @@ Response:
 }
 ```
 
-Tom checks this endpoint to determine if Jerry is awake and ready. The check happens:
-- Before every `tj send` (skip WOL if healthy)
+H1 checks this endpoint to determine if H2 is awake and ready. The check happens:
+- Before every `hh send` (skip WOL if healthy)
 - After sending WOL (poll until healthy)
-- On every `tj status` run
+- On every `hh status` run
 
 ---
 
 ## Socat proxy (advanced)
 
-If you need Tom's gateway accessible on a network port for external tools (not typical), you can use a socat proxy:
+If you need H1's gateway accessible on a network port for external tools (not typical), you can use a socat proxy:
 
 ```bash
 # Forward network port 3737 to loopback 3737
 socat TCP-LISTEN:3737,bind=100.x.y.z,reuseaddr,fork TCP:127.0.0.1:3737
 ```
 
-The `tj onboard` wizard sets this up automatically if you need it. The pattern is used when you want Tom to also accept inbound connections from tools running elsewhere on your Tailscale network.
+The `hh onboard` wizard sets this up automatically if you need it. The pattern is used when you want H1 to also accept inbound connections from tools running elsewhere on your Tailscale network.
 
 ---
 
 ## Multi-gateway setup
 
-If Tom and Jerry are both on the same machine (dev/testing):
+If H1 and H2 are both on the same machine (dev/testing):
 
 ```json
-// Tom's config
+// H1's config
 {
   "gateway": { "bind": "127.0.0.1", "port": 3737 }
 }
 
-// Jerry's config (~/.his-and-hers-jerry/tj.json)
+// H2's config (~/.his-and-hers-h2/hh.json)
 {
   "gateway": { "bind": "127.0.0.1", "port": 3738 }
 }
 ```
 
-Tom's `peers` config points to `127.0.0.1:3738` instead of a Tailscale IP.
+H1's `peers` config points to `127.0.0.1:3738` instead of a Tailscale IP.
 
 ---
 
@@ -192,12 +192,12 @@ Tom's `peers` config points to `127.0.0.1:3738` instead of a Tailscale IP.
 # Check OpenClaw gateway directly
 openclaw gateway status
 
-# Check via tj (includes peer connectivity)
-tj status
+# Check via hh (includes peer connectivity)
+hh status
 
 # Direct health check (curl)
-curl http://127.0.0.1:3737/health         # Tom
-curl http://100.x.y.z:3737/health        # Jerry (from Tom's machine)
+curl http://127.0.0.1:3737/health         # H1
+curl http://100.x.y.z:3737/health        # H2 (from H1's machine)
 ```
 
 ## Logs
@@ -210,5 +210,5 @@ openclaw gateway logs
 openclaw gateway logs --follow
 
 # On Linux (systemd)
-journalctl -u tj-gateway -f
+journalctl -u hh-gateway -f
 ```

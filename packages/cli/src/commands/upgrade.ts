@@ -1,5 +1,5 @@
 /**
- * commands/upgrade.ts — `tj upgrade`
+ * commands/upgrade.ts — `hh upgrade`
  *
  * Checks the npm registry for a newer version of the `his-and-hers` package
  * and prints upgrade instructions if one is available.
@@ -12,9 +12,9 @@
  *   - Respects NO_UPDATE_NOTIFIER env var (same convention as update-notifier)
  *
  * Usage:
- *   tj upgrade             # Check and print instructions
- *   tj upgrade --check     # Scripted: exit 1 if outdated
- *   tj upgrade --json      # JSON output
+ *   hh upgrade             # Check and print instructions
+ *   hh upgrade --check     # Scripted: exit 1 if outdated
+ *   hh upgrade --json      # JSON output
  */
 
 import * as p from "@clack/prompts";
@@ -104,7 +104,7 @@ export async function upgrade(opts: UpgradeOptions = {}): Promise<void> {
   const CHANGELOG_URL = "https://github.com/CalciferFriend/his-and-hers/blob/master/CHANGELOG.md";
 
   if (!opts.json && !opts.check) {
-    p.intro(pc.bgMagenta(pc.black(" tj upgrade ")));
+    p.intro(pc.bgMagenta(pc.black(" hh upgrade ")));
   }
 
   const currentVersion = getLocalVersion();

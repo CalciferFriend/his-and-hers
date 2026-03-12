@@ -11,33 +11,33 @@ const execFileAsync = promisify(execFile);
 
 const STARTUP_BAT = `@echo off
 :: start-gateway.bat — Waits for Tailscale then starts OpenClaw gateway
-:: Installed by tj onboard
+:: Installed by hh onboard
 
-echo [TJ] Waiting for Tailscale to come online...
+echo [HH] Waiting for Tailscale to come online...
 :wait_tailscale
 tailscale status >nul 2>&1
 if errorlevel 1 (
     timeout /t 2 /nobreak >nul
     goto wait_tailscale
 )
-echo [TJ] Tailscale is online.
+echo [HH] Tailscale is online.
 
-echo [TJ] Starting OpenClaw gateway...
+echo [HH] Starting OpenClaw gateway...
 cd /d "%USERPROFILE%"
 openclaw gateway
 `;
 
 const STARTUP_SH = `#!/usr/bin/env bash
 # start-gateway.sh — Waits for Tailscale then starts OpenClaw gateway
-# Installed by tj onboard
+# Installed by hh onboard
 
-echo "[TJ] Waiting for Tailscale to come online..."
+echo "[HH] Waiting for Tailscale to come online..."
 until tailscale status &>/dev/null; do
     sleep 2
 done
-echo "[TJ] Tailscale is online."
+echo "[HH] Tailscale is online."
 
-echo "[TJ] Starting OpenClaw gateway..."
+echo "[HH] Starting OpenClaw gateway..."
 cd ~
 exec openclaw gateway
 `;
@@ -65,7 +65,7 @@ async function installWindowsLocalStartup(): Promise<{ ok: boolean; batPath: str
     // Scheduled Task as belt-and-suspenders (survives if Startup folder is skipped)
     await execFileAsync("schtasks", [
       "/Create",
-      "/TN", "TJ-OpenClawGateway",
+      "/TN", "HH-OpenClawGateway",
       "/TR", batPath,
       "/SC", "ONLOGON",
       "/RL", "HIGHEST",
@@ -76,10 +76,10 @@ async function installWindowsLocalStartup(): Promise<{ ok: boolean; batPath: str
 
     // Verify the task was created
     const { stdout: taskCheck } = await execFileAsync("schtasks", [
-      "/Query", "/TN", "TJ-OpenClawGateway",
+      "/Query", "/TN", "HH-OpenClawGateway",
     ], { timeout: 5_000 }).catch(() => ({ stdout: "" }));
 
-    return { ok: true, batPath, error: taskCheck.includes("TJ-OpenClawGateway") ? undefined : "Scheduled Task not confirmed (Startup folder is still active)" };
+    return { ok: true, batPath, error: taskCheck.includes("HH-OpenClawGateway") ? undefined : "Scheduled Task not confirmed (Startup folder is still active)" };
   } catch (err: unknown) {
     return { ok: false, batPath: "", error: err instanceof Error ? err.message : String(err) };
   }
@@ -99,17 +99,17 @@ async function installLinuxLocalStartup(): Promise<{ ok: boolean; shPath: string
 // ── Main step ──────────────────────────────────────────────────────────────
 
 export async function stepStartup(ctx: Partial<WizardContext>): Promise<Partial<WizardContext>> {
-  // Only relevant for Jerry role setup
-  const isJerrySetup = ctx.role === "jerry" || (ctx.role === "tom" && ctx.peerOS !== undefined);
+  // Only relevant for H2 role setup
+  const isJerrySetup = ctx.role === "h2" || (ctx.role === "h1" && ctx.peerOS !== undefined);
   if (!isJerrySetup) return { ...ctx, startupScriptInstalled: false };
 
-  const peerIsWindows = ctx.role === "tom" ? ctx.peerOS === "windows" : process.platform === "win32";
-  const isLocal = ctx.role === "jerry";
+  const peerIsWindows = ctx.role === "h1" ? ctx.peerOS === "windows" : process.platform === "win32";
+  const isLocal = ctx.role === "h2";
 
   const install = await p.confirm({
     message: isLocal
       ? "Install startup script on this machine (gateway auto-starts after boot)?"
-      : "Install startup script on the remote Jerry node via SSH?",
+      : "Install startup script on the remote H2 node via SSH?",
     initialValue: true,
   });
   if (isCancelled(install)) { p.cancel("Setup cancelled."); process.exit(0); }
@@ -120,7 +120,7 @@ export async function stepStartup(ctx: Partial<WizardContext>): Promise<Partial<
 
   const s = p.spinner();
 
-  // ── Case 1: Running ON Jerry (local Windows) ──────────────────────────────
+  // ── Case 1: Running ON H2 (local Windows) ──────────────────────────────
   if (isLocal && process.platform === "win32") {
     s.start("Installing startup script + Scheduled Task...");
     const result = await installWindowsLocalStartup();
@@ -137,7 +137,7 @@ export async function stepStartup(ctx: Partial<WizardContext>): Promise<Partial<
     return { ...ctx, startupScriptInstalled: result.ok };
   }
 
-  // ── Case 2: Running ON Jerry (local Linux/macOS) ──────────────────────────
+  // ── Case 2: Running ON H2 (local Linux/macOS) ──────────────────────────
   if (isLocal && process.platform !== "win32") {
     s.start("Installing startup script + crontab...");
     try {
@@ -151,14 +151,14 @@ export async function stepStartup(ctx: Partial<WizardContext>): Promise<Partial<
     }
   }
 
-  // ── Case 3: Tom installing on remote Jerry via SSH ────────────────────────
+  // ── Case 3: H1 installing on remote H2 via SSH ────────────────────────
   const sshConfig = {
     host: ctx.peerTailscaleIP!,
     user: ctx.peerSSHUser!,
     keyPath: ctx.peerSSHKeyPath!,
   };
 
-  s.start(`Installing startup script on remote Jerry via SSH (${peerIsWindows ? "Windows" : "Linux"})...`);
+  s.start(`Installing startup script on remote H2 via SSH (${peerIsWindows ? "Windows" : "Linux"})...`);
 
   try {
     if (peerIsWindows) {
@@ -173,12 +173,12 @@ export async function stepStartup(ctx: Partial<WizardContext>): Promise<Partial<
       // Scheduled Task on remote
       await sshExec(
         sshConfig,
-        `schtasks /Create /TN "TJ-OpenClawGateway" /TR "%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\start-gateway.bat" /SC ONLOGON /RL HIGHEST /F`,
+        `schtasks /Create /TN "HH-OpenClawGateway" /TR "%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\start-gateway.bat" /SC ONLOGON /RL HIGHEST /F`,
         15_000,
       );
-      s.stop(pc.green("✓ Startup script + Scheduled Task installed on Windows Jerry"));
+      s.stop(pc.green("✓ Startup script + Scheduled Task installed on Windows H2"));
     } else {
-      // Write shell script + crontab on Linux/macOS Jerry
+      // Write shell script + crontab on Linux/macOS H2
       await sshExec(
         sshConfig,
         `cat > ~/start-gateway.sh << 'TJEOF'\n${STARTUP_SH}\nTJEOF\nchmod +x ~/start-gateway.sh`,
@@ -189,12 +189,12 @@ export async function stepStartup(ctx: Partial<WizardContext>): Promise<Partial<
         `(crontab -l 2>/dev/null | grep -v start-gateway; echo "@reboot ~/start-gateway.sh") | crontab -`,
         15_000,
       );
-      s.stop(pc.green("✓ Startup script + @reboot crontab installed on Linux/macOS Jerry"));
+      s.stop(pc.green("✓ Startup script + @reboot crontab installed on Linux/macOS H2"));
     }
     return { ...ctx, startupScriptInstalled: true };
   } catch (err) {
     s.stop(pc.yellow("⚠ Remote install failed"));
-    p.log.warn("Install the startup script manually on the Jerry machine.");
+    p.log.warn("Install the startup script manually on the H2 machine.");
     p.log.warn(err instanceof Error ? err.message : String(err));
     return { ...ctx, startupScriptInstalled: false };
   }

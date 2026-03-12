@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# entrypoint.sh — Tom node Docker entrypoint
+# entrypoint.sh — H1 node Docker entrypoint
 # Handles: Tailscale auth, OpenClaw config, gateway start, socat proxy
 
 set -euo pipefail
@@ -9,13 +9,13 @@ set -euo pipefail
 : "${ANTHROPIC_API_KEY:?ANTHROPIC_API_KEY is required}"
 
 # ── Optional config via env ───────────────────────────────────────────────────
-TOM_NAME="${TOM_NAME:-Tom}"
+H1_NAME="${H1_NAME:-H1}"
 TOM_EMOJI="${TOM_EMOJI:-🐱}"
 TOM_MODEL="${TOM_MODEL:-claude-sonnet-4-6}"
 TOM_GATEWAY_PORT="${TOM_GATEWAY_PORT:-18789}"
 TOM_GATEWAY_TOKEN="${TOM_GATEWAY_TOKEN:-$(openssl rand -hex 24)}"
 
-echo "🐱 Tom node starting — $TOM_NAME"
+echo "🐱 H1 node starting — $H1_NAME"
 
 # ── 1. Start Tailscale daemon ─────────────────────────────────────────────────
 echo "[1/5] Starting Tailscale..."
@@ -32,7 +32,7 @@ done
 # Authenticate
 tailscale up \
   --authkey="$TS_AUTHKEY" \
-  --hostname="${TOM_NAME,,}-tom-docker" \
+  --hostname="${H1_NAME,,}-tom-docker" \
   --accept-routes \
   --accept-dns \
   --timeout=30s
@@ -71,7 +71,7 @@ cat > /root/.openclaw/openclaw.json <<EOF
 EOF
 echo "[2/5] OpenClaw config written."
 
-# ── 3. Write TJ config ────────────────────────────────────────────────────────
+# ── 3. Write HH config ────────────────────────────────────────────────────────
 echo "[3/5] Writing his-and-hers config..."
 TS_HOSTNAME=$(tailscale status --json 2>/dev/null | node -e "const d=require('fs').readFileSync('/dev/stdin','utf8'); try { console.log(JSON.parse(d).Self?.HostName ?? ''); } catch { console.log(''); }" || echo "")
 
@@ -83,7 +83,7 @@ if [ ! -f /root/.his-and-hers/config.json ]; then
   "gateway_port": $TOM_GATEWAY_PORT,
   "this_node": {
     "role": "tom",
-    "name": "$TOM_NAME",
+    "name": "$H1_NAME",
     "emoji": "$TOM_EMOJI",
     "tailscale_hostname": "${TS_HOSTNAME:-tom-docker}",
     "tailscale_ip": "${TAILSCALE_IP:-127.0.0.1}",
@@ -95,7 +95,7 @@ if [ ! -f /root/.his-and-hers/config.json ]; then
   },
   "peer_node": {
     "role": "jerry",
-    "name": "Jerry",
+    "name": "H2",
     "emoji": "🐭",
     "tailscale_hostname": "${JERRY_TAILSCALE_HOSTNAME:-}",
     "tailscale_ip": "${JERRY_TAILSCALE_IP:-}",
@@ -119,9 +119,9 @@ if [ ! -f /root/.his-and-hers/config.json ]; then
   }
 }
 EOF
-  echo "[3/5] TJ config written."
+  echo "[3/5] HH config written."
 else
-  echo "[3/5] TJ config already exists — skipping (mounted volume)."
+  echo "[3/5] HH config already exists — skipping (mounted volume)."
 fi
 
 # ── 4. Start OpenClaw gateway ─────────────────────────────────────────────────
@@ -155,14 +155,14 @@ fi
 # ── Print ready banner ────────────────────────────────────────────────────────
 echo ""
 echo "╔══════════════════════════════════════════════════════╗"
-echo "║  🐱 $TOM_NAME (Tom) is ready                              ║"
+echo "║  🐱 $H1_NAME (H1) is ready                              ║"
 echo "║  Gateway:  ws://127.0.0.1:$TOM_GATEWAY_PORT                ║"
 echo "║  Tailscale: $TAILSCALE_IP                                ║"
 echo "║  Token:    $TOM_GATEWAY_TOKEN            ║"
 echo "╚══════════════════════════════════════════════════════╝"
 echo ""
-echo "Run 'tj status' to check connectivity."
-echo "Run 'tj send \"<task>\"' to dispatch work to Jerry."
+echo "Run 'hh status' to check connectivity."
+echo "Run 'hh send \"<task>\"' to dispatch work to H2."
 echo ""
 
 # ── Keep alive — tail gateway logs ───────────────────────────────────────────

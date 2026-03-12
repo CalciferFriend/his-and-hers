@@ -1,26 +1,26 @@
 /**
- * commands/capabilities.ts — `tj capabilities`
+ * commands/capabilities.ts — `hh capabilities`
  *
- * Manage and query the Jerry capability registry.
+ * Manage and query the H2 capability registry.
  *
  * Subcommands:
  *
- *   tj capabilities scan
+ *   hh capabilities scan
  *     Probe this machine and print a capability report.
  *     Does NOT save — use `--save` to persist.
  *
- *   tj capabilities advertise
+ *   hh capabilities advertise
  *     Scan + save to ~/.his-and-hers/capabilities.json.
- *     Jerry should run this after setup and periodically (or via cron).
+ *     H2 should run this after setup and periodically (or via cron).
  *
- *   tj capabilities fetch
- *     Tom fetches Jerry's report via the peer gateway (/capabilities endpoint)
+ *   hh capabilities fetch
+ *     H1 fetches H2's report via the peer gateway (/capabilities endpoint)
  *     or via SSH fallback, saves to ~/.his-and-hers/peer-capabilities.json.
  *
- *   tj capabilities show [--peer]
+ *   hh capabilities show [--peer]
  *     Print this node's (or peer's) last known capability report.
  *
- *   tj capabilities route "<task>"
+ *   hh capabilities route "<task>"
  *     Show what routing decision would be made for a given task string,
  *     using stored peer capabilities.
  */
@@ -35,13 +35,13 @@ import {
   loadCapabilities,
   loadPeerCapabilities,
   isPeerCapabilityStale,
-  type TJCapabilityReport,
+  type HHCapabilityReport,
 } from "@his-and-hers/core";
 import { routeTask } from "@his-and-hers/core";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function formatReport(report: TJCapabilityReport, label: string): void {
+function formatReport(report: HHCapabilityReport, label: string): void {
   p.log.info(`${pc.bold(label)} — ${pc.dim(`reported ${formatAge(report.reported_at)}`)}`);
   p.log.info(`  Node:     ${report.node}`);
   p.log.info(`  Platform: ${report.platform}`);
@@ -99,7 +99,7 @@ function formatAge(iso: string): string {
 export async function capabilitiesScan(opts: { save?: boolean; notes?: string } = {}) {
   const config = await loadConfig();
 
-  p.intro(pc.bgCyan(pc.black(" tj capabilities scan ")));
+  p.intro(pc.bgCyan(pc.black(" hh capabilities scan ")));
 
   const s = p.spinner();
   s.start("Probing local capabilities...");
@@ -118,7 +118,7 @@ export async function capabilitiesScan(opts: { save?: boolean; notes?: string } 
     await saveCapabilities(report);
     p.log.success(`Saved → ~/.his-and-hers/capabilities.json`);
   } else {
-    p.log.info(pc.dim("Use `tj capabilities advertise` to save and share this report."));
+    p.log.info(pc.dim("Use `hh capabilities advertise` to save and share this report."));
   }
 
   p.outro("");
@@ -128,11 +128,11 @@ export async function capabilitiesAdvertise(opts: { notes?: string } = {}) {
   const config = await loadConfig();
 
   if (!config) {
-    p.log.error("No configuration found. Run `tj onboard` first.");
+    p.log.error("No configuration found. Run `hh onboard` first.");
     return;
   }
 
-  p.intro(pc.bgCyan(pc.black(" tj capabilities advertise ")));
+  p.intro(pc.bgCyan(pc.black(" hh capabilities advertise ")));
 
   const s = p.spinner();
   s.start("Scanning capabilities...");
@@ -157,18 +157,18 @@ export async function capabilitiesAdvertise(opts: { notes?: string } = {}) {
       : pc.dim("No skills detected. Your peer will use heuristic routing."),
   );
 
-  p.outro("Done. Tom can now fetch this with `tj capabilities fetch`.");
+  p.outro("Done. H1 can now fetch this with `hh capabilities fetch`.");
 }
 
 export async function capabilitiesFetch() {
   const config = await loadConfig();
 
   if (!config) {
-    p.log.error("No configuration found. Run `tj onboard` first.");
+    p.log.error("No configuration found. Run `hh onboard` first.");
     return;
   }
 
-  p.intro(pc.bgCyan(pc.black(" tj capabilities fetch ")));
+  p.intro(pc.bgCyan(pc.black(" hh capabilities fetch ")));
 
   const peer = config.peer_node;
   const peerPort = peer.gateway_port ?? peer.gateway?.port ?? 18789;
@@ -183,20 +183,20 @@ export async function capabilitiesFetch() {
     if (!res.ok) {
       s.stop(pc.red(`Gateway returned HTTP ${res.status}`));
       p.log.warn("Peer may not have advertised capabilities yet.");
-      p.log.info(`Ask ${peer.name} to run: tj capabilities advertise`);
+      p.log.info(`Ask ${peer.name} to run: hh capabilities advertise`);
       p.outro("Fetch failed.");
       return;
     }
 
     const raw = await res.json();
-    const report = (raw as TJCapabilityReport);
+    const report = (raw as HHCapabilityReport);
 
     s.stop(pc.green(`✓ Fetched from ${peer.name}`));
     formatReport(report, `${peer.emoji ?? ""} ${peer.name} capabilities`);
 
     await savePeerCapabilities(report);
     p.log.success("Saved → ~/.his-and-hers/peer-capabilities.json");
-    p.log.info(pc.dim("`tj send` will now use these capabilities for routing."));
+    p.log.info(pc.dim("`hh send` will now use these capabilities for routing."));
 
   } catch (err) {
     s.stop(pc.red("Fetch failed"));
@@ -208,23 +208,23 @@ export async function capabilitiesFetch() {
 }
 
 export async function capabilitiesShow(opts: { peer?: boolean } = {}) {
-  p.intro(pc.bgCyan(pc.black(" tj capabilities show ")));
+  p.intro(pc.bgCyan(pc.black(" hh capabilities show ")));
 
   if (opts.peer) {
     const report = await loadPeerCapabilities();
     if (!report) {
-      p.log.warn("No peer capability report found. Run `tj capabilities fetch` first.");
+      p.log.warn("No peer capability report found. Run `hh capabilities fetch` first.");
       p.outro("");
       return;
     }
     if (isPeerCapabilityStale(report)) {
-      p.log.warn(pc.yellow("⚠ Peer capabilities are stale (>24h). Run `tj capabilities fetch` to refresh."));
+      p.log.warn(pc.yellow("⚠ Peer capabilities are stale (>24h). Run `hh capabilities fetch` to refresh."));
     }
     formatReport(report, "Peer capabilities (cached)");
   } else {
     const report = await loadCapabilities();
     if (!report) {
-      p.log.warn("No capability report found. Run `tj capabilities advertise` first.");
+      p.log.warn("No capability report found. Run `hh capabilities advertise` first.");
       p.outro("");
       return;
     }
@@ -235,7 +235,7 @@ export async function capabilitiesShow(opts: { peer?: boolean } = {}) {
 }
 
 export async function capabilitiesRoute(task: string) {
-  p.intro(pc.bgCyan(pc.black(" tj capabilities route ")));
+  p.intro(pc.bgCyan(pc.black(" hh capabilities route ")));
 
   const peerCaps = await loadPeerCapabilities();
 
@@ -249,7 +249,7 @@ export async function capabilitiesRoute(task: string) {
   }
 
   const decision = routeTask(task, peerCaps);
-  const hintColor = decision.hint === "jerry-local" ? pc.yellow : pc.cyan;
+  const hintColor = decision.hint === "h2-local" ? pc.yellow : pc.cyan;
 
   p.log.info("");
   p.log.info(`Route:  ${hintColor(pc.bold(decision.hint))}`);

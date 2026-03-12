@@ -8,7 +8,7 @@ npx his-and-hers
 
 That's it. The guided wizard handles everything:
 
-- Picks a role (🐱 Tom orchestrator or 🐭 Jerry executor)
+- Picks a role (🔥 H1 orchestrator or 🐭 H2 executor)
 - Configures your LLM provider (Anthropic, OpenAI, Ollama, or any OpenAI-compatible API)
 - Pairs the two machines over Tailscale
 - Sets up Wake-on-LAN if one machine sleeps

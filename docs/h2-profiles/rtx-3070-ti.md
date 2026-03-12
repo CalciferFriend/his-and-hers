@@ -1,4 +1,4 @@
-# Jerry Profile — NVIDIA RTX 3070 Ti (Windows 11)
+# H2 Profile — NVIDIA RTX 3070 Ti (Windows 11)
 
 The reference implementation hardware. This is what GLaDOS runs.
 
@@ -84,19 +84,19 @@ npm install -g openclaw
 npm install -g his-and-hers
 
 # Run setup wizard
-tj onboard
-# → Select role: Jerry
+hh onboard
+# → Select role: H2
 # → Provider: Ollama (auto-detected)
 ```
 
 ### 5. Advertise capabilities
 
 ```powershell
-# Scan and save capabilities so Tom can route intelligently
-tj capabilities advertise
+# Scan and save capabilities so H1 can route intelligently
+hh capabilities advertise
 
 # Verify
-tj capabilities show
+hh capabilities show
 ```
 
 Expected output:
@@ -112,7 +112,7 @@ Skills: ollama, gpu-inference
 **Option A — Scheduled Task (recommended):**
 
 ```powershell
-# tj onboard creates this automatically, but manual fallback:
+# hh onboard creates this automatically, but manual fallback:
 $action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c start-gateway.bat"
 $trigger = New-ScheduledTaskTrigger -AtLogon
 Register-ScheduledTask -TaskName "OpenClaw Gateway" -Action $action -Trigger $trigger -RunLevel Highest
@@ -131,7 +131,7 @@ start /B openclaw gateway start
 
 ### 7. Enable WOL (optional but recommended)
 
-Lets Tom wake your PC when needed — saves power when idle.
+Lets H1 wake your PC when needed — saves power when idle.
 
 1. **BIOS:** Enable "Wake on LAN" / "Power On By PCI-E" (varies by board)
 2. **NIC:** Device Manager → Network Adapters → your NIC → Properties → Power Management → enable all WOL checkboxes
@@ -142,7 +142,7 @@ Find your MAC:
 Get-NetAdapter | Select Name, MacAddress
 ```
 
-Tell Tom about it during `tj onboard`, or update config:
+Tell H1 about it during `hh onboard`, or update config:
 ```json
 {
   "this_node": {

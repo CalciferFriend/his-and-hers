@@ -1,7 +1,7 @@
 /**
  * capabilities/scanner.ts
  *
- * Auto-detect local capabilities for a Jerry node.
+ * Auto-detect local capabilities for a H2 node.
  *
  * Runs a series of lightweight probes:
  *   - Platform detection
@@ -16,7 +16,7 @@
 import { exec as execCb } from "node:child_process";
 import { promisify } from "node:util";
 import { platform } from "node:os";
-import type { TJCapabilityReport, TJGPUInfo, TJOllamaInfo, TJSkillTag } from "./registry.schema.ts";
+import type { HHCapabilityReport, TJGPUInfo, TJOllamaInfo, TJSkillTag } from "./registry.schema.ts";
 
 const exec = promisify(execCb);
 
@@ -27,7 +27,7 @@ async function run(cmd: string, timeoutMs = 5000): Promise<string> {
 
 // ─── Platform ────────────────────────────────────────────────────────────────
 
-function detectPlatform(): TJCapabilityReport["platform"] {
+function detectPlatform(): HHCapabilityReport["platform"] {
   const p = platform();
   if (p === "win32") return "windows";
   if (p === "darwin") return "macos";
@@ -200,7 +200,7 @@ async function probeLatentCodecs(): Promise<string[]> {
  * LatentMAS (same model family, same weights). Strips tags/quantization suffixes
  * to produce a canonical ID (e.g. "llama3.2:latest" → "llama3.2").
  *
- * Tom uses this to know if he can do lossless KV-cache handoff instead of text.
+ * H1 uses this to know if he can do lossless KV-cache handoff instead of text.
  */
 function inferKVCompatibleModels(ollama: TJOllamaInfo): string[] {
   if (!ollama.running || ollama.models.length === 0) return [];
@@ -218,10 +218,10 @@ export interface ScanOptions {
 }
 
 /**
- * Scan the local machine and return a TJCapabilityReport.
+ * Scan the local machine and return a HHCapabilityReport.
  * All probes are best-effort — never throws.
  */
-export async function scanCapabilities(opts: ScanOptions): Promise<TJCapabilityReport> {
+export async function scanCapabilities(opts: ScanOptions): Promise<HHCapabilityReport> {
   const [ollama, gpu] = await Promise.all([
     probeOllama(opts.ollamaBaseUrl).catch(() => ({
       running: false,

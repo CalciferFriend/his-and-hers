@@ -22,7 +22,7 @@ export async function onboard() {
   // Step 1: Welcome — version check, OpenClaw check, Tailscale check
   ctx = await stepWelcome(ctx);
 
-  // Step 2: Role — tom or jerry
+  // Step 2: Role — h1 or h2
   ctx = await stepRole(ctx);
 
   // Step 3: Identity — name, emoji, persona
@@ -34,7 +34,7 @@ export async function onboard() {
   // Step 5: Peer — remote node connection details
   ctx = await stepPeer(ctx);
 
-  // Step 6: WOL — Wake-on-LAN config if Jerry sleeps
+  // Step 6: WOL — Wake-on-LAN config if H2 sleeps
   ctx = await stepWOL(ctx);
 
   // Step 7: Gateway bind — bind mode for both nodes
@@ -43,7 +43,7 @@ export async function onboard() {
   // Step 8: AutoLogin — Windows registry for headless WOL boot
   ctx = await stepAutologin(ctx);
 
-  // Step 9: Startup — install gateway startup script on Jerry
+  // Step 9: Startup — install gateway startup script on H2
   ctx = await stepStartup(ctx);
 
   // Step 10: Soul — install SOUL.md / IDENTITY.md templates
@@ -55,5 +55,5 @@ export async function onboard() {
   // Step 12: Finalize — write config, generate pairing code, print summary
   ctx = await stepFinalize(ctx);
 
-  p.outro(`Setup complete. Run ${pc.cyan("tj status")} to check your pair.`);
+  p.outro(`Setup complete. Run ${pc.cyan("hh status")} to check your pair.`);
 }

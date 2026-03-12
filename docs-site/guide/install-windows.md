@@ -1,6 +1,6 @@
-# Install on Windows (Jerry)
+# Install on Windows (H2)
 
-Windows setup guide for Jerry nodes. This covers the full automation stack: Ollama, OpenClaw gateway, AutoLogin, Startup Batch, Scheduled Task, Firewall, and Wake-on-LAN.
+Windows setup guide for H2 nodes. This covers the full automation stack: Ollama, OpenClaw gateway, AutoLogin, Startup Batch, Scheduled Task, Firewall, and Wake-on-LAN.
 
 > **Run everything in an Administrator PowerShell** unless noted otherwise. The wizard needs elevated privileges for AutoLogin registry and Scheduled Task setup.
 
@@ -58,7 +58,7 @@ npm install -g his-and-hers
 
 # Verify
 openclaw --version
-tj --version
+hh --version
 ```
 
 ---
@@ -75,7 +75,7 @@ tailscale up --authkey tskey-auth-YOUR_KEY
 tailscale up
 # Opens browser for login
 
-# Get your Tailscale IP (give this to Tom)
+# Get your Tailscale IP (give this to H1)
 tailscale ip -4
 # → 100.x.y.z
 ```
@@ -87,15 +87,15 @@ tailscale ip -4
 Open an **Administrator PowerShell** and run:
 
 ```powershell
-tj onboard
+hh onboard
 ```
 
 When prompted:
 
-1. **Role:** Jerry
+1. **Role:** H2
 2. **Name + emoji:** e.g. `GLaDOS 🤖`
 3. **LLM provider:** Ollama (auto-detected if running)
-4. **Tom's Tailscale IP:** get this from Tom's machine via `tailscale ip -4`
+4. **H1's Tailscale IP:** get this from H1's machine via `tailscale ip -4`
 5. **AutoLogin:** the wizard will prompt for your Windows username and password to configure auto-login for headless WOL boot
 6. **Startup script:** wizard creates `start-gateway.bat` and installs a Scheduled Task
 7. **Firewall rule:** wizard opens the gateway port (default 3737)
@@ -138,9 +138,9 @@ if %errorlevel% neq 0 (
 rem Start the OpenClaw gateway
 start /B openclaw gateway start
 
-rem Advertise capabilities to Tom
+rem Advertise capabilities to H1
 timeout /t 10 /nobreak >nul
-tj capabilities advertise
+hh capabilities advertise
 ```
 
 Save to `%APPDATA%\his-and-hers\start-gateway.bat`.
@@ -186,7 +186,7 @@ Allow inbound TCP on the gateway port (default 3737):
 $port = 3737
 
 New-NetFirewallRule `
-  -DisplayName "Tom-and-Jerry Gateway" `
+  -DisplayName "His-and-Hers Gateway" `
   -Direction Inbound `
   -Protocol TCP `
   -LocalPort $port `
@@ -194,16 +194,16 @@ New-NetFirewallRule `
   -Profile Any
 
 # Verify
-Get-NetFirewallRule -DisplayName "Tom-and-Jerry Gateway"
+Get-NetFirewallRule -DisplayName "His-and-Hers Gateway"
 ```
 
-If you changed the gateway port during `tj onboard`, use that port number instead.
+If you changed the gateway port during `hh onboard`, use that port number instead.
 
 ---
 
 ## 9 — Wake-on-LAN setup
 
-WOL lets Tom boot your PC remotely. Three things must be configured:
+WOL lets H1 boot your PC remotely. Three things must be configured:
 
 ### BIOS
 
@@ -248,7 +248,7 @@ Get-NetAdapter | Where-Object { $_.Status -eq "Up" } | Select Name, MacAddress
 # → Name: Ethernet    MacAddress: D8-5E-D3-04-18-B4
 ```
 
-Give this MAC to Tom during `tj onboard` or add it to config manually. See [Wake-on-LAN guide](/guide/wol) for router configuration.
+Give this MAC to H1 during `hh onboard` or add it to config manually. See [Wake-on-LAN guide](/guide/wol) for router configuration.
 
 ---
 
@@ -259,13 +259,13 @@ Reboot the machine. It should:
 2. The Scheduled Task fires → `start-gateway.bat` runs
 3. Tailscale connects
 4. OpenClaw gateway starts
-5. `tj capabilities advertise` runs
+5. `hh capabilities advertise` runs
 
-From Tom's machine:
+From H1's machine:
 
 ```bash
-tj status
-# Jerry should appear with ✓ gateway healthy
+hh status
+# H2 should appear with ✓ gateway healthy
 ```
 
 ---

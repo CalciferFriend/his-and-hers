@@ -24,7 +24,7 @@ async function runElevatedPS(script: string, timeoutMs = 30_000): Promise<{ ok: 
     if (msg.includes("Access") || msg.includes("privilege") || msg.includes("Unauthorized")) {
       try {
         // Write script to a temp file and launch via Start-Process with -Verb RunAs
-        const tmpScript = `$env:TEMP\\tj-autologin-${Date.now()}.ps1`;
+        const tmpScript = `$env:TEMP\\hh-autologin-${Date.now()}.ps1`;
         await execFileAsync("powershell", [
           "-NoProfile", "-Command",
           `Set-Content -Path '${tmpScript}' -Value @'\n${script}\n'@; Start-Process powershell -ArgumentList '-NoProfile -File ${tmpScript}' -Verb RunAs -Wait`,
@@ -65,7 +65,7 @@ async function writeAutoLoginRegistry(username: string, password: string): Promi
   return runElevatedPS(script);
 }
 
-/** Write AutoAdminLogon via SSH to a remote Windows Jerry */
+/** Write AutoAdminLogon via SSH to a remote Windows H2 */
 async function writeAutoLoginRemote(
   sshCreds: { host: string; user: string; keyPath: string },
   username: string,
@@ -81,8 +81,8 @@ async function writeAutoLoginRemote(
 }
 
 export async function stepAutologin(ctx: Partial<WizardContext>): Promise<Partial<WizardContext>> {
-  const isLocalJerry = ctx.role === "jerry" && process.platform === "win32";
-  const isRemoteJerry = ctx.role === "tom" && ctx.peerOS === "windows";
+  const isLocalJerry = ctx.role === "h2" && process.platform === "win32";
+  const isRemoteJerry = ctx.role === "h1" && ctx.peerOS === "windows";
   const jerryIsWindows = isLocalJerry || isRemoteJerry;
 
   if (!jerryIsWindows) {
@@ -122,7 +122,7 @@ export async function stepAutologin(ctx: Partial<WizardContext>): Promise<Partia
   const proceed = await p.confirm({
     message: isLocalJerry
       ? "Configure AutoAdminLogon on this machine now?"
-      : "Configure AutoAdminLogon on the Jerry machine via SSH?",
+      : "Configure AutoAdminLogon on the H2 machine via SSH?",
     initialValue: true,
   });
   if (isCancelled(proceed)) { p.cancel("Setup cancelled."); process.exit(0); }
@@ -170,7 +170,7 @@ export async function stepAutologin(ctx: Partial<WizardContext>): Promise<Partia
         creds.username,
         creds.password,
       );
-      s.stop(pc.green("✓ AutoAdminLogon configured on Jerry via SSH"));
+      s.stop(pc.green("✓ AutoAdminLogon configured on H2 via SSH"));
     }
   } catch (err: unknown) {
     s.stop(pc.yellow("⚠ AutoLogin setup failed — configure manually"));

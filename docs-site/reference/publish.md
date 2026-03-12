@@ -1,9 +1,9 @@
 ---
-title: "tj publish"
-description: Publish your Jerry node's capability card to the community registry.
+title: "hh publish"
+description: Publish your H2 node's capability card to the community registry.
 ---
 
-# `tj publish` — Reference
+# `hh publish` — Reference
 
 Publish an anonymised node card to the community registry so others can discover
 nodes with specific hardware or skills.
@@ -13,7 +13,7 @@ nodes with specific hardware or skills.
 ## Synopsis
 
 ```bash
-tj publish [flags]
+hh publish [flags]
 ```
 
 ---
@@ -35,32 +35,32 @@ tj publish [flags]
 ### Normal publish
 
 ```bash
-$ tj publish --description "Beast node, 24 GB VRAM, always on"
+$ hh publish --description "Beast node, 24 GB VRAM, always on"
 
 Publishing node card...
 ✓  Capabilities loaded from ~/.his-and-hers/capabilities.json
 ✓  Card built:
-     Name:   jerry-beast
+     Name:   h2-beast
      OS:     linux
      GPU:    NVIDIA GeForce RTX 4090 · 24 GB VRAM
      Skills: inference:70b, image-gen, code, embeddings, vision
      WOL:    yes
 ✓  Published to registry (gist: https://gist.github.com/abc123def456)
 
-Your node is now discoverable via `tj discover`.
-To remove it: tj publish --revoke
+Your node is now discoverable via `hh discover`.
+To remove it: hh publish --revoke
 ```
 
 ### Dry run
 
 ```bash
-$ tj publish --dry-run
+$ hh publish --dry-run
 
 Dry run — nothing will be published.
 
 Node card preview:
 {
-  "name": "jerry-beast",
+  "name": "h2-beast",
   "os": "linux",
   "gpu": {
     "name": "NVIDIA GeForce RTX 4090",
@@ -78,7 +78,7 @@ Node card preview:
 ### Revoke
 
 ```bash
-$ tj publish --revoke
+$ hh publish --revoke
 
 Removing node card from registry...
 ✓  Card removed (gist deleted)
@@ -90,7 +90,7 @@ Your node is no longer discoverable.
 ## JSON output
 
 ```bash
-$ tj publish --json
+$ hh publish --json
 ```
 
 ```json
@@ -99,7 +99,7 @@ $ tj publish --json
   "gist_id": "abc123def456",
   "gist_url": "https://gist.github.com/abc123def456",
   "card": {
-    "name": "jerry-beast",
+    "name": "h2-beast",
     "os": "linux",
     "gpu": {
       "name": "NVIDIA GeForce RTX 4090",
@@ -120,10 +120,10 @@ $ tj publish --json
 
 ## What gets published
 
-`tj publish` builds a `TJNodeCard` from:
+`hh publish` builds a `HHNodeCard` from:
 
 1. `~/.his-and-hers/capabilities.json` — hardware, Ollama models, skill tags
-2. Your `tj.json` config — node name, OS, provider
+2. Your `hh.json` config — node name, OS, provider
 3. WOL config — whether a MAC address is configured
 
 **What is NOT included:**
@@ -136,12 +136,12 @@ $ tj publish --json
 
 ## Prerequisites
 
-- Run `tj capabilities advertise` first to generate `capabilities.json`
+- Run `hh capabilities advertise` first to generate `capabilities.json`
 - A GitHub Personal Access Token with `gist` scope stored in your OS keychain:
 
 ```bash
 # Store token (interactive prompt)
-tj auth github
+hh auth github
 # Or set env var
 export GITHUB_TOKEN=ghp_...
 ```
@@ -150,18 +150,18 @@ export GITHUB_TOKEN=ghp_...
 
 ## Auto-refresh
 
-To keep your published card up to date, add `tj publish` to your Jerry startup
-sequence alongside `tj capabilities advertise`:
+To keep your published card up to date, add `hh publish` to your H2 startup
+sequence alongside `hh capabilities advertise`:
 
 ```bash
 # In systemd ExecStart or startup.bat:
-tj capabilities advertise && tj publish
+hh capabilities advertise && hh publish
 ```
 
 ---
 
 ## See also
 
-- [`tj discover`](/reference/discover) — browse the community registry
-- [`tj capabilities`](/reference/capabilities) — manage your capability profile
-- [Protocol: TJCapabilityReport](/protocol/capabilities) — the underlying schema
+- [`hh discover`](/reference/discover) — browse the community registry
+- [`hh capabilities`](/reference/capabilities) — manage your capability profile
+- [Protocol: HHCapabilityReport](/protocol/capabilities) — the underlying schema

@@ -1,34 +1,34 @@
 # docker-compose.yml — his-and-hers
 #
 # Profiles:
-#   - default (no profile): Tom only
-#   - jerry-cpu: Tom + Jerry (CPU/Ollama)
-#   - jerry-cuda: Tom + Jerry (NVIDIA GPU/Ollama)
+#   - default (no profile): H1 only
+#   - h2-cpu: H1 + H2 (CPU/Ollama)
+#   - h2-cuda: H1 + H2 (NVIDIA GPU/Ollama)
 #
-# Quick start (Tom only):
+# Quick start (H1 only):
 #   cp docker/.env.example docker/.env
 #   docker compose -f docker/docker-compose.yml up -d
 #
-# With Jerry (CPU Ollama):
-#   docker compose -f docker/docker-compose.yml --profile jerry-cpu up -d
+# With H2 (CPU Ollama):
+#   docker compose -f docker/docker-compose.yml --profile h2-cpu up -d
 #
-# With Jerry (NVIDIA GPU):
-#   docker compose -f docker/docker-compose.yml --profile jerry-cuda up -d
+# With H2 (NVIDIA GPU):
+#   docker compose -f docker/docker-compose.yml --profile h2-cuda up -d
 #
-# NOTE: Tom and Jerry usually run on *separate machines*. This compose file
-# is useful when you want to prototype both sides locally or run a Jerry
+# NOTE: H1 and H2 usually run on *separate machines*. This compose file
+# is useful when you want to prototype both sides locally or run a H2
 # in a Linux container on the same Tailscale network.
 
 name: his-and-hers
 
-# ─── Tom (orchestrator) ───────────────────────────────────────────────────────
+# ─── H1 (orchestrator) ───────────────────────────────────────────────────────
 services:
   tom:
     build:
       context: ..
       dockerfile: docker/tom/Dockerfile
     image: calcifer-ai/tom:latest
-    container_name: tom
+    container_name: h1
     restart: unless-stopped
 
     network_mode: host
@@ -43,14 +43,14 @@ services:
       TS_AUTHKEY: "${TS_AUTHKEY}"
       ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY}"
 
-      # Optional — Tom identity
-      TOM_NAME: "${TOM_NAME:-Tom}"
+      # Optional — H1 identity
+      H1_NAME: "${H1_NAME:-H1}"
       TOM_EMOJI: "${TOM_EMOJI:-🐱}"
       TOM_MODEL: "${TOM_MODEL:-claude-sonnet-4-6}"
       TOM_GATEWAY_PORT: "${TOM_GATEWAY_PORT:-18789}"
       TOM_GATEWAY_TOKEN: "${TOM_GATEWAY_TOKEN:-}"  # auto-generated if empty
 
-      # Jerry peer connection (fill in after Jerry starts)
+      # H2 peer connection (fill in after H2 starts)
       JERRY_TAILSCALE_HOSTNAME: "${JERRY_TAILSCALE_HOSTNAME:-}"
       JERRY_TAILSCALE_IP: "${JERRY_TAILSCALE_IP:-}"
       JERRY_GATEWAY_PORT: "${JERRY_GATEWAY_PORT:-18789}"
@@ -65,8 +65,8 @@ services:
     volumes:
       - tailscale-tom:/var/lib/tailscale
       - tom-openclaw:/root/.openclaw
-      - tom-tj-config:/root/.his-and-hers
-      # Mount SSH key if using SSH to Jerry:
+      - his-and-hers-config:/root/.his-and-hers
+      # Mount SSH key if using SSH to H2:
       # - ./ssh/id_ed25519:/root/.ssh/id_ed25519:ro
 
     healthcheck:
@@ -82,14 +82,14 @@ services:
         max-size: "10m"
         max-file: "3"
 
-# ─── Jerry — CPU / Ollama (profile: jerry-cpu) ────────────────────────────────
-  jerry-cpu:
-    profiles: ["jerry-cpu"]
+# ─── H2 — CPU / Ollama (profile: h2-cpu) ────────────────────────────────
+  h2-cpu:
+    profiles: ["h2-cpu"]
     build:
       context: ..
-      dockerfile: docker/jerry/Dockerfile
+      dockerfile: docker/h2/Dockerfile
     image: calcifer-ai/jerry:latest
-    container_name: jerry
+    container_name: h2
     restart: unless-stopped
 
     network_mode: host
@@ -101,7 +101,7 @@ services:
 
     environment:
       TS_AUTHKEY: "${JERRY_TS_AUTHKEY:-${TS_AUTHKEY}}"
-      JERRY_NAME: "${JERRY_NAME:-Jerry}"
+      H2_NAME: "${H2_NAME:-H2}"
       JERRY_EMOJI: "${JERRY_EMOJI:-🐭}"
       JERRY_MODEL: "${JERRY_MODEL:-llama3.2}"
       JERRY_PROVIDER: "${JERRY_PROVIDER:-ollama}"
@@ -109,20 +109,20 @@ services:
       JERRY_GATEWAY_TOKEN: "${JERRY_GATEWAY_TOKEN:-}"
       JERRY_OLLAMA_MODELS: "${JERRY_OLLAMA_MODELS:-llama3.2}"
 
-      # Tom peer (so Jerry knows where to report back)
-      TOM_NAME: "${TOM_NAME:-Tom}"
+      # H1 peer (so H2 knows where to report back)
+      H1_NAME: "${H1_NAME:-H1}"
       TOM_TAILSCALE_IP: "${TOM_TAILSCALE_IP:-}"
       TOM_GATEWAY_PORT: "${TOM_GATEWAY_PORT:-18789}"
       TOM_GATEWAY_TOKEN: "${TOM_GATEWAY_TOKEN:-}"
 
-      # Tom's SSH public key (so Tom can SSH to Jerry)
+      # H1's SSH public key (so H1 can SSH to H2)
       TOM_SSH_PUBKEY: "${TOM_SSH_PUBKEY:-}"
 
     volumes:
       - tailscale-jerry:/var/lib/tailscale
-      - jerry-openclaw:/root/.openclaw
-      - jerry-tj-config:/root/.his-and-hers
-      - jerry-ollama:/root/.ollama  # persist downloaded models
+      - h2-openclaw:/root/.openclaw
+      - h2-hh-config:/root/.his-and-hers
+      - h2-ollama:/root/.ollama  # persist downloaded models
 
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://127.0.0.1:${JERRY_GATEWAY_PORT:-18789}/health"]
@@ -137,14 +137,14 @@ services:
         max-size: "10m"
         max-file: "3"
 
-# ─── Jerry — NVIDIA CUDA (profile: jerry-cuda) ────────────────────────────────
-  jerry-cuda:
-    profiles: ["jerry-cuda"]
+# ─── H2 — NVIDIA CUDA (profile: h2-cuda) ────────────────────────────────
+  h2-cuda:
+    profiles: ["h2-cuda"]
     build:
       context: ..
-      dockerfile: docker/jerry/Dockerfile.cuda
-    image: calcifer-ai/jerry-cuda:latest
-    container_name: jerry
+      dockerfile: docker/h2/Dockerfile.cuda
+    image: calcifer-ai/h2-cuda:latest
+    container_name: h2
     restart: unless-stopped
 
     # GPU access
@@ -165,7 +165,7 @@ services:
 
     environment:
       TS_AUTHKEY: "${JERRY_TS_AUTHKEY:-${TS_AUTHKEY}}"
-      JERRY_NAME: "${JERRY_NAME:-Jerry}"
+      H2_NAME: "${H2_NAME:-H2}"
       JERRY_EMOJI: "${JERRY_EMOJI:-🤖}"
       JERRY_MODEL: "${JERRY_MODEL:-llama3.2}"
       JERRY_PROVIDER: "${JERRY_PROVIDER:-ollama}"
@@ -173,7 +173,7 @@ services:
       JERRY_GATEWAY_TOKEN: "${JERRY_GATEWAY_TOKEN:-}"
       JERRY_OLLAMA_MODELS: "${JERRY_OLLAMA_MODELS:-llama3.2}"
 
-      TOM_NAME: "${TOM_NAME:-Tom}"
+      H1_NAME: "${H1_NAME:-H1}"
       TOM_TAILSCALE_IP: "${TOM_TAILSCALE_IP:-}"
       TOM_GATEWAY_PORT: "${TOM_GATEWAY_PORT:-18789}"
       TOM_GATEWAY_TOKEN: "${TOM_GATEWAY_TOKEN:-}"
@@ -181,9 +181,9 @@ services:
 
     volumes:
       - tailscale-jerry:/var/lib/tailscale
-      - jerry-openclaw:/root/.openclaw
-      - jerry-tj-config:/root/.his-and-hers
-      - jerry-ollama:/root/.ollama
+      - h2-openclaw:/root/.openclaw
+      - h2-hh-config:/root/.his-and-hers
+      - h2-ollama:/root/.ollama
 
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://127.0.0.1:${JERRY_GATEWAY_PORT:-18789}/health"]
@@ -203,7 +203,7 @@ volumes:
   tailscale-tom:
   tailscale-jerry:
   tom-openclaw:
-  tom-tj-config:
-  jerry-openclaw:
-  jerry-tj-config:
-  jerry-ollama:   # Large volume — Ollama models can be multi-GB
+  his-and-hers-config:
+  h2-openclaw:
+  h2-hh-config:
+  h2-ollama:   # Large volume — Ollama models can be multi-GB

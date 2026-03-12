@@ -2,12 +2,12 @@ import * as p from "@clack/prompts";
 import { isCancelled, type WizardContext } from "../context.ts";
 
 export async function stepWOL(ctx: Partial<WizardContext>): Promise<Partial<WizardContext>> {
-  // WOL only makes sense when the Jerry node is a sleeping machine.
-  // If this machine IS Jerry, WOL is configured on the Tom side (peer).
-  // If this machine IS Tom, we configure WOL for reaching Jerry.
+  // WOL only makes sense when the H2 node is a sleeping machine.
+  // If this machine IS H2, WOL is configured on the H1 side (peer).
+  // If this machine IS H1, we configure WOL for reaching H2.
 
-  const jerryIsRemote = ctx.role === "tom";
-  const target = jerryIsRemote ? "the remote Jerry node" : "this machine (Jerry)";
+  const jerryIsRemote = ctx.role === "h1";
+  const target = jerryIsRemote ? "the remote H2 node" : "this machine (H2)";
 
   const wolEnabled = await p.confirm({
     message: `Does ${target} need Wake-on-LAN? (i.e., is it a machine that sleeps/shuts down)`,
@@ -36,7 +36,7 @@ export async function stepWOL(ctx: Partial<WizardContext>): Promise<Partial<Wiza
     {
       mac: () =>
         p.text({
-          message: "MAC address of the Jerry node's network adapter",
+          message: "MAC address of the H2 node's network adapter",
           placeholder: "D8:5E:D3:04:18:B4",
           validate: (v: string) => {
             const cleaned = v.replace(/[:-]/g, "");

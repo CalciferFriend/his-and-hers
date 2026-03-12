@@ -6,7 +6,7 @@ export async function wake() {
   const config = await loadConfig();
 
   if (!config) {
-    p.log.error("No configuration found. Run `tj onboard` first.");
+    p.log.error("No configuration found. Run `hh onboard` first.");
     return;
   }
 
@@ -16,7 +16,7 @@ export async function wake() {
     return;
   }
 
-  p.intro("Waking Jerry node...");
+  p.intro("Waking H2 node...");
 
   const spinner = p.spinner();
   spinner.start("Sending magic packet and waiting for boot...");
@@ -36,8 +36,8 @@ export async function wake() {
   );
 
   if (success) {
-    spinner.stop("Jerry is awake and gateway is healthy.");
+    spinner.stop("H2 is awake and gateway is healthy.");
   } else {
-    spinner.stop("Failed to wake Jerry — check WOL config with `tj doctor`.");
+    spinner.stop("Failed to wake H2 — check WOL config with `hh doctor`.");
   }
 }

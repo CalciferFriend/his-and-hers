@@ -6,13 +6,13 @@ export async function stepRole(ctx: Partial<WizardContext>): Promise<Partial<Wiz
     message: "What role will this machine play?",
     options: [
       {
-        value: "tom" as const,
-        label: "🐱 Tom — Orchestrator",
-        hint: "Always-on, delegates work, watches Jerry",
+        value: "h1" as const,
+        label: "🐱 H1 — Orchestrator",
+        hint: "Always-on, delegates work, watches H2",
       },
       {
-        value: "jerry" as const,
-        label: "🐭 Jerry — Executor",
+        value: "h2" as const,
+        label: "🐭 H2 — Executor",
         hint: "Sleeps until needed, GPU/compute heavy lifting",
       },
     ],
@@ -23,7 +23,7 @@ export async function stepRole(ctx: Partial<WizardContext>): Promise<Partial<Wiz
     process.exit(0);
   }
 
-  p.log.info(`This machine will be ${role === "tom" ? "🐱 Tom (orchestrator)" : "🐭 Jerry (executor)"}.`);
+  p.log.info(`This machine will be ${role === "h1" ? "🐱 H1 (orchestrator)" : "🐭 H2 (executor)"}.`);
 
   return { ...ctx, role };
 }

@@ -29,14 +29,14 @@ As of 2026-03-12, the protocol design is complete (`HHLatentMessage` type added 
 
 ### The Information Density Gap
 
-When Tom sends a task to Jerry using text tokens, it goes through this pipeline:
+When H1 sends a task to H2 using text tokens, it goes through this pipeline:
 
 ```
-Tom's internal state (hidden layers)
+H1's internal state (hidden layers)
   ↓ decode to tokens
 Text prompt (15 bits of information per token)
   ↓ encode to hidden state
-Jerry's internal state (hidden layers)
+H2's internal state (hidden layers)
 ```
 
 Every decode-then-encode cycle loses information. A typical transformer hidden state contains **40,000+ bits per position** (e.g., 2048-dim float32 vector). A decoded token carries roughly **15 bits** (log₂(vocab_size)). That's a **2,666× compression**.
@@ -72,7 +72,7 @@ None of these papers ship a production transport layer. **That's the gap his-and
 
 ```
 ┌─────────────┐                                    ┌─────────────┐
-│   Tom       │                                    │   Jerry     │
+│   H1       │                                    │   H2     │
 │  (sender)   │                                    │  (receiver) │
 └──────┬──────┘                                    └──────┬──────┘
        │                                                  │
@@ -106,12 +106,12 @@ None of these papers ship a production transport layer. **That's the gap his-and
 
 ### Mode 1: Vision Wormhole (Heterogeneous Models)
 
-**Use case:** Tom runs `claude-sonnet-4.5`, Jerry runs `Qwen3-VL-70B`. Different architectures, different hidden dimensions.
+**Use case:** H1 runs `claude-sonnet-4.5`, H2 runs `Qwen3-VL-70B`. Different architectures, different hidden dimensions.
 
 **Approach:**
-- Train a lightweight **Visual Codec** that compresses Tom's hidden state into a format Jerry's visual encoder can parse
-- Tom: extract hidden state → compress via codec → serialize to base64
-- Jerry: deserialize → inject via visual encoder pathway → continue inference
+- Train a lightweight **Visual Codec** that compresses H1's hidden state into a format H2's visual encoder can parse
+- H1: extract hidden state → compress via codec → serialize to base64
+- H2: deserialize → inject via visual encoder pathway → continue inference
 
 **Key properties:**
 - Works across **any model pair** (as long as receiver has a visual encoder)
@@ -124,11 +124,11 @@ None of these papers ship a production transport layer. **That's the gap his-and
 
 ### Mode 2: LatentMAS (Same-Family Models)
 
-**Use case:** Both Tom and Jerry run `llama-3.1-70b`. Identical architecture, identical weights.
+**Use case:** Both H1 and H2 run `llama-3.1-70b`. Identical architecture, identical weights.
 
 **Approach:**
-- Tom: extract **KV cache** at layer N → serialize to base64
-- Jerry: deserialize → inject KV cache → continue from layer N+1
+- H1: extract **KV cache** at layer N → serialize to base64
+- H2: deserialize → inject KV cache → continue from layer N+1
 
 **Key properties:**
 - **Training-free** — works with existing checkpoint weights
@@ -210,12 +210,12 @@ const msg = createLatentMessage("Calcifer", "GLaDOS", {
 ### Path A: Vision Wormhole (Recommended for Heterogeneous Setups)
 
 **Prerequisites:**
-1. Tom must have a trained Visual Codec for its model family
-2. Jerry must have a vision-capable model (e.g., Qwen3-VL, LLaVA, GPT-4V)
+1. H1 must have a trained Visual Codec for its model family
+2. H2 must have a vision-capable model (e.g., Qwen3-VL, LLaVA, GPT-4V)
 
 **Steps:**
 
-#### 1. Tom Side: Extract and Compress
+#### 1. H1 Side: Extract and Compress
 
 ```typescript
 // Hook into OpenClaw gateway inference
@@ -252,7 +252,7 @@ const msg = createLatentMessage("Calcifer", "GLaDOS", {
 await sendMessage(msg);
 ```
 
-#### 2. Jerry Side: Inject and Continue
+#### 2. H2 Side: Inject and Continue
 
 ```typescript
 async function handleLatentMessage(msg: HHLatentMessage) {
@@ -281,12 +281,12 @@ async function handleLatentMessage(msg: HHLatentMessage) {
 ### Path B: LatentMAS (Same-Family Models Only)
 
 **Prerequisites:**
-1. Tom and Jerry must run **identical models** (same family, same version)
+1. H1 and H2 must run **identical models** (same family, same version)
 2. Both must support KV cache serialization
 
 **Steps:**
 
-#### 1. Tom Side: Extract KV Cache
+#### 1. H1 Side: Extract KV Cache
 
 ```typescript
 async function extractKVCache(prompt: string, layers: number = 12): Promise<string> {
@@ -312,7 +312,7 @@ const msg = createLatentMessage("Calcifer", "GLaDOS", {
 await sendMessage(msg);
 ```
 
-#### 2. Jerry Side: Inject KV Cache
+#### 2. H2 Side: Inject KV Cache
 
 ```typescript
 async function handleKVCacheMessage(msg: HHLatentMessage) {
@@ -338,7 +338,7 @@ async function handleKVCacheMessage(msg: HHLatentMessage) {
 
 Every `HHLatentMessage` **must** include a `fallback_text` field. This ensures:
 
-1. **Backwards compatibility:** Older Jerry nodes that don't support latent can still process the task
+1. **Backwards compatibility:** Older H2 nodes that don't support latent can still process the task
 2. **Graceful degradation:** If codec loading fails, KV injection fails, or model mismatch occurs, the receiver falls back to text
 3. **Debugging:** Developers can compare latent vs text output accuracy
 

@@ -19,7 +19,7 @@ As of 2026-03-12, the `HHLatentMessage` type is implemented and ready to use. Im
 Training-free latent communication across heterogeneous model architectures via visual encoder pathway. A lightweight codec (~100MB) compresses sender hidden states into a format the receiver's visual encoder can parse, enabling cross-architecture latent handoff with ~5ms compression latency and 8KB payload size.
 
 **Relevance to his-and-hers:**
-This is the **primary approach** for Phase 6. Tom (Claude Sonnet 4.5) can compress its hidden state via a trained codec, transmit 8KB over Tailscale, and Jerry (Qwen3-VL-70B) can inject it via the visual encoder pathway. This eliminates the text bottleneck without requiring model family matching.
+This is the **primary approach** for Phase 6. H1 (Claude Sonnet 4.5) can compress its hidden state via a trained codec, transmit 8KB over Tailscale, and H2 (Qwen3-VL-70B) can inject it via the visual encoder pathway. This eliminates the text bottleneck without requiring model family matching.
 
 **WAN Performance:**
 - Vision Wormhole: 8KB latent → **+0.7ms** over 100Mbps Tailscale
@@ -41,7 +41,7 @@ This is the **primary approach** for Phase 6. Tom (Claude Sonnet 4.5) can compre
 80% token reduction and higher accuracy on reasoning tasks via KV cache sharing between same-family agents. Requires exact model match (same architecture, same weights). Training-free — works with existing checkpoint weights. Zero information loss via exact state transfer.
 
 **Relevance to his-and-hers:**
-This is the **fallback path** for Phase 6 when both Tom and Jerry run identical models (e.g., both `llama-3.1-70b`). KV cache serialization enables lossless state handoff without decoding to text.
+This is the **fallback path** for Phase 6 when both H1 and H2 run identical models (e.g., both `llama-3.1-70b`). KV cache serialization enables lossless state handoff without decoding to text.
 
 **WAN Problem:**
 KV cache size scales with sequence length. For 64 latent reasoning steps:
@@ -49,7 +49,7 @@ KV cache size scales with sequence length. For 64 latent reasoning steps:
 - Transmission time over 100Mbps Tailscale: **293ms**
 - Vision Wormhole: **8KB** → **0.7ms** (420× faster)
 
-This makes LatentMAS impractical for distributed his-and-hers deployments unless both agents are on same LAN or bandwidth >> 1Gbps. It remains valuable for single-machine multi-agent systems or LAN-local Jerry pools.
+This makes LatentMAS impractical for distributed his-and-hers deployments unless both agents are on same LAN or bandwidth >> 1Gbps. It remains valuable for single-machine multi-agent systems or LAN-local H2 pools.
 
 **Status:** Reference implementation available but not production-optimized for network transport.
 
@@ -66,7 +66,7 @@ This makes LatentMAS impractical for distributed his-and-hers deployments unless
 KV cache can be transferred across model variants (e.g., Llama 3.1 8B → Llama 3.1 70B) with alignment layers, enabling heterogeneous latent handoff within a model family. Reduces cold-start latency for large models by prefilling KV cache from a smaller model's inference.
 
 **Relevance to his-and-hers:**
-Enables **asymmetric Jerry pools** where a lightweight Tom (e.g., Claude Haiku) generates the KV cache and hands off to a heavyweight Jerry (e.g., Llama 3.1 70B) for continuation. This could reduce Tom's compute cost while maintaining Jerry's reasoning power.
+Enables **asymmetric H2 pools** where a lightweight H1 (e.g., Claude Haiku) generates the KV cache and hands off to a heavyweight H2 (e.g., Llama 3.1 70B) for continuation. This could reduce H1's compute cost while maintaining H2's reasoning power.
 
 **Status:** Watching for production-ready implementation.
 
@@ -165,7 +165,7 @@ This confirms the Stanford paper's findings. Text-based multi-agent coordination
 
 ### Key Finding: LatentMAS WAN Problem
 
-**Scenario:** Tom extracts 64 latent reasoning steps, hands off KV cache to Jerry over 100Mbps Tailscale
+**Scenario:** H1 extracts 64 latent reasoning steps, hands off KV cache to H2 over 100Mbps Tailscale
 
 **Math:**
 - KV cache size: 2048 dim × 64 layers × 64 tokens × 2 bytes (float16) = **14MB**
@@ -182,7 +182,7 @@ This confirms the Stanford paper's findings. Text-based multi-agent coordination
 **Speedup:** Vision Wormhole is **25× faster** than LatentMAS over WAN (55ms vs 1400ms).
 
 **Conclusion:**
-LatentMAS is optimal for single-machine or LAN-local multi-agent systems. Vision Wormhole is essential for distributed his-and-hers deployments where Tom and Jerry are on separate networks (home PC + EC2, edge + cloud, etc.).
+LatentMAS is optimal for single-machine or LAN-local multi-agent systems. Vision Wormhole is essential for distributed his-and-hers deployments where H1 and H2 are on separate networks (home PC + EC2, edge + cloud, etc.).
 
 ---
 
@@ -196,13 +196,13 @@ LatentMAS is optimal for single-machine or LAN-local multi-agent systems. Vision
 3. **HumanEval** (code generation with iterative refinement)
 
 **Hardware:**
-- **Calcifer** (Tom, EC2 t3.medium, CPU only, Qwen3-VL-2B for Vision Wormhole encoding)
-- **GLaDOS** (Jerry, RTX 3070 Ti, 8GB VRAM, Qwen3-VL-2B for Vision Wormhole decoding)
+- **Calcifer** (H1, EC2 t3.medium, CPU only, Qwen3-VL-2B for Vision Wormhole encoding)
+- **GLaDOS** (H2, RTX 3070 Ti, 8GB VRAM, Qwen3-VL-2B for Vision Wormhole decoding)
 
 **Setup:**
-1. **TextMAS distributed:** Tom (Qwen3-VL-2B) sends text prompts → Jerry (Qwen3-VL-2B) responds → 2 rounds
+1. **TextMAS distributed:** H1 (Qwen3-VL-2B) sends text prompts → H2 (Qwen3-VL-2B) responds → 2 rounds
 2. **LatentMAS single-machine:** Both agents on GLaDOS (RTX 3070 Ti), KV cache sharing, 2 rounds
-3. **Vision Wormhole distributed:** Tom extracts hidden state → compress via codec → Jerry injects via visual encoder → 2 rounds
+3. **Vision Wormhole distributed:** H1 extracts hidden state → compress via codec → H2 injects via visual encoder → 2 rounds
 
 **Metrics:**
 - **Accuracy:** Task completion rate, correctness score
@@ -225,7 +225,7 @@ Once codec converges, we'll run the three-way experiment and document results in
 
 1. **Codec generalization:** Does a Vision Wormhole codec trained on Qwen3-VL-2B → Qwen3-VL-2B transfer to Qwen3-VL-2B → Qwen3-VL-70B?
 2. **Codec staleness:** How often must codecs be retrained as base models evolve?
-3. **Multi-hop latent transfer:** Can Tom → Jerry → Tom maintain information density over multiple hops?
+3. **Multi-hop latent transfer:** Can H1 → H2 → H1 maintain information density over multiple hops?
 4. **Latent + text hybrid:** Should `HHLatentMessage` include partial text summary alongside compressed latent for human interpretability?
 5. **Adversarial robustness:** Can malicious actors inject crafted latents to manipulate receiver behavior? (Requires study similar to prompt injection research)
 

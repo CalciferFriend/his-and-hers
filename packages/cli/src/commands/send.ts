@@ -1,5 +1,5 @@
 /**
- * commands/send.ts — `tj send <task>`
+ * commands/send.ts — `hh send <task>`
  *
  * Send a task to the peer node.
  *
@@ -10,9 +10,9 @@
  *   4. Build HHTaskMessage, write pending task state
  *   5. Deliver via wakeAgent (injects into peer's OpenClaw session) — with retry/backoff
  *   6. If --wait:
- *        a. Start a result webhook server (Phase 5d) — Jerry POSTs back directly
- *        b. Webhook URL included in the wake message so Jerry knows where to call
- *        c. Falls back to polling if webhook never arrives (older Jerry / network issue)
+ *        a. Start a result webhook server (Phase 5d) — H2 POSTs back directly
+ *        b. Webhook URL included in the wake message so H2 knows where to call
+ *        c. Falls back to polling if webhook never arrives (older H2 / network issue)
  *
  * Retry safety (Phase 5e):
  *   wakeAgent delivery is wrapped in withRetry(). A RetryState file persisted at
@@ -56,7 +56,7 @@ export interface SendOptions {
   wait?: boolean;
   waitTimeoutSeconds?: string;
   noState?: boolean;
-  /** Target a specific peer by name (for multi-Jerry setups) */
+  /** Target a specific peer by name (for multi-H2 setups) */
   peer?: string;
   /** Auto-select best peer based on task + capabilities (ignores --peer) */
   auto?: boolean;
@@ -67,7 +67,7 @@ export interface SendOptions {
   force?: boolean;
   /**
    * Disable the result webhook server (fall back to polling only).
-   * Useful for debugging or when Tom's Tailscale IP isn't accessible from Jerry.
+   * Useful for debugging or when H1's Tailscale IP isn't accessible from H2.
    */
   noWebhook?: boolean;
   /**
@@ -92,7 +92,7 @@ export async function send(task: string, opts: SendOptions = {}) {
   const config = await loadConfig();
 
   if (!config) {
-    p.log.error("No configuration found. Run `tj onboard` first.");
+    p.log.error("No configuration found. Run `hh onboard` first.");
     return;
   }
 
@@ -120,7 +120,7 @@ export async function send(task: string, opts: SendOptions = {}) {
 
   // Routing hint (Phase 3 capability-aware + Phase 6 latent)
   const routing = suggestRouting(task);
-  if (routing === "jerry-local") {
+  if (routing === "h2-local") {
     p.log.info(`Routing hint: ${pc.yellow("heavy task")} → recommended for ${peer.name} (local GPU)`);
   }
 
@@ -137,7 +137,7 @@ export async function send(task: string, opts: SendOptions = {}) {
     const peerCaps = await loadPeerCapabilities().catch(() => null);
     if (peerCaps) {
       const latentDecision = routeTask(task, peerCaps);
-      if (latentDecision.hint === "jerry-latent") {
+      if (latentDecision.hint === "h2-latent") {
         useLatent = true;
         latentCodec = latentDecision.codec_id ?? latentDecision.latent_codec;
         kvModel = latentDecision.kv_model;
@@ -157,7 +157,7 @@ export async function send(task: string, opts: SendOptions = {}) {
       }
     } else if (opts.latent) {
       p.log.error(
-        `No cached capabilities for ${peer.name}. Run \`tj capabilities fetch\` first, ` +
+        `No cached capabilities for ${peer.name}. Run \`hh capabilities fetch\` first, ` +
         `or omit --latent to use text transport.`
       );
       p.outro("Send failed.");
@@ -292,12 +292,12 @@ export async function send(task: string, opts: SendOptions = {}) {
           : 300_000;
         webhookHandle = await startResultServer({
           taskId: msg.id,
-          token: peer.gateway_token, // shared secret — Jerry must echo this back
+          token: peer.gateway_token, // shared secret — H2 must echo this back
           bindAddress: tomIP,
           timeoutMs,
         });
         webhookUrl = webhookHandle.url;
-        p.log.info(pc.dim(`Webhook: ${webhookUrl} (Jerry will POST result here)`));
+        p.log.info(pc.dim(`Webhook: ${webhookUrl} (H2 will POST result here)`));
       } catch {
         // Webhook setup failed — fall through to polling silently
         p.log.info(pc.dim("Webhook server unavailable — will use polling fallback."));
@@ -309,7 +309,7 @@ export async function send(task: string, opts: SendOptions = {}) {
   const sendS = p.spinner();
   sendS.start("Delivering task...");
   if (!peer.gateway_token) {
-    p.log.error("Peer gateway token not set. Run `tj pair` first.");
+    p.log.error("Peer gateway token not set. Run `hh pair` first.");
     p.outro("Send failed.");
     webhookHandle?.close();
     return;
@@ -439,7 +439,7 @@ export async function send(task: string, opts: SendOptions = {}) {
       pollS.stop(pc.red("Task state lost — the state file may have been removed."));
     } else if (finalState.status === "timeout") {
       pollS.stop(pc.yellow("Timed out waiting for result. Task is still pending."));
-      p.log.info(`Check later with: ${pc.cyan(`tj task-status ${msg.id}`)}`);
+      p.log.info(`Check later with: ${pc.cyan(`hh task-status ${msg.id}`)}`);
     } else if (finalState.status === "completed") {
       pollS.stop(pc.green("✓ Task completed!"));
       p.log.info(`\n${pc.bold("Result:")}`);
@@ -457,8 +457,8 @@ export async function send(task: string, opts: SendOptions = {}) {
 
     p.outro("Done.");
   } else {
-    p.log.info(pc.dim(`To wait for result: tj send --wait "${task}"`));
-    p.log.info(pc.dim(`To check status:   tj task-status ${msg.id.slice(0, 8)}`));
+    p.log.info(pc.dim(`To wait for result: hh send --wait "${task}"`));
+    p.log.info(pc.dim(`To check status:   hh task-status ${msg.id.slice(0, 8)}`));
     p.outro("Task sent.");
   }
 }
@@ -467,19 +467,19 @@ export async function send(task: string, opts: SendOptions = {}) {
 
 /**
  * Build the wake message text sent to the peer agent.
- * Includes the webhook URL when available so Jerry knows where to push the result.
+ * Includes the webhook URL when available so H2 knows where to push the result.
  */
 function buildWakeText(from: string, taskId: string, task: string, webhookUrl: string | null): string {
   const lines = [
     `[HHMessage:task from ${from} id=${taskId}] ${task}`,
     ``,
-    `When done, run: tj result ${taskId} "<your output here>"`,
+    `When done, run: hh result ${taskId} "<your output here>"`,
   ];
 
   if (webhookUrl) {
     lines.push(``);
-    lines.push(`TJ-Result-Webhook: ${webhookUrl}`);
-    lines.push(`TJ-Result-Token: (use your configured gateway_token)`);
+    lines.push(`HH-Result-Webhook: ${webhookUrl}`);
+    lines.push(`HH-Result-Token: (use your configured gateway_token)`);
     lines.push(`(POST JSON to the webhook URL to deliver result instantly, skipping polling)`);
   }
 

@@ -10,10 +10,10 @@ Two agents. Separate machines. One command to wire them.
 
 An open protocol and setup wizard for connecting two [OpenClaw](https://github.com/openclaw/openclaw) agents on physically separate machines.
 
-**Tom** is the orchestrator — always-on, always watching, delegates work.
-**Jerry** is the executor — sleeps until needed, wakes on demand, does the heavy lifting.
+**H1** is the orchestrator — always-on, always watching, delegates work.
+**H2** is the executor — sleeps until needed, wakes on demand, does the heavy lifting.
 
-Tom can't catch Jerry but can't function without him. Jerry runs fast, disappears when done. The dynamic is the product.
+H1 can't catch H2 but can't function without him. H2 runs fast, disappears when done. The dynamic is the product.
 
 ---
 
@@ -22,7 +22,7 @@ Tom can't catch Jerry but can't function without him. Jerry runs fast, disappear
 > *"We do not have organs of communication. Our brains can display our thoughts to the outside world, thereby achieving communication."*
 > — Cixin Liu, The Dark Forest
 
-Today, his-and-hers speaks text. Tom sends a prompt. Jerry sends a response. That works — and it's how every multi-agent system in production works right now.
+Today, his-and-hers speaks text. H1 sends a prompt. H2 sends a response. That works — and it's how every multi-agent system in production works right now.
 
 But text is a lossy compression of thought. Every message forces an agent to collapse its rich internal state into a sequence of tokens, discarding alternative reasoning paths, nuance, and structure that never survives the translation. The other agent then reconstructs meaning from those tokens — a game of telephone running at the speed of inference.
 
@@ -56,25 +56,25 @@ Or install globally:
 
 ```bash
 npm install -g his-and-hers
-tj          # wizard on first run, status thereafter
-tj onboard  # explicit wizard
-tj status   # show both nodes + connectivity
-tj send "generate a hero image for the landing page"
+hh          # wizard on first run, status thereafter
+hh onboard  # explicit wizard
+hh status   # show both nodes + connectivity
+hh send "generate a hero image for the landing page"
 ```
 
 ## What the wizard does
 
-`tj onboard` walks you through the full setup in 12 steps:
+`hh onboard` walks you through the full setup in 12 steps:
 
 1. **Prerequisites** — checks Node >= 22, Tailscale running, OpenClaw installed
-2. **Role** — Tom (orchestrator) or Jerry (executor)
+2. **Role** — H1 (orchestrator) or H2 (executor)
 3. **Identity** — agent name, emoji, persona
 4. **LLM provider** — API key stored in OS keychain (never plaintext)
 5. **Peer connection** — remote Tailscale hostname, SSH user/key, live connectivity test
-6. **Wake-on-LAN** — MAC address, broadcast IP, router port forward (if Jerry sleeps)
-7. **Gateway bind** — loopback for Tom, Tailscale interface for Jerry, remote config update via SSH
-8. **Windows AutoLogin** — registry instructions for headless WOL boot (if Jerry is Windows)
-9. **Startup script** — installs `start-gateway.bat/.sh` on Jerry (Startup folder + Scheduled Task on Windows, crontab on Linux)
+6. **Wake-on-LAN** — MAC address, broadcast IP, router port forward (if H2 sleeps)
+7. **Gateway bind** — loopback for H1, Tailscale interface for H2, remote config update via SSH
+8. **Windows AutoLogin** — registry instructions for headless WOL boot (if H2 is Windows)
+9. **Startup script** — installs `start-gateway.bat/.sh` on H2 (Startup folder + Scheduled Task on Windows, crontab on Linux)
 10. **Templates** — personalized SOUL.md, IDENTITY.md, AGENTS.md for the role
 11. **Validation** — full round-trip: WOL → Tailscale ping → SSH → gateway health
 12. **Finalize** — writes config, generates 6-digit pairing code
@@ -83,7 +83,7 @@ tj send "generate a hero image for the landing page"
 
 ```
 ┌──────────────────────┐         Tailscale          ┌──────────────────────┐
-│   Tom (Orchestrator)  │◄──────────────────────────►│   Jerry (Executor)    │
+│   H1 (Orchestrator)  │◄──────────────────────────►│   H2 (Executor)    │
 │                       │                            │                       │
 │  Always-on server     │     HHMessage protocol     │  GPU workstation      │
 │  Lightweight tasks    │◄──────────────────────────►│  Heavy compute        │
@@ -136,16 +136,16 @@ Message types: `task`, `result`, `heartbeat`, `handoff`, `wake`, `error`
 
 | Command | Description |
 |---------|-------------|
-| `tj onboard` | Setup wizard — configure this node, pair with remote |
-| `tj pair --code <code>` | Complete pairing with a 6-digit code |
-| `tj status` | Show both nodes, connectivity, last heartbeat |
-| `tj wake` | Send WOL magic packet to wake Jerry |
-| `tj send <task>` | Send a task to the peer node |
-| `tj doctor` | Diagnose connectivity and configuration issues |
+| `hh onboard` | Setup wizard — configure this node, pair with remote |
+| `hh pair --code <code>` | Complete pairing with a 6-digit code |
+| `hh status` | Show both nodes, connectivity, last heartbeat |
+| `hh wake` | Send WOL magic packet to wake H2 |
+| `hh send <task>` | Send a task to the peer node |
+| `hh doctor` | Diagnose connectivity and configuration issues |
 
 ## Config
 
-Written to `~/.his-and-hers/tj.json` with `0o600` permissions. Contains:
+Written to `~/.his-and-hers/hh.json` with `0o600` permissions. Contains:
 
 - This node's role, name, Tailscale identity
 - Peer node's connection details (SSH, Tailscale, WOL)
@@ -163,7 +163,7 @@ Written to `~/.his-and-hers/tj.json` with `0o600` permissions. Contains:
 
 ## Reference implementation
 
-The **Calcifer / GLaDOS** pair is the canonical reference — an EC2 server (Tom) paired with a home Windows PC with an RTX 3070 Ti (Jerry). Fully operational, including the hardest part: Wake-on-LAN → Windows AutoLogin → Tailscale wait → gateway bind.
+The **Calcifer / GLaDOS** pair is the canonical reference — an EC2 server (H1) paired with a home Windows PC with an RTX 3070 Ti (H2). Fully operational, including the hardest part: Wake-on-LAN → Windows AutoLogin → Tailscale wait → gateway bind.
 
 See [`docs/reference/calcifer-glados.md`](docs/reference/calcifer-glados.md) for the full annotated walkthrough.
 

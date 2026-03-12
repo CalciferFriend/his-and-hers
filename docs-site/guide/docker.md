@@ -1,20 +1,20 @@
 # Docker Setup
 
-Run Tom and Jerry in containers. Docker is the cleanest way to run Tom on a server and works for Jerry on Linux (CPU or CUDA). For Windows Jerry and M2 Mac Jerry, use the native setup — Docker doesn't give you access to Apple's Metal or Windows GPU toolchain.
+Run H1 and H2 in containers. Docker is the cleanest way to run H1 on a server and works for H2 on Linux (CPU or CUDA). For Windows H2 and M2 Mac H2, use the native setup — Docker doesn't give you access to Apple's Metal or Windows GPU toolchain.
 
 ---
 
-## Tom (any platform)
+## H1 (any platform)
 
 ### Quick start
 
 ```bash
 docker run -d \
-  --name tom \
+  --name h1 \
   --restart unless-stopped \
   -e ANTHROPIC_API_KEY=sk-ant-... \
-  -e TJ_ROLE=tom \
-  -e TJ_NAME="Calcifer" \
+  -e TJ_ROLE=h1 \
+  -e HH_NAME="Calcifer" \
   -e TJ_EMOJI="🔥" \
   -e TS_AUTHKEY=tskey-auth-... \
   -e JERRY_TAILSCALE_IP=100.x.y.z \
@@ -23,7 +23,7 @@ docker run -d \
   calcifierai/tom:latest
 ```
 
-First boot: the container runs `tj onboard --non-interactive` and registers with Tailscale automatically.
+First boot: the container runs `hh onboard --non-interactive` and registers with Tailscale automatically.
 
 ### docker-compose (recommended)
 
@@ -32,11 +32,11 @@ First boot: the container runs `tj onboard --non-interactive` and registers with
 services:
   tom:
     image: calcifierai/tom:latest
-    container_name: tom
+    container_name: h1
     restart: unless-stopped
     environment:
-      - TJ_ROLE=tom
-      - TJ_NAME=${TOM_NAME:-Calcifer}
+      - TJ_ROLE=h1
+      - HH_NAME=${H1_NAME:-Calcifer}
       - TJ_EMOJI=${TOM_EMOJI:-🔥}
       - TS_AUTHKEY=${TS_AUTHKEY}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
@@ -46,7 +46,7 @@ services:
       - GATEWAY_PORT=${GATEWAY_PORT:-3737}
     volumes:
       - tom-data:/root/.his-and-hers
-      - ~/.ssh:/root/.ssh:ro   # SSH keys for connecting to Jerry
+      - ~/.ssh:/root/.ssh:ro   # SSH keys for connecting to H2
     cap_add:
       - NET_ADMIN   # needed for Tailscale
     devices:
@@ -66,33 +66,33 @@ cp docker/.env.example .env
 Start:
 
 ```bash
-docker compose --profile tom up -d
+docker compose --profile h1 up -d
 ```
 
 ---
 
-## Jerry — CPU (Linux, no GPU)
+## H2 — CPU (Linux, no GPU)
 
 For always-on lightweight compute: embeddings, small models, summarization.
 
 ```yaml
-# docker-compose.yml (add alongside Tom or standalone)
+# docker-compose.yml (add alongside H1 or standalone)
 services:
-  jerry-cpu:
+  h2-cpu:
     image: calcifierai/jerry:cpu
-    container_name: jerry-cpu
+    container_name: h2-cpu
     restart: unless-stopped
-    profiles: ["jerry-cpu"]
+    profiles: ["h2-cpu"]
     environment:
-      - TJ_ROLE=jerry
-      - TJ_NAME=${JERRY_NAME:-Jerry}
+      - TJ_ROLE=h2
+      - HH_NAME=${H2_NAME:-H2}
       - TJ_EMOJI=${JERRY_EMOJI:-🤖}
       - TS_AUTHKEY=${TS_AUTHKEY}
       - TOM_TAILSCALE_IP=${TOM_TAILSCALE_IP}
       - OLLAMA_MODELS=${OLLAMA_MODELS:-llama3.2:3b,nomic-embed-text}
       - GATEWAY_PORT=${GATEWAY_PORT:-3737}
     volumes:
-      - jerry-cpu-data:/root/.his-and-hers
+      - h2-cpu-data:/root/.his-and-hers
       - ollama-models:/root/.ollama
     cap_add:
       - NET_ADMIN
@@ -103,19 +103,19 @@ services:
 Start:
 
 ```bash
-docker compose --profile jerry-cpu up -d
+docker compose --profile h2-cpu up -d
 ```
 
 The entrypoint:
 1. Starts Tailscale with the provided auth key
 2. Starts Ollama and pulls models listed in `OLLAMA_MODELS`
-3. Runs `tj onboard --non-interactive` with Tom's Tailscale IP
+3. Runs `hh onboard --non-interactive` with H1's Tailscale IP
 4. Starts the OpenClaw gateway bound to the Tailscale IP
-5. Runs `tj capabilities advertise`
+5. Runs `hh capabilities advertise`
 
 ---
 
-## Jerry — CUDA (NVIDIA GPU)
+## H2 — CUDA (NVIDIA GPU)
 
 ### Prerequisites
 
@@ -139,39 +139,39 @@ docker run --rm --gpus all nvidia/cuda:12.3-base-ubuntu22.04 nvidia-smi
 # Should show your GPU
 ```
 
-### Run CUDA Jerry
+### Run CUDA H2
 
 ```bash
 docker build \
-  -t jerry-cuda:latest \
-  -f docker/jerry/Dockerfile.cuda .
+  -t h2-cuda:latest \
+  -f docker/h2/Dockerfile.cuda .
 
 docker run -d \
-  --name jerry-cuda \
+  --name h2-cuda \
   --restart unless-stopped \
   --gpus all \
-  -e TJ_ROLE=jerry \
-  -e TJ_NAME="GLaDOS" \
+  -e TJ_ROLE=h2 \
+  -e HH_NAME="GLaDOS" \
   -e TJ_EMOJI="🤖" \
   -e TS_AUTHKEY=tskey-auth-... \
   -e TOM_TAILSCALE_IP=100.x.y.z \
   -e OLLAMA_MODELS="llama3.2,mistral,nomic-embed-text" \
-  -v jerry-data:/root/.his-and-hers \
+  -v h2-data:/root/.his-and-hers \
   -v ollama-models:/root/.ollama \
-  jerry-cuda:latest
+  h2-cuda:latest
 ```
 
 Or via docker-compose:
 
 ```yaml
 services:
-  jerry-cuda:
+  h2-cuda:
     build:
       context: .
-      dockerfile: docker/jerry/Dockerfile.cuda
-    container_name: jerry-cuda
+      dockerfile: docker/h2/Dockerfile.cuda
+    container_name: h2-cuda
     restart: unless-stopped
-    profiles: ["jerry-cuda"]
+    profiles: ["h2-cuda"]
     deploy:
       resources:
         reservations:
@@ -180,14 +180,14 @@ services:
               count: all
               capabilities: [gpu]
     environment:
-      - TJ_ROLE=jerry
-      - TJ_NAME=${JERRY_NAME:-GLaDOS}
+      - TJ_ROLE=h2
+      - HH_NAME=${H2_NAME:-GLaDOS}
       - TJ_EMOJI=${JERRY_EMOJI:-🤖}
       - TS_AUTHKEY=${TS_AUTHKEY}
       - TOM_TAILSCALE_IP=${TOM_TAILSCALE_IP}
       - OLLAMA_MODELS=${OLLAMA_MODELS:-llama3.2,mistral,qwen2.5-coder:7b}
     volumes:
-      - jerry-data:/root/.his-and-hers
+      - h2-data:/root/.his-and-hers
       - ollama-models:/root/.ollama
     cap_add:
       - NET_ADMIN
@@ -197,26 +197,26 @@ services:
 
 ---
 
-## Jerry — ARM64 (Raspberry Pi 5)
+## H2 — ARM64 (Raspberry Pi 5)
 
 ```bash
 docker build \
   --platform linux/arm64 \
-  -t jerry-arm64:latest \
-  -f docker/jerry/Dockerfile.arm64 .
+  -t h2-arm64:latest \
+  -f docker/h2/Dockerfile.arm64 .
 
 docker run -d \
   --platform linux/arm64 \
-  --name jerry-pi \
+  --name h2-pi \
   --restart unless-stopped \
   -e TS_AUTHKEY=tskey-auth-... \
-  -e TJ_NAME="jerry-pi" \
+  -e HH_NAME="h2-pi" \
   -e TJ_EMOJI="🍓" \
   -e TOM_TAILSCALE_IP=100.x.y.z \
   -e OLLAMA_MODELS="llama3.2:3b,nomic-embed-text" \
-  -v jerry-pi-data:/root/.his-and-hers \
+  -v h2-pi-data:/root/.his-and-hers \
   -v ollama-models:/root/.ollama \
-  jerry-arm64:latest
+  h2-arm64:latest
 ```
 
 Use quantized models (`llama3.2:3b-q4_0`) to fit in the Pi's RAM.
@@ -228,13 +228,13 @@ Use quantized models (`llama3.2:3b-q4_0`) to fit in the Pi's RAM.
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `TJ_ROLE` | — | `tom` or `jerry` (required) |
-| `TJ_NAME` | `Tom` / `Jerry` | Node display name |
+| `HH_NAME` | `H1` / `H2` | Node display name |
 | `TJ_EMOJI` | `🔥` / `🤖` | Node emoji |
 | `TS_AUTHKEY` | — | Tailscale auth key (required) |
-| `ANTHROPIC_API_KEY` | — | Anthropic API key (Tom, optional) |
-| `OPENAI_API_KEY` | — | OpenAI API key (Tom, optional) |
-| `JERRY_TAILSCALE_IP` | — | Jerry's Tailscale IP (Tom only) |
-| `TOM_TAILSCALE_IP` | — | Tom's Tailscale IP (Jerry only) |
+| `ANTHROPIC_API_KEY` | — | Anthropic API key (H1, optional) |
+| `OPENAI_API_KEY` | — | OpenAI API key (H1, optional) |
+| `JERRY_TAILSCALE_IP` | — | H2's Tailscale IP (H1 only) |
+| `TOM_TAILSCALE_IP` | — | H1's Tailscale IP (H2 only) |
 | `OLLAMA_MODELS` | `llama3.2` | Comma-separated models to pull on startup |
 | `GATEWAY_PORT` | `3737` | Gateway listen port |
 
@@ -243,15 +243,15 @@ Use quantized models (`llama3.2:3b-q4_0`) to fit in the Pi's RAM.
 ## Checking container health
 
 ```bash
-# Check status from inside Tom container
-docker exec tom tj status
+# Check status from inside H1 container
+docker exec h1 hh status
 
 # Tail logs
-docker logs -f tom
-docker logs -f jerry-cuda
+docker logs -f h1
+docker logs -f h2-cuda
 
 # Follow task log
-docker exec tom tj logs --follow
+docker exec h1 hh logs --follow
 ```
 
 ---

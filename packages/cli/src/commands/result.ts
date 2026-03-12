@@ -1,23 +1,23 @@
 /**
- * commands/result.ts — `tj result <task-id> [output]`
+ * commands/result.ts — `hh result <task-id> [output]`
  *
  * Marks a pending task as completed or failed and writes the result payload.
  *
  * Usage (typically called by GLaDOS after processing a delegated task):
  *
- *   tj result <task-id> "Image saved to /tmp/cat.png"
- *   tj result <task-id> --fail "Ollama model not available"
- *   tj result <task-id> --output-file /tmp/result.txt
- *   tj result <task-id> --json '{"output":"...","artifacts":["/tmp/cat.png"]}'
+ *   hh result <task-id> "Image saved to /tmp/cat.png"
+ *   hh result <task-id> --fail "Ollama model not available"
+ *   hh result <task-id> --output-file /tmp/result.txt
+ *   hh result <task-id> --json '{"output":"...","artifacts":["/tmp/cat.png"]}'
  *
  * The state file is written to ~/.his-and-hers/state/tasks/<id>.json so
- * Tom's `tj send --wait` polling loop picks it up automatically.
+ * H1's `hh send --wait` polling loop picks it up automatically.
  *
  * Remote delivery:
  *   GLaDOS can call this over SSH:
- *     ssh calcifer "tj result <id> 'task done'"
+ *     ssh calcifer "hh result <id> 'task done'"
  *   Or via wakeAgent (the result text is injected into Calcifer's session
- *   which can then run `tj result` directly).
+ *   which can then run `hh result` directly).
  */
 
 import * as p from "@clack/prompts";
@@ -42,7 +42,7 @@ export async function result(taskId: string, output: string | undefined, opts: R
 
   if (!task) {
     p.log.error(`Task not found: ${taskId}`);
-    p.log.info("Run `tj status --tasks` to list known tasks.");
+    p.log.info("Run `hh status --tasks` to list known tasks.");
     process.exitCode = 1;
     return;
   }

@@ -1,10 +1,10 @@
 import { z } from "zod";
 
 /**
- * TJPair — paired node registry format.
- * Created during the `tj onboard` / `tj pair` flow.
+ * HHPair — paired node registry format.
+ * Created during the `hh onboard` / `hh pair` flow.
  */
-export const TJPair = z.object({
+export const HHPair = z.object({
   established_at: z.string().datetime(),
   pairing_code_hash: z.string(),
   trusted: z.boolean().default(false),
@@ -24,4 +24,4 @@ export const TJPair = z.object({
     wol_enabled: z.boolean().default(false),
   }),
 });
-export type TJPair = z.infer<typeof TJPair>;
+export type HHPair = z.infer<typeof HHPair>;

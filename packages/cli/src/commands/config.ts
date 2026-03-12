@@ -1,11 +1,11 @@
 /**
- * commands/config.ts — `tj config` subcommand
+ * commands/config.ts — `hh config` subcommand
  *
  * Subcommands:
- *   tj config show          — pretty-print config, redact secrets
- *   tj config get <key>     — read a single key (dot-notation)
- *   tj config set <key> <value> — write a key with auto type coercion
- *   tj config path          — print config file path (machine-readable)
+ *   hh config show          — pretty-print config, redact secrets
+ *   hh config get <key>     — read a single key (dot-notation)
+ *   hh config set <key> <value> — write a key with auto type coercion
+ *   hh config path          — print config file path (machine-readable)
  */
 
 import * as p from "@clack/prompts";
@@ -100,12 +100,12 @@ export async function configShow() {
 
   if (!config) {
     p.log.error(
-      `No config found at ${pc.cyan(configPath)}. Run ${pc.bold("tj onboard")} to set up.`,
+      `No config found at ${pc.cyan(configPath)}. Run ${pc.bold("hh onboard")} to set up.`,
     );
     return;
   }
 
-  p.intro(`${pc.bold("TJ Configuration")} — ${pc.dim(configPath)}`);
+  p.intro(`${pc.bold("HH Configuration")} — ${pc.dim(configPath)}`);
 
   const redacted = redactSensitive(config as unknown as Record<string, unknown>);
   const formatted = JSON.stringify(redacted, null, 2);
@@ -135,7 +135,7 @@ export async function configGet(key: string) {
   const config = await loadConfig();
 
   if (!config) {
-    p.log.error(`No config found. Run ${pc.bold("tj onboard")} first.`);
+    p.log.error(`No config found. Run ${pc.bold("hh onboard")} first.`);
     process.exit(1);
   }
 
@@ -157,7 +157,7 @@ export async function configSet(key: string, value: string) {
   const config = await loadConfig();
 
   if (!config) {
-    p.log.error(`No config found. Run ${pc.bold("tj onboard")} first.`);
+    p.log.error(`No config found. Run ${pc.bold("hh onboard")} first.`);
     process.exit(1);
   }
 

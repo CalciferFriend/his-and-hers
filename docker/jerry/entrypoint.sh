@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# entrypoint.sh — Jerry node Docker entrypoint
+# entrypoint.sh — H2 node Docker entrypoint
 # Handles: Tailscale auth, SSH key injection, OpenClaw config, Ollama start, gateway
 
 set -euo pipefail
@@ -8,7 +8,7 @@ set -euo pipefail
 : "${TS_AUTHKEY:?TS_AUTHKEY is required (Tailscale auth key)}"
 
 # ── Optional config via env ───────────────────────────────────────────────────
-JERRY_NAME="${JERRY_NAME:-Jerry}"
+H2_NAME="${H2_NAME:-H2}"
 JERRY_EMOJI="${JERRY_EMOJI:-🐭}"
 JERRY_MODEL="${JERRY_MODEL:-llama3.2}"
 JERRY_PROVIDER="${JERRY_PROVIDER:-ollama}"
@@ -16,7 +16,7 @@ JERRY_GATEWAY_PORT="${JERRY_GATEWAY_PORT:-18789}"
 JERRY_GATEWAY_TOKEN="${JERRY_GATEWAY_TOKEN:-$(openssl rand -hex 24)}"
 JERRY_OLLAMA_MODELS="${JERRY_OLLAMA_MODELS:-}"  # comma-separated, e.g. "llama3.2,mistral"
 
-echo "🐭 Jerry node starting — $JERRY_NAME"
+echo "🐭 H2 node starting — $H2_NAME"
 
 # ── 0. Print GPU info if available ───────────────────────────────────────────
 if command -v nvidia-smi &>/dev/null; then
@@ -38,7 +38,7 @@ done
 
 tailscale up \
   --authkey="$TS_AUTHKEY" \
-  --hostname="${JERRY_NAME,,}-jerry-docker" \
+  --hostname="${H2_NAME,,}-h2-docker" \
   --accept-routes \
   --accept-dns \
   --timeout=30s
@@ -48,11 +48,11 @@ echo "[1/6] Tailscale up — IP: $TAILSCALE_IP"
 
 # ── 2. SSH server ─────────────────────────────────────────────────────────────
 echo "[2/6] Starting SSH server..."
-# Inject Tom's SSH public key if provided
+# Inject H1's SSH public key if provided
 if [ -n "${TOM_SSH_PUBKEY:-}" ]; then
   echo "$TOM_SSH_PUBKEY" >> /root/.ssh/authorized_keys
   chmod 600 /root/.ssh/authorized_keys
-  echo "  Authorized Tom's SSH key."
+  echo "  Authorized H1's SSH key."
 fi
 /usr/sbin/sshd
 echo "[2/6] SSH daemon running."
@@ -78,7 +78,7 @@ if [ -n "$JERRY_OLLAMA_MODELS" ]; then
   echo "[4/6] Pulling models: $JERRY_OLLAMA_MODELS"
   /pull-models.sh "$JERRY_OLLAMA_MODELS"
 else
-  # Default: pull the model configured for Jerry
+  # Default: pull the model configured for H2
   if [ -n "$JERRY_MODEL" ] && [ "$JERRY_PROVIDER" = "ollama" ]; then
     echo "[4/6] Pulling default model: $JERRY_MODEL"
     ollama pull "$JERRY_MODEL" || echo "  WARNING: Could not pull $JERRY_MODEL"
@@ -87,11 +87,11 @@ else
   fi
 fi
 
-# ── 5. Write OpenClaw + TJ config ─────────────────────────────────────────────
+# ── 5. Write OpenClaw + HH config ─────────────────────────────────────────────
 echo "[5/6] Writing configs..."
 mkdir -p /root/.openclaw /root/.his-and-hers
 
-# OpenClaw config — bind to Tailscale IP so Tom can reach it
+# OpenClaw config — bind to Tailscale IP so H1 can reach it
 cat > /root/.openclaw/openclaw.json <<EOF
 {
   "gateway": {
@@ -111,11 +111,11 @@ cat > /root/.openclaw/openclaw.json <<EOF
 }
 EOF
 
-# Write TJ config if not already present (e.g. from mounted volume)
+# Write HH config if not already present (e.g. from mounted volume)
 if [ ! -f /root/.his-and-hers/config.json ]; then
   TS_HOSTNAME=$(tailscale status --json 2>/dev/null \
     | node -e "const d=require('fs').readFileSync('/dev/stdin','utf8'); try { console.log(JSON.parse(d).Self?.HostName ?? ''); } catch { console.log(''); }" \
-    || echo "jerry-docker")
+    || echo "h2-docker")
 
   cat > /root/.his-and-hers/config.json <<EOF
 {
@@ -123,7 +123,7 @@ if [ ! -f /root/.his-and-hers/config.json ]; then
   "gateway_port": $JERRY_GATEWAY_PORT,
   "this_node": {
     "role": "jerry",
-    "name": "$JERRY_NAME",
+    "name": "$H2_NAME",
     "emoji": "$JERRY_EMOJI",
     "tailscale_hostname": "${TS_HOSTNAME}",
     "tailscale_ip": "${TAILSCALE_IP:-127.0.0.1}",
@@ -135,7 +135,7 @@ if [ ! -f /root/.his-and-hers/config.json ]; then
   },
   "peer_node": {
     "role": "tom",
-    "name": "${TOM_NAME:-Tom}",
+    "name": "${H1_NAME:-H1}",
     "emoji": "${TOM_EMOJI:-🐱}",
     "tailscale_hostname": "${TOM_TAILSCALE_HOSTNAME:-}",
     "tailscale_ip": "${TOM_TAILSCALE_IP:-}",
@@ -146,9 +146,9 @@ if [ ! -f /root/.his-and-hers/config.json ]; then
   }
 }
 EOF
-  echo "[5/6] TJ config written."
+  echo "[5/6] HH config written."
 else
-  echo "[5/6] TJ config already exists — skipping (mounted volume)."
+  echo "[5/6] HH config already exists — skipping (mounted volume)."
 fi
 
 # ── 6. Start OpenClaw gateway ─────────────────────────────────────────────────
@@ -168,23 +168,23 @@ else
   echo "[6/6] WARNING: Gateway did not respond — check logs"
 fi
 
-# ── Advertise capabilities to Tom ─────────────────────────────────────────────
+# ── Advertise capabilities to H1 ─────────────────────────────────────────────
 echo "Scanning and advertising capabilities..."
-tj capabilities advertise 2>/dev/null || true
+hh capabilities advertise 2>/dev/null || true
 
 # ── Print ready banner ────────────────────────────────────────────────────────
 MODEL_LIST=$(ollama list 2>/dev/null | tail -n +2 | awk '{print $1}' | tr '\n' ' ' || echo "none")
 
 echo ""
 echo "╔══════════════════════════════════════════════════════════╗"
-echo "║  🐭 $JERRY_NAME (Jerry) is ready                              ║"
+echo "║  🐭 $H2_NAME (H2) is ready                              ║"
 echo "║  Gateway:  ws://$TAILSCALE_IP:$JERRY_GATEWAY_PORT             ║"
 echo "║  Ollama:   http://$TAILSCALE_IP:11434                    ║"
 echo "║  Token:    $JERRY_GATEWAY_TOKEN     ║"
 echo "║  Models:   $MODEL_LIST               ║"
 echo "╚══════════════════════════════════════════════════════════╝"
 echo ""
-echo "Give Tom this gateway token: $JERRY_GATEWAY_TOKEN"
+echo "Give H1 this gateway token: $JERRY_GATEWAY_TOKEN"
 echo "And this IP: $TAILSCALE_IP"
 echo ""
 

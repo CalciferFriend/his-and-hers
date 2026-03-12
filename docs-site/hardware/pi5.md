@@ -1,9 +1,9 @@
 ---
 title: Raspberry Pi 5
-description: Set up a Raspberry Pi 5 as a Jerry node — always-on, low-power compute for embeddings and small models.
+description: Set up a Raspberry Pi 5 as a H2 node — always-on, low-power compute for embeddings and small models.
 ---
 
-# Jerry on Raspberry Pi 5
+# H2 on Raspberry Pi 5
 
 Best use: always-on, low-power compute node for lightweight tasks — embeddings,
 text summarization, small-context chat (3B–7B models with quantization).
@@ -21,7 +21,7 @@ text summarization, small-context chat (3B–7B models with quantization).
 | OS | Raspberry Pi OS Lite (64-bit) or Ubuntu 24.04 LTS (arm64) |
 
 > **USB SSD note:** SD cards are the #1 source of Pi failures under write load.
-> Use a USB SSD (e.g. Samsung T7) as your root disk for any persistent Jerry node.
+> Use a USB SSD (e.g. Samsung T7) as your root disk for any persistent H2 node.
 
 ---
 
@@ -44,7 +44,7 @@ text summarization, small-context chat (3B–7B models with quantization).
 
 ```bash
 # Use Raspberry Pi Imager → Raspberry Pi OS Lite (64-bit)
-# Enable SSH, set hostname (e.g. jerry-pi), configure WiFi in Imager
+# Enable SSH, set hostname (e.g. h2-pi), configure WiFi in Imager
 ```
 
 ### 2 — System setup
@@ -76,7 +76,7 @@ ollama pull nomic-embed-text
 
 ```bash
 sudo npm install -g openclaw his-and-hers
-tj --version
+hh --version
 ```
 
 ### 6 — Install Tailscale
@@ -84,17 +84,17 @@ tj --version
 ```bash
 curl -fsSL https://tailscale.com/install.sh | sh
 sudo tailscale up --authkey tskey-auth-YOUR_KEY
-tailscale ip -4  # note this IP for Tom's config
+tailscale ip -4  # note this IP for H1's config
 ```
 
-### 7 — Run tj onboard (Jerry role)
+### 7 — Run hh onboard (H2 role)
 
 ```bash
-tj onboard
-# Role: Jerry
-# Name: jerry-pi (or whatever)
+hh onboard
+# Role: H2
+# Name: h2-pi (or whatever)
 # Model: Ollama → llama3.2:3b
-# Tom's Tailscale IP: <from Tom's tj status>
+# H1's Tailscale IP: <from H1's hh status>
 ```
 
 ---
@@ -104,7 +104,7 @@ tj onboard
 Keep the gateway running across reboots:
 
 ```ini
-# /etc/systemd/system/tj-gateway.service
+# /etc/systemd/system/hh-gateway.service
 [Unit]
 Description=his-and-hers gateway
 After=network-online.target tailscaled.service
@@ -122,8 +122,8 @@ WantedBy=multi-user.target
 ```
 
 ```bash
-sudo systemctl enable --now tj-gateway
-sudo systemctl status tj-gateway
+sudo systemctl enable --now hh-gateway
+sudo systemctl status hh-gateway
 ```
 
 ---
@@ -132,13 +132,13 @@ sudo systemctl status tj-gateway
 
 ```bash
 docker build --platform linux/arm64 \
-  -t jerry-pi:arm64 \
-  -f docker/jerry/Dockerfile.arm64 .
+  -t h2-pi:arm64 \
+  -f docker/h2/Dockerfile.arm64 .
 
 docker run -d \
   --platform linux/arm64 \
   -e TS_AUTHKEY=tskey-auth-... \
-  -e JERRY_NAME="jerry-pi" \
+  -e H2_NAME="h2-pi" \
   -e JERRY_EMOJI="🍓" \
   -e OLLAMA_MODELS="llama3.2:3b,nomic-embed-text" \
   calcifer-ai/jerry:arm64
@@ -161,7 +161,7 @@ docker run -d \
 
 ## Capability tags
 
-After `tj capabilities advertise`:
+After `hh capabilities advertise`:
 
 ```json
 {
@@ -172,12 +172,12 @@ After `tj capabilities advertise`:
 }
 ```
 
-Tom automatically routes embedding and lightweight summarization tasks here.
+H1 automatically routes embedding and lightweight summarization tasks here.
 
 ---
 
 ## See also
 
 - [Hardware overview](/hardware/overview) — compare with other profiles
-- [`tj capabilities`](/reference/capabilities) — scan and advertise
-- [Docker guide](/guide/docker) — containerized Jerry
+- [`hh capabilities`](/reference/capabilities) — scan and advertise
+- [Docker guide](/guide/docker) — containerized H2

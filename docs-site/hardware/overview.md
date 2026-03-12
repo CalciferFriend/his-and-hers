@@ -1,11 +1,11 @@
 ---
 title: Hardware Overview
-description: Comparison of all supported Jerry hardware profiles — how to pick, cost, and power tradeoffs.
+description: Comparison of all supported H2 hardware profiles — how to pick, cost, and power tradeoffs.
 ---
 
 # Hardware Overview
 
-Jerry can run on almost anything — from a Raspberry Pi to an RTX 4090 workstation.
+H2 can run on almost anything — from a Raspberry Pi to an RTX 4090 workstation.
 This page helps you pick the right hardware for what you want to do.
 
 ---
@@ -58,8 +58,8 @@ M2 Mac can do SDXL via Core ML but it's slower.
 
 ### "I have a beast PC already"
 
-→ **RTX 4090** — make it a Jerry. 24 GB VRAM handles 70B models, Flux image gen,
-and LoRA fine-tuning. Let Tom wake it only when needed to save power.
+→ **RTX 4090** — make it an H2. 24 GB VRAM handles 70B models, Flux image gen,
+and LoRA fine-tuning. Let H1 wake it only when needed to save power.
 
 ### "I want always-on, low-power compute"
 
@@ -68,7 +68,7 @@ Great as a dedicated node that's always awake while bigger machines sleep.
 
 ### "I want a mix — lightweight routing + heavy GPU on demand"
 
-→ **Pi 5 + RTX 4090** — Pi 5 runs 24/7 for light tasks, Tom wakes the 4090 for
+→ **Pi 5 + RTX 4090** — Pi 5 runs 24/7 for light tasks, H1 wakes the 4090 for
 heavy inference or image generation. Cost-efficient and responsive.
 
 ---
@@ -83,8 +83,8 @@ heavy inference or image generation. Cost-efficient and responsive.
 | RTX 3070 Ti | `ollama`, `gpu-inference`, `image-gen` (with ComfyUI) |
 | RTX 4090 | `ollama`, `gpu-inference`, `inference:70b`, `image-gen`, `code`, `vision` |
 
-These are auto-detected by `tj capabilities scan`. Add custom tags with
-`tj capabilities advertise --tags "your-tag"`.
+These are auto-detected by `hh capabilities scan`. Add custom tags with
+`hh capabilities advertise --tags "your-tag"`.
 
 ---
 
@@ -103,15 +103,15 @@ can reduce that to **$20–50/month** depending on usage.
 | RTX 4090 24/7 | ~$200–260 |
 | RTX 4090 WOL (2h/day) | ~$15–25 |
 
-**Tip:** Enable WOL on your GPU machines and let Tom wake them only when needed.
+**Tip:** Enable WOL on your GPU machines and let H1 wake them only when needed.
 See [`---
 title: Hardware Overview
-description: Comparison of all supported Jerry hardware profiles — how to pick, cost, and power tradeoffs.
+description: Comparison of all supported H2 hardware profiles — how to pick, cost, and power tradeoffs.
 ---
 
 # Hardware Overview
 
-Jerry can run on almost anything — from a Raspberry Pi to an RTX 4090 workstation.
+H2 can run on almost anything — from a Raspberry Pi to an RTX 4090 workstation.
 This page helps you pick the right hardware for what you want to do.
 
 ---
@@ -164,8 +164,8 @@ M2 Mac can do SDXL via Core ML but it's slower.
 
 ### "I have a beast PC already"
 
-→ **RTX 4090** — make it a Jerry. 24 GB VRAM handles 70B models, Flux image gen,
-and LoRA fine-tuning. Let Tom wake it only when needed to save power.
+→ **RTX 4090** — make it an H2. 24 GB VRAM handles 70B models, Flux image gen,
+and LoRA fine-tuning. Let H1 wake it only when needed to save power.
 
 ### "I want always-on, low-power compute"
 
@@ -174,7 +174,7 @@ Great as a dedicated node that's always awake while bigger machines sleep.
 
 ### "I want a mix — lightweight routing + heavy GPU on demand"
 
-→ **Pi 5 + RTX 4090** — Pi 5 runs 24/7 for light tasks, Tom wakes the 4090 for
+→ **Pi 5 + RTX 4090** — Pi 5 runs 24/7 for light tasks, H1 wakes the 4090 for
 heavy inference or image generation. Cost-efficient and responsive.
 
 ---
@@ -189,8 +189,8 @@ heavy inference or image generation. Cost-efficient and responsive.
 | RTX 3070 Ti | `ollama`, `gpu-inference`, `image-gen` (with ComfyUI) |
 | RTX 4090 | `ollama`, `gpu-inference`, `inference:70b`, `image-gen`, `code`, `vision` |
 
-These are auto-detected by `tj capabilities scan`. Add custom tags with
-`tj capabilities advertise --tags "your-tag"`.
+These are auto-detected by `hh capabilities scan`. Add custom tags with
+`hh capabilities advertise --tags "your-tag"`.
 
 ---
 
@@ -209,7 +209,7 @@ can reduce that to **$20–50/month** depending on usage.
 | RTX 4090 24/7 | ~$200–260 |
 | RTX 4090 WOL (2h/day) | ~$15–25 |
 
-**Tip:** Enable WOL on your GPU machines and let Tom wake them only when needed.
+**Tip:** Enable WOL on your GPU machines and let H1 wake them only when needed.
 See [`hh wake`](/reference/wake) and the [WOL guide](/guide/wol).
 
 ---

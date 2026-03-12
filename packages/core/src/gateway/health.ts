@@ -1,6 +1,6 @@
 /**
  * Gateway /health endpoint checker.
- * Used in the wake polling loop to confirm Jerry's gateway is ready.
+ * Used in the wake polling loop to confirm H2's gateway is ready.
  */
 export async function checkGatewayHealth(
   endpoint: string,

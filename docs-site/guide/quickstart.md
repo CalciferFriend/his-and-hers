@@ -18,55 +18,55 @@ Both machines must be connected to the same Tailscale network (same account or s
 
 ---
 
-## Step 1 — Run the wizard on Tom's machine
+## Step 1 — Run the wizard on H1's machine
 
-Tom is typically your always-on server, cloud VM, or low-power machine. It orchestrates.
+H1 is typically your always-on server, cloud VM, or low-power machine. It orchestrates.
 
 ```bash
 npx his-and-hers
 # or
-npm install -g his-and-hers && tj onboard
+npm install -g his-and-hers && hh onboard
 ```
 
 When prompted:
 
-1. **Role:** Tom
+1. **Role:** H1
 2. **Name + emoji:** whatever feels right (`Calcifer 🔥`, `Orchestrator`, etc.)
 3. **LLM provider:** your cloud provider + API key (stored in OS keychain, never plaintext)
-4. **Jerry's Tailscale IP:** run `tailscale ip -4` on Jerry's machine and paste it here
-5. **SSH user + key path:** how Tom SSHes into Jerry
-6. **Wake-on-LAN (optional):** Jerry's MAC address if you want Tom to wake it from sleep
+4. **H2's Tailscale IP:** run `tailscale ip -4` on H2's machine and paste it here
+5. **SSH user + key path:** how H1 SSHes into H2
+6. **Wake-on-LAN (optional):** H2's MAC address if you want H1 to wake it from sleep
 
 ---
 
-## Step 2 — Run the wizard on Jerry's machine
+## Step 2 — Run the wizard on H2's machine
 
-Jerry is your GPU workstation, gaming PC, Mac Mini, or Raspberry Pi. It executes.
+H2 is your GPU workstation, gaming PC, Mac Mini, or Raspberry Pi. It executes.
 
 ```bash
 npx his-and-hers
 # or
-tj onboard
+hh onboard
 ```
 
 When prompted:
 
-1. **Role:** Jerry
+1. **Role:** H2
 2. **Name + emoji:** `GLaDOS 🤖`, `WorkerBee`, etc.
 3. **LLM provider:** local Ollama (recommended), or cloud
-4. **Tom's Tailscale IP:** run `tailscale ip -4` on Tom's machine
+4. **H1's Tailscale IP:** run `tailscale ip -4` on H1's machine
 5. **Windows only:** wizard installs AutoLogin registry + Scheduled Task for headless WOL boot
 
-> **Tip:** If Jerry is Windows, run the wizard in an **Administrator** PowerShell so it can configure AutoLogin and the Scheduled Task automatically.
+> **Tip:** If H2 is Windows, run the wizard in an **Administrator** PowerShell so it can configure AutoLogin and the Scheduled Task automatically.
 
 ---
 
 ## Step 3 — Verify the connection
 
-On Tom's machine:
+On H1's machine:
 
 ```bash
-tj status
+hh status
 ```
 
 You should see both nodes with a ✓ on Tailscale reachability and gateway health.
@@ -74,25 +74,25 @@ You should see both nodes with a ✓ on Tailscale reachability and gateway healt
 If anything's red, run:
 
 ```bash
-tj doctor
+hh doctor
 ```
 
 The doctor checks connectivity, SSH access, gateway config, and WOL setup and tells you exactly what's wrong.
 
 ---
 
-## Step 4 — Send Jerry something to do
+## Step 4 — Send H2 something to do
 
 ```bash
-tj send "write a haiku about distributed systems"
+hh send "write a haiku about distributed systems"
 ```
 
-If Jerry is asleep, Tom sends a Wake-on-LAN packet and waits. Jerry boots, receives the task, works on it, and sends back the result.
+If H2 is asleep, H1 sends a Wake-on-LAN packet and waits. H2 boots, receives the task, works on it, and sends back the result.
 
 Watch it live:
 
 ```bash
-tj logs --follow
+hh logs --follow
 ```
 
 ---
@@ -101,6 +101,6 @@ tj logs --follow
 
 - **[How it works](/guide/how-it-works)** — understand the architecture
 - **[LLM providers](/guide/providers)** — connect Ollama, Anthropic, OpenAI, LM Studio
-- **[Sending tasks](/guide/sending-tasks)** — `tj send` flags and options
-- **[Capability routing](/guide/capabilities)** — let Tom route tasks automatically
-- **[Docker](/guide/docker)** — containerized Tom and Jerry
+- **[Sending tasks](/guide/sending-tasks)** — `hh send` flags and options
+- **[Capability routing](/guide/capabilities)** — let H1 route tasks automatically
+- **[Docker](/guide/docker)** — containerized H1 and H2

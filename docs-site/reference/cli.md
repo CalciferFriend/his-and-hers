@@ -1,6 +1,6 @@
-# CLI Reference — `tj`
+# CLI Reference — `hh`
 
-`tj` is the command-line interface for his-and-hers. All commands work on both Tom and Jerry nodes unless noted.
+`hh` is the command-line interface for his-and-hers. All commands work on both H1 and H2 nodes unless noted.
 
 ---
 
@@ -16,35 +16,35 @@
 
 ## Commands
 
-### `tj` (no args)
+### `hh` (no args)
 
-First run → launches `tj onboard`. Subsequent runs → shows `tj status`.
+First run → launches `hh onboard`. Subsequent runs → shows `hh status`.
 
 ---
 
-### `tj onboard`
+### `hh onboard`
 
 Interactive setup wizard. Configures role, identity, LLM provider, Tailscale pairing, SSH, Wake-on-LAN, gateway bind, Windows AutoLogin, and startup scripts.
 
 ```bash
-tj onboard
-tj onboard --role tom     # skip role selection
-tj onboard --role jerry
+hh onboard
+hh onboard --role h1     # skip role selection
+hh onboard --role h2
 ```
 
 See [Quickstart](/guide/quickstart) for a full walkthrough.
 
 ---
 
-### `tj send <task>`
+### `hh send <task>`
 
-Send a task to Jerry (run from Tom).
+Send a task to H2 (run from H1).
 
 ```bash
-tj send "summarize the attached PDF"
-tj send "generate a hero image, dark theme" --wait
-tj send "run the test suite" --peer jerry-beast
-tj send "what is 2+2"      # fast, no WOL needed
+hh send "summarize the attached PDF"
+hh send "generate a hero image, dark theme" --wait
+hh send "run the test suite" --peer h2-beast
+hh send "what is 2+2"      # fast, no WOL needed
 ```
 
 **Flags:**
@@ -52,7 +52,7 @@ tj send "what is 2+2"      # fast, no WOL needed
 | Flag | Description |
 |------|-------------|
 | `--wait` | Block until result is received (polls task state) |
-| `--peer <name>` | Target a specific Jerry by name |
+| `--peer <name>` | Target a specific H2 by name |
 | `--timeout <s>` | Max seconds to wait for result (default: 300) |
 | `--attach <path>` | Attach a file to the task |
 | `--json` | Output task ID + status as JSON |
@@ -61,139 +61,139 @@ See [Sending tasks](/guide/sending-tasks) for more.
 
 ---
 
-### `tj status`
+### `hh status`
 
-Show the health of both Tom and Jerry nodes.
+Show the health of both H1 and H2 nodes.
 
 ```bash
-tj status
-tj status --json
+hh status
+hh status --json
 ```
 
 Displays: Tailscale reachability, gateway health, last heartbeat, current model, WOL capability, budget summary.
 
 ---
 
-### `tj wake`
+### `hh wake`
 
-Send a Wake-on-LAN Magic Packet to Jerry.
+Send a Wake-on-LAN Magic Packet to H2.
 
 ```bash
-tj wake
-tj wake --peer jerry-beast
-tj wake --wait    # wait for gateway to come online
+hh wake
+hh wake --peer h2-beast
+hh wake --wait    # wait for gateway to come online
 ```
 
 ---
 
-### `tj logs`
+### `hh logs`
 
 View task history.
 
 ```bash
-tj logs                          # last 20 tasks
-tj logs --follow                 # live tail, polls every 2s
-tj logs --status failed          # filter by status
-tj logs --peer jerry-pi          # filter by peer
-tj logs --since 24h              # time window (24h, 7d, 30m)
-tj logs --limit 50
-tj logs --output                 # include result text inline
-tj logs --json                   # machine-readable
+hh logs                          # last 20 tasks
+hh logs --follow                 # live tail, polls every 2s
+hh logs --status failed          # filter by status
+hh logs --peer h2-pi          # filter by peer
+hh logs --since 24h              # time window (24h, 7d, 30m)
+hh logs --limit 50
+hh logs --output                 # include result text inline
+hh logs --json                   # machine-readable
 ```
 
 ---
 
-### `tj budget`
+### `hh budget`
 
 Show cost tracking.
 
 ```bash
-tj budget                # today
-tj budget --week
-tj budget --month
-tj budget --all
-tj budget --tasks        # per-task breakdown
-tj budget --json
+hh budget                # today
+hh budget --week
+hh budget --month
+hh budget --all
+hh budget --tasks        # per-task breakdown
+hh budget --json
 ```
 
 See [Budget tracking](/guide/budget) for more.
 
 ---
 
-### `tj capabilities`
+### `hh capabilities`
 
 Scan, advertise, fetch, and route via capabilities.
 
 ```bash
-tj capabilities scan       # probe local hardware + models
-tj capabilities advertise  # scan + save + notify Tom
-tj capabilities fetch      # pull Jerry's capabilities to Tom (run on Tom)
-tj capabilities show       # display cached capabilities
-tj capabilities route "generate an image"  # preview routing decision
+hh capabilities scan       # probe local hardware + models
+hh capabilities advertise  # scan + save + notify H1
+hh capabilities fetch      # pull H2's capabilities to H1 (run on H1)
+hh capabilities show       # display cached capabilities
+hh capabilities route "generate an image"  # preview routing decision
 ```
 
 See [Capability routing](/guide/capabilities) for more.
 
 ---
 
-### `tj discover`
+### `hh discover`
 
-Browse the community registry of published Jerry nodes.
+Browse the community registry of published H2 nodes.
 
 ```bash
-tj discover                          # browse all
-tj discover --gpu                    # nodes with GPU
-tj discover --skill image-gen        # nodes with image gen
-tj discover --provider ollama        # Ollama nodes only
-tj discover --os windows             # Windows Jerrys
-tj discover --json
+hh discover                          # browse all
+hh discover --gpu                    # nodes with GPU
+hh discover --skill image-gen        # nodes with image gen
+hh discover --provider ollama        # Ollama nodes only
+hh discover --os windows             # Windows Jerrys
+hh discover --json
 ```
 
 ---
 
-### `tj publish`
+### `hh publish`
 
 Publish your node card to the community registry (anonymized GitHub Gist).
 
 ```bash
-tj publish          # guided flow: description, tags, public/private
-tj publish --dry-run
+hh publish          # guided flow: description, tags, public/private
+hh publish --dry-run
 ```
 
-See what gets published: `tj capabilities show` — no IP addresses, no API keys, just hardware + skill tags.
+See what gets published: `hh capabilities show` — no IP addresses, no API keys, just hardware + skill tags.
 
 ---
 
-### `tj pair`
+### `hh pair`
 
 Manage peer connections.
 
 ```bash
-tj pair              # interactive: add/remove/test peers
-tj pair list         # list configured peers
-tj pair test         # test all peers
-tj pair remove <name>
+hh pair              # interactive: add/remove/test peers
+hh pair list         # list configured peers
+hh pair test         # test all peers
+hh pair remove <name>
 ```
 
 ---
 
-### `tj doctor`
+### `hh doctor`
 
 Diagnose connectivity, config, and setup issues.
 
 ```bash
-tj doctor
+hh doctor
 ```
 
 Checks: Node version, Tailscale status, SSH access to peers, gateway health, WOL config, capability file freshness.
 
 ---
 
-### `tj heartbeat`
+### `hh heartbeat`
 
-Manually send a heartbeat to Tom (typically run automatically by Jerry's gateway).
+Manually send a heartbeat to H1 (typically run automatically by H2's gateway).
 
 ```bash
-tj heartbeat
-tj heartbeat --peer tom-name
+hh heartbeat
+hh heartbeat --peer tom-name
 ```

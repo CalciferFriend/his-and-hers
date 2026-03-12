@@ -1,11 +1,11 @@
 /**
  * capabilities/registry.schema.ts
  *
- * Zod schema for TJCapabilityReport — what a Jerry node advertises about
- * itself so Tom can make informed routing decisions.
+ * Zod schema for HHCapabilityReport — what a H2 node advertises about
+ * itself so H1 can make informed routing decisions.
  *
- * Jerry writes this to ~/.his-and-hers/capabilities.json via `tj capabilities --advertise`.
- * Tom fetches it from the peer gateway at /capabilities or via SSH.
+ * H2 writes this to ~/.his-and-hers/capabilities.json via `hh capabilities --advertise`.
+ * H1 fetches it from the peer gateway at /capabilities or via SSH.
  */
 
 import { z } from "zod";
@@ -31,7 +31,7 @@ export const TJOllamaInfo = z.object({
 export type TJOllamaInfo = z.infer<typeof TJOllamaInfo>;
 
 /**
- * Skill tags Jerry can advertise. Tom uses these for routing hints.
+ * Skill tags H2 can advertise. H1 uses these for routing hints.
  *
  * Well-known tags:
  *   - "image-gen"      → Stable Diffusion, ComfyUI, etc.
@@ -59,14 +59,14 @@ export const TJSkillTag = z.enum([
 ]);
 export type TJSkillTag = z.infer<typeof TJSkillTag>;
 
-export const TJCapabilityReport = z.object({
+export const HHCapabilityReport = z.object({
   /** Schema version — for forward compat */
   version: z.string().default("0.1.0"),
   /** Node name (matches TJConfig.this_node.name) */
   node: z.string(),
   /** ISO datetime when this report was generated */
   reported_at: z.string().datetime().default(() => new Date().toISOString()),
-  /** Platform Jerry is running on */
+  /** Platform H2 is running on */
   platform: z.enum(["windows", "linux", "macos"]).default("linux"),
   /** GPU status */
   gpu: TJGPUInfo.default({ available: false }),
@@ -97,15 +97,15 @@ export const TJCapabilityReport = z.object({
    */
   latent_support: z.boolean().default(false),
   /**
-   * Peer-set field: Tom stamps this when he receives the report so he knows
-   * when he last fetched fresh capability data from Jerry.
+   * Peer-set field: H1 stamps this when he receives the report so he knows
+   * when he last fetched fresh capability data from H2.
    */
   fetched_at: z.string().datetime().optional(),
 });
-export type TJCapabilityReport = z.infer<typeof TJCapabilityReport>;
+export type HHCapabilityReport = z.infer<typeof HHCapabilityReport>;
 
 /** Minimal capability report when peer is unreachable or hasn't advertised. */
-export const UNKNOWN_CAPABILITIES: TJCapabilityReport = TJCapabilityReport.parse({
+export const UNKNOWN_CAPABILITIES: HHCapabilityReport = HHCapabilityReport.parse({
   version: "0.1.0",
   node: "unknown",
   reported_at: new Date(0).toISOString(),

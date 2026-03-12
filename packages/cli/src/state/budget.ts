@@ -172,14 +172,14 @@ export async function buildBudgetSummary(
 
 /**
  * Return a simple routing recommendation based on current budget state.
- * Called by `tj send` to suggest local routing when cloud spend is high.
+ * Called by `hh send` to suggest local routing when cloud spend is high.
  */
 export function budgetRoutingAdvice(summary: BudgetSummary): string | null {
   if (summary.total_cost_usd > 5.0) {
-    return `Cloud spend is $${summary.total_cost_usd.toFixed(2)} this ${summary.window} — consider routing heavy tasks to Jerry (local GPU)`;
+    return `Cloud spend is $${summary.total_cost_usd.toFixed(2)} this ${summary.window} — consider routing heavy tasks to H2 (local GPU)`;
   }
   if (summary.total_cost_usd > 1.0 && summary.local_tokens === 0) {
-    return `No local tasks this ${summary.window} — tj send supports Jerry's Ollama for heavy workloads`;
+    return `No local tasks this ${summary.window} — hh send supports H2's Ollama for heavy workloads`;
   }
   return null;
 }

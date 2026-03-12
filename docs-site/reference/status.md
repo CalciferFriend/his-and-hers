@@ -1,4 +1,4 @@
-# `tj status` — Reference
+# `hh status` — Reference
 
 Show the health and state of all configured nodes.
 
@@ -7,7 +7,7 @@ Show the health and state of all configured nodes.
 ## Synopsis
 
 ```bash
-tj status [flags]
+hh status [flags]
 ```
 
 ---
@@ -27,16 +27,16 @@ tj status [flags]
 ### Default
 
 ```bash
-$ tj status
+$ hh status
 
 his-and-hers v0.5.2
 
-Tom  (Calcifer 🔥)
+H1  (Calcifer 🔥)
   ✓  gateway healthy      127.0.0.1:3737
   ✓  Tailscale up         100.x.y.z
   ✓  provider             anthropic/claude-sonnet-4-5
 
-Jerry  (GLaDOS 🤖  —  jerry-home)
+H2  (GLaDOS 🤖  —  h2-home)
   ✓  Tailscale reachable  100.a.b.c
   ✓  gateway healthy      100.a.b.c:3737
   ✓  last heartbeat       8s ago
@@ -44,13 +44,13 @@ Jerry  (GLaDOS 🤖  —  jerry-home)
   ✓  WOL configured       D8:5E:D3:04:18:B4
      GPU                  NVIDIA RTX 3070 Ti · 8 GB VRAM
 
-Jerry  (jerry-pi 🍓)
+H2  (h2-pi 🍓)
   ✓  Tailscale reachable  100.c.d.e
   ✓  gateway healthy      100.c.d.e:3737
   ✓  last heartbeat       22s ago
      WOL                  not configured
 
-Jerry  (jerry-beast 🦾)
+H2  (h2-beast 🦾)
   ✗  Tailscale offline    (last seen: 4h 12m ago)
   ✓  WOL configured       D8:5E:D3:AA:BB:CC
      Capabilities cached  (fetched 4h ago)
@@ -61,9 +61,9 @@ Budget (today): $0.18 cloud / $0.00 local (5 tasks)
 ### With `--peer`
 
 ```bash
-$ tj status --peer jerry-beast
+$ hh status --peer h2-beast
 
-Jerry (jerry-beast 🦾)  —  RTX 4090
+H2 (h2-beast 🦾)  —  RTX 4090
   Tailscale IP:    100.a.b.c
   Status:          OFFLINE (last seen 4h 12m ago)
   WOL:             ✓ configured  MAC: D8:5E:D3:AA:BB:CC
@@ -86,7 +86,7 @@ Jerry (jerry-beast 🦾)  —  RTX 4090
 ## JSON output
 
 ```bash
-$ tj status --json
+$ hh status --json
 ```
 
 ```json
@@ -103,7 +103,7 @@ $ tj status --json
   },
   "peers": [
     {
-      "name": "jerry-home",
+      "name": "h2-home",
       "emoji": "🤖",
       "tailscale_ip": "100.a.b.c",
       "tailscale_reachable": true,
@@ -119,7 +119,7 @@ $ tj status --json
       }
     },
     {
-      "name": "jerry-beast",
+      "name": "h2-beast",
       "tailscale_reachable": false,
       "gateway_healthy": false,
       "last_seen_seconds_ago": 15120,
@@ -146,26 +146,26 @@ $ tj status --json
 
 ---
 
-## What `tj status` checks
+## What `hh status` checks
 
-1. **Tom gateway** — HTTP GET `http://127.0.0.1:3737/health`
+1. **H1 gateway** — HTTP GET `http://127.0.0.1:3737/health`
 2. **Tailscale** — `tailscale status` for this node
 3. **For each peer:**
    - Tailscale reachability — `tailscale ping <peer-ip>` (fast, cached)
    - Gateway health — HTTP GET `http://<peer-ip>:<port>/health`
-   - Last heartbeat — age of last `HHHeartbeat` received from Jerry
+   - Last heartbeat — age of last `HHHeartbeat` received from H2
    - WOL config — whether MAC address is configured
 
-Heartbeat is passive — it uses the last-received time. `tj status` does not actively contact Jerry's heartbeat endpoint.
+Heartbeat is passive — it uses the last-received time. `hh status` does not actively contact H2's heartbeat endpoint.
 
 ---
 
-## `tj doctor`
+## `hh doctor`
 
 For deeper diagnostics (SSH, WOL, config validation):
 
 ```bash
-tj doctor
+hh doctor
 ```
 
 Output:
@@ -176,21 +176,21 @@ Diagnosing...
 ✓  Node.js v22.14.0
 ✓  Tailscale running (100.x.y.z)
 ✓  OpenClaw gateway healthy (127.0.0.1:3737)
-✓  jerry-home: Tailscale reachable (12ms)
-✓  jerry-home: gateway healthy
-✓  jerry-home: SSH access OK
-✓  jerry-home: WOL configured
-✗  jerry-beast: Tailscale unreachable (offline)
-⚠  jerry-beast: capabilities cache is 4h old (stale)
+✓  h2-home: Tailscale reachable (12ms)
+✓  h2-home: gateway healthy
+✓  h2-home: SSH access OK
+✓  h2-home: WOL configured
+✗  h2-beast: Tailscale unreachable (offline)
+⚠  h2-beast: capabilities cache is 4h old (stale)
 
 1 error, 1 warning
-Run `tj wake --peer jerry-beast` to check WOL setup.
+Run `hh wake --peer h2-beast` to check WOL setup.
 ```
 
 ---
 
 ## See also
 
-- [tj logs](/reference/logs) — task history
-- [tj wake](/reference/wake) — wake offline Jerry
-- [tj doctor](/reference/cli#tj-doctor) — deep diagnostics
+- [hh logs](/reference/logs) — task history
+- [hh wake](/reference/wake) — wake offline H2
+- [hh doctor](/reference/cli#hh-doctor) — deep diagnostics

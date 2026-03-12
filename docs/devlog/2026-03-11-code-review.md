@@ -8,8 +8,8 @@ A live asynchronous code review conducted between the two paired agents via the 
 
 | Agent | Role | Model |
 |-------|------|-------|
-| **Calcifer** 🔥 | Tom (Orchestrator) — AWS EC2 | claude-sonnet-4-6 |
-| **GLaDOS** 🤖 | Jerry (Executor) — Home PC, NYC | gpt-5.1-codex |
+| **Calcifer** 🔥 | H1 (Orchestrator) — AWS EC2 | claude-sonnet-4-6 |
+| **GLaDOS** 🤖 | H2 (Executor) — Home PC, NYC | gpt-5.1-codex |
 
 ---
 
@@ -103,7 +103,7 @@ if (msg.type === 'res' && msg.id === wakeReqId) { finish({ ok: msg.ok, error: ..
 
 ### Roadmap
 
-**6. Implement Phase 3 CLI** — `tj send <task>` should: ping peer → WOL if sleeping → build HHMessage → send via `wakeAgent` → wait for result. `tj status` should: check Tailscale reachability → check gateway health → show last heartbeat.
+**6. Implement Phase 3 CLI** — `hh send <task>` should: ping peer → WOL if sleeping → build HHMessage → send via `wakeAgent` → wait for result. `hh status` should: check Tailscale reachability → check gateway health → show last heartbeat.
 
 ---
 

@@ -1,6 +1,6 @@
 # Budget Tracking
 
-his-and-hers tracks the cost of every task — cloud API tokens and local compute both. `tj budget` shows you where your money is going and advises when to route to local instead of cloud.
+his-and-hers tracks the cost of every task — cloud API tokens and local compute both. `hh budget` shows you where your money is going and advises when to route to local instead of cloud.
 
 ---
 
@@ -27,10 +27,10 @@ Costs are stored in task state files at `~/.his-and-hers/tasks/`.
 
 ---
 
-## `tj budget` — daily summary
+## `hh budget` — daily summary
 
 ```bash
-tj budget
+hh budget
 ```
 
 Output:
@@ -48,7 +48,7 @@ Tasks run:      23 (18 cloud, 5 local)
 Avg task cost:  $0.008 (cloud)
 ───────────────────────────────────────────
 Routing tip: 5 tasks routed to cloud could have run locally.
-             Consider: tj send with --peer jerry-home for coding tasks.
+             Consider: hh send with --peer h2-home for coding tasks.
 ```
 
 ---
@@ -56,11 +56,11 @@ Routing tip: 5 tasks routed to cloud could have run locally.
 ## Time ranges
 
 ```bash
-tj budget           # today (default)
-tj budget --week    # last 7 days
-tj budget --month   # current calendar month
-tj budget --all     # all time
-tj budget --since 2026-03-01  # custom start date
+hh budget           # today (default)
+hh budget --week    # last 7 days
+hh budget --month   # current calendar month
+hh budget --all     # all time
+hh budget --since 2026-03-01  # custom start date
 ```
 
 ---
@@ -68,7 +68,7 @@ tj budget --since 2026-03-01  # custom start date
 ## Per-task breakdown
 
 ```bash
-tj budget --tasks
+hh budget --tasks
 ```
 
 Output:
@@ -76,11 +76,11 @@ Output:
 ```
 Task breakdown (today)
 ─────────────────────────────────────────────────────────────
-task_01j8g1...  claude-sonnet  "summarize the repo..."   $0.04   local → jerry-pi
+task_01j8g1...  claude-sonnet  "summarize the repo..."   $0.04   local → h2-pi
 task_01j8g2...  gpt-4o         "generate test plan"      $0.03   cloud
-task_01j8g3...  ollama/mistral "write unit tests"        $0.00   jerry-home
+task_01j8g3...  ollama/mistral "write unit tests"        $0.00   h2-home
 task_01j8g4...  claude-haiku   "route: is this GPU..."   $0.00
-task_01j8g5...  ollama/llama3  "review PR diff"          $0.00   jerry-home
+task_01j8g5...  ollama/llama3  "review PR diff"          $0.00   h2-home
 ─────────────────────────────────────────────────────────────
 Total: $0.07
 ```
@@ -90,7 +90,7 @@ Total: $0.07
 ## JSON output
 
 ```bash
-tj budget --json
+hh budget --json
 ```
 
 ```json
@@ -114,7 +114,7 @@ tj budget --json
 
 ## Cost routing
 
-his-and-hers can automatically route tasks to minimize cloud spend. Set thresholds in `tj.json`:
+his-and-hers can automatically route tasks to minimize cloud spend. Set thresholds in `hh.json`:
 
 ```json
 {
@@ -132,11 +132,11 @@ his-and-hers can automatically route tasks to minimize cloud spend. Set threshol
 With this config:
 - Short tasks (≤ 1000 estimated tokens): Haiku (~$0.001)
 - Standard tasks: Sonnet (~$0.01)
-- Heavy/GPU tasks: routed to Jerry at $0.00
+- Heavy/GPU tasks: routed to H2 at $0.00
 
 ### Local-first routing
 
-To always prefer Jerry's local models and only fall back to cloud:
+To always prefer H2's local models and only fall back to cloud:
 
 ```json
 {
@@ -149,7 +149,7 @@ To always prefer Jerry's local models and only fall back to cloud:
 }
 ```
 
-This routes everything to Jerry. If Jerry is offline and WOL fails within the timeout, it falls back to cloud.
+This routes everything to H2. If H2 is offline and WOL fails within the timeout, it falls back to cloud.
 
 ---
 
@@ -166,13 +166,13 @@ Set a daily budget limit to get notified before you overspend:
 }
 ```
 
-When 80% of the daily limit is reached, Tom logs a warning and can optionally block further cloud tasks:
+When 80% of the daily limit is reached, H1 logs a warning and can optionally block further cloud tasks:
 
 ```bash
-$ tj send "complex reasoning task"
+$ hh send "complex reasoning task"
 ⚠️  Daily budget 82% used ($0.82/$1.00).
-   Routing to Jerry (local) instead of cloud.
-→ Task dispatched to jerry-home (Ollama/mistral)
+   Routing to H2 (local) instead of cloud.
+→ Task dispatched to h2-home (Ollama/mistral)
 ```
 
 ---
@@ -180,11 +180,11 @@ $ tj send "complex reasoning task"
 ## Per-peer breakdown
 
 ```bash
-tj budget --peer jerry-home --week
+hh budget --peer h2-home --week
 ```
 
 ```
-Budget — jerry-home (last 7 days)
+Budget — h2-home (last 7 days)
 ──────────────────────────────────
 Tasks:    47
 Tokens:   1.2M in / 210k out

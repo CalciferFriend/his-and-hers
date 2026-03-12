@@ -35,8 +35,8 @@ export async function sshExec(
  */
 export async function testSSH(config: SSHConfig): Promise<boolean> {
   try {
-    const { stdout } = await sshExec(config, "echo tj-connected");
-    return stdout.trim() === "tj-connected";
+    const { stdout } = await sshExec(config, "echo hh-connected");
+    return stdout.trim() === "hh-connected";
   } catch {
     return false;
   }

@@ -56,7 +56,7 @@ async function restartLocalGateway(): Promise<boolean> {
 export async function stepGatewayBind(ctx: Partial<WizardContext>): Promise<Partial<WizardContext>> {
   const role = ctx.role!;
   const defaults = ROLE_DEFAULTS[role];
-  const peerRole = role === "tom" ? "jerry" : "tom";
+  const peerRole = role === "h1" ? "jerry" : "tom";
   const peerDefaults = ROLE_DEFAULTS[peerRole];
 
   // ── Step 1: choose bind mode for THIS node ────────────────────────────────
@@ -64,8 +64,8 @@ export async function stepGatewayBind(ctx: Partial<WizardContext>): Promise<Part
     message: `Gateway bind mode for this node (${ctx.name})`,
     initialValue: defaults.bindMode,
     options: [
-      { value: "loopback" as const, label: "Loopback (127.0.0.1)", hint: "local only — recommended for Tom" },
-      { value: "tailscale" as const, label: "Tailscale IP", hint: "peer-reachable — recommended for Jerry" },
+      { value: "loopback" as const, label: "Loopback (127.0.0.1)", hint: "local only — recommended for H1" },
+      { value: "tailscale" as const, label: "Tailscale IP", hint: "peer-reachable — recommended for H2" },
       { value: "lan" as const, label: "LAN (0.0.0.0)", hint: "all interfaces — use with caution" },
     ],
   });
@@ -87,11 +87,11 @@ export async function stepGatewayBind(ctx: Partial<WizardContext>): Promise<Part
       const bindPatch: Record<string, unknown> = {
         gateway: {
           bind: thisBindMode,
-          // For Jerry (tailscale bind), also add Tom's IP to trustedProxies
+          // For H2 (tailscale bind), also add H1's IP to trustedProxies
           ...(thisBindMode === "tailscale" && ctx.peerTailscaleIP
             ? { trustedProxies: ["127.0.0.1", ctx.peerTailscaleIP] }
             : {}),
-          // For Tom (loopback bind), enable tailscale mode off to keep loopback
+          // For H1 (loopback bind), enable tailscale mode off to keep loopback
           ...(thisBindMode === "loopback"
             ? { tailscale: { mode: "off" } }
             : { tailscale: { mode: "on" } }),
@@ -105,7 +105,7 @@ export async function stepGatewayBind(ctx: Partial<WizardContext>): Promise<Part
     }
   }
 
-  // ── Step 3: For Jerry on Windows with tailscale bind ─────────────────────
+  // ── Step 3: For H2 on Windows with tailscale bind ─────────────────────
   //    The local TUI won't work unless we add a loopback→tailscale portproxy.
   //    Discovered during Calcifer/GLaDOS reference setup (2026-03-11).
   if (thisBindMode === "tailscale" && process.platform === "win32" && ctx.tailscaleIP) {
@@ -115,7 +115,7 @@ export async function stepGatewayBind(ctx: Partial<WizardContext>): Promise<Part
     if (!alreadyInstalled) {
       p.log.info(
         pc.cyan("ℹ") +
-        " Jerry's gateway binds to the Tailscale IP so Tom can reach it.\n" +
+        " H2's gateway binds to the Tailscale IP so H1 can reach it.\n" +
         "  But the local OpenClaw TUI connects to 127.0.0.1 — which won't be listening.\n" +
         "  Installing a loopback portproxy so the TUI works locally too.",
       );
@@ -149,12 +149,12 @@ export async function stepGatewayBind(ctx: Partial<WizardContext>): Promise<Part
     }
   }
 
-  // ── Step 5: update PEER's gateway config via SSH (Tom setting up Jerry) ───
+  // ── Step 5: update PEER's gateway config via SSH (H1 setting up H2) ───
   const peerBindMode = peerDefaults.bindMode;
 
-  if (role === "tom" && ctx.peerTailscaleIP && ctx.peerSSHUser) {
+  if (role === "h1" && ctx.peerTailscaleIP && ctx.peerSSHUser) {
     const updatePeer = await p.confirm({
-      message: `Update the peer's (Jerry) gateway to bind=tailscale and add your Tailscale IP to trustedProxies?`,
+      message: `Update the peer's (H2) gateway to bind=tailscale and add your Tailscale IP to trustedProxies?`,
       initialValue: true,
     });
     if (!isCancelled(updatePeer) && updatePeer) {
@@ -164,7 +164,7 @@ export async function stepGatewayBind(ctx: Partial<WizardContext>): Promise<Part
         const peerOS = ctx.peerOS ?? "linux";
 
         if (peerOS === "windows") {
-          // PowerShell deep-merge of gateway config on Windows Jerry
+          // PowerShell deep-merge of gateway config on Windows H2
           const tomIP = ctx.tailscaleIP ?? "";
           const psCmd = [
             `$f = "$env:USERPROFILE\\.openclaw\\openclaw.json"`,
@@ -173,7 +173,7 @@ export async function stepGatewayBind(ctx: Partial<WizardContext>): Promise<Part
             `$j.gateway | Add-Member -NotePropertyName bind -NotePropertyValue 'tailscale' -Force`,
             `if (-not $j.gateway.PSObject.Properties['tailscale']) { $j.gateway | Add-Member -NotePropertyName tailscale -NotePropertyValue ([PSCustomObject]@{}) }`,
             `$j.gateway.tailscale | Add-Member -NotePropertyName mode -NotePropertyValue 'on' -Force`,
-            // Merge trustedProxies — preserve existing, add Tom's IP
+            // Merge trustedProxies — preserve existing, add H1's IP
             `$existing = if ($j.gateway.PSObject.Properties['trustedProxies']) { @($j.gateway.trustedProxies) } else { @('127.0.0.1') }`,
             `$j.gateway | Add-Member -NotePropertyName trustedProxies -NotePropertyValue ($existing + '${tomIP}' | Select-Object -Unique) -Force`,
             `$j | ConvertTo-Json -Depth 10 | Set-Content $f -Encoding UTF8`,
@@ -206,7 +206,7 @@ export async function stepGatewayBind(ctx: Partial<WizardContext>): Promise<Part
         s.stop(pc.green(`✓ Peer gateway updated and restarted (bind=tailscale, trustedProxies +${ctx.tailscaleIP})`));
       } catch (err) {
         s.stop(pc.yellow("⚠ Could not update peer gateway via SSH — update manually"));
-        p.log.warn("On the Jerry machine, set: gateway.bind = 'tailscale', gateway.trustedProxies includes this node's Tailscale IP");
+        p.log.warn("On the H2 machine, set: gateway.bind = 'tailscale', gateway.trustedProxies includes this node's Tailscale IP");
       }
     }
   }

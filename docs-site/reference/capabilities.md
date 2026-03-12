@@ -1,4 +1,4 @@
-# `tj capabilities` — Reference
+# `hh capabilities` — Reference
 
 Scan, advertise, fetch, show, and route via the capability registry.
 
@@ -7,19 +7,19 @@ Scan, advertise, fetch, show, and route via the capability registry.
 ## Synopsis
 
 ```bash
-tj capabilities <subcommand> [flags]
+hh capabilities <subcommand> [flags]
 ```
 
 ---
 
 ## Subcommands
 
-### `tj capabilities scan`
+### `hh capabilities scan`
 
 Probe local hardware and software without saving or advertising.
 
 ```bash
-tj capabilities scan
+hh capabilities scan
 ```
 
 Output:
@@ -40,13 +40,13 @@ Skill tags:    ollama, gpu-inference
 
 ---
 
-### `tj capabilities advertise`
+### `hh capabilities advertise`
 
-Scan, save to disk, and push the profile to Tom.
+Scan, save to disk, and push the profile to H1.
 
 ```bash
-tj capabilities advertise
-tj capabilities advertise --tags "finetune,custom-skill"
+hh capabilities advertise
+hh capabilities advertise --tags "finetune,custom-skill"
 ```
 
 | Flag | Description |
@@ -59,19 +59,19 @@ What it does:
 
 1. Runs `scan`
 2. Writes `~/.his-and-hers/capabilities.json`
-3. POSTs the profile to Tom's gateway (if Tom is reachable)
+3. POSTs the profile to H1's gateway (if H1 is reachable)
 
-Run this on Jerry startup. The startup script / systemd unit includes it by default.
+Run this on H2 startup. The startup script / systemd unit includes it by default.
 
 ---
 
-### `tj capabilities fetch`
+### `hh capabilities fetch`
 
-Pull a peer's capability profile to Tom. Run on Tom.
+Pull a peer's capability profile to H1. Run on H1.
 
 ```bash
-tj capabilities fetch
-tj capabilities fetch --peer jerry-beast
+hh capabilities fetch
+hh capabilities fetch --peer h2-beast
 ```
 
 | Flag | Description |
@@ -83,17 +83,17 @@ Saves to `~/.his-and-hers/peer-capabilities-<peer>.json`.
 
 ---
 
-### `tj capabilities show`
+### `hh capabilities show`
 
 Display the cached capability profile.
 
 ```bash
-# On Jerry: show this node's profile
-tj capabilities show
+# On H2: show this node's profile
+hh capabilities show
 
-# On Tom: show a peer's cached profile
-tj capabilities show --peer jerry-home
-tj capabilities show --peer jerry-home --json
+# On H1: show a peer's cached profile
+hh capabilities show --peer h2-home
+hh capabilities show --peer h2-home --json
 ```
 
 Output:
@@ -132,14 +132,14 @@ JSON output:
 
 ---
 
-### `tj capabilities route`
+### `hh capabilities route`
 
 Preview where a task would be routed without actually sending it.
 
 ```bash
-tj capabilities route "generate a product image"
-tj capabilities route "summarize this document"
-tj capabilities route "run 70B inference on this paper"
+hh capabilities route "generate a product image"
+hh capabilities route "summarize this document"
+hh capabilities route "run 70B inference on this paper"
 ```
 
 Output:
@@ -149,11 +149,11 @@ Routing: "generate a product image"
 ──────────────────────────────────────────
 Keyword match:  "image" → skill: image-gen
 Candidates:
-  jerry-home   ✓ online   image-gen: no   gpu: RTX 3070 Ti
-  jerry-beast  ✗ offline  image-gen: yes  gpu: RTX 4090
-  jerry-pi     ✓ online   image-gen: no   gpu: none
+  h2-home   ✓ online   image-gen: no   gpu: RTX 3070 Ti
+  h2-beast  ✗ offline  image-gen: yes  gpu: RTX 4090
+  h2-pi     ✓ online   image-gen: no   gpu: none
 
-Decision: jerry-beast (offline — WOL will be sent)
+Decision: h2-beast (offline — WOL will be sent)
 Reason: only peer with image-gen skill
 ```
 
@@ -165,7 +165,7 @@ Reason: only peer with image-gen skill
 
 ## Capability file format
 
-`~/.his-and-hers/capabilities.json` (Jerry side):
+`~/.his-and-hers/capabilities.json` (H2 side):
 
 ```json
 {
@@ -204,4 +204,4 @@ Reason: only peer with image-gen skill
 
 - [Capability routing guide](/guide/capabilities) — routing logic, skill tags, keyword matching
 - [Multi-H2](/guide/multi-h2) — routing across multiple peers
-- [Protocol: TJCapabilityReport](/protocol/capabilities) — schema specification
+- [Protocol: HHCapabilityReport](/protocol/capabilities) — schema specification

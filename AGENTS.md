@@ -3,7 +3,7 @@
 ## Project structure
 ```
 packages/core/src/
-  protocol/       — HHMessage, HHHandoff, HHHeartbeat, TJPair (Zod schemas)
+  protocol/       — HHMessage, HHHandoff, HHHeartbeat, HHPair (Zod schemas)
   transport/      — tailscale.ts, ssh.ts, wol.ts
   trust/          — pairing.ts, allowlist.ts
   gateway/        — health.ts, bind.ts

@@ -1,4 +1,4 @@
-# `tj budget` — Reference
+# `hh budget` — Reference
 
 View cost tracking by time period, provider, model, or peer.
 
@@ -7,7 +7,7 @@ View cost tracking by time period, provider, model, or peer.
 ## Synopsis
 
 ```bash
-tj budget [flags]
+hh budget [flags]
 ```
 
 ---
@@ -31,7 +31,7 @@ tj budget [flags]
 ## Default output (today)
 
 ```bash
-$ tj budget
+$ hh budget
 ```
 
 ```
@@ -46,8 +46,8 @@ Local savings:  ~$4.27  (vs. claude-sonnet-4-5 pricing)
 Tasks run:      23  (18 cloud · 5 local)
 Avg cost/task:  $0.008 (cloud)
 ───────────────────────────────────────────────────────────
-Routing tip: 5 tasks routed to cloud could have run on Jerry.
-             Try: tj send "..." --auto (uses local when capable)
+Routing tip: 5 tasks routed to cloud could have run on H2.
+             Try: hh send "..." --auto (uses local when capable)
 ```
 
 ---
@@ -55,17 +55,17 @@ Routing tip: 5 tasks routed to cloud could have run on Jerry.
 ## `--tasks` output
 
 ```bash
-$ tj budget --tasks
+$ hh budget --tasks
 ```
 
 ```
 Per-task breakdown (today)
 ──────────────────────────────────────────────────────────────────
-task_01j8g1fk  ollama/mistral    "summarize the repo README"       $0.00   jerry-home
-task_01j8g0xq  claude-sonnet     "write unit tests for auth.ts"    $0.04   cloud (Tom)
-task_01j8fzq7  claude-haiku      "translate doc to French"         $0.01   cloud (Tom)
-task_01j8fzp1  ollama/llama3.2   "embed document corpus"           $0.00   jerry-pi
-task_01j8fzk3  claude-sonnet     "generate test plan for v2"       $0.08   cloud (Tom)
+task_01j8g1fk  ollama/mistral    "summarize the repo README"       $0.00   h2-home
+task_01j8g0xq  claude-sonnet     "write unit tests for auth.ts"    $0.04   cloud (H1)
+task_01j8fzq7  claude-haiku      "translate doc to French"         $0.01   cloud (H1)
+task_01j8fzp1  ollama/llama3.2   "embed document corpus"           $0.00   h2-pi
+task_01j8fzk3  claude-sonnet     "generate test plan for v2"       $0.08   cloud (H1)
 ──────────────────────────────────────────────────────────────────
 Total: $0.13
 ```
@@ -75,7 +75,7 @@ Total: $0.13
 ## Weekly output
 
 ```bash
-$ tj budget --week
+$ hh budget --week
 ```
 
 ```
@@ -102,7 +102,7 @@ Total:          $1.24  (164 tasks)
 ## JSON output
 
 ```bash
-$ tj budget --json
+$ hh budget --json
 ```
 
 ```json
@@ -130,8 +130,8 @@ $ tj budget --json
     "ollama":    { "cost_usd": 0.00, "tasks": 5,  "tokens_in": 284900, "tokens_out": 61200 }
   },
   "by_peer": {
-    "jerry-home": { "cost_usd": 0.00, "tasks": 3 },
-    "jerry-pi":   { "cost_usd": 0.00, "tasks": 2 },
+    "h2-home": { "cost_usd": 0.00, "tasks": 3 },
+    "h2-pi":   { "cost_usd": 0.00, "tasks": 2 },
     "cloud":      { "cost_usd": 0.18, "tasks": 18 }
   }
 }
@@ -142,11 +142,11 @@ $ tj budget --json
 ## Per-peer budget
 
 ```bash
-$ tj budget --peer jerry-home --week
+$ hh budget --peer h2-home --week
 ```
 
 ```
-Budget — jerry-home (last 7 days)
+Budget — h2-home (last 7 days)
 ──────────────────────────────────────────────
 Tasks:    47
 Tokens:   1.2M in / 210k out
@@ -179,4 +179,4 @@ Prices are baked into the binary and updated with releases. For the latest price
 ## See also
 
 - [Budget guide](/guide/budget) — cost routing, budget alerts, local-first config
-- [tj logs](/reference/logs) — per-task detail including cost
+- [hh logs](/reference/logs) — per-task detail including cost

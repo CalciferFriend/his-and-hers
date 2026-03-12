@@ -3,9 +3,9 @@ import { isCancelled, type WizardContext } from "../context.ts";
 import { buildProviderConfig, type ProviderConfig } from "../../config/schema.ts";
 
 const PROVIDERS = [
-  { value: "anthropic", label: "Anthropic (Claude)", hint: "recommended for Tom" },
+  { value: "anthropic", label: "Anthropic (Claude)", hint: "recommended for H1" },
   { value: "openai",    label: "OpenAI" },
-  { value: "ollama",    label: "Ollama (local)",    hint: "recommended for Jerry / GPU" },
+  { value: "ollama",    label: "Ollama (local)",    hint: "recommended for H2 / GPU" },
   { value: "lmstudio",  label: "LM Studio (local)" },
   { value: "custom",    label: "Custom OpenAI-compatible endpoint" },
 ] as const satisfies { value: ProviderConfig["kind"]; label: string; hint?: string }[];
@@ -123,7 +123,7 @@ export async function stepProvider(
           spinner.stop("Ollama responded but returned an error — continuing anyway.");
         }
       } catch {
-        spinner.stop("Ollama not reachable at that URL — make sure it's running before using tj.");
+        spinner.stop("Ollama not reachable at that URL — make sure it's running before using hh.");
       }
     }
   }
@@ -144,7 +144,7 @@ export async function stepProvider(
       process.exit(0);
     }
 
-    const keychainKey = `tj-${providerKind}-api-key`;
+    const keychainKey = `hh-${providerKind}-api-key`;
     const spinner = p.spinner();
     spinner.start("Storing API key in OS keychain…");
 

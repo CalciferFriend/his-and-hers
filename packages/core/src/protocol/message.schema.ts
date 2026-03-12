@@ -19,18 +19,18 @@ const HHMessageBase = z.object({
 
 // ─── Typed payload schemas ────────────────────────────────────────────────────
 
-/** Payload for type: "task" — Tom delegates work to Jerry */
-export const TJTaskPayload = z.object({
+/** Payload for type: "task" — H1 delegates work to H2 */
+export const HHTaskPayload = z.object({
   objective: z.string(),
   context: z.string().optional(),
   constraints: z.array(z.string()).default([]),
   expected_output: z.string().optional(),
   timeout_seconds: z.number().int().positive().optional(),
 });
-export type TJTaskPayload = z.infer<typeof TJTaskPayload>;
+export type HHTaskPayload = z.infer<typeof HHTaskPayload>;
 
-/** Payload for type: "result" — Jerry returns work to Tom */
-export const TJResultPayload = z.object({
+/** Payload for type: "result" — H2 returns work to H1 */
+export const HHResultPayload = z.object({
   task_id: z.string().uuid(),
   output: z.string(),
   success: z.boolean(),
@@ -40,7 +40,7 @@ export const TJResultPayload = z.object({
   tokens_used: z.number().int().nonnegative().optional(),
   duration_ms: z.number().int().nonnegative().optional(),
 });
-export type TJResultPayload = z.infer<typeof TJResultPayload>;
+export type HHResultPayload = z.infer<typeof HHResultPayload>;
 
 /** Payload for type: "heartbeat" — periodic liveness ping */
 export const HHHeartbeatPayload = z.object({
@@ -106,13 +106,13 @@ export type HHLatentPayload = z.infer<typeof HHLatentPayload>;
 
 export const HHTaskMessage = HHMessageBase.extend({
   type: z.literal("task"),
-  payload: TJTaskPayload,
+  payload: HHTaskPayload,
 });
 export type HHTaskMessage = z.infer<typeof HHTaskMessage>;
 
 export const HHResultMessage = HHMessageBase.extend({
   type: z.literal("result"),
-  payload: TJResultPayload,
+  payload: HHResultPayload,
 });
 export type HHResultMessage = z.infer<typeof HHResultMessage>;
 
@@ -200,7 +200,7 @@ export function isLatentMessage(msg: HHMessage): msg is HHLatentMessage {
 export function createTaskMessage(
   from: string,
   to: string,
-  payload: TJTaskPayload,
+  payload: HHTaskPayload,
   opts?: Partial<Pick<HHTaskMessage, "turn" | "context_summary" | "budget_remaining" | "wake_required">>,
 ): HHTaskMessage {
   return HHTaskMessage.parse({ from, to, type: "task", payload, ...opts });
@@ -210,7 +210,7 @@ export function createTaskMessage(
 export function createResultMessage(
   from: string,
   to: string,
-  payload: TJResultPayload,
+  payload: HHResultPayload,
   opts?: Partial<Pick<HHResultMessage, "turn" | "done" | "context_summary">>,
 ): HHResultMessage {
   return HHResultMessage.parse({ from, to, type: "result", done: true, payload, ...opts });

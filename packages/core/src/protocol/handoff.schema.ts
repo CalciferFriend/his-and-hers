@@ -2,7 +2,7 @@ import { z } from "zod";
 
 /**
  * HHHandoff — structured task handoff format.
- * Tom sends this to Jerry when delegating work.
+ * H1 sends this to H2 when delegating work.
  */
 export const HHHandoff = z.object({
   task_id: z.string().uuid(),

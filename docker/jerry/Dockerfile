@@ -1,15 +1,15 @@
-# Jerry node — Docker image (CPU / generic Linux)
+# H2 node — Docker image (CPU / generic Linux)
 # Ollama + Node 22 + Tailscale + OpenClaw + his-and-hers
 #
 # Usage:
-#   docker build -t calcifer-ai/jerry -f docker/jerry/Dockerfile .
+#   docker build -t calcifer-ai/h2 -f docker/h2/Dockerfile .
 #   docker run -d \
 #     -e TS_AUTHKEY=tskey-auth-... \
-#     -e JERRY_NAME="Jerry" \
+#     -e H2_NAME="H2" \
 #     -e JERRY_EMOJI="🐭" \
-#     calcifer-ai/jerry
+#     calcifer-ai/h2
 #
-# For NVIDIA GPU support use docker/jerry/Dockerfile.cuda instead.
+# For NVIDIA GPU support use docker/h2/Dockerfile.cuda instead.
 # This CPU image is a good fit for Raspberry Pi / low-power always-on nodes.
 
 FROM node:22-slim AS base
@@ -45,14 +45,14 @@ RUN npm install -g his-and-hers
 # ── Runtime config dirs ───────────────────────────────────────────────────────
 RUN mkdir -p /root/.openclaw /root/.his-and-hers /root/.ollama
 
-# ── SSH server setup (for tj send over SSH from Tom) ─────────────────────────
+# ── SSH server setup (for hh send over SSH from H1) ─────────────────────────
 RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh
 RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config
 RUN ssh-keygen -A
 
 # ── Entrypoint ────────────────────────────────────────────────────────────────
-COPY docker/jerry/entrypoint.sh /entrypoint.sh
-COPY docker/jerry/pull-models.sh /pull-models.sh
+COPY docker/h2/entrypoint.sh /entrypoint.sh
+COPY docker/h2/pull-models.sh /pull-models.sh
 RUN chmod +x /entrypoint.sh /pull-models.sh
 
 # ── Ports ─────────────────────────────────────────────────────────────────────

@@ -1,7 +1,7 @@
 /**
  * retry.ts — Exponential backoff + retry for transient failures
  *
- * Used by `tj send` to retry on:
+ * Used by `hh send` to retry on:
  *   - Gateway not reachable (WS timeout, connection refused)
  *   - Tailscale peer temporarily offline
  *   - Gateway startup delay after WOL

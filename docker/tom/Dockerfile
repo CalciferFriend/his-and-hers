@@ -1,14 +1,14 @@
-# Tom node — Docker image
+# H1 node — Docker image
 # Alpine + Node 22 + Tailscale + OpenClaw + his-and-hers
 #
 # Usage:
-#   docker build -t calcifer-ai/tom -f docker/tom/Dockerfile .
+#   docker build -t calcifer-ai/h1 -f docker/tom/Dockerfile .
 #   docker run -d \
 #     -e ANTHROPIC_API_KEY=sk-ant-... \
 #     -e TS_AUTHKEY=tskey-auth-... \
-#     -e TOM_NAME="Tom" \
+#     -e H1_NAME="H1" \
 #     -e TOM_EMOJI="🐱" \
-#     calcifer-ai/tom
+#     calcifer-ai/h1
 
 FROM node:22-alpine AS base
 

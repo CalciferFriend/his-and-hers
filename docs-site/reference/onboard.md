@@ -1,13 +1,13 @@
-# `tj onboard` — Reference
+# `hh onboard` — Reference
 
-Interactive setup wizard. Configures everything needed to get Tom and Jerry talking: role, identity, LLM provider, Tailscale pairing, SSH, Wake-on-LAN, gateway config, Windows AutoLogin, and startup scripts.
+Interactive setup wizard. Configures everything needed to get H1 and H2 talking: role, identity, LLM provider, Tailscale pairing, SSH, Wake-on-LAN, gateway config, Windows AutoLogin, and startup scripts.
 
 ---
 
 ## Synopsis
 
 ```bash
-tj onboard [flags]
+hh onboard [flags]
 ```
 
 ---
@@ -16,8 +16,8 @@ tj onboard [flags]
 
 | Flag | Description |
 |------|-------------|
-| `--role tom` | Skip role selection, configure as Tom |
-| `--role jerry` | Skip role selection, configure as Jerry |
+| `--role h1` | Skip role selection, configure as H1 |
+| `--role h2` | Skip role selection, configure as H2 |
 | `--non-interactive` | Skip wizard, use environment variables (Docker/CI) |
 | `--reconfigure-provider` | Re-run only the LLM provider setup step |
 | `--reconfigure-gateway` | Re-run only the gateway setup step |
@@ -29,32 +29,32 @@ tj onboard [flags]
 
 ## Wizard steps
 
-### Tom role
+### H1 role
 
-1. **Role:** Tom
+1. **Role:** H1
 2. **Identity:** name, emoji
 3. **LLM provider:** Anthropic / OpenAI / Ollama / custom
 4. **API key:** stored in OS keychain via `keytar`
 5. **Cost routing:** lightweight model vs standard model
-6. **Peer connection:** Jerry's Tailscale IP, SSH user, SSH key path
+6. **Peer connection:** H2's Tailscale IP, SSH user, SSH key path
 7. **SSH test:** validates key, confirms SSH works
 8. **Gateway config:** loopback bind (127.0.0.1), port, token
 9. **Autostart:** creates systemd service (Linux) or launchd plist (macOS)
-10. **Round-trip test:** sends a test ping to Jerry and waits for response
+10. **Round-trip test:** sends a test ping to H2 and waits for response
 
-### Jerry role
+### H2 role
 
-1. **Role:** Jerry
+1. **Role:** H2
 2. **Identity:** name, emoji
 3. **LLM provider:** Ollama (auto-detected) / LM Studio / custom
-4. **Tom's Tailscale IP**
+4. **H1's Tailscale IP**
 5. **Gateway config:** Tailscale IP bind, port, token
 6. **WOL:** MAC address, broadcast IP, port
 7. **Autostart:**
    - Linux: systemd service
    - macOS: launchd plist
    - Windows: AutoLogin registry + Scheduled Task + Firewall rule
-8. **Capabilities:** runs `tj capabilities advertise`
+8. **Capabilities:** runs `hh capabilities advertise`
 
 ---
 
@@ -65,14 +65,14 @@ Used by Docker and CI:
 | Variable | Description |
 |----------|-------------|
 | `TJ_ROLE` | `tom` or `jerry` |
-| `TJ_NAME` | Node display name |
+| `HH_NAME` | Node display name |
 | `TJ_EMOJI` | Node emoji |
 | `TJ_PROVIDER` | `anthropic`, `openai`, `ollama`, `lmstudio`, `custom` |
 | `ANTHROPIC_API_KEY` | Anthropic API key |
 | `OPENAI_API_KEY` | OpenAI API key |
 | `OLLAMA_BASE_URL` | Ollama URL (default: `http://localhost:11434`) |
-| `JERRY_TAILSCALE_IP` | Jerry's Tailscale IP (Tom only) |
-| `TOM_TAILSCALE_IP` | Tom's Tailscale IP (Jerry only) |
+| `JERRY_TAILSCALE_IP` | H2's Tailscale IP (H1 only) |
+| `TOM_TAILSCALE_IP` | H1's Tailscale IP (H2 only) |
 | `GATEWAY_PORT` | Gateway listen port (default: 3737) |
 | `TS_AUTHKEY` | Tailscale auth key (Docker) |
 
@@ -82,12 +82,12 @@ Used by Docker and CI:
 
 ```
 ~/.his-and-hers/
-  tj.json                  ← main config (mode 0o600)
+  hh.json                  ← main config (mode 0o600)
   peers/
     <peer-name>.json        ← one per peer (mode 0o600)
 ```
 
-### tj.json structure
+### hh.json structure
 
 ```json
 {
@@ -110,7 +110,7 @@ Used by Docker and CI:
     "standard_model": "claude-sonnet-4-5",
     "heavy_route": "jerry"
   },
-  "peer_nodes": ["jerry-home", "jerry-pi"]
+  "peer_nodes": ["h2-home", "h2-pi"]
 }
 ```
 
@@ -121,21 +121,21 @@ Used by Docker and CI:
 The wizard is non-destructive by default — it reads existing config and only prompts for values that aren't set. To reconfigure a specific section:
 
 ```bash
-tj onboard --reconfigure-provider    # change LLM provider/key
-tj onboard --reconfigure-gateway     # change port or regenerate token
-tj onboard --reconfigure-peer        # update peer IP or SSH key
+hh onboard --reconfigure-provider    # change LLM provider/key
+hh onboard --reconfigure-gateway     # change port or regenerate token
+hh onboard --reconfigure-peer        # update peer IP or SSH key
 ```
 
 To start completely fresh:
 
 ```bash
-tj onboard --reset
-# ⚠️  This deletes ~/.his-and-hers/tj.json and all peer configs
+hh onboard --reset
+# ⚠️  This deletes ~/.his-and-hers/hh.json and all peer configs
 ```
 
 ---
 
-## What `tj onboard` doesn't do
+## What `hh onboard` doesn't do
 
 - It doesn't install Node.js, Tailscale, or OpenClaw (check those first — see [Prerequisites](/guide/prerequisites))
 - It doesn't pull Ollama models (do that separately with `ollama pull`)

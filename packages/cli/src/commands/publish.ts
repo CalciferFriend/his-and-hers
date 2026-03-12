@@ -1,12 +1,12 @@
 /**
- * tj publish — publish an anonymised node card to the community registry.
+ * hh publish — publish an anonymised node card to the community registry.
  *
  * Uses GitHub Gist as a zero-infrastructure registry. Each published node
  * is a public Gist with:
  *   - description: "[his-and-hers] <role> — <name>, <provider>, <GPU>"
- *   - file: tj-node-card.json  (the anonymised TJNodeCard)
+ *   - file: hh-node-card.json  (the anonymised HHNodeCard)
  *
- * Anyone can browse the registry with: tj discover
+ * Anyone can browse the registry with: hh discover
  *
  * Auth: set GITHUB_TOKEN env var, or pass --token. Without a token, publish
  * works anonymously (no editing/deleting later). Most users should set the
@@ -25,13 +25,13 @@ const CARD_FILE = join(CARD_DIR, "published-card.json");
 
 // ─── Schema ──────────────────────────────────────────────────────────────────
 
-export interface TJNodeCard {
+export interface HHNodeCard {
   /** Schema version for forward compat */
   schema_version: "1.0";
   /** ISO datetime when this card was published */
   published_at: string;
-  /** tom (orchestrator, always-on) or jerry (executor, powerful PC) */
-  role: "tom" | "jerry";
+  /** h1 (orchestrator, always-on) or h2 (executor, powerful PC) */
+  role: "h1" | "jerry";
   /** Display name (user-provided — can be anything) */
   name: string;
   emoji?: string;
@@ -54,7 +54,7 @@ export interface TJNodeCard {
   wol_supported: boolean;
   /** User-provided tags, e.g. ["rtx3070ti", "comfyui", "rag"] */
   tags: string[];
-  /** Free-form description shown in tj discover */
+  /** Free-form description shown in hh discover */
   description?: string;
   /** Gist ID of this card (filled in after first publish) */
   gist_id?: string;
@@ -64,15 +64,15 @@ export interface TJNodeCard {
 
 async function buildNodeCard(
   opts: { tags?: string[]; description?: string; force?: boolean },
-): Promise<TJNodeCard> {
+): Promise<HHNodeCard> {
   const config = await loadConfig();
-  if (!config) throw new Error("No config found — run `tj onboard` first.");
+  if (!config) throw new Error("No config found — run `hh onboard` first.");
 
   const node = config.this_node;
   const peer = config.peer_node;
 
   // Load capabilities if present
-  let capabilities: TJNodeCard["capabilities"] | undefined;
+  let capabilities: HHNodeCard["capabilities"] | undefined;
   const capPath = join(CARD_DIR, "capabilities.json");
   if (existsSync(capPath)) {
     try {
@@ -92,7 +92,7 @@ async function buildNodeCard(
     }
   }
 
-  const card: TJNodeCard = {
+  const card: HHNodeCard = {
     schema_version: "1.0",
     published_at: new Date().toISOString(),
     role: node.role,
@@ -103,7 +103,7 @@ async function buildNodeCard(
       model: node.provider?.model ?? "claude-sonnet-4-6",
       alias: node.provider?.alias,
     },
-    os: node.role === "tom" ? "linux" : (peer?.os ?? "linux"),
+    os: node.role === "h1" ? "linux" : (peer?.os ?? "linux"),
     capabilities,
     wol_supported: !!(peer?.wol?.enabled || peer?.wol_enabled),
     tags: opts.tags ?? [],
@@ -113,7 +113,7 @@ async function buildNodeCard(
   return card;
 }
 
-function gistDescription(card: TJNodeCard): string {
+function gistDescription(card: HHNodeCard): string {
   const gpu = card.capabilities?.gpu?.name
     ? ` — ${card.capabilities.gpu.name}`
     : "";
@@ -123,7 +123,7 @@ function gistDescription(card: TJNodeCard): string {
 
 // ─── GitHub Gist API ─────────────────────────────────────────────────────────
 
-async function postGist(card: TJNodeCard, token?: string): Promise<{ id: string; url: string }> {
+async function postGist(card: HHNodeCard, token?: string): Promise<{ id: string; url: string }> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     "User-Agent": "his-and-hers-cli",
@@ -135,7 +135,7 @@ async function postGist(card: TJNodeCard, token?: string): Promise<{ id: string;
     description: gistDescription(card),
     public: true,
     files: {
-      "tj-node-card.json": {
+      "hh-node-card.json": {
         content: JSON.stringify({ ...card, tags: [...card.tags, REGISTRY_TAG] }, null, 2),
       },
     },
@@ -158,7 +158,7 @@ async function postGist(card: TJNodeCard, token?: string): Promise<{ id: string;
 
 async function patchGist(
   gistId: string,
-  card: TJNodeCard,
+  card: HHNodeCard,
   token: string,
 ): Promise<{ id: string; url: string }> {
   const res = await fetch(`https://api.github.com/gists/${gistId}`, {
@@ -172,7 +172,7 @@ async function patchGist(
     body: JSON.stringify({
       description: gistDescription(card),
       files: {
-        "tj-node-card.json": {
+        "hh-node-card.json": {
           content: JSON.stringify({ ...card, tags: [...card.tags, REGISTRY_TAG] }, null, 2),
         },
       },
@@ -201,7 +201,7 @@ export async function publish(opts: {
   const token = opts.token ?? process.env["GITHUB_TOKEN"];
   const tags = opts.tags ? opts.tags.split(",").map((t) => t.trim()).filter(Boolean) : [];
 
-  let card: TJNodeCard;
+  let card: HHNodeCard;
   try {
     card = await buildNodeCard({ tags, description: opts.description });
   } catch (err) {
@@ -219,7 +219,7 @@ export async function publish(opts: {
   let existingGistId: string | undefined;
   if (existsSync(CARD_FILE)) {
     try {
-      const saved = JSON.parse(await readFile(CARD_FILE, "utf-8")) as TJNodeCard;
+      const saved = JSON.parse(await readFile(CARD_FILE, "utf-8")) as HHNodeCard;
       existingGistId = saved.gist_id;
     } catch {
       // corrupted — ignore
@@ -255,7 +255,7 @@ export async function publish(opts: {
     console.log(`   ${result.url}`);
     console.log(``);
     console.log(`   Share this URL so others can see your node config.`);
-    console.log(`   Run \`tj discover\` to browse the community registry.`);
-    console.log(`   Run \`tj publish\` again to update your card.`);
+    console.log(`   Run \`hh discover\` to browse the community registry.`);
+    console.log(`   Run \`hh publish\` again to update your card.`);
   }
 }

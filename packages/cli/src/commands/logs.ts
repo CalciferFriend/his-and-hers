@@ -1,20 +1,20 @@
 /**
- * commands/logs.ts — `tj logs`
+ * commands/logs.ts — `hh logs`
  *
  * Pretty-print the full task history with filtering and formatting options.
- * Complements `tj task-status` (single-task inspect) with a log-style view
+ * Complements `hh task-status` (single-task inspect) with a log-style view
  * of all tasks across time.
  *
  * Usage:
- *   tj logs                          # all tasks, newest-first
- *   tj logs --limit 20               # last 20 tasks
- *   tj logs --status completed       # filter by status
- *   tj logs --status failed          # show failures only
- *   tj logs --peer glados            # filter by peer
- *   tj logs --since 24h              # last 24 hours (also: 7d, 1h, 30m)
- *   tj logs --output                 # include result output text
- *   tj logs --json                   # raw JSON array
- *   tj logs --follow                 # live tail (poll every 2s)
+ *   hh logs                          # all tasks, newest-first
+ *   hh logs --limit 20               # last 20 tasks
+ *   hh logs --status completed       # filter by status
+ *   hh logs --status failed          # show failures only
+ *   hh logs --peer glados            # filter by peer
+ *   hh logs --since 24h              # last 24 hours (also: 7d, 1h, 30m)
+ *   hh logs --output                 # include result output text
+ *   hh logs --json                   # raw JSON array
+ *   hh logs --follow                 # live tail (poll every 2s)
  */
 
 import * as p from "@clack/prompts";
@@ -209,7 +209,7 @@ async function renderOnce(opts: LogsOptions): Promise<TaskState[]> {
   if (filtered.length === 0) {
     p.log.info("No tasks found matching the given filters.");
     if (all.length === 0) {
-      p.log.info('Run `tj send "<task>"` to delegate work to your Jerry node.');
+      p.log.info('Run `hh send "<task>"` to delegate work to your H2 node.');
     }
     return filtered;
   }
@@ -221,7 +221,7 @@ async function renderOnce(opts: LogsOptions): Promise<TaskState[]> {
     if (opts.status) parts.push(`status=${opts.status}`);
     if (opts.peer) parts.push(`peer=${opts.peer}`);
     const label = parts.length > 0 ? ` (${parts.join(", ")})` : "";
-    p.intro(pc.bgBlue(pc.white(` tj logs${label} `)));
+    p.intro(pc.bgBlue(pc.white(` hh logs${label} `)));
     console.log("");
   }
 
@@ -245,7 +245,7 @@ async function renderOnce(opts: LogsOptions): Promise<TaskState[]> {
 
 export async function logs(opts: LogsOptions = {}): Promise<void> {
   if (opts.follow) {
-    p.intro(pc.bgBlue(pc.white(" tj logs --follow ")));
+    p.intro(pc.bgBlue(pc.white(" hh logs --follow ")));
     console.log(pc.dim("  Polling for new tasks every 2s — Ctrl-C to exit\n"));
 
     let knownIds = new Set<string>();

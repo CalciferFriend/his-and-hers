@@ -1,6 +1,6 @@
-# Jerry Hardware Profiles
+# H2 Hardware Profiles
 
-Pre-built setup guides for common Jerry (executor) hardware configurations.
+Pre-built setup guides for common H2 (executor) hardware configurations.
 Each profile covers Ollama setup, recommended models, and optional extras.
 
 | Profile | Hardware | GPU VRAM | Recommended for |

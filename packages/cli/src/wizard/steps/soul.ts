@@ -52,8 +52,8 @@ export async function stepSoul(ctx: Partial<WizardContext>): Promise<Partial<Wiz
         const content = await readFile(src, "utf-8");
         // Personalize the template
         const personalized = content
-          .replace(/\*\*Tom\*\*/g, role === "tom" ? `**${ctx.name}**` : "**Tom**")
-          .replace(/\*\*Jerry\*\*/g, role === "jerry" ? `**${ctx.name}**` : "**Jerry**");
+          .replace(/\*\*H1\*\*/g, role === "h1" ? `**${ctx.name}**` : "**H1**")
+          .replace(/\*\*H2\*\*/g, role === "h2" ? `**${ctx.name}**` : "**H2**");
         await writeFile(join(targetDir, file), personalized);
       } catch {
         // Template file not found — skip silently

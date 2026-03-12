@@ -28,7 +28,7 @@ import { loadConfig } from "./config/store.ts";
 
 const program = new Command()
   .name("hh")
-  .description("Tom & Jerry — two agents, separate machines, one command to wire them.")
+  .description("H1 & H2 — two agents, separate machines, one command to wire them.")
   .version("0.1.0")
   // Default action when no subcommand given: onboard if unconfigured, status if already set up
   .action(async () => {
@@ -48,7 +48,7 @@ program
 program
   .command("pair")
   .description("Pair with a remote node using a 6-digit code")
-  .requiredOption("--code <code>", "6-digit pairing code from the Tom node")
+  .requiredOption("--code <code>", "6-digit pairing code from the H1 node")
   .action(pair);
 
 program
@@ -58,7 +58,7 @@ program
 
 program
   .command("wake")
-  .description("Manually trigger Wake-on-LAN for the Jerry node")
+  .description("Manually trigger Wake-on-LAN for the H2 node")
   .action(wake);
 
 program
@@ -68,7 +68,7 @@ program
   .option("--wait", "Wait for the result before exiting")
   .option("--wait-timeout <seconds>", "Max seconds to wait for result (default: 300)", "300")
   .option("--no-state", "Skip writing task state to disk (fire-and-forget)")
-  .option("--peer <name>", "Target a specific peer by name (multi-Jerry setups)")
+  .option("--peer <name>", "Target a specific peer by name (multi-H2 setups)")
   .option("--auto", "Auto-select the best peer based on task + cached capabilities")
   .option("--latent", "[Phase 6] Force latent communication (Vision Wormhole / LatentMAS). Fails if peer doesn't support it.")
   .option("--auto-latent", "[Phase 6] Use latent if peer supports it, fall back to text otherwise")
@@ -171,7 +171,7 @@ program
 const caps = program
   .command("capabilities")
   .aliases(["caps"])
-  .description("Manage and query Jerry node capability registry");
+  .description("Manage and query H2 node capability registry");
 
 caps
   .command("scan")
@@ -182,19 +182,19 @@ caps
 
 caps
   .command("advertise")
-  .description("Scan capabilities and save to disk (run on Jerry node)")
+  .description("Scan capabilities and save to disk (run on H2 node)")
   .option("--notes <text>", "Free-form notes to include in the report")
   .action((opts: { notes?: string }) => capabilitiesAdvertise(opts));
 
 caps
   .command("fetch")
-  .description("Fetch peer capabilities from Jerry gateway (run on Tom node)")
+  .description("Fetch peer capabilities from H2 gateway (run on H1 node)")
   .action(() => capabilitiesFetch());
 
 caps
   .command("show")
   .description("Show last known capability report")
-  .option("--peer", "Show peer (Jerry) capabilities instead of local")
+  .option("--peer", "Show peer (H2) capabilities instead of local")
   .action((opts: { peer?: boolean }) => capabilitiesShow(opts));
 
 caps
@@ -216,7 +216,7 @@ program
   .command("publish")
   .description("Publish an anonymised node card to the community registry (GitHub Gist)")
   .option("--tags <csv>", "Comma-separated tags, e.g. rtx3070ti,comfyui,rag")
-  .option("--description <text>", "Short description shown in tj discover")
+  .option("--description <text>", "Short description shown in hh discover")
   .option("--token <token>", "GitHub personal access token (or set GITHUB_TOKEN env var)")
   .option("--update", "Force update even if no gist_id saved locally")
   .option("--dry", "Print the node card without publishing")
@@ -243,7 +243,7 @@ program
 
 const configCmd = program
   .command("config")
-  .description("View and edit the TJ configuration")
+  .description("View and edit the HH configuration")
   .action(() => configShow());
 
 configCmd
@@ -287,8 +287,8 @@ program
 
 program
   .command("discover")
-  .description("Browse the community node registry — nodes published with tj publish")
-  .option("--role <role>", "Filter by role: tom | jerry")
+  .description("Browse the community node registry — nodes published with hh publish")
+  .option("--role <role>", "Filter by role: h1 | jerry")
   .option("--gpu <backend>", "Filter by GPU backend: cuda | rocm | metal")
   .option("--skill <skill>", "Filter by skill tag, e.g. image-gen | transcription")
   .option("--provider <kind>", "Filter by provider: anthropic | openai | ollama | lmstudio")

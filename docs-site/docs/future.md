@@ -3,11 +3,11 @@
 > *"We do not have organs of communication. Our brains can display our thoughts to the outside world, thereby achieving communication."*
 > — Cixin Liu, The Dark Forest
 
-Today, his-and-hers speaks text. Tom sends a prompt. Jerry sends back a completion. That works — and it's how every multi-agent system in production works right now.
+Today, his-and-hers speaks text. H1 sends a prompt. H2 sends back a completion. That works — and it's how every multi-agent system in production works right now.
 
 But text is a lossy compression of thought.
 
-Every time Tom sends a task, it collapses its internal state into a sequence of tokens. Alternative reasoning paths, confidence weights, structural relationships — all of it discarded. Jerry reconstructs meaning from those tokens. The result is accurate enough for most work, but it's a game of telephone running at the speed of inference.
+Every time H1 sends a task, it collapses its internal state into a sequence of tokens. Alternative reasoning paths, confidence weights, structural relationships — all of it discarded. H2 reconstructs meaning from those tokens. The result is accurate enough for most work, but it's a game of telephone running at the speed of inference.
 
 **Our mission is to push the boundaries of what inter-agent communication can be — and to build the transport and memory-sharing layer that makes it possible as those boundaries move.**
 
@@ -21,7 +21,7 @@ Two recent papers point to where this goes:
 
 **[Communication-Efficient Collaborative Inference via Intermediate Latent Representations](https://arxiv.org/abs/2511.09149)**
 
-Interlat proposes sending hidden states between heterogeneous model architectures instead of decoded text. A "Tom" model runs the first N layers of reasoning, extracts its intermediate representation, transmits it directly to a "Jerry" model running a complementary architecture, and Jerry continues from there.
+Interlat proposes sending hidden states between heterogeneous model architectures instead of decoded text. A "H1" model runs the first N layers of reasoning, extracts its intermediate representation, transmits it directly to a "H2" model running a complementary architecture, and H2 continues from there.
 
 Key results:
 - Up to **24× faster inference** compared to text-roundtrip pipelines
@@ -63,7 +63,7 @@ A future `HHLatentMessage` carries continuous representations:
 type HHLatentMessage = {
   type: "latent_task";
   format: "interlat_v1" | "kv_cache" | "embedding";
-  layers_computed: number;       // how far Tom got before handing off
+  layers_computed: number;       // how far H1 got before handing off
   hidden_states: Float32Array;   // raw activations — NOT tokens
   model_family: string;          // for alignment verification
   text_fallback: string;         // always included — older Jerrys ignore the rest
@@ -74,11 +74,11 @@ type HHLatentMessage = {
 The protocol negotiates capability at pairing time:
 
 ```
-Tom → Jerry: TJPair (capabilities: ["latent_interlat_v1", "kv_cache"])
-Jerry → Tom: TJPairAck (accepted: ["latent_interlat_v1"])
+H1 → H2: HHPair (capabilities: ["latent_interlat_v1", "kv_cache"])
+H2 → H1: HHPairAck (accepted: ["latent_interlat_v1"])
 ```
 
-If Jerry doesn't support latent communication, Tom falls back to text transparently. The routing layer handles this automatically.
+If H2 doesn't support latent communication, H1 falls back to text transparently. The routing layer handles this automatically.
 
 ---
 
@@ -91,10 +91,10 @@ If Jerry doesn't support latent communication, Tom falls back to text transparen
 | Step | Description | Notes |
 |------|-------------|-------|
 | 6a | `HHLatentMessage` schema (Zod) | Discriminated union extension |
-| 6b | Capability negotiation at pair time | `latent_interlat_v1` token in TJPair |
+| 6b | Capability negotiation at pair time | `latent_interlat_v1` token in HHPair |
 | 6c | Hidden state serialization | Float32 → gzip → base64 for HTTP transport |
-| 6d | Interlat adapter (Tom side) | Hook into OpenClaw inference for mid-layer extraction |
-| 6e | Interlat adapter (Jerry side) | Accept latent input, continue from hidden state |
+| 6d | Interlat adapter (H1 side) | Hook into OpenClaw inference for mid-layer extraction |
+| 6e | Interlat adapter (H2 side) | Accept latent input, continue from hidden state |
 | 6f | KV cache sharing (LatentMAS path) | For same-family model pairs (e.g., two Llama-3.1 installs) |
 | 6g | Streaming latent updates | Partial hidden state streaming, not just final layer |
 | 6h | Text fallback on every path | Always compute text_fallback; latent is additive |
@@ -105,7 +105,7 @@ If Jerry doesn't support latent communication, Tom falls back to text transparen
 > Target: Q4 2026 · Status: concept
 
 Beyond single-message latent communication, agents could share a persistent semantic
-memory store — a vector database that both Tom and Jerry can read from and write to,
+memory store — a vector database that both H1 and H2 can read from and write to,
 indexed by embedding (not by text key). Tasks don't need to re-explain prior context;
 they reference a memory ID. The receiver loads the embedding directly.
 
@@ -123,9 +123,9 @@ But "same machine" imposes hard constraints:
 - Memory ceiling: you're sharing one pool of VRAM
 - Hardware diversity: you can't pair an AWS VM (cheap tokens) with a home RTX (expensive hardware, free inference)
 - Redundancy: a crash takes both agents down
-- Ownership: you can't run your Tom on a VPS and lend your Jerry's GPU cycles to a friend
+- Ownership: you can't run your H1 on a VPS and lend your H2's GPU cycles to a friend
 
-his-and-hers is specifically about **cross-machine, cross-network agent communication**. The Tailscale tunnel is load-bearing. The WOL mechanism matters. The async result delivery exists because Jerry might be asleep.
+his-and-hers is specifically about **cross-machine, cross-network agent communication**. The Tailscale tunnel is load-bearing. The WOL mechanism matters. The async result delivery exists because H2 might be asleep.
 
 The latent communication layer adds a high-bandwidth, low-loss channel on top of that existing transport — it doesn't replace the separation constraint. It makes the separation cheaper.
 

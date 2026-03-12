@@ -1,13 +1,13 @@
-# `tj wake` — Reference
+# `hh wake` — Reference
 
-Send a Wake-on-LAN magic packet to a Jerry node and optionally wait for its gateway to come online.
+Send a Wake-on-LAN magic packet to a H2 node and optionally wait for its gateway to come online.
 
 ---
 
 ## Synopsis
 
 ```bash
-tj wake [flags]
+hh wake [flags]
 ```
 
 ---
@@ -16,8 +16,8 @@ tj wake [flags]
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `--peer <name>` | default peer | Target a specific Jerry by name |
-| `--wait` | false | Poll until Jerry's gateway is healthy |
+| `--peer <name>` | default peer | Target a specific H2 by name |
+| `--wait` | false | Poll until H2's gateway is healthy |
 | `--timeout <s>` | 120 | Max seconds to wait when `--wait` is set |
 | `--verbose` | false | Show magic packet details and poll progress |
 | `--json` | false | JSON output |
@@ -29,24 +29,24 @@ tj wake [flags]
 1. Looks up the target peer's WOL config (MAC address, broadcast IP, port)
 2. Constructs a [Magic Packet](https://en.wikipedia.org/wiki/Wake-on-LAN#Magic_packet) (6× 0xFF + 16× MAC address)
 3. Sends it as a UDP broadcast to `broadcast_ip:port` (default port: 9)
-4. If `--wait`: polls `http://<jerry-tailscale-ip>:<port>/health` every 2s until healthy or timeout
+4. If `--wait`: polls `http://<h2-tailscale-ip>:<port>/health` every 2s until healthy or timeout
 
 ---
 
 ## Examples
 
 ```bash
-# Send magic packet to default Jerry (no wait)
-tj wake
+# Send magic packet to default H2 (no wait)
+hh wake
 
 # Send and wait for gateway to come online
-tj wake --wait
+hh wake --wait
 
 # Target a specific peer, wait, verbose
-tj wake --peer jerry-beast --wait --verbose
+hh wake --peer h2-beast --wait --verbose
 
 # With custom timeout
-tj wake --peer jerry-home --wait --timeout 60
+hh wake --peer h2-home --wait --timeout 60
 ```
 
 ---
@@ -54,8 +54,8 @@ tj wake --peer jerry-home --wait --timeout 60
 ## Verbose output
 
 ```bash
-$ tj wake --peer jerry-beast --wait --verbose
-→ Peer: jerry-beast
+$ hh wake --peer h2-beast --wait --verbose
+→ Peer: h2-beast
   MAC:       D8:5E:D3:AA:BB:CC
   Broadcast: 192.168.1.1:9
 → Sending magic packet...
@@ -67,7 +67,7 @@ $ tj wake --peer jerry-beast --wait --verbose
 → Polling gateway health...
   Attempt 15/60: http://100.a.b.c:3737/health — no response
   Attempt 18/60: http://100.a.b.c:3737/health — ✓ healthy
-→ Jerry (jerry-beast) is online. Boot time: 38s
+→ H2 (h2-beast) is online. Boot time: 38s
 ```
 
 ---
@@ -75,12 +75,12 @@ $ tj wake --peer jerry-beast --wait --verbose
 ## JSON output
 
 ```bash
-$ tj wake --peer jerry-beast --wait --json
+$ hh wake --peer h2-beast --wait --json
 ```
 
 ```json
 {
-  "peer": "jerry-beast",
+  "peer": "h2-beast",
   "mac": "D8:5E:D3:AA:BB:CC",
   "packet_sent": true,
   "came_online": true,
@@ -93,7 +93,7 @@ If `--wait` is not passed:
 
 ```json
 {
-  "peer": "jerry-home",
+  "peer": "h2-home",
   "mac": "D8:5E:D3:04:18:B4",
   "packet_sent": true,
   "came_online": null
@@ -119,15 +119,15 @@ See the full [Wake-on-LAN guide](/guide/wol) for BIOS, NIC, and router configura
 Quick checklist:
 - BIOS WOL enabled?
 - NIC power management: "Allow magic packet to wake"?
-- Router forwarding UDP port 9 to Jerry's static IP?
+- Router forwarding UDP port 9 to H2's static IP?
 - Correct MAC address in peer config?
 
 ```bash
-# Verify MAC address matches Jerry's NIC
-# On Jerry (Windows):
+# Verify MAC address matches H2's NIC
+# On H2 (Windows):
 Get-NetAdapter | Select MacAddress
 
-# On Jerry (Linux/macOS):
+# On H2 (Linux/macOS):
 ip link show eth0 | grep ether
 ```
 
@@ -136,5 +136,5 @@ ip link show eth0 | grep ether
 ## See also
 
 - [Wake-on-LAN guide](/guide/wol) — full setup walkthrough
-- [tj send](/reference/send) — WOL happens automatically on `tj send` if Jerry is offline
-- [tj status](/reference/status) — check WOL configuration status
+- [hh send](/reference/send) — WOL happens automatically on `hh send` if H2 is offline
+- [hh status](/reference/status) — check WOL configuration status

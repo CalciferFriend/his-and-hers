@@ -1,16 +1,16 @@
 /**
- * commands/budget.ts — `tj budget`
+ * commands/budget.ts — `hh budget`
  *
  * Show token usage and cost spend across recent tasks.
  * Helps users understand cloud costs and potential local savings.
  *
  * Usage:
- *   tj budget               → this week's summary
- *   tj budget --today       → today only
- *   tj budget --month       → last 30 days
- *   tj budget --all         → all time
- *   tj budget --tasks       → per-task breakdown table
- *   tj budget --json        → raw JSON output
+ *   hh budget               → this week's summary
+ *   hh budget --today       → today only
+ *   hh budget --month       → last 30 days
+ *   hh budget --all         → all time
+ *   hh budget --tasks       → per-task breakdown table
+ *   hh budget --json        → raw JSON output
  */
 
 import * as p from "@clack/prompts";
@@ -49,14 +49,14 @@ export async function budget(opts: BudgetOptions = {}) {
     all: "All time",
   }[window];
 
-  p.intro(pc.bgMagenta(pc.white(` tj budget — ${windowLabel} `)));
+  p.intro(pc.bgMagenta(pc.white(` hh budget — ${windowLabel} `)));
 
   // ── Overview ─────────────────────────────────────────────────────────────
 
   const totalTasks = summary.completed + summary.failed + summary.pending;
   if (totalTasks === 0) {
     p.log.info("No tasks found in this time window.");
-    p.log.info(pc.dim("Send a task with `tj send` to start tracking usage."));
+    p.log.info(pc.dim("Send a task with `hh send` to start tracking usage."));
     p.outro("Nothing to show.");
     return;
   }
@@ -87,7 +87,7 @@ export async function budget(opts: BudgetOptions = {}) {
     }
     if (summary.local_tokens > 0) {
       p.log.info(
-        `  Local:   ${pc.green(formatTokens(summary.local_tokens))} tokens  →  ${pc.green("$0.00 (Jerry GPU)")}`,
+        `  Local:   ${pc.green(formatTokens(summary.local_tokens))} tokens  →  ${pc.green("$0.00 (H2 GPU)")}`,
       );
     }
 
@@ -107,7 +107,7 @@ export async function budget(opts: BudgetOptions = {}) {
     );
   } else {
     p.log.info(pc.dim("No token data recorded — tasks may predate budget tracking."));
-    p.log.info(pc.dim("Pass --tokens <n> to `tj result` to start tracking."));
+    p.log.info(pc.dim("Pass --tokens <n> to `hh result` to start tracking."));
   }
 
   // ── Routing advice ────────────────────────────────────────────────────────
@@ -116,14 +116,14 @@ export async function budget(opts: BudgetOptions = {}) {
     p.log.message("");
     p.log.warn(
       `Cloud spend is ${formatCost(summary.cloud_cost_usd)} ${windowLabel.toLowerCase()}. ` +
-      `Route heavy tasks to Jerry: ${pc.cyan("tj send --caps-route <task>")}`,
+      `Route heavy tasks to H2: ${pc.cyan("hh send --caps-route <task>")}`,
     );
   }
 
   if (summary.local_tokens === 0 && summary.total_tokens > 0) {
     p.log.message("");
     p.log.info(
-      pc.dim("💡 All tasks ran on cloud. If Jerry has Ollama installed, run `tj capabilities fetch` to enable local routing."),
+      pc.dim("💡 All tasks ran on cloud. If H2 has Ollama installed, run `hh capabilities fetch` to enable local routing."),
     );
   }
 

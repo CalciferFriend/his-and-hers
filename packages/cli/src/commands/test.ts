@@ -1,5 +1,5 @@
 /**
- * commands/test.ts — `tj test`
+ * commands/test.ts — `hh test`
  *
  * End-to-end connectivity validator.
  *
@@ -36,7 +36,7 @@ export async function tjTest(opts: TestOptions = {}) {
   const config = await loadConfig();
 
   if (!config) {
-    p.log.error("No configuration found. Run `tj onboard` first.");
+    p.log.error("No configuration found. Run `hh onboard` first.");
     process.exit(1);
   }
 
@@ -53,7 +53,7 @@ export async function tjTest(opts: TestOptions = {}) {
 
   if (!opts.json) {
     p.intro(
-      `${pc.bold("TJ Connectivity Test")} → ${peer.emoji ?? ""} ${peer.name} (${peer.tailscale_ip})`,
+      `${pc.bold("HH Connectivity Test")} → ${peer.emoji ?? ""} ${peer.name} (${peer.tailscale_ip})`,
     );
   }
 
@@ -112,7 +112,7 @@ export async function tjTest(opts: TestOptions = {}) {
   // ── Step 3: Round-trip wake message ───────────────────────────────────────
   const step3: StepResult = { step: "Round-trip wake message", passed: false };
   if (!peer.gateway_token) {
-    step3.error = "No gateway token — run `tj pair` first";
+    step3.error = "No gateway token — run `hh pair` first";
     step3.passed = false;
     if (!opts.json) {
       p.log.warn(`Step 3 — ${pc.yellow("skipped")} (no gateway token)`);
@@ -121,7 +121,7 @@ export async function tjTest(opts: TestOptions = {}) {
     const wakeMsg = createWakeMessage(
       config.this_node.name,
       peer.name,
-      "tj test connectivity check",
+      "hh test connectivity check",
     );
     const wakeText = `[HHMessage:wake from ${wakeMsg.from} id=${wakeMsg.id}] connectivity test`;
 

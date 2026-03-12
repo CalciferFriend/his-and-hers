@@ -1,18 +1,18 @@
 /**
  * state/tasks.ts
  *
- * Persistent task state for the tj send pipeline.
+ * Persistent task state for the hh send pipeline.
  *
- * When Tom sends a task via `tj send`, a pending task record is written to
- * ~/.his-and-hers/state/tasks/<id>.json. Jerry (GLaDOS) processes the task
- * and signals completion via `tj result <id> <output>` (or by writing the
- * result directly over SSH/socat). Tom can poll for the result with
- * `tj send --wait` or check any time with `tj status`.
+ * When H1 sends a task via `hh send`, a pending task record is written to
+ * ~/.his-and-hers/state/tasks/<id>.json. H2 (GLaDOS 🤖) processes the task
+ * and signals completion via `hh result <id> <output>` (or by writing the
+ * result directly over SSH/socat). H1 can poll for the result with
+ * `hh send --wait` or check any time with `hh status`.
  *
  * Why files instead of a running daemon?
  *   - No extra process required on either side
  *   - Works even if the CLI exits between send and result
- *   - GLaDOS can write results remotely via SSH or a future tj RPC mechanism
+ *   - GLaDOS can write results remotely via SSH or a future hh RPC mechanism
  */
 
 import { readFile, writeFile, readdir, mkdir } from "node:fs/promises";

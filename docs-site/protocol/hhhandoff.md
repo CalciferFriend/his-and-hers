@@ -5,7 +5,7 @@ description: The HHHandoff payload schema for structured task delegation.
 
 # HHHandoff Schema
 
-`HHHandoff` is a structured task delegation payload used when Tom or Jerry wants
+`HHHandoff` is a structured task delegation payload used when H1 or H2 wants
 to hand off work with explicit constraints, expected output, and execution bounds.
 It is carried in a `HHMessage` with `type: "handoff"`.
 
@@ -16,13 +16,13 @@ It is carried in a `HHMessage` with `type: "handoff"`.
 ```typescript
 interface HHHandoff {
   task_id: string;               // UUID v4 — stable identifier for this handoff
-  from_role: "tom" | "jerry";    // Who is delegating
-  to_role: "tom" | "jerry";      // Who should execute
+  from_role: "h1" | "jerry";    // Who is delegating
+  to_role: "h1" | "jerry";      // Who should execute
   objective: string;             // Clear description of the task
   context: string;               // Background information
   constraints: string[];         // Rules and boundaries for execution
   expected_output: string;       // Description of what a successful result looks like
-  timeout_seconds: number;       // Max execution time before Tom considers it failed
+  timeout_seconds: number;       // Max execution time before H1 considers it failed
   wake_if_sleeping: boolean;     // Send WOL magic packet if target is offline
   shutdown_when_done: boolean;   // Target should shut down after completing
 }
@@ -41,7 +41,7 @@ interface HHHandoff {
 | `context` | `string` | ✓ | Background info to help the executor understand scope |
 | `constraints` | `string[]` | ✓ | List of rules and boundaries (can be empty `[]`) |
 | `expected_output` | `string` | ✓ | What the result should look like when done |
-| `timeout_seconds` | `number` | ✓ | Max execution time. Tom marks the task failed if exceeded |
+| `timeout_seconds` | `number` | ✓ | Max execution time. H1 marks the task failed if exceeded |
 | `wake_if_sleeping` | `boolean` | ✓ | If `true`, send WOL magic packet before delivery |
 | `shutdown_when_done` | `boolean` | ✓ | If `true`, executor shuts down after sending the result |
 
@@ -146,7 +146,7 @@ const message: HHMessage = {
 
 ## Responding to a handoff
 
-Jerry responds with a standard `HHMessage` of `type: "result"`, using the same
+H2 responds with a standard `HHMessage` of `type: "result"`, using the same
 `task_id` to correlate. The result `payload` should match the `expected_output`
 described in the handoff.
 
@@ -156,4 +156,4 @@ described in the handoff.
 
 - [HHMessage](/protocol/hhmessage) — the outer envelope
 - [Protocol overview](/protocol/overview) — message flow and wake/shutdown sequences
-- [`tj send`](/reference/send) — how `--handoff` tasks are constructed
+- [`hh send`](/reference/send) — how `--handoff` tasks are constructed

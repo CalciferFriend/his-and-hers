@@ -1,10 +1,10 @@
 # Prerequisites
 
-What you need before running `tj onboard`.
+What you need before running `hh onboard`.
 
 ---
 
-## Both machines (Tom and Jerry)
+## Both machines (H1 and H2)
 
 | Requirement | Version | Notes |
 |-------------|---------|-------|
@@ -16,19 +16,19 @@ Both machines must be authenticated to the **same Tailscale account** (or connec
 
 ---
 
-## Tom-specific
+## H1-specific
 
 | Requirement | Notes |
 |-------------|-------|
 | **SSH client** | Included on macOS/Linux. On Windows: built-in OpenSSH or Git Bash |
 | **API key** | For your chosen LLM provider (Anthropic, OpenAI, etc.) |
-| **Jerry's Tailscale IP** | Run `tailscale ip -4` on Jerry's machine |
-| **SSH access to Jerry** | Tom pushes gateway config via SSH — you'll need a keypair |
+| **H2's Tailscale IP** | Run `tailscale ip -4` on H2's machine |
+| **SSH access to H2** | H1 pushes gateway config via SSH — you'll need a keypair |
 
-### Get Jerry's Tailscale IP
+### Get H2's Tailscale IP
 
 ```bash
-# Run this on Jerry's machine
+# Run this on H2's machine
 tailscale ip -4
 # → 100.x.y.z
 ```
@@ -38,18 +38,18 @@ tailscale ip -4
 If you don't have one:
 
 ```bash
-# Run on Tom's machine
+# Run on H1's machine
 ssh-keygen -t ed25519 -C "tom-to-jerry"
 # Default: ~/.ssh/id_ed25519
 
-# Copy public key to Jerry
-ssh-copy-id -i ~/.ssh/id_ed25519.pub user@jerry-tailscale-ip
-# On Windows Jerry: manually add contents of id_ed25519.pub to C:\Users\<user>\.ssh\authorized_keys
+# Copy public key to H2
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@h2-tailscale-ip
+# On Windows H2: manually add contents of id_ed25519.pub to C:\Users\<user>\.ssh\authorized_keys
 ```
 
 ---
 
-## Jerry-specific
+## H2-specific
 
 ### Linux / Mac
 
@@ -77,7 +77,7 @@ ssh-copy-id -i ~/.ssh/id_ed25519.pub user@jerry-tailscale-ip
 | No GPU (CPU only) | — | 3B models, embeddings (slow) |
 | Raspberry Pi 5 | — | 3B–7B quantized, embeddings |
 
-Jerry works without a GPU — Ollama runs on CPU with quantized models. It's slower but functional.
+H2 works without a GPU — Ollama runs on CPU with quantized models. It's slower but functional.
 
 ---
 
@@ -85,17 +85,17 @@ Jerry works without a GPU — Ollama runs on CPU with quantized models. It's slo
 
 | Port | Protocol | Direction | Purpose |
 |------|----------|-----------|---------|
-| 3737 | TCP | Tom → Jerry | Gateway API |
-| 9 | UDP | Tom → Router | Wake-on-LAN Magic Packet |
-| 22 | TCP | Tom → Jerry | SSH (config push) |
+| 3737 | TCP | H1 → H2 | Gateway API |
+| 9 | UDP | H1 → Router | Wake-on-LAN Magic Packet |
+| 22 | TCP | H1 → H2 | SSH (config push) |
 
-All traffic between Tom and Jerry flows over Tailscale (WireGuard-encrypted). You don't need to open any ports on your home router for the gateway — only for WOL if Jerry is on a different subnet.
+All traffic between H1 and H2 flows over Tailscale (WireGuard-encrypted). You don't need to open any ports on your home router for the gateway — only for WOL if H2 is on a different subnet.
 
 ---
 
 ## Verify your setup
 
-Run this checklist before starting `tj onboard`:
+Run this checklist before starting `hh onboard`:
 
 ```bash
 # On both machines:
@@ -103,14 +103,14 @@ node --version        # must be v22+
 tailscale status      # must show both machines
 openclaw --version    # must succeed
 
-# On Tom:
+# On H1:
 ssh jerry@100.x.y.z  # must connect without password prompt
 
-# On Jerry:
+# On H2:
 ollama list           # should show at least one model
 ```
 
-If anything fails, fix it before running `tj onboard`. The wizard checks prerequisites but it's faster to fix them manually first.
+If anything fails, fix it before running `hh onboard`. The wizard checks prerequisites but it's faster to fix them manually first.
 
 ---
 
@@ -131,7 +131,7 @@ sudo tailscale up
 # OpenClaw
 npm install -g openclaw
 
-# Ollama (Jerry only)
+# Ollama (H2 only)
 curl -fsSL https://ollama.com/install.sh | sh
 ollama pull llama3.2
 ```
@@ -148,7 +148,7 @@ winget install tailscale.tailscale
 # OpenClaw
 npm install -g openclaw
 
-# Ollama (Jerry only)
+# Ollama (H2 only)
 winget install Ollama.Ollama
 ollama pull llama3.2
 ```

@@ -1,13 +1,13 @@
-# `tj send` — Reference
+# `hh send` — Reference
 
-Send a task to a Jerry node. The core command you'll use most.
+Send a task to a H2 node. The core command you'll use most.
 
 ---
 
 ## Synopsis
 
 ```bash
-tj send "<task>" [flags]
+hh send "<task>" [flags]
 ```
 
 ---
@@ -17,13 +17,13 @@ tj send "<task>" [flags]
 | Flag | Type | Default | Description |
 |------|------|---------|-------------|
 | `--wait` | bool | false | Block until result received; print to stdout |
-| `--peer <name>` | string | auto | Target a specific Jerry by name |
+| `--peer <name>` | string | auto | Target a specific H2 by name |
 | `--timeout <s>` | int | 300 | Max seconds to wait in `--wait` mode |
 | `--attach <path>` | string | — | Attach a file (PDF, image, text, code) |
-| `--no-wol` | bool | false | Don't send WOL if Jerry is offline — fail immediately |
+| `--no-wol` | bool | false | Don't send WOL if H2 is offline — fail immediately |
 | `--auto` | bool | false | Use capability-based routing to pick best peer |
 | `--context <text>` | string | auto | Override the context summary sent with the task |
-| `--shutdown-after` | bool | false | Tell Jerry to shut down after completing this task |
+| `--shutdown-after` | bool | false | Tell H2 to shut down after completing this task |
 | `--json` | bool | false | Output task ID, peer, status as JSON |
 | `--verbose` | bool | false | Show WOL steps, gateway calls, timing |
 
@@ -34,17 +34,17 @@ tj send "<task>" [flags]
 ### Default (no `--wait`)
 
 ```bash
-$ tj send "write a haiku about TCP/IP"
+$ hh send "write a haiku about TCP/IP"
 → Task dispatched: task_01j8fzq7r4
-  Jerry: jerry-home (100.x.y.z)
+  H2: h2-home (100.x.y.z)
   Status: queued
-  Track: tj logs --task task_01j8fzq7r4
+  Track: hh logs --task task_01j8fzq7r4
 ```
 
 ### With `--wait`
 
 ```bash
-$ tj send "write a haiku about TCP/IP" --wait
+$ hh send "write a haiku about TCP/IP" --wait
 Bits flow through the dark,
 Each packet seeks its lost home—
 Checksum finds the truth.
@@ -55,7 +55,7 @@ Checksum finds the truth.
 ```json
 {
   "task_id": "task_01j8fzq7r4",
-  "peer": "jerry-home",
+  "peer": "h2-home",
   "tailscale_ip": "100.x.y.z",
   "status": "queued",
   "dispatched_at": "2026-03-12T09:15:00Z"
@@ -66,7 +66,7 @@ Checksum finds the truth.
 
 ## Message format
 
-`tj send` builds a `HHMessage` with type `task`:
+`hh send` builds a `HHMessage` with type `task`:
 
 ```json
 {
@@ -93,9 +93,9 @@ Checksum finds the truth.
 ```
 1. Parse flags and task string
 2. Load peer config (--peer, or auto-select)
-3. Check Jerry gateway health (GET /health)
+3. Check H2 gateway health (GET /health)
 4. If unhealthy + WOL configured: send magic packet, poll gateway
-5. Build HHMessage, POST to Jerry gateway
+5. Build HHMessage, POST to H2 gateway
 6. Write task state to ~/.his-and-hers/tasks/<task_id>.json
 7. If --wait: poll task state every 2s until done:true
 8. Print result (--wait) or task ID (default)
@@ -109,8 +109,8 @@ Checksum finds the truth.
 |------|---------|
 | 0 | Task dispatched (or completed, if `--wait`) |
 | 1 | Config error (no peers configured, bad args) |
-| 2 | Jerry unreachable (no WOL, or WOL timeout exceeded) |
-| 3 | Task failed (Jerry returned error) |
+| 2 | H2 unreachable (no WOL, or WOL timeout exceeded) |
+| 3 | Task failed (H2 returned error) |
 | 4 | Timeout (`--wait` + `--timeout` exceeded) |
 
 ---
@@ -119,38 +119,38 @@ Checksum finds the truth.
 
 ```bash
 # Basic send
-tj send "summarize the attached PDF" --attach report.pdf
+hh send "summarize the attached PDF" --attach report.pdf
 
 # Wait for result
-tj send "translate this to French" --attach doc.txt --wait
+hh send "translate this to French" --attach doc.txt --wait
 
 # Target specific peer, wait, verbose
-tj send "run the test suite" --peer jerry-beast --wait --verbose
+hh send "run the test suite" --peer h2-beast --wait --verbose
 
 # Use capability routing
-tj send "generate a product image" --auto --wait
+hh send "generate a product image" --auto --wait
 
-# Fail fast if Jerry is offline
-tj send "quick code review" --no-wol --wait
+# Fail fast if H2 is offline
+hh send "quick code review" --no-wol --wait
 
-# Schedule Jerry to shut down after task
-tj send "render overnight batch job" --peer jerry-beast --shutdown-after --wait --timeout 7200
+# Schedule H2 to shut down after task
+hh send "render overnight batch job" --peer h2-beast --shutdown-after --wait --timeout 7200
 
 # JSON output for scripting
-RESULT=$(tj send "what is 2+2" --wait --json)
+RESULT=$(hh send "what is 2+2" --wait --json)
 echo $RESULT | jq .output
 ```
 
 ---
 
-## Scripting with `tj send`
+## Scripting with `hh send`
 
 ```bash
 #!/bin/bash
 # Process all PDFs in a directory
 for pdf in ~/docs/*.pdf; do
   echo "Processing: $pdf"
-  tj send "extract key facts and bullet-point summary" \
+  hh send "extract key facts and bullet-point summary" \
     --attach "$pdf" \
     --wait \
     --timeout 120 \
@@ -163,6 +163,6 @@ done
 ## See also
 
 - [Sending tasks guide](/guide/sending-tasks) — full walkthrough
-- [tj logs](/reference/logs) — monitor task status
-- [tj wake](/reference/wake) — manually wake Jerry
-- [tj capabilities](/reference/capabilities) — understand routing decisions
+- [hh logs](/reference/logs) — monitor task status
+- [hh wake](/reference/wake) — manually wake H2
+- [hh capabilities](/reference/capabilities) — understand routing decisions

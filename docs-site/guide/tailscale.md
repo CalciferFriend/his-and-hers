@@ -1,12 +1,12 @@
 # Tailscale Setup
 
-Tailscale is the network layer that connects Tom and Jerry. All communication between them flows over an encrypted WireGuard tunnel — no port forwarding, no VPN config, no firewall punching.
+Tailscale is the network layer that connects H1 and H2. All communication between them flows over an encrypted WireGuard tunnel — no port forwarding, no VPN config, no firewall punching.
 
 ---
 
 ## Why Tailscale
 
-- **Zero config networking** — Tom and Jerry just work once they're on the same Tailscale network
+- **Zero config networking** — H1 and H2 just work once they're on the same Tailscale network
 - **WireGuard encryption** — all traffic is encrypted point-to-point
 - **NAT traversal** — works even if both machines are behind NAT
 - **Stable IPs** — each device gets a stable `100.x.y.z` IP that doesn't change
@@ -51,35 +51,35 @@ Generate auth keys at [login.tailscale.com/admin/settings/keys](https://login.ta
 ## Verify both machines can see each other
 
 ```bash
-# On Tom:
+# On H1:
 tailscale status
-# → Should list Jerry's machine name and IP
+# → Should list H2's machine name and IP
 
-# Get Tom's IP (give this to Jerry during onboarding)
+# Get H1's IP (give this to H2 during onboarding)
 tailscale ip -4
 # → 100.x.y.z
 
-# Ping Jerry
-tailscale ping jerry-machine-name
-# → pong from jerry (100.a.b.c) via DERP(nyc) in 15ms
+# Ping H2
+tailscale ping h2-machine-name
+# → pong from h2 (100.a.b.c) via DERP(nyc) in 15ms
 ```
 
 If both machines are online and authenticated to the same account, they'll appear in `tailscale status` within seconds.
 
 ---
 
-## Pairing Tom and Jerry
+## Pairing H1 and H2
 
-Once both machines are on the same Tailscale network, give Tom Jerry's IP during `tj onboard`:
+Once both machines are on the same Tailscale network, give H1 H2's IP during `hh onboard`:
 
 ```bash
-# On Jerry's machine:
+# On H2's machine:
 tailscale ip -4
-# → 100.a.b.c  ← give this to Tom
+# → 100.a.b.c  ← give this to H1
 
-# On Tom's machine:
-tj onboard
-# → Enter Jerry's Tailscale IP: 100.a.b.c
+# On H1's machine:
+hh onboard
+# → Enter H2's Tailscale IP: 100.a.b.c
 ```
 
 his-and-hers uses the Tailscale IP directly for:
@@ -91,11 +91,11 @@ his-and-hers uses the Tailscale IP directly for:
 
 ## Separate Tailscale accounts (sharing)
 
-If Tom and Jerry are on different Tailscale accounts (e.g. different households or users), use Tailscale's [node sharing](https://tailscale.com/kb/1084/sharing):
+If H1 and H2 are on different Tailscale accounts (e.g. different households or users), use Tailscale's [node sharing](https://tailscale.com/kb/1084/sharing):
 
-1. On Jerry's admin panel: Share → enter Tom's Tailscale email
-2. Tom accepts the share
-3. Jerry's machine appears in Tom's `tailscale status`
+1. On H2's admin panel: Share → enter H1's Tailscale email
+2. H1 accepts the share
+3. H2's machine appears in H1's `tailscale status`
 
 The `100.x.y.z` IP works the same way regardless.
 
@@ -103,7 +103,7 @@ The `100.x.y.z` IP works the same way regardless.
 
 ## Static Tailscale IPs
 
-Tailscale IPs are stable — they don't change as long as the device is registered to your account. No need to update Tom's config if Jerry reboots or changes networks.
+Tailscale IPs are stable — they don't change as long as the device is registered to your account. No need to update H1's config if H2 reboots or changes networks.
 
 To see all assigned IPs in your account: [login.tailscale.com/admin/machines](https://login.tailscale.com/admin/machines)
 
@@ -111,7 +111,7 @@ To see all assigned IPs in your account: [login.tailscale.com/admin/machines](ht
 
 ## Tailscale on servers (Linux systemd)
 
-For always-on Tom nodes (cloud VMs, home servers):
+For always-on H1 nodes (cloud VMs, home servers):
 
 ```bash
 # Enable and start tailscaled
@@ -129,13 +129,13 @@ tailscale status  # should show up within 30s
 
 ## Tailscale on Windows at boot
 
-For Jerry nodes that need to be reachable after a WOL boot:
+For H2 nodes that need to be reachable after a WOL boot:
 
 1. Open Task Manager → Startup tab → verify Tailscale is enabled
 2. Or in System Settings → Apps → Startup
 3. Tailscale should be in your system tray and auto-connect on login
 
-Tom's startup script (`start-gateway.bat`) already waits for Tailscale before starting the gateway:
+H1's startup script (`start-gateway.bat`) already waits for Tailscale before starting the gateway:
 
 ```bat
 :wait_ts
@@ -158,12 +158,12 @@ if %errorlevel% neq 0 (
 
 **Tailscale ping works but gateway is unreachable**
 
-Tailscale is up but the OpenClaw gateway isn't running on Jerry. Check:
+Tailscale is up but the OpenClaw gateway isn't running on H2. Check:
 
 ```bash
-# On Jerry:
+# On H2:
 openclaw gateway status
-tj status
+hh status
 ```
 
 **High latency / DERP relay**
@@ -177,10 +177,10 @@ Try enabling `--accept-routes` or check if your router supports hairpin NAT.
 It shouldn't change, but if it does (device re-registered):
 
 ```bash
-# Get new IP on Jerry
+# Get new IP on H2
 tailscale ip -4
 
-# Update Tom's peer config
-# Edit ~/.his-and-hers/peers/jerry-home.json → tailscale_ip field
-# Then test: tj status
+# Update H1's peer config
+# Edit ~/.his-and-hers/peers/h2-home.json → tailscale_ip field
+# Then test: hh status
 ```

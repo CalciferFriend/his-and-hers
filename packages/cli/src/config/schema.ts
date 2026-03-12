@@ -29,7 +29,7 @@ export const ProviderConfig = z.object({
   model: z.string(),
   /** Base URL — required for ollama/lmstudio/custom */
   base_url: z.string().optional(),
-  /** Keychain key where the API key is stored (e.g. "tj-anthropic-key") */
+  /** Keychain key where the API key is stored (e.g. "hh-anthropic-key") */
   api_key_keychain_key: z.string().optional(),
   /** Display alias shown in status output */
   alias: z.string().optional(),
@@ -84,9 +84,9 @@ export const TJConfig = z.object({
   /** Primary peer node (backwards-compatible single-peer config) */
   peer_node: PeerNodeConfig,
   /**
-   * Additional peer nodes for multi-Jerry setups.
+   * Additional peer nodes for multi-H2 setups.
    * Combine with peer_node to form the full peer roster.
-   * Use `tj send --peer <name>` to target a specific peer.
+   * Use `hh send --peer <name>` to target a specific peer.
    */
   peer_nodes: z.array(PeerNodeConfig).optional(),
   pair: PairState.optional(),

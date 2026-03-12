@@ -1,10 +1,10 @@
 /**
  * routing.ts
  *
- * Routing decisions for task delegation between Tom (cloud) and Jerry (local).
+ * Routing decisions for task delegation between H1 (cloud) and H2 (local).
  *
  * Two-tier approach:
- *   1. **Capability-aware routing** — when a TJCapabilityReport for the peer
+ *   1. **Capability-aware routing** — when a HHCapabilityReport for the peer
  *      is available, route based on actual advertised skills and models.
  *   2. **Heuristic routing** — keyword-pattern fallback when no capability
  *      data is on hand (e.g. first-run, peer never advertised).
@@ -12,30 +12,30 @@
  * Phase 3 will add cost/latency estimation once token budgets are tracked.
  */
 
-import type { TJCapabilityReport } from "./capabilities/registry.schema.ts";
+import type { HHCapabilityReport } from "./capabilities/registry.schema.ts";
 
-export type RoutingHint = "local" | "jerry-local" | "jerry-latent" | "cloud";
+export type RoutingHint = "local" | "h2-local" | "h2-latent" | "cloud";
 
 export interface RoutingDecision {
   hint: RoutingHint;
   reason: string;
-  /** Specific Ollama model to use on Jerry, if applicable */
+  /** Specific Ollama model to use on H2, if applicable */
   suggested_model?: string;
   /**
    * Phase 6: Vision Wormhole codec ID to use for latent send.
-   * Only set when hint === "jerry-latent".
+   * Only set when hint === "h2-latent".
    * Example: "vw-qwen3vl2b-v1"
    */
   latent_codec?: string;
   /**
    * Phase 6: Canonical codec ID for the chosen latent path.
    * Alias for latent_codec when using Vision Wormhole; kv_model when using LatentMAS.
-   * Only set when hint === "jerry-latent".
+   * Only set when hint === "h2-latent".
    */
   codec_id?: string;
   /**
    * Phase 6: KV-compatible model ID for LatentMAS path.
-   * Only set when hint === "jerry-latent" and both peers share the same model family.
+   * Only set when hint === "h2-latent" and both peers share the same model family.
    * Example: "llama3.2"
    */
   kv_model?: string;
@@ -43,7 +43,7 @@ export interface RoutingDecision {
 
 // ─── Keyword heuristics (fallback) ──────────────────────────────────────────
 
-/** Patterns that suggest a task needs local GPU resources on Jerry. */
+/** Patterns that suggest a task needs local GPU resources on H2. */
 const JERRY_PATTERNS: RegExp[] = [
   /\bimage\b/i,
   /\bdiffus/i,
@@ -74,7 +74,7 @@ const CLOUD_PATTERNS: RegExp[] = [
 
 function heuristicRouting(task: string): RoutingDecision {
   if (JERRY_PATTERNS.some((re) => re.test(task))) {
-    return { hint: "jerry-local", reason: "keyword match: GPU/local-model task pattern" };
+    return { hint: "h2-local", reason: "keyword match: GPU/local-model task pattern" };
   }
   if (CLOUD_PATTERNS.some((re) => re.test(task))) {
     return { hint: "cloud", reason: "keyword match: lightweight cloud task pattern" };
@@ -88,15 +88,15 @@ function heuristicRouting(task: string): RoutingDecision {
  * Route using real peer capability data.
  *
  * Decision tree:
- *   - Task mentions image/art/diffusion AND peer has "image-gen" skill → jerry-local
- *   - Task mentions transcription AND peer has "transcription" skill → jerry-local
- *   - Task is LLM-heavy AND peer has Ollama running with models → jerry-local
- *   - Task is heavy (heuristic) AND peer has GPU → jerry-local
+ *   - Task mentions image/art/diffusion AND peer has "image-gen" skill → h2-local
+ *   - Task mentions transcription AND peer has "transcription" skill → h2-local
+ *   - Task is LLM-heavy AND peer has Ollama running with models → h2-local
+ *   - Task is heavy (heuristic) AND peer has GPU → h2-local
  *   - Otherwise → cloud
  */
 function capabilityRouting(
   task: string,
-  peer: TJCapabilityReport,
+  peer: HHCapabilityReport,
 ): RoutingDecision {
   const lower = task.toLowerCase();
 
@@ -104,7 +104,7 @@ function capabilityRouting(
   if (peer.latent_support && peer.latent_codecs.length > 0) {
     if (lower.split(" ").length > 5) {
       return {
-        hint: "jerry-latent",
+        hint: "h2-latent",
         reason: `peer supports latent comm (codec: ${peer.latent_codecs[0]})`,
         codec_id: peer.latent_codecs[0],
         latent_codec: peer.latent_codecs[0],
@@ -118,7 +118,7 @@ function capabilityRouting(
     /\b(image|photo|picture|art|draw|paint|generat|diffus|stable)\b/.test(lower)
   ) {
     return {
-      hint: "jerry-local",
+      hint: "h2-local",
       reason: `peer has image-gen skill (GPU: ${peer.gpu.name ?? "available"})`,
     };
   }
@@ -129,7 +129,7 @@ function capabilityRouting(
     /\b(video|animation|clip|render)\b/.test(lower)
   ) {
     return {
-      hint: "jerry-local",
+      hint: "h2-local",
       reason: `peer has video-gen skill`,
     };
   }
@@ -140,7 +140,7 @@ function capabilityRouting(
     /\b(transcri(be|pt)|audio|speech|whisper|mp3|wav)\b/.test(lower)
   ) {
     return {
-      hint: "jerry-local",
+      hint: "h2-local",
       reason: "peer has transcription skill (Whisper detected)",
     };
   }
@@ -150,7 +150,7 @@ function capabilityRouting(
     if (/\b(ollama|local\s+model|llama|mistral|codellama|qwen|deepseek)\b/.test(lower)) {
       const suggested = peer.ollama.models[0];
       return {
-        hint: "jerry-local",
+        hint: "h2-local",
         reason: `peer has Ollama running with ${peer.ollama.models.length} model(s)`,
         suggested_model: suggested,
       };
@@ -164,7 +164,7 @@ function capabilityRouting(
     ) {
       const suggested = peer.ollama.models[0];
       return {
-        hint: "jerry-local",
+        hint: "h2-local",
         reason: `heavy task → routing to local GPU (${peer.gpu.name ?? "available"})`,
         suggested_model: suggested,
       };
@@ -173,7 +173,7 @@ function capabilityRouting(
 
   // Phase 6: Latent routing — prefer Vision Wormhole when peer has a matching codec
   // and the task is complex enough to benefit from latent state transfer.
-  // Only activates when Tom also has a matching codec (checked by caller via --latent flag).
+  // Only activates when H1 also has a matching codec (checked by caller via --latent flag).
   if (
     peer.latent_codecs &&
     peer.latent_codecs.length > 0 &&
@@ -181,7 +181,7 @@ function capabilityRouting(
   ) {
     const codec = peer.latent_codecs[0];
     return {
-      hint: "jerry-latent",
+      hint: "h2-latent",
       reason: `peer supports Vision Wormhole (codec: ${codec}) — latent send preferred`,
       latent_codec: codec,
       codec_id: codec,
@@ -196,7 +196,7 @@ function capabilityRouting(
   ) {
     const model = peer.kv_compatible_models[0];
     return {
-      hint: "jerry-latent",
+      hint: "h2-latent",
       reason: `peer shares KV-compatible model (${model}) — LatentMAS path available`,
       kv_model: model,
       codec_id: model,
@@ -205,7 +205,7 @@ function capabilityRouting(
 
   // Heuristic fallback within capability context
   const heuristic = heuristicRouting(task);
-  if (heuristic.hint === "jerry-local" && peer.gpu.available) {
+  if (heuristic.hint === "h2-local" && peer.gpu.available) {
     return { ...heuristic, reason: `${heuristic.reason} (peer GPU confirmed)` };
   }
 
@@ -252,13 +252,13 @@ function isLatentWorthy(task: string): boolean {
  * Pass `peerCapabilities` when available for accurate routing.
  * Falls back to keyword heuristics when capabilities are unknown.
  *
- * - `"jerry-local"` → send to Jerry for GPU/local model execution
- * - `"cloud"`        → handle locally (Tom's cloud API)
+ * - `"h2-local"` → send to H2 for GPU/local model execution
+ * - `"cloud"`        → handle locally (H1's cloud API)
  * - `"local"`        → handle inline, no peer needed
  */
 export function suggestRouting(
   task: string,
-  peerCapabilities?: TJCapabilityReport | null,
+  peerCapabilities?: HHCapabilityReport | null,
 ): RoutingHint {
   return routeTask(task, peerCapabilities).hint;
 }
@@ -269,7 +269,7 @@ export function suggestRouting(
  */
 export function routeTask(
   task: string,
-  peerCapabilities?: TJCapabilityReport | null,
+  peerCapabilities?: HHCapabilityReport | null,
 ): RoutingDecision {
   if (peerCapabilities && peerCapabilities.node !== "unknown") {
     return capabilityRouting(task, peerCapabilities);

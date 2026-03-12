@@ -70,7 +70,7 @@ describe("startResultServer", () => {
     };
 
     const [res, webhookResult] = await Promise.all([
-      post(handle.url, payload, { "X-TJ-Token": TOKEN }),
+      post(handle.url, payload, { "X-HH-Token": TOKEN }),
       handle.waitForResult(),
     ]);
 
@@ -92,7 +92,7 @@ describe("startResultServer", () => {
     const res = await post(
       handle.url,
       { task_id: TASK_ID, output: "x", success: true },
-      { "X-TJ-Token": "wrong-token" },
+      { "X-HH-Token": "wrong-token" },
     );
 
     expect(res.status).toBe(401);
@@ -110,7 +110,7 @@ describe("startResultServer", () => {
     const res = await post(
       handle.url,
       { task_id: "different-task", output: "x", success: true },
-      { "X-TJ-Token": TOKEN },
+      { "X-HH-Token": TOKEN },
     );
 
     expect(res.status).toBe(409);
@@ -168,13 +168,13 @@ describe("startResultServer", () => {
     };
 
     const [, _result] = await Promise.all([
-      post(handle.url, payload, { "X-TJ-Token": TOKEN }),
+      post(handle.url, payload, { "X-HH-Token": TOKEN }),
       handle.waitForResult(),
     ]);
 
     // After the server closes, further requests should fail (ECONNREFUSED)
     await expect(
-      post(handle.url, payload, { "X-TJ-Token": TOKEN }),
+      post(handle.url, payload, { "X-HH-Token": TOKEN }),
     ).rejects.toThrow();
   });
 });
@@ -182,7 +182,7 @@ describe("startResultServer", () => {
 describe("parseWebhookUrl", () => {
   it("extracts webhook URL from wake message", async () => {
     const { parseWebhookUrl } = await import("./result-server.ts");
-    const msg = `[HHMessage:task from Calcifer id=abc] do something\n\nWhen done, run: tj result abc "..."\n\nTJ-Result-Webhook: http://100.116.25.69:38791/result\nTJ-Result-Token: (use your token)`;
+    const msg = `[HHMessage:task from Calcifer id=abc] do something\n\nWhen done, run: hh result abc "..."\n\nTJ-Result-Webhook: http://100.116.25.69:38791/result\nTJ-Result-Token: (use your token)`;
     expect(parseWebhookUrl(msg)).toBe("http://100.116.25.69:38791/result");
   });
 

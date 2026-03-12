@@ -1,6 +1,6 @@
-# Jerry Profile — Apple M2/M3 Mac (macOS)
+# H2 Profile — Apple M2/M3 Mac (macOS)
 
-Apple Silicon Macs are excellent Jerry nodes — unified memory means the GPU
+Apple Silicon Macs are excellent H2 nodes — unified memory means the GPU
 and CPU share the same fast RAM pool. An M2 with 16 GB unified memory can run
 13B models comfortably. An M3 Max with 128 GB can run 70B+ models.
 
@@ -68,8 +68,8 @@ npm install -g openclaw
 npm install -g his-and-hers
 
 # Run wizard
-tj onboard
-# → Role: Jerry
+hh onboard
+# → Role: H2
 # → Provider: Ollama (auto-detected)
 ```
 
@@ -87,8 +87,8 @@ tailscale up --authkey tskey-auth-...
 ### 5. Advertise capabilities
 
 ```bash
-tj capabilities advertise
-tj capabilities show
+hh capabilities advertise
+hh capabilities show
 ```
 
 Expected output:
@@ -143,7 +143,7 @@ System Settings → General → Login Items → add `openclaw` binary.
 Macs support "Wake for network access" but it's less reliable than PC WOL.
 Enable in: System Settings → Energy → Options → "Wake for network access".
 
-For best results with Tom wake: leave Mac in sleep (not shutdown) and ensure
+For best results with H1 wake: leave Mac in sleep (not shutdown) and ensure
 Tailscale is set to maintain connection during sleep.
 
 ## Image generation on Apple Silicon
@@ -165,7 +165,7 @@ python main.py --force-fp16
 
 Advertise image-gen skill:
 ```bash
-tj capabilities advertise --notes "SDXL via ComfyUI, Metal backend"
+hh capabilities advertise --notes "SDXL via ComfyUI, Metal backend"
 ```
 
 ## Troubleshooting
@@ -182,7 +182,7 @@ OLLAMA_GPU_OVERHEAD=0 ollama run llama3.2
 **Out of memory:**
 Reduce context size: `ollama run llama3.2 --ctx-size 2048`
 
-**Gateway not reachable from Tom:**
+**Gateway not reachable from H1:**
 ```bash
 # Check Tailscale is up and has an IP
 tailscale ip

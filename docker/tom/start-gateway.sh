@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# start-gateway.sh — standalone helper to (re)start OpenClaw gateway inside the Tom container
+# start-gateway.sh — standalone helper to (re)start OpenClaw gateway inside the H1 container
 # Called by entrypoint.sh; can also be run manually for debugging.
 
 set -euo pipefail

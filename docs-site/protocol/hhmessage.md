@@ -5,7 +5,7 @@ description: The HHMessage envelope — all fields, types, and discriminated uni
 
 # HHMessage Schema
 
-Every message between Tom and Jerry is wrapped in a `HHMessage` envelope.
+Every message between H1 and H2 is wrapped in a `HHMessage` envelope.
 The `type` field determines the message variant and the expected shape of `payload`.
 
 ---
@@ -24,8 +24,8 @@ interface HHMessage {
   context_summary: string | null;   // Background context for the recipient
   budget_remaining: number | null;  // Token/cost budget remaining (USD)
   done: boolean;                    // Whether this message completes the task
-  wake_required: boolean;           // Tom sets true when Jerry needs waking first
-  shutdown_after: boolean;          // Jerry should shut down after completing
+  wake_required: boolean;           // H1 sets true when H2 needs waking first
+  shutdown_after: boolean;          // H2 should shut down after completing
   timestamp: string;                // ISO 8601 datetime
 }
 
@@ -40,7 +40,7 @@ type HHMessageType = "task" | "result" | "heartbeat" | "handoff" | "wake" | "err
 |-------|------|----------|-------------|
 | `version` | `string` | ✓ | Protocol version, e.g. `"0.1.0"` |
 | `id` | `string` | ✓ | UUID v4 — unique message identifier |
-| `from` | `string` | ✓ | Sender node name (matches `tj.json` name) |
+| `from` | `string` | ✓ | Sender node name (matches `hh.json` name) |
 | `to` | `string` | ✓ | Recipient node name |
 | `turn` | `number` | ✓ | Turn counter, 0-indexed. Increments per message in a conversation |
 | `type` | `HHMessageType` | ✓ | Message variant — see union types below |
@@ -48,15 +48,15 @@ type HHMessageType = "task" | "result" | "heartbeat" | "handoff" | "wake" | "err
 | `context_summary` | `string \| null` | – | Optional background context from previous tasks |
 | `budget_remaining` | `number \| null` | – | Remaining budget in USD; `null` = no limit |
 | `done` | `boolean` | ✓ | `true` = final message for this task |
-| `wake_required` | `boolean` | ✓ | If `true`, Tom sends WOL before delivering |
-| `shutdown_after` | `boolean` | ✓ | If `true`, Jerry shuts down after the task |
+| `wake_required` | `boolean` | ✓ | If `true`, H1 sends WOL before delivering |
+| `shutdown_after` | `boolean` | ✓ | If `true`, H2 shuts down after the task |
 | `timestamp` | `string` | ✓ | ISO 8601 datetime, e.g. `"2026-03-12T10:00:00.000Z"` |
 
 ---
 
 ## Discriminated union variants
 
-### `task` — Tom → Jerry
+### `task` — H1 → H2
 
 New task delegation. This is the most common message type.
 
@@ -80,7 +80,7 @@ New task delegation. This is the most common message type.
 
 ---
 
-### `result` — Jerry → Tom
+### `result` — H2 → H1
 
 Task output. Can be partial (`done: false`) or final (`done: true`).
 
@@ -180,9 +180,9 @@ See [HHHandoff](/protocol/hhhandoff) for the payload schema.
 
 ---
 
-### `wake` — Tom → Jerry
+### `wake` — H1 → H2
 
-Explicit wake signal sent before a task when Jerry is sleeping. Tom may send
+Explicit wake signal sent before a task when H2 is sleeping. H1 may send
 this after the WOL packet lands and before sending the actual task.
 
 ```json

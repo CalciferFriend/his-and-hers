@@ -4,7 +4,7 @@ The battle-tested two-node setup that proved this architecture works.
 
 ## Nodes
 
-### Calcifer (Tom — Orchestrator)
+### Calcifer (H1 — Orchestrator)
 - **Host:** AWS EC2 us-east-1
 - **OS:** Ubuntu 24.04.4 LTS
 - **Hardware:** 2 vCPUs, 7.6 GB RAM
@@ -20,7 +20,7 @@ The battle-tested two-node setup that proved this architecture works.
 - Wake GLaDOS via WOL magic packet
 - SSH into GLaDOS via Tailscale
 
-### GLaDOS (Jerry — Executor)
+### GLaDOS (H2 — Executor)
 - **Host:** Home Windows 11 PC, NYC
 - **OS:** Windows 11 Pro (build 10.0.26200)
 - **Hardware:** AMD Ryzen 5 3400G, RTX 3070 Ti (8 GB VRAM), 16 GB RAM
@@ -81,13 +81,13 @@ DefaultUserName = nicol
 
 ## Loopback + Tailscale: The Proxy Pattern
 
-OpenClaw's local tools (message, cron, sessions) require the gateway on loopback. But Jerry needs to reach Tom via Tailscale. The solution: Tom stays on loopback, a socat proxy forwards the Tailscale interface to loopback.
+OpenClaw's local tools (message, cron, sessions) require the gateway on loopback. But H2 needs to reach H1 via Tailscale. The solution: H1 stays on loopback, a socat proxy forwards the Tailscale interface to loopback.
 
 **Service file:** `~/.config/systemd/user/calcifer-tailnet-proxy.service`
 
 ```ini
 [Unit]
-Description=Tom Tailscale→Loopback Gateway Proxy
+Description=H1 Tailscale→Loopback Gateway Proxy
 After=network.target tailscaled.service openclaw-gateway.service
 Requires=openclaw-gateway.service
 

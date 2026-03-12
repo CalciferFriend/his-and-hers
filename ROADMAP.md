@@ -1,16 +1,16 @@
 # Roadmap — his-and-hers
 
-> Goal: someone with two machines runs `npx tj onboard`, answers a few questions,
+> Goal: someone with two machines runs `npx hh onboard`, answers a few questions,
 > and has two agents talking in under 10 minutes — with whatever models they want.
 
 ---
 
 ## Phase 1 — Foundation ✅ (2026-03-11)
 
-- [x] Protocol design (HHMessage, HHHandoff, HHHeartbeat, TJPair)
+- [x] Protocol design (HHMessage, HHHandoff, HHHeartbeat, HHPair)
 - [x] Core transport (Tailscale, SSH, WOL)
 - [x] Gateway wake implementation (reverse-engineered OpenClaw WS protocol)
-- [x] Socat proxy pattern for Tom (loopback + tailscale)
+- [x] Socat proxy pattern for H1 (loopback + tailscale)
 - [x] Reference implementation: Calcifer (AWS/Linux) ↔ GLaDOS (Home PC/Windows)
 - [x] First bidirectional agent-to-agent message confirmed
 - [x] First inter-agent code review completed
@@ -20,17 +20,17 @@
 
 ## Phase 2 — Plug & Play 🚧 (current)
 
-> Owned by: Calcifer (Tom/Linux) + GLaDOS (Jerry/Windows) in parallel
+> Owned by: Calcifer (H1/Linux) + GLaDOS (H2/Windows) in parallel
 
 ### 2a. Onboard wizard — core flow (Calcifer) ✅ (2026-03-12)
 - [x] Prerequisites check (Node ≥ 22, Tailscale running, OpenClaw installed)
-- [x] Role selection (Tom/Jerry) with clear explanation of each
+- [x] Role selection (H1/H2) with clear explanation of each
 - [x] Identity setup (name, emoji, model provider)
 - [x] Peer connection (Tailscale hostname/IP, SSH user/key, live test)
-- [x] Gateway config write (loopback for Tom, tailscale for Jerry)
+- [x] Gateway config write (loopback for H1, tailscale for H2)
 - [x] Round-trip validation before declaring success
 
-### 2b. Onboard wizard — Windows/Jerry steps (GLaDOS)
+### 2b. Onboard wizard — Windows/H2 steps (GLaDOS)
 - [ ] AutoLogin registry setup (with recovery prompt)
 - [ ] Startup bat generation (`start-gateway.bat`)
 - [ ] Scheduled Task installation (logon trigger, belt-and-suspenders)
@@ -43,25 +43,25 @@
 - [x] API key setup per provider (OS keychain via keytar)
 - [x] Ollama auto-detect (is it running locally? list models)
 - [x] Provider-specific OpenClaw config generation
-- [x] Cost-routing: lightweight tasks → cloud, heavy → local (Jerry/Ollama)
+- [x] Cost-routing: lightweight tasks → cloud, heavy → local (H2/Ollama)
 
-### 2d. `tj send` pipeline (both)
-- [x] Tom: ping peer → WOL if needed → build HHMessage → send via wakeAgent
+### 2d. `hh send` pipeline (both)
+- [x] H1: ping peer → WOL if needed → build HHMessage → send via wakeAgent
 - [x] Timeout + retry logic
-- [x] `tj send --wait` polls for result via task state file
-- [ ] Jerry: `tj result <id> <output>` — receive + store result back (GLaDOS)
-- [ ] Streaming results (partial updates while Jerry works) — Phase 3
-- [ ] `tj send "generate an image of X"` → wakes GLaDOS, runs diffusion, returns path — Phase 3
+- [x] `hh send --wait` polls for result via task state file
+- [ ] H2: `hh result <id> <output>` — receive + store result back (GLaDOS)
+- [ ] Streaming results (partial updates while H2 works) — Phase 3
+- [ ] `hh send "generate an image of X"` → wakes GLaDOS, runs diffusion, returns path — Phase 3
 
-### 2e. `tj status` — live checks (Calcifer) ✅ (2026-03-11)
+### 2e. `hh status` — live checks (Calcifer) ✅ (2026-03-11)
 - [x] Tailscale reachability ping
 - [x] Gateway health check (HTTP /health)
 - [x] Last heartbeat timestamp
 - [x] Current model + cost tracking
 - [x] WOL capability indicator
 
-### 2f. Docker Tom template (Calcifer) ✅ (2026-03-11)
-- [x] `Dockerfile` for Tom node (Alpine + Node + OpenClaw + his-and-hers)
+### 2f. Docker H1 template (Calcifer) ✅ (2026-03-11)
+- [x] `Dockerfile` for H1 node (Alpine + Node + OpenClaw + his-and-hers)
 - [x] `docker-compose.yml` with env-var config
 - [x] One-liner: `docker run -e ANTHROPIC_API_KEY=... calcifierai/tom`
 - [x] Auto-registers with Tailscale on first boot (entrypoint.sh)
@@ -81,40 +81,40 @@
 ## Phase 3 — Intelligence Layer 🚧 (current)
 
 ### 3a. Capability registry (Calcifer) ✅ (2026-03-12)
-- [x] `TJCapabilityReport` Zod schema: GPU info, Ollama models, skill tags
+- [x] `HHCapabilityReport` Zod schema: GPU info, Ollama models, skill tags
 - [x] Auto-scanner: probes nvidia-smi / rocm-smi / Metal, Ollama /api/tags,
       SD/ComfyUI ports, LM Studio, whisper binary
-- [x] Persistent store: `~/.his-and-hers/capabilities.json` (Jerry) +
-      `peer-capabilities.json` (Tom caches peer's report)
-- [x] `tj capabilities scan|advertise|fetch|show|route` CLI
+- [x] Persistent store: `~/.his-and-hers/capabilities.json` (H2) +
+      `peer-capabilities.json` (H1 caches peer's report)
+- [x] `hh capabilities scan|advertise|fetch|show|route` CLI
 - [x] `routeTask()` — capability-aware routing with keyword heuristic fallback
 - [x] 10 new tests (34 total, all passing)
 
 ### 3b. Gateway /capabilities endpoint (GLaDOS)
-- [ ] Jerry's gateway serves GET /capabilities → returns capabilities.json
+- [ ] H2's gateway serves GET /capabilities → returns capabilities.json
 - [ ] Auth: verify gateway token before serving (same as /health)
 
 ### 3c. Budget tracking (Calcifer) ✅ (2026-03-12)
 - [x] Token/cost tracking per session in task state (`TaskResult.cost_usd`, auto-computed)
 - [x] Per-token pricing tables: Anthropic (Opus/Sonnet/Haiku), OpenAI (gpt-4o/mini, o3-mini), local ($0)
-- [x] `tj budget` command: --today/week/month/all/--tasks/--json
+- [x] `hh budget` command: --today/week/month/all/--tasks/--json
 - [x] Cloud vs local token breakdown, local savings estimate
 - [x] Budget routing advice when cloud spend is high
 
-### 3d. Handoff continuity (both) ✅ (2026-03-12, Tom side)
+### 3d. Handoff continuity (both) ✅ (2026-03-12, H1 side)
 - [x] Context summary auto-generated when task completes (template-based, LLM-upgradeable)
 - [x] Summary passed in `HHTaskMessage.context_summary` on next task
-- [x] Tom retains last N=10 summaries per peer (~/.his-and-hers/context/<peer>.json)
-- [ ] Jerry side: include `context_summary` in HHResultMessage on result delivery (GLaDOS)
+- [x] H1 retains last N=10 summaries per peer (~/.his-and-hers/context/<peer>.json)
+- [ ] H2 side: include `context_summary` in HHResultMessage on result delivery (GLaDOS)
 
 ### 3e. Multi-H2 support (Calcifer) ✅ (2026-03-12)
 - [x] Config: `peer_nodes[]` array added alongside `peer_node` (backwards-compatible)
-- [x] `tj send --peer <name>` to target a specific Jerry
-- [x] `tj send --auto` — capability-aware auto-selection via cached capabilities
-- [x] `tj peers` — list all peers with GPU/Ollama/skill info; --ping for live check
+- [x] `hh send --peer <name>` to target a specific H2
+- [x] `hh send --auto` — capability-aware auto-selection via cached capabilities
+- [x] `hh peers` — list all peers with GPU/Ollama/skill info; --ping for live check
 
-### 3f. Jerry skill registry endpoint (GLaDOS)
-- [ ] `tj capabilities advertise` runs on Jerry startup (add to startup.bat / systemd)
+### 3f. H2 skill registry endpoint (GLaDOS)
+- [ ] `hh capabilities advertise` runs on H2 startup (add to startup.bat / systemd)
 - [ ] Auto-refresh: re-scan when Ollama model list changes
 
 ---
@@ -122,22 +122,22 @@
 ## Phase 4 — Community 🚧
 
 ### 4a. Community registry (Calcifer) ✅ (2026-03-12)
-- [x] `tj publish` — publish anonymised node card to GitHub Gist registry
-- [x] `tj discover` — browse community nodes with GPU/skill/provider/OS filters
-- [x] `TJNodeCard` schema with capabilities, WOL support, tags, description
+- [x] `hh publish` — publish anonymised node card to GitHub Gist registry
+- [x] `hh discover` — browse community nodes with GPU/skill/provider/OS filters
+- [x] `HHNodeCard` schema with capabilities, WOL support, tags, description
 
-### 4b. Jerry Docker images (Calcifer) ✅ (2026-03-12)
-- [x] `docker/jerry/Dockerfile` — CPU/Ollama Jerry image (Debian + Node 22 + Ollama)
-- [x] `docker/jerry/Dockerfile.cuda` — NVIDIA CUDA variant (tested: RTX 3070 Ti+)
-- [x] `docker/jerry/entrypoint.sh` — Tailscale auth, SSH server, Ollama start, config gen
-- [x] `docker/jerry/pull-models.sh` — pull comma-separated models at startup
-- [x] `docker-compose.yml` — profiles: `jerry-cpu` and `jerry-cuda` added alongside Tom
+### 4b. H2 Docker images (Calcifer) ✅ (2026-03-12)
+- [x] `docker/h2/Dockerfile` — CPU/Ollaman H2 image (Debian + Node 22 + Ollama)
+- [x] `docker/h2/Dockerfile.cuda` — NVIDIA CUDA variant (tested: RTX 3070 Ti+)
+- [x] `docker/h2/entrypoint.sh` — Tailscale auth, SSH server, Ollama start, config gen
+- [x] `docker/h2/pull-models.sh` — pull comma-separated models at startup
+- [x] `docker-compose.yml` — profiles: `h2-cpu` and `h2-cuda` added alongside H1
 - [x] `docker/.env.example` — unified env template for both nodes
-- [x] Pre-built M2 Mac instructions (`docs/jerry-profiles/m2-mac.md` — uses `tj onboard`, no Docker)
+- [x] Pre-built M2 Mac instructions (`docs/h2-profiles/m2-mac.md` — uses `hh onboard`, no Docker)
 - [x] Raspberry Pi 5 variant (ARM64 base image + quantized Ollama models) ✅ (2026-03-12)
-- [x] RTX 4090 profile docs (`docs/jerry-profiles/rtx-4090.md`) ✅ (2026-03-12)
+- [x] RTX 4090 profile docs (`docs/h2-profiles/rtx-4090.md`) ✅ (2026-03-12)
 
-### 4c. `tj logs` — task history viewer (Calcifer) ✅ (2026-03-12)
+### 4c. `hh logs` — task history viewer (Calcifer) ✅ (2026-03-12)
 - [x] Pretty-printed log view with status badges, relative timestamps, peer name
 - [x] Filters: --status, --peer, --since (24h / 7d / 30m), --limit
 - [x] --output flag to include result text inline
@@ -153,37 +153,37 @@
 
 ## Phase 5 — Resilience & Developer Experience 🚧
 
-> Owned by: Calcifer (Tom/Linux) + GLaDOS (Jerry/Windows) in parallel
+> Owned by: Calcifer (H1/Linux) + GLaDOS (H2/Windows) in parallel
 
-### 5a. `tj config` command (Calcifer) ✅ (2026-03-12)
-- [x] `tj config show` — pretty-print config, redact secrets
-- [x] `tj config get <key>` — read a single key (dot-notation)
-- [x] `tj config set <key> <value>` — write a key with auto type coercion
-- [x] `tj config path` — print config file path
+### 5a. `hh config` command (Calcifer) ✅ (2026-03-12)
+- [x] `hh config show` — pretty-print config, redact secrets
+- [x] `hh config get <key>` — read a single key (dot-notation)
+- [x] `hh config set <key> <value>` — write a key with auto type coercion
+- [x] `hh config path` — print config file path
 
-### 5b. `tj test` command (Calcifer) ✅ (2026-03-12)
+### 5b. `hh test` command (Calcifer) ✅ (2026-03-12)
 - [x] Tailscale reachability check with RTT
 - [x] Gateway health check
 - [x] Round-trip wake message test with RTT
 - [x] Summary table output (+ --json flag)
 - [x] Exit code 1 on any failure (useful for CI/health scripts)
 
-### 5c. `tj watch` daemon — Jerry-side task listener (GLaDOS)
-- [ ] Persistent process that polls for pending tasks from Tom
-- [ ] Auto-calls `tj result <id> <output>` when task state file is created
+### 5c. `hh watch` daemon — H2-side task listener (GLaDOS)
+- [ ] Persistent process that polls for pending tasks from H1
+- [ ] Auto-calls `hh result <id> <output>` when task state file is created
 - [ ] Configurable poll interval (default: 5s)
 - [ ] Graceful shutdown on SIGINT/SIGTERM
 
 ### 5d. Webhook result push (Calcifer) ✅ (2026-03-12)
-- [x] Tom exposes POST /result on its gateway (authenticated, token-gated, one-shot)
-- [x] `deliverResultWebhook()` helper in core — Jerry calls this to push result back
+- [x] H1 exposes POST /result on its gateway (authenticated, token-gated, one-shot)
+- [x] `deliverResultWebhook()` helper in core — H2 calls this to push result back
 - [x] `parseWebhookUrl()` parses webhook URL embedded in wake message
 - [x] `startResultServer()` binds to Tailscale IP, auto-selects port, auto-closes after delivery
-- [x] Fallback to polling if webhook not received (older Jerry / network block)
+- [x] Fallback to polling if webhook not received (older H2 / network block)
 - [x] Tests: 9 tests covering auth, task_id guard, timeout, one-shot close, URL parsing
 
 ### 5e. Exponential backoff + retry (Calcifer) ✅ (2026-03-12)
-- [x] `tj send` retries on transient failures (gateway down, WS timeout) via `withRetry()`
+- [x] `hh send` retries on transient failures (gateway down, WS timeout) via `withRetry()`
 - [x] Configurable max retries + base delay (`--max-retries` CLI flag)
 - [x] Backoff state persisted so cron retries don't duplicate (`~/.his-and-hers/retry/<id>.json`)
 - [x] `cronRetryDecision()` — send/skip/retry/backoff logic for cron safety
@@ -212,7 +212,7 @@
 ### 6b. HLCA sender integration (Calcifer) ✅ (2026-03-12)
 - [ ] Hook into OpenClaw gateway to extract hidden states mid-inference (awaits upstream codec)
 - [ ] Implement Vision Wormhole codec adapter (compress 2048d → 512d via visual encoder)
-- [x] Add `--latent` flag to `tj send` command (hard-require latent; error if peer lacks it)
+- [x] Add `--latent` flag to `hh send` command (hard-require latent; error if peer lacks it)
 - [x] Add `--auto-latent` flag — prefer latent, fall back to text if peer doesn't support it
 - [x] Auto-detect if peer supports latent via cached capability negotiation
 - [x] Fallback: if peer doesn't advertise latent support, send text instead
@@ -225,10 +225,10 @@
 - [ ] Graceful degradation: use fallback_text if latent parsing fails
 
 ### 6d. Capability advertisement (both)
-- [x] Add `latent_codecs: ["vw-qwen3vl2b-v1"]` to TJCapabilityReport
+- [x] Add `latent_codecs: ["vw-qwen3vl2b-v1"]` to HHCapabilityReport
 - [x] Add `kv_compatible_models: ["llama-3.1-70b"]` for LatentMAS
 - [ ] Gateway /capabilities endpoint serves latent support info
-- [x] Tom caches peer latent capabilities in peer-capabilities.json
+- [x] H1 caches peer latent capabilities in peer-capabilities.json
 
 ### 6e. Automatic routing and fallback (Calcifer)
 - [x] `routeTask()` checks if peer supports latent before choosing message type
@@ -240,7 +240,7 @@
 - [ ] Latency: latent vs text round-trip time on same hardware
 - [ ] Accuracy: structured task completion rate (JSON generation, code, math)
 - [ ] Bandwidth: bytes transmitted per task (compressed latent vs tokenized text)
-- [ ] Test across Jerry profiles: RTX 3070 Ti, RTX 4090, M2 Mac, Pi 5
+- [ ] Test across H2 profiles: RTX 3070 Ti, RTX 4090, M2 Mac, Pi 5
 - [ ] Document results in `docs/benchmarks/latent-vs-text.md`
 
 ### Research dependencies
@@ -262,10 +262,10 @@ context and `docs/latent-communication.md` for implementation guide.
 | Wizard core + Linux steps | Calcifer 🔥 |
 | Wizard Windows steps | GLaDOS 🤖 |
 | Model provider abstraction | Calcifer 🔥 |
-| `tj send` Tom side | Calcifer 🔥 |
-| `tj send` Jerry side | GLaDOS 🤖 |
-| `tj status` | Calcifer 🔥 |
-| Docker Tom template | Calcifer 🔥 |
+| `hh send` H1 side | Calcifer 🔥 |
+| `hh send` H2 side | GLaDOS 🤖 |
+| `hh status` | Calcifer 🔥 |
+| Docker H1 template | Calcifer 🔥 |
 | Ollama/local model integration | GLaDOS 🤖 |
 | HHMessage discriminated union | Calcifer 🔥 |
 | Windows boot chain testing | GLaDOS 🤖 |

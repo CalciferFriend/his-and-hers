@@ -1,12 +1,12 @@
 ---
 title: HHHeartbeat Schema
-description: The HHHeartbeat payload schema for liveness pings between Tom and Jerry.
+description: The HHHeartbeat payload schema for liveness pings between H1 and H2.
 ---
 
 # HHHeartbeat Schema
 
 `HHHeartbeat` is the payload carried by `HHMessage` messages with `type: "heartbeat"`.
-Jerry sends a heartbeat on a regular interval so Tom knows the node is alive
+H2 sends a heartbeat on a regular interval so H1 knows the node is alive
 and its gateway is healthy.
 
 ---
@@ -16,7 +16,7 @@ and its gateway is healthy.
 ```typescript
 interface HHHeartbeat {
   from: string;              // Sender node name
-  role: "tom" | "jerry";    // Role of the sender
+  role: "h1" | "jerry";    // Role of the sender
   tailscale_ip: string;     // Current Tailscale IP (useful if it changed)
   gateway_port: number;     // Gateway port this node is listening on
   gateway_healthy: boolean; // Whether the local gateway passed its own /health check
@@ -31,10 +31,10 @@ interface HHHeartbeat {
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `from` | `string` | ✓ | Node name matching `tj.json` |
+| `from` | `string` | ✓ | Node name matching `hh.json` |
 | `role` | `"tom" \| "jerry"` | ✓ | Role of the sender |
 | `tailscale_ip` | `string` | ✓ | Current Tailscale IPv4 address |
-| `gateway_port` | `number` | ✓ | Port Tom should use to reach this node's gateway |
+| `gateway_port` | `number` | ✓ | Port H1 should use to reach this node's gateway |
 | `gateway_healthy` | `boolean` | ✓ | Result of the node's own `/health` check |
 | `uptime_seconds` | `number` | ✓ | Seconds the gateway process has been running |
 | `timestamp` | `string` | ✓ | ISO 8601 datetime of this heartbeat |
@@ -86,20 +86,20 @@ not part of a multi-turn conversation.
 
 ## Heartbeat interval
 
-Jerry's gateway sends a heartbeat to Tom every **30 seconds** by default.
-Tom updates its last-seen timestamp for the peer on receipt.
+H2's gateway sends a heartbeat to H1 every **30 seconds** by default.
+H1 updates its last-seen timestamp for the peer on receipt.
 
-`tj status` displays the age of the last heartbeat:
+`hh status` displays the age of the last heartbeat:
 
 ```bash
-$ tj status
+$ hh status
 
-Jerry  (jerry-home 🤖)
+H2  (h2-home 🤖)
   ✓  last heartbeat   8s ago
 ```
 
-If no heartbeat is received for more than **90 seconds**, Tom marks the peer as
-potentially unhealthy (⚠️ stale). After **5 minutes** with no heartbeat, Tom
+If no heartbeat is received for more than **90 seconds**, H1 marks the peer as
+potentially unhealthy (⚠️ stale). After **5 minutes** with no heartbeat, H1
 flags the peer as offline.
 
 ---
@@ -107,11 +107,11 @@ flags the peer as offline.
 ## Troubleshooting stale heartbeats
 
 ```bash
-# Check if Jerry's gateway is running
-$ tj status --peer jerry-home
+# Check if H2's gateway is running
+$ hh status --peer h2-home
 
-# If gateway is stopped, restart it on Jerry:
-$ sudo systemctl restart tj-gateway     # Linux
+# If gateway is stopped, restart it on H2:
+$ sudo systemctl restart hh-gateway     # Linux
 $ openclaw gateway start                # Manual start
 ```
 
@@ -121,4 +121,4 @@ $ openclaw gateway start                # Manual start
 
 - [HHMessage](/protocol/hhmessage) — the outer message envelope
 - [Protocol overview](/protocol/overview) — full message flow
-- [`tj status`](/reference/status) — viewing heartbeat age in the live status output
+- [`hh status`](/reference/status) — viewing heartbeat age in the live status output

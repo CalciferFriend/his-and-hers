@@ -13,7 +13,7 @@ export async function stepFinalize(ctx: Partial<WizardContext>): Promise<Partial
   const pairingCode = generatePairingCode();
   const pairingCodeHash = hashPairingCode(pairingCode);
 
-  const peerRole = ctx.role === "tom" ? "jerry" : "tom";
+  const peerRole = ctx.role === "h1" ? "jerry" : "tom";
 
   const config: TJConfig = {
     version: "0.1.0",
@@ -75,8 +75,8 @@ export async function stepFinalize(ctx: Partial<WizardContext>): Promise<Partial
   }
 
   // Print summary
-  const emoji = ctx.emoji ?? (ctx.role === "tom" ? "🐱" : "🐭");
-  const peerEmoji = ctx.role === "tom" ? "🐭" : "🐱";
+  const emoji = ctx.emoji ?? (ctx.role === "h1" ? "🐱" : "🐭");
+  const peerEmoji = ctx.role === "h1" ? "🐭" : "🐱";
 
   p.note(
     [
@@ -101,7 +101,7 @@ export async function stepFinalize(ctx: Partial<WizardContext>): Promise<Partial
     `Share this code with the peer machine to complete pairing:\n\n` +
     `  ${pc.bold(pc.cyan(pairingCode))}\n\n` +
     `On the peer machine, run:\n` +
-    `  ${pc.cyan(`tj pair --code ${pairingCode}`)}`,
+    `  ${pc.cyan(`hh pair --code ${pairingCode}`)}`,
     "Pairing Code"
   );
 

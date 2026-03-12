@@ -1,9 +1,9 @@
 ---
 title: RTX 3070 Ti (Windows 11)
-description: Set up a Jerry node on an NVIDIA RTX 3070 Ti Windows PC — the reference implementation.
+description: Set up a H2 node on an NVIDIA RTX 3070 Ti Windows PC — the reference implementation.
 ---
 
-# Jerry Profile — RTX 3070 Ti (Windows 11)
+# H2 Profile — RTX 3070 Ti (Windows 11)
 
 The reference implementation hardware. This is what GLaDOS runs.
 
@@ -76,16 +76,16 @@ winget install OpenJS.NodeJS.LTS
 npm install -g openclaw
 npm install -g his-and-hers
 
-tj onboard
-# → Select role: Jerry
+hh onboard
+# → Select role: H2
 # → Provider: Ollama (auto-detected)
 ```
 
 ### 5. Advertise capabilities
 
 ```powershell
-tj capabilities advertise
-tj capabilities show
+hh capabilities advertise
+hh capabilities show
 ```
 
 Expected output:
@@ -98,7 +98,7 @@ Skills: ollama, gpu-inference
 
 ### 6. Add to startup
 
-**Option A — Scheduled Task (recommended, created by `tj onboard` automatically):**
+**Option A — Scheduled Task (recommended, created by `hh onboard` automatically):**
 
 ```powershell
 $action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c start-gateway.bat"
@@ -119,7 +119,7 @@ start /B openclaw gateway start
 
 ### 7. Enable Wake-on-LAN (recommended)
 
-Lets Tom wake your PC when needed — saves significant power when idle.
+Lets H1 wake your PC when needed — saves significant power when idle.
 
 1. **BIOS:** Enable "Wake on LAN" / "Power On By PCI-E" (varies by board)
 2. **NIC:** Device Manager → Network Adapters → your NIC → Properties → Power Management → enable all WOL checkboxes
@@ -130,7 +130,7 @@ Find your MAC:
 Get-NetAdapter | Select Name, MacAddress
 ```
 
-Add to Tom's config:
+Add to H1's config:
 ```json
 {
   "this_node": {
@@ -185,5 +185,5 @@ Check Windows Event Viewer → Application for errors. Ensure Tailscale is in st
 ## See also
 
 - [Hardware overview](/hardware/overview) — compare with other profiles
-- [`tj capabilities`](/reference/capabilities) — scan, advertise, fetch
+- [`hh capabilities`](/reference/capabilities) — scan, advertise, fetch
 - [WOL guide](/guide/wol) — Wake-on-LAN setup and troubleshooting

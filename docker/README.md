@@ -1,8 +1,8 @@
-# Docker — Tom Node
+# Docker — H1 Node
 
-Run a Tom (orchestrator) node as a Docker container. Tom handles task routing, wakes Jerry when needed, and talks to cloud LLMs (Claude, GPT).
+Run a H1 (orchestrator) node as a Docker container. H1 handles task routing, wakes H2 when needed, and talks to cloud LLMs (Claude, GPT).
 
-Jerry is *not* containerised — it's your home PC running Windows with a GPU. Containers don't make sense there.
+H2 is *not* containerised — it's your home PC running Windows with a GPU. Containers don't make sense there.
 
 ---
 
@@ -15,7 +15,7 @@ git clone https://github.com/CalciferFriend/his-and-hers
 cd his-and-hers
 
 # Build the image
-docker build -t calcifer-ai/tom -f docker/tom/Dockerfile .
+docker build -t calcifer-ai/h1 -f docker/tom/Dockerfile .
 ```
 
 ### 2. Configure
@@ -36,27 +36,27 @@ docker compose -f docker/docker-compose.yml logs -f
 
 # Or bare docker
 docker run -d \
-  --name tom \
+  --name h1 \
   --network host \
   --cap-add NET_ADMIN \
   --cap-add NET_RAW \
   --device /dev/net/tun \
   -e TS_AUTHKEY=tskey-auth-... \
   -e ANTHROPIC_API_KEY=sk-ant-... \
-  calcifer-ai/tom
+  calcifer-ai/h1
 ```
 
 ### 4. Verify
 
 ```bash
 # Check gateway health
-docker exec tom curl -s http://127.0.0.1:18789/health
+docker exec h1 curl -s http://127.0.0.1:18789/health
 
-# Run tj status inside the container
-docker exec -it tom tj status
+# Run hh status inside the container
+docker exec -it h1 hh status
 
-# Send a task to Jerry
-docker exec -it tom tj send "summarise the latest arxiv ML papers"
+# Send a task to H2
+docker exec -it h1 hh send "summarise the latest arxiv ML papers"
 ```
 
 ---
@@ -67,11 +67,11 @@ On startup the container:
 
 1. **Tailscale up** — authenticates with `TS_AUTHKEY`, joins your tailnet
 2. **OpenClaw config** — writes `~/.openclaw/openclaw.json` with the gateway token + API key
-3. **TJ config** — writes `~/.his-and-hers/config.json` with peer info from env vars
+3. **HH config** — writes `~/.his-and-hers/config.json` with peer info from env vars
 4. **Gateway start** — boots the OpenClaw gateway on loopback port 18789
-5. **Socat proxy** — forwards `<tailscale-ip>:18789 → 127.0.0.1:18789` so Jerry can reach Tom
+5. **Socat proxy** — forwards `<tailscale-ip>:18789 → 127.0.0.1:18789` so H2 can reach H1
 
-Jerry can now send messages to Tom's Tailscale IP without any public port exposure.
+H2 can now send messages to H1's Tailscale IP without any public port exposure.
 
 ---
 
@@ -81,11 +81,11 @@ Jerry can now send messages to Tom's Tailscale IP without any public port exposu
 |--------|---------|
 | `tailscale-state` | Tailscale machine identity (avoids re-auth on restart) |
 | `tom-openclaw` | OpenClaw config + agent state |
-| `tom-tj-config` | his-and-hers config (peer info, pairing code, etc.) |
+| `his-and-hers-config` | his-and-hers config (peer info, pairing code, etc.) |
 
-## SSH key for Jerry
+## SSH key for H2
 
-If you want Tom to SSH into Jerry (e.g., to run commands or check status), mount an SSH key:
+If you want H1 to SSH into H2 (e.g., to run commands or check status), mount an SSH key:
 
 ```yaml
 volumes:
@@ -93,7 +93,7 @@ volumes:
 ```
 
 Generate with: `ssh-keygen -t ed25519 -f docker/ssh/id_ed25519 -N ""`  
-Add the public key to Jerry's `~/.ssh/authorized_keys`.
+Add the public key to H2's `~/.ssh/authorized_keys`.
 
 ---
 
@@ -103,15 +103,15 @@ Add the public key to Jerry's `~/.ssh/authorized_keys`.
 |----------|----------|---------|-------------|
 | `TS_AUTHKEY` | ✅ | — | Tailscale auth key |
 | `ANTHROPIC_API_KEY` | ✅ | — | Anthropic API key |
-| `TOM_NAME` | — | `Tom` | Display name |
+| `H1_NAME` | — | `H1` | Display name |
 | `TOM_EMOJI` | — | `🐱` | Avatar emoji |
 | `TOM_MODEL` | — | `claude-sonnet-4-6` | Primary model |
 | `TOM_GATEWAY_PORT` | — | `18789` | Gateway port |
 | `TOM_GATEWAY_TOKEN` | — | *(auto-generated)* | Gateway auth token |
-| `JERRY_TAILSCALE_IP` | — | — | Jerry's Tailscale IP |
-| `JERRY_GATEWAY_TOKEN` | — | — | Jerry's gateway token |
+| `JERRY_TAILSCALE_IP` | — | — | H2's Tailscale IP |
+| `JERRY_GATEWAY_TOKEN` | — | — | H2's gateway token |
 | `JERRY_WOL_ENABLED` | — | `false` | Enable Wake-on-LAN |
-| `JERRY_WOL_MAC` | — | — | Jerry's MAC address |
+| `JERRY_WOL_MAC` | — | — | H2's MAC address |
 | `JERRY_WOL_BROADCAST` | — | — | WOL broadcast address |
 
 ---
@@ -119,7 +119,7 @@ Add the public key to Jerry's `~/.ssh/authorized_keys`.
 ## Publishing to Docker Hub
 
 ```bash
-docker tag calcifer-ai/tom calcifierai/tom:latest
+docker tag calcifer-ai/h1 calcifierai/tom:latest
 docker push calcifierai/tom:latest
 ```
 
@@ -129,5 +129,5 @@ docker run -d --network host --cap-add NET_ADMIN --cap-add NET_RAW \
   --device /dev/net/tun \
   -e TS_AUTHKEY=tskey-auth-... \
   -e ANTHROPIC_API_KEY=sk-ant-... \
-  calcifierai/tom
+  calcifierai/h1
 ```
