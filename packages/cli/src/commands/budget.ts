@@ -16,7 +16,7 @@
 import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { buildBudgetSummary, type BudgetSummary } from "../state/budget.ts";
-import { formatCost, formatTokens } from "@tom-and-jerry/core";
+import { formatCost, formatTokens } from "@his-and-hers/core";
 
 export interface BudgetOptions {
   today?: boolean;

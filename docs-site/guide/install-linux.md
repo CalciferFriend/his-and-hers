@@ -70,10 +70,10 @@ openclaw gateway status
 
 ---
 
-## 4 — Install tom-and-jerry
+## 4 — Install his-and-hers
 
 ```bash
-npm install -g tom-and-jerry
+npm install -g his-and-hers
 tj --version
 ```
 
@@ -97,7 +97,7 @@ The wizard will ask:
 ### What the wizard creates
 
 ```
-~/.tom-and-jerry/
+~/.his-and-hers/
   tj.json                 ← main config (0o600 permissions)
   peers/
     jerry-home.json       ← one file per peer
@@ -116,7 +116,7 @@ Create a systemd service so the gateway restarts on boot:
 ```bash
 sudo tee /etc/systemd/system/tj-gateway.service << 'EOF'
 [Unit]
-Description=tom-and-jerry gateway (OpenClaw)
+Description=his-and-hers gateway (OpenClaw)
 After=network-online.target tailscaled.service
 Wants=network-online.target
 
@@ -142,14 +142,14 @@ Replace `YOUR_USERNAME` and the Node path (`which openclaw` to find the right pa
 ### Autostart — macOS (launchd)
 
 ```bash
-cat > ~/Library/LaunchAgents/com.tom-and-jerry.gateway.plist << 'EOF'
+cat > ~/Library/LaunchAgents/com.his-and-hers.gateway.plist << 'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
   "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
   <key>Label</key>
-  <string>com.tom-and-jerry.gateway</string>
+  <string>com.his-and-hers.gateway</string>
   <key>ProgramArguments</key>
   <array>
     <string>/usr/local/bin/openclaw</string>
@@ -168,8 +168,8 @@ cat > ~/Library/LaunchAgents/com.tom-and-jerry.gateway.plist << 'EOF'
 </plist>
 EOF
 
-launchctl load ~/Library/LaunchAgents/com.tom-and-jerry.gateway.plist
-launchctl list | grep tom-and-jerry
+launchctl load ~/Library/LaunchAgents/com.his-and-hers.gateway.plist
+launchctl list | grep his-and-hers
 ```
 
 ---
@@ -183,7 +183,7 @@ tj status
 Expected output:
 
 ```
-tom-and-jerry v0.5.2
+his-and-hers v0.5.2
 
 Tom  ✓ gateway healthy   127.0.0.1:3737
      ✓ Tailscale up      100.x.y.z

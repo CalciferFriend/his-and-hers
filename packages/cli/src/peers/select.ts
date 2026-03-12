@@ -15,7 +15,7 @@
  */
 
 import type { TJConfig, PeerNodeConfig } from "../config/schema.ts";
-import { loadPeerCapabilities } from "@tom-and-jerry/core";
+import { loadPeerCapabilities } from "@his-and-hers/core";
 
 export type { PeerNodeConfig };
 
@@ -96,9 +96,12 @@ export async function selectBestPeer(config: TJConfig, task: string): Promise<Pe
     let score = 0;
 
     // Load cached capabilities (non-blocking — file may not exist)
-    const caps = await loadPeerCapabilities(peer.name).catch(() => null);
+    // Note: loadPeerCapabilities() reads the single cached peer report;
+    // in a multi-Jerry setup each peer's capability file is namespaced by the
+    // capabilities store path — for now we gracefully skip scoring on cache miss.
+    const caps = await loadPeerCapabilities().catch(() => null);
 
-    if (caps) {
+    if (caps && caps.node === peer.name) {
       if (needsGPU && caps.gpu?.available) {
         score += 10;
         // Bonus: dedicated GPU (non-integrated)
@@ -113,9 +116,9 @@ export async function selectBestPeer(config: TJConfig, task: string): Promise<Pe
           score += 3;
         }
       }
-      // Skill tag matching
-      if (caps.skill_tags) {
-        for (const tag of caps.skill_tags) {
+      // Skill tag matching (field is `skills` in TJCapabilityReport)
+      if (caps.skills && caps.skills.length > 0) {
+        for (const tag of caps.skills) {
           if (taskLower.includes(tag.toLowerCase())) {
             score += 4;
           }

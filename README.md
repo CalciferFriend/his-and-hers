@@ -1,9 +1,9 @@
-# tom-and-jerry
+# his-and-hers
 
 Two agents. Separate machines. One command to wire them.
 
-[![CI](https://github.com/CalciferFriend/tom-and-jerry/actions/workflows/ci.yml/badge.svg)](https://github.com/CalciferFriend/tom-and-jerry/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/npm/v/tom-and-jerry)](https://www.npmjs.com/package/tom-and-jerry)
+[![CI](https://github.com/CalciferFriend/his-and-hers/actions/workflows/ci.yml/badge.svg)](https://github.com/CalciferFriend/his-and-hers/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/his-and-hers)](https://www.npmjs.com/package/his-and-hers)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ---
@@ -22,21 +22,21 @@ Tom can't catch Jerry but can't function without him. Jerry runs fast, disappear
 > *"We do not have organs of communication. Our brains can display our thoughts to the outside world, thereby achieving communication."*
 > — Cixin Liu, The Dark Forest
 
-Today, tom-and-jerry speaks text. Tom sends a prompt. Jerry sends a response. That works — and it's how every multi-agent system in production works right now.
+Today, his-and-hers speaks text. Tom sends a prompt. Jerry sends a response. That works — and it's how every multi-agent system in production works right now.
 
 But text is a lossy compression of thought. Every message forces an agent to collapse its rich internal state into a sequence of tokens, discarding alternative reasoning paths, nuance, and structure that never survives the translation. The other agent then reconstructs meaning from those tokens — a game of telephone running at the speed of inference.
 
 **Our mission is to push the boundaries of what inter-agent communication can be — and to build the transport and memory-sharing layer that makes it possible as those boundaries move.**
 
-The immediate question is practical: how do you connect two machines, wake a sleeping GPU node, route a task, track cost, and get a result back? That's what tom-and-jerry does today.
+The immediate question is practical: how do you connect two machines, wake a sleeping GPU node, route a task, track cost, and get a result back? That's what his-and-hers does today.
 
 The deeper question is architectural: **what does the transport layer look like when the payload isn't text at all?**
 
 Recent research ([Interlat](https://arxiv.org/abs/2511.09149), [LatentMAS](https://arxiv.org/abs/2511.20639)) shows that agents can communicate directly via hidden states — raw continuous vectors passed between models before any token is decoded. The results are significant: up to 24× faster inference, 80% fewer tokens, measurably higher accuracy on complex reasoning tasks. Interlat does this across heterogeneous model architectures. LatentMAS does it training-free via KV cache sharing.
 
-Neither paper ships a production transport layer. That's the gap tom-and-jerry is positioned to fill.
+Neither paper ships a production transport layer. That's the gap his-and-hers is positioned to fill.
 
-The TJMessage protocol today carries text. A future `TJLatentMessage` carries hidden states — with text fallback for nodes that don't support it, capability negotiation at pairing time, and the same Tailscale/WOL/gateway infrastructure underneath. The physical-separation constraint stays. The payload evolves.
+The HHMessage protocol today carries text. A future `HHLatentMessage` carries hidden states — with text fallback for nodes that don't support it, capability negotiation at pairing time, and the same Tailscale/WOL/gateway infrastructure underneath. The physical-separation constraint stays. The payload evolves.
 
 We're building the pipes. The signal running through them will get stranger and more powerful over time.
 
@@ -45,7 +45,7 @@ We're building the pipes. The signal running through them will get stranger and 
 ## Quickstart
 
 ```bash
-npx tom-and-jerry
+npx his-and-hers
 ```
 
 Run that on each machine. The wizard handles everything — role selection, model provider, Tailscale pairing, Wake-on-LAN, gateway config, Windows AutoLogin, startup scripts. Under 10 minutes from zero to two agents talking.
@@ -55,7 +55,7 @@ Run that on each machine. The wizard handles everything — role selection, mode
 Or install globally:
 
 ```bash
-npm install -g tom-and-jerry
+npm install -g his-and-hers
 tj          # wizard on first run, status thereafter
 tj onboard  # explicit wizard
 tj status   # show both nodes + connectivity
@@ -85,7 +85,7 @@ tj send "generate a hero image for the landing page"
 ┌──────────────────────┐         Tailscale          ┌──────────────────────┐
 │   Tom (Orchestrator)  │◄──────────────────────────►│   Jerry (Executor)    │
 │                       │                            │                       │
-│  Always-on server     │     TJMessage protocol     │  GPU workstation      │
+│  Always-on server     │     HHMessage protocol     │  GPU workstation      │
 │  Lightweight tasks    │◄──────────────────────────►│  Heavy compute        │
 │  Web / API / social   │                            │  Inference / GenAI    │
 │                       │         WOL packet         │                       │
@@ -94,7 +94,7 @@ tj send "generate a hero image for the landing page"
 └──────────────────────┘                             └──────────────────────┘
 ```
 
-### The protocol: TJMessage
+### The protocol: HHMessage
 
 Every cross-machine communication uses a typed envelope:
 
@@ -145,7 +145,7 @@ Message types: `task`, `result`, `heartbeat`, `handoff`, `wake`, `error`
 
 ## Config
 
-Written to `~/.tom-and-jerry/tj.json` with `0o600` permissions. Contains:
+Written to `~/.his-and-hers/tj.json` with `0o600` permissions. Contains:
 
 - This node's role, name, Tailscale identity
 - Peer node's connection details (SSH, Tailscale, WOL)
@@ -157,9 +157,9 @@ Written to `~/.tom-and-jerry/tj.json` with `0o600` permissions. Contains:
 
 | Package | Description |
 |---------|-------------|
-| `@tom-and-jerry/core` | Protocol schemas (Zod), transport (Tailscale, SSH, WOL), trust model, gateway helpers |
-| `@tom-and-jerry/cli` | CLI commands + onboard wizard |
-| `@tom-and-jerry/skills` | OpenClaw SKILL.md files for cross-node agent communication |
+| `@his-and-hers/core` | Protocol schemas (Zod), transport (Tailscale, SSH, WOL), trust model, gateway helpers |
+| `@his-and-hers/cli` | CLI commands + onboard wizard |
+| `@his-and-hers/skills` | OpenClaw SKILL.md files for cross-node agent communication |
 
 ## Reference implementation
 
@@ -170,8 +170,8 @@ See [`docs/reference/calcifer-glados.md`](docs/reference/calcifer-glados.md) for
 ## Development
 
 ```bash
-git clone https://github.com/CalciferFriend/tom-and-jerry
-cd tom-and-jerry
+git clone https://github.com/CalciferFriend/his-and-hers
+cd his-and-hers
 pnpm install
 pnpm build
 pnpm test

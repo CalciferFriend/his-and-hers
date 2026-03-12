@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to tom-and-jerry will be documented in this file.
+All notable changes to his-and-hers will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### Phase 1: Foundation (2026-03-11)
-- Protocol design: `TJMessage`, `TJHandoff`, `TJHeartbeat`, `TJPair` Zod schemas
+- Protocol design: `HHMessage`, `HHHandoff`, `HHHeartbeat`, `TJPair` Zod schemas
 - Core transport layer: Tailscale discovery, SSH execution, WOL magic packets
 - Gateway wake implementation via reverse-engineered OpenClaw WebSocket protocol
 - Socat proxy pattern for Tom (loopback + Tailscale bridge)
@@ -39,8 +39,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`tj heartbeat` command** — Send, show, and record heartbeats
 - **`tj result` command** — Mark tasks complete (Jerry calls via SSH after task execution)
 - **`tj peers` command** — List all peers with GPU/Ollama/skill info, `--ping` for live check, `--json` output
-- **Docker Tom template** — Alpine-based image with Tailscale + OpenClaw + tom-and-jerry
-- **TJMessage discriminated union** — Typed envelopes for `TJTaskMessage`, `TJResultMessage`, `TJHeartbeatMessage`, `TJLatentMessage`
+- **Docker Tom template** — Alpine-based image with Tailscale + OpenClaw + his-and-hers
+- **HHMessage discriminated union** — Typed envelopes for `HHTaskMessage`, `HHResultMessage`, `HHHeartbeatMessage`, `HHLatentMessage`
 - **Full test suite** — 81 passing tests via Vitest covering protocol, transport, trust, and gateway
 - **`send-to-agent.js` relay script** — Standalone Node script for agent-to-agent messaging without build step
 
@@ -51,7 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Budget tracking** — Per-task token/cost tracking with provider-specific pricing tables
 - **`tj budget` command** — Cloud vs local breakdown, savings estimates, `--today/week/month/all`, `--tasks`, `--json`
 - **Handoff continuity (Tom side)** — Per-peer context ring buffer (N=10), template-based summarizer, auto-summarize on task complete, `context_summary` field in outbound messages
-- **Multi-Jerry support** — `peer_nodes[]` array in config (backwards-compatible), `--peer <name>` and `--auto` flags on `tj send`
+- **Multi-H2 support** — `peer_nodes[]` array in config (backwards-compatible), `--peer <name>` and `--auto` flags on `tj send`
 - **`tj capabilities` command** — `scan`, `advertise`, `fetch`, `show`, `route` subcommands
 
 #### Phase 4: Community (2026-03-12)
@@ -74,11 +74,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`tj config` command** — `show` (redact secrets), `get <key>` (dot-notation), `set <key> <value>` (auto type coercion), `path`
 - **`tj test` command** — Tailscale reachability + RTT, gateway health, round-trip wake message + RTT, summary table, `--json`, exit code 1 on failure
 - **Webhook result push** — Tom exposes POST /result (token-gated, one-shot), `deliverResultWebhook()` helper, `startResultServer()` auto-binds to Tailscale IP, fallback to polling
-- **Exponential backoff + retry** — `withRetry()` wrapper, `--max-retries` CLI flag, backoff state persistence (`~/.tom-and-jerry/retry/<id>.json`), `cronRetryDecision()` for cron safety
+- **Exponential backoff + retry** — `withRetry()` wrapper, `--max-retries` CLI flag, backoff state persistence (`~/.his-and-hers/retry/<id>.json`), `cronRetryDecision()` for cron safety
 - **Tests** — 28 new tests covering retry logic, webhook auth, timeout, one-shot close, URL parsing
 
 #### Phase 6: Latent Communication (2026-03-12, Experimental)
-- **`TJLatentMessage` type** — Added to `TJMessage` discriminated union for latent space communication
+- **`HHLatentMessage` type** — Added to `HHMessage` discriminated union for latent space communication
 - **Vision Wormhole codec path** — Heterogeneous model support via visual encoder pathway
 - **LatentMAS KV-cache path** — Same-family model support, training-free
 - **Mandatory text fallback** — `fallback_text` field for backwards compatibility
@@ -92,7 +92,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **CI/CD pipeline** — GitHub Actions `ci.yml` (runs on both master and main branches)
 - **npm publish workflow** — `publish.yml` auto-publishes to npm on `v*` tags (requires `NPM_TOKEN` secret)
-- **Vitest config** — `@tom-and-jerry/core` alias for CLI tests without build step
+- **Vitest config** — `@his-and-hers/core` alias for CLI tests without build step
 - **Monorepo structure** — pnpm workspaces: `packages/core`, `packages/cli`, `packages/skills`, `templates/`, `docs/`
 - **Build tooling** — tsdown for fast TypeScript compilation, oxlint/oxfmt for linting
 
@@ -109,6 +109,6 @@ Initial release (pending Phase 2 completion).
 
 ---
 
-**Repository:** https://github.com/CalciferFriend/tom-and-jerry
+**Repository:** https://github.com/CalciferFriend/his-and-hers
 **Authors:** Calcifer 🔥 (Tom/Linux) + GLaDOS 🤖 (Jerry/Windows)
 **License:** MIT

@@ -3,10 +3,10 @@
  *
  * Tom keeps a rolling window of the last N task summaries per peer.
  * On the next outbound task message, the recent summaries are serialized
- * into `TJTaskMessage.context_summary` so Jerry has multi-turn context
+ * into `HHTaskMessage.context_summary` so Jerry has multi-turn context
  * without requiring a full session transcript.
  *
- * Storage: ~/.tom-and-jerry/context/<peer-name>.json
+ * Storage: ~/.his-and-hers/context/<peer-name>.json
  * Format:  JSON array of ContextEntry, capped at MAX_ENTRIES (newest last).
  */
 
@@ -14,7 +14,7 @@ import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-const CONTEXT_DIR = join(homedir(), ".tom-and-jerry", "context");
+const CONTEXT_DIR = join(homedir(), ".his-and-hers", "context");
 const MAX_ENTRIES = 10;
 
 export interface ContextEntry {
@@ -69,7 +69,7 @@ export async function loadContextEntries(peerName: string): Promise<ContextEntry
  * Build a single condensed context string from the last `limit` entries.
  * Returns null if there are no stored entries (first task — no prior context).
  *
- * The returned string is suitable for `TJTaskMessage.context_summary`.
+ * The returned string is suitable for `HHTaskMessage.context_summary`.
  */
 export async function buildContextSummary(
   peerName: string,

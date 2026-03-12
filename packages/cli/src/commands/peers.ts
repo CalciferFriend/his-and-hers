@@ -15,7 +15,7 @@
 import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { loadConfig } from "../config/store.ts";
-import { pingPeer, loadPeerCapabilities } from "@tom-and-jerry/core";
+import { pingPeer, loadPeerCapabilities } from "@his-and-hers/core";
 import { getAllPeers } from "../peers/select.ts";
 
 export interface PeersOptions {
@@ -48,7 +48,10 @@ export async function peers(opts: PeersOptions = {}) {
 
   const statuses: PeerStatus[] = await Promise.all(
     allPeers.map(async (peer, i): Promise<PeerStatus> => {
-      const caps = await loadPeerCapabilities(peer.name).catch(() => null);
+      // Load cached peer capabilities — matches by node name to handle
+      // multi-peer configs where only the primary peer's cache may be present.
+      const allCaps = await loadPeerCapabilities().catch(() => null);
+      const caps = allCaps?.node === peer.name ? allCaps : null;
 
       let reachable: boolean | undefined;
       if (opts.ping) {
@@ -64,7 +67,7 @@ export async function peers(opts: PeersOptions = {}) {
         reachable,
         gpu: caps?.gpu?.available ? (caps.gpu.name ?? "GPU") : undefined,
         ollama_models: caps?.ollama?.models?.length,
-        skill_tags: caps?.skill_tags,
+        skill_tags: caps?.skills,
       };
     }),
   );

@@ -1,8 +1,8 @@
 import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { loadConfig } from "../config/store.ts";
-import { pingPeer, getTailscaleStatus } from "@tom-and-jerry/core";
-import { checkGatewayHealth } from "@tom-and-jerry/core";
+import { pingPeer, getTailscaleStatus } from "@his-and-hers/core";
+import { checkGatewayHealth } from "@his-and-hers/core";
 
 export async function status() {
   const config = await loadConfig();

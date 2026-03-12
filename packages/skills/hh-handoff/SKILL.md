@@ -1,7 +1,7 @@
-# tj-handoff — Cross-Node Handoff Protocol
+# hh-handoff — Cross-Node Handoff Protocol
 
-## TJMessage format
-Every cross-machine communication uses the TJMessage envelope:
+## HHMessage format
+Every cross-machine communication uses the HHMessage envelope:
 
 ```json
 {

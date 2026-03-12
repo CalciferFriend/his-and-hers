@@ -38,7 +38,7 @@ tj publish [flags]
 $ tj publish --description "Beast node, 24 GB VRAM, always on"
 
 Publishing node card...
-✓  Capabilities loaded from ~/.tom-and-jerry/capabilities.json
+✓  Capabilities loaded from ~/.his-and-hers/capabilities.json
 ✓  Card built:
      Name:   jerry-beast
      OS:     linux
@@ -122,7 +122,7 @@ $ tj publish --json
 
 `tj publish` builds a `TJNodeCard` from:
 
-1. `~/.tom-and-jerry/capabilities.json` — hardware, Ollama models, skill tags
+1. `~/.his-and-hers/capabilities.json` — hardware, Ollama models, skill tags
 2. Your `tj.json` config — node name, OS, provider
 3. WOL config — whether a MAC address is configured
 

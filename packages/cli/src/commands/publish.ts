@@ -3,7 +3,7 @@
  *
  * Uses GitHub Gist as a zero-infrastructure registry. Each published node
  * is a public Gist with:
- *   - description: "[tom-and-jerry] <role> — <name>, <provider>, <GPU>"
+ *   - description: "[his-and-hers] <role> — <name>, <provider>, <GPU>"
  *   - file: tj-node-card.json  (the anonymised TJNodeCard)
  *
  * Anyone can browse the registry with: tj discover
@@ -19,8 +19,8 @@ import { join } from "node:path";
 import { existsSync } from "node:fs";
 import { loadConfig } from "../config/store.ts";
 
-const REGISTRY_TAG = "tom-and-jerry-node";
-const CARD_DIR = join(homedir(), ".tom-and-jerry");
+const REGISTRY_TAG = "his-and-hers-node";
+const CARD_DIR = join(homedir(), ".his-and-hers");
 const CARD_FILE = join(CARD_DIR, "published-card.json");
 
 // ─── Schema ──────────────────────────────────────────────────────────────────
@@ -118,7 +118,7 @@ function gistDescription(card: TJNodeCard): string {
     ? ` — ${card.capabilities.gpu.name}`
     : "";
   const modelAlias = card.provider.alias ?? `${card.provider.kind}/${card.provider.model}`;
-  return `[tom-and-jerry] ${card.role} node: ${card.name} ${card.emoji ?? ""} · ${modelAlias}${gpu}`;
+  return `[his-and-hers] ${card.role} node: ${card.name} ${card.emoji ?? ""} · ${modelAlias}${gpu}`;
 }
 
 // ─── GitHub Gist API ─────────────────────────────────────────────────────────
@@ -126,7 +126,7 @@ function gistDescription(card: TJNodeCard): string {
 async function postGist(card: TJNodeCard, token?: string): Promise<{ id: string; url: string }> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    "User-Agent": "tom-and-jerry-cli",
+    "User-Agent": "his-and-hers-cli",
     "X-GitHub-Api-Version": "2022-11-28",
   };
   if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -165,7 +165,7 @@ async function patchGist(
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
-      "User-Agent": "tom-and-jerry-cli",
+      "User-Agent": "his-and-hers-cli",
       "Authorization": `Bearer ${token}`,
       "X-GitHub-Api-Version": "2022-11-28",
     },

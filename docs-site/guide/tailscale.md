@@ -82,7 +82,7 @@ tj onboard
 # → Enter Jerry's Tailscale IP: 100.a.b.c
 ```
 
-tom-and-jerry uses the Tailscale IP directly for:
+his-and-hers uses the Tailscale IP directly for:
 - Gateway API calls (HTTP to `100.a.b.c:3737`)
 - SSH config push
 - WOL reachability check
@@ -181,6 +181,6 @@ It shouldn't change, but if it does (device re-registered):
 tailscale ip -4
 
 # Update Tom's peer config
-# Edit ~/.tom-and-jerry/peers/jerry-home.json → tailscale_ip field
+# Edit ~/.his-and-hers/peers/jerry-home.json → tailscale_ip field
 # Then test: tj status
 ```

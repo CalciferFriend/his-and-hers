@@ -1,11 +1,11 @@
 ---
-title: TJHeartbeat Schema
-description: The TJHeartbeat payload schema for liveness pings between Tom and Jerry.
+title: HHHeartbeat Schema
+description: The HHHeartbeat payload schema for liveness pings between Tom and Jerry.
 ---
 
-# TJHeartbeat Schema
+# HHHeartbeat Schema
 
-`TJHeartbeat` is the payload carried by `TJMessage` messages with `type: "heartbeat"`.
+`HHHeartbeat` is the payload carried by `HHMessage` messages with `type: "heartbeat"`.
 Jerry sends a heartbeat on a regular interval so Tom knows the node is alive
 and its gateway is healthy.
 
@@ -14,7 +14,7 @@ and its gateway is healthy.
 ## TypeScript interface
 
 ```typescript
-interface TJHeartbeat {
+interface HHHeartbeat {
   from: string;              // Sender node name
   role: "tom" | "jerry";    // Role of the sender
   tailscale_ip: string;     // Current Tailscale IP (useful if it changed)
@@ -57,9 +57,9 @@ interface TJHeartbeat {
 
 ---
 
-## As a TJMessage
+## As a HHMessage
 
-Heartbeats are carried as the `payload` of a `TJMessage` with `type: "heartbeat"`:
+Heartbeats are carried as the `payload` of a `HHMessage` with `type: "heartbeat"`:
 
 ```json
 {
@@ -119,6 +119,6 @@ $ openclaw gateway start                # Manual start
 
 ## See also
 
-- [TJMessage](/protocol/tjmessage) — the outer message envelope
+- [HHMessage](/protocol/hhmessage) — the outer message envelope
 - [Protocol overview](/protocol/overview) — full message flow
 - [`tj status`](/reference/status) — viewing heartbeat age in the live status output

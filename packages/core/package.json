@@ -1,12 +1,12 @@
 {
-  "name": "@tom-and-jerry/core",
+  "name": "@his-and-hers/core",
   "version": "0.1.0",
   "description": "Cross-machine pairing protocol, handoff message schema, trust model, peer discovery, WOL, SSH transport",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CalciferFriend/tom-and-jerry",
+    "url": "https://github.com/CalciferFriend/his-and-hers",
     "directory": "packages/core"
   },
   "main": "dist/index.js",

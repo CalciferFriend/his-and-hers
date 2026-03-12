@@ -8,7 +8,7 @@ Jerry advertises what it can do — GPU, models, skills. Tom uses that profile t
 
 1. **Jerry scans** its hardware and software: `tj capabilities scan`
 2. **Jerry advertises** the profile to Tom: `tj capabilities advertise`
-3. **Tom caches** the profile: `~/.tom-and-jerry/peer-capabilities.json`
+3. **Tom caches** the profile: `~/.his-and-hers/peer-capabilities.json`
 4. **Tom routes** using `routeTask()`: picks the best peer for each task based on keywords and capability tags
 
 This happens automatically on Jerry startup. You don't need to configure it manually.
@@ -64,7 +64,7 @@ tj capabilities advertise
 
 This:
 1. Runs the scan
-2. Writes `~/.tom-and-jerry/capabilities.json`
+2. Writes `~/.his-and-hers/capabilities.json`
 3. POSTs the profile to Tom's `/capabilities` endpoint (Tom caches it)
 
 Run this on Jerry startup (the startup batch script / systemd unit includes it by default).
@@ -174,7 +174,7 @@ tj capabilities advertise --tags "my-custom-skill,finetune"
 # → Appended to skill_tags in capabilities.json
 ```
 
-Or edit `~/.tom-and-jerry/capabilities.json` directly and re-advertise.
+Or edit `~/.his-and-hers/capabilities.json` directly and re-advertise.
 
 ---
 
@@ -206,4 +206,4 @@ $ tj capabilities route "generate an image"
   Reason: online + image-gen skill
 ```
 
-See [Multi-Jerry](/guide/multi-jerry) for more.
+See [Multi-H2](/guide/multi-h2) for more.

@@ -71,7 +71,7 @@ ollama pull codellama          # code tasks
 ollama pull whisper            # or install standalone whisper
 ```
 
-### 4. Install OpenClaw + tom-and-jerry
+### 4. Install OpenClaw + his-and-hers
 
 ```powershell
 # Install Node.js 22+
@@ -80,8 +80,8 @@ winget install OpenJS.NodeJS.LTS
 # Install OpenClaw
 npm install -g openclaw
 
-# Install tom-and-jerry
-npm install -g tom-and-jerry
+# Install his-and-hers
+npm install -g his-and-hers
 
 # Run setup wizard
 tj onboard

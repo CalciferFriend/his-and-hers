@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 
 // ─── Shared base fields ──────────────────────────────────────────────────────
 
-const TJMessageBase = z.object({
+const HHMessageBase = z.object({
   version: z.string().default("0.1.0"),
   id: z.string().uuid().default(() => randomUUID()),
   from: z.string(),
@@ -43,22 +43,22 @@ export const TJResultPayload = z.object({
 export type TJResultPayload = z.infer<typeof TJResultPayload>;
 
 /** Payload for type: "heartbeat" — periodic liveness ping */
-export const TJHeartbeatPayload = z.object({
+export const HHHeartbeatPayload = z.object({
   gateway_healthy: z.boolean(),
   uptime_seconds: z.number().nonnegative(),
   tailscale_ip: z.string(),
   model: z.string().optional(),
   gpu_available: z.boolean().optional(),
 });
-export type TJHeartbeatPayload = z.infer<typeof TJHeartbeatPayload>;
+export type HHHeartbeatPayload = z.infer<typeof HHHeartbeatPayload>;
 
 /** Payload for type: "handoff" — structured context/state handoff */
-export const TJHandoffPayload = z.object({
+export const HHHandoffPayload = z.object({
   handoff_summary: z.string(),
   next_objective: z.string().optional(),
   session_id: z.string().optional(),
 });
-export type TJHandoffPayload = z.infer<typeof TJHandoffPayload>;
+export type HHHandoffPayload = z.infer<typeof HHHandoffPayload>;
 
 /** Payload for type: "wake" — request peer to wake up */
 export const TJWakePayload = z.object({
@@ -77,7 +77,7 @@ export const TJErrorPayload = z.object({
 export type TJErrorPayload = z.infer<typeof TJErrorPayload>;
 
 /** Payload for type: "latent" — latent space communication via Vision Wormhole or KV cache */
-export const TJLatentPayload = z.object({
+export const HHLatentPayload = z.object({
   task_id: z.string().uuid(),
   sender_model: z.string(),
   sender_hidden_dim: z.number().int().positive(),
@@ -100,97 +100,97 @@ export const TJLatentPayload = z.object({
 
   compression_ratio: z.number().positive().optional(), // raw hidden size / compressed size
 });
-export type TJLatentPayload = z.infer<typeof TJLatentPayload>;
+export type HHLatentPayload = z.infer<typeof HHLatentPayload>;
 
 // ─── Discriminated union variants ────────────────────────────────────────────
 
-export const TJTaskMessage = TJMessageBase.extend({
+export const HHTaskMessage = HHMessageBase.extend({
   type: z.literal("task"),
   payload: TJTaskPayload,
 });
-export type TJTaskMessage = z.infer<typeof TJTaskMessage>;
+export type HHTaskMessage = z.infer<typeof HHTaskMessage>;
 
-export const TJResultMessage = TJMessageBase.extend({
+export const HHResultMessage = HHMessageBase.extend({
   type: z.literal("result"),
   payload: TJResultPayload,
 });
-export type TJResultMessage = z.infer<typeof TJResultMessage>;
+export type HHResultMessage = z.infer<typeof HHResultMessage>;
 
-export const TJHeartbeatMessage = TJMessageBase.extend({
+export const HHHeartbeatMessage = HHMessageBase.extend({
   type: z.literal("heartbeat"),
-  payload: TJHeartbeatPayload,
+  payload: HHHeartbeatPayload,
 });
-export type TJHeartbeatMessage = z.infer<typeof TJHeartbeatMessage>;
+export type HHHeartbeatMessage = z.infer<typeof HHHeartbeatMessage>;
 
-export const TJHandoffMessage = TJMessageBase.extend({
+export const HHHandoffMessage = HHMessageBase.extend({
   type: z.literal("handoff"),
-  payload: TJHandoffPayload,
+  payload: HHHandoffPayload,
 });
-export type TJHandoffMessage = z.infer<typeof TJHandoffMessage>;
+export type HHHandoffMessage = z.infer<typeof HHHandoffMessage>;
 
-export const TJWakeMessage = TJMessageBase.extend({
+export const TJWakeMessage = HHMessageBase.extend({
   type: z.literal("wake"),
   payload: TJWakePayload,
 });
 export type TJWakeMessage = z.infer<typeof TJWakeMessage>;
 
-export const TJErrorMessage = TJMessageBase.extend({
+export const TJErrorMessage = HHMessageBase.extend({
   type: z.literal("error"),
   payload: TJErrorPayload,
 });
 export type TJErrorMessage = z.infer<typeof TJErrorMessage>;
 
-export const TJLatentMessage = TJMessageBase.extend({
+export const HHLatentMessage = HHMessageBase.extend({
   type: z.literal("latent"),
-  payload: TJLatentPayload,
+  payload: HHLatentPayload,
 });
-export type TJLatentMessage = z.infer<typeof TJLatentMessage>;
+export type HHLatentMessage = z.infer<typeof HHLatentMessage>;
 
 // ─── Discriminated union ─────────────────────────────────────────────────────
 
 /**
- * TJMessage — discriminated union on `type`.
+ * HHMessage — discriminated union on `type`.
  * Every cross-machine communication is wrapped in this format.
  * Payload type is fully typed per message variant — no more JSON.parse(payload).
  */
-export const TJMessage = z.discriminatedUnion("type", [
-  TJTaskMessage,
-  TJResultMessage,
-  TJHeartbeatMessage,
-  TJHandoffMessage,
+export const HHMessage = z.discriminatedUnion("type", [
+  HHTaskMessage,
+  HHResultMessage,
+  HHHeartbeatMessage,
+  HHHandoffMessage,
   TJWakeMessage,
   TJErrorMessage,
-  TJLatentMessage,
+  HHLatentMessage,
 ]);
-export type TJMessage = z.infer<typeof TJMessage>;
+export type HHMessage = z.infer<typeof HHMessage>;
 
 // ─── Type guard helpers ───────────────────────────────────────────────────────
 
-export function isTaskMessage(msg: TJMessage): msg is TJTaskMessage {
+export function isTaskMessage(msg: HHMessage): msg is HHTaskMessage {
   return msg.type === "task";
 }
 
-export function isResultMessage(msg: TJMessage): msg is TJResultMessage {
+export function isResultMessage(msg: HHMessage): msg is HHResultMessage {
   return msg.type === "result";
 }
 
-export function isHeartbeatMessage(msg: TJMessage): msg is TJHeartbeatMessage {
+export function isHeartbeatMessage(msg: HHMessage): msg is HHHeartbeatMessage {
   return msg.type === "heartbeat";
 }
 
-export function isHandoffMessage(msg: TJMessage): msg is TJHandoffMessage {
+export function isHandoffMessage(msg: HHMessage): msg is HHHandoffMessage {
   return msg.type === "handoff";
 }
 
-export function isWakeMessage(msg: TJMessage): msg is TJWakeMessage {
+export function isWakeMessage(msg: HHMessage): msg is TJWakeMessage {
   return msg.type === "wake";
 }
 
-export function isErrorMessage(msg: TJMessage): msg is TJErrorMessage {
+export function isErrorMessage(msg: HHMessage): msg is TJErrorMessage {
   return msg.type === "error";
 }
 
-export function isLatentMessage(msg: TJMessage): msg is TJLatentMessage {
+export function isLatentMessage(msg: HHMessage): msg is HHLatentMessage {
   return msg.type === "latent";
 }
 
@@ -201,9 +201,9 @@ export function createTaskMessage(
   from: string,
   to: string,
   payload: TJTaskPayload,
-  opts?: Partial<Pick<TJTaskMessage, "turn" | "context_summary" | "budget_remaining" | "wake_required">>,
-): TJTaskMessage {
-  return TJTaskMessage.parse({ from, to, type: "task", payload, ...opts });
+  opts?: Partial<Pick<HHTaskMessage, "turn" | "context_summary" | "budget_remaining" | "wake_required">>,
+): HHTaskMessage {
+  return HHTaskMessage.parse({ from, to, type: "task", payload, ...opts });
 }
 
 /** Build a result message with defaults filled */
@@ -211,18 +211,18 @@ export function createResultMessage(
   from: string,
   to: string,
   payload: TJResultPayload,
-  opts?: Partial<Pick<TJResultMessage, "turn" | "done" | "context_summary">>,
-): TJResultMessage {
-  return TJResultMessage.parse({ from, to, type: "result", done: true, payload, ...opts });
+  opts?: Partial<Pick<HHResultMessage, "turn" | "done" | "context_summary">>,
+): HHResultMessage {
+  return HHResultMessage.parse({ from, to, type: "result", done: true, payload, ...opts });
 }
 
 /** Build a heartbeat message */
 export function createHeartbeatMessage(
   from: string,
   to: string,
-  payload: TJHeartbeatPayload,
-): TJHeartbeatMessage {
-  return TJHeartbeatMessage.parse({ from, to, type: "heartbeat", payload });
+  payload: HHHeartbeatPayload,
+): HHHeartbeatMessage {
+  return HHHeartbeatMessage.parse({ from, to, type: "heartbeat", payload });
 }
 
 /** Build a wake message */
@@ -238,10 +238,10 @@ export function createWakeMessage(
 export function createLatentMessage(
   from: string,
   to: string,
-  payload: TJLatentPayload,
-  opts?: Partial<Pick<TJLatentMessage, "turn" | "context_summary">>,
-): TJLatentMessage {
-  return TJLatentMessage.parse({ from, to, type: "latent", payload, ...opts });
+  payload: HHLatentPayload,
+  opts?: Partial<Pick<HHLatentMessage, "turn" | "context_summary">>,
+): HHLatentMessage {
+  return HHLatentMessage.parse({ from, to, type: "latent", payload, ...opts });
 }
 
 // ─── Latent serialization helpers ────────────────────────────────────────────

@@ -1,7 +1,7 @@
 /**
  * tj discover — browse and search the community node registry.
  *
- * Searches GitHub Gists tagged "tom-and-jerry-node" (i.e. those published
+ * Searches GitHub Gists tagged "his-and-hers-node" (i.e. those published
  * with `tj publish`). Filters by role, GPU, provider, skills, and OS.
  *
  * Examples:
@@ -17,7 +17,7 @@
 import type { TJNodeCard } from "./publish.ts";
 
 const GIST_SEARCH_URL =
-  "https://api.github.com/gists/public?per_page=100&description=tom-and-jerry";
+  "https://api.github.com/gists/public?per_page=100&description=his-and-hers";
 
 interface GistSummary {
   id: string;
@@ -32,7 +32,7 @@ interface GistSummary {
 
 async function fetchGistList(token?: string): Promise<GistSummary[]> {
   const headers: Record<string, string> = {
-    "User-Agent": "tom-and-jerry-cli",
+    "User-Agent": "his-and-hers-cli",
     "X-GitHub-Api-Version": "2022-11-28",
   };
   if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -48,7 +48,7 @@ async function fetchCardFromGist(gist: GistSummary, token?: string): Promise<TJN
   const cardFile = gist.files["tj-node-card.json"];
   if (!cardFile) return null;
   try {
-    const headers: Record<string, string> = { "User-Agent": "tom-and-jerry-cli" };
+    const headers: Record<string, string> = { "User-Agent": "his-and-hers-cli" };
     if (token) headers["Authorization"] = `Bearer ${token}`;
     const res = await fetch(cardFile.raw_url, { headers });
     if (!res.ok) return null;
@@ -134,10 +134,10 @@ export async function discover(opts: {
     process.exit(1);
   }
 
-  // Filter to tom-and-jerry gists (description contains our tag)
+  // Filter to his-and-hers gists (description contains our tag)
   const tjGists = gists.filter(
     (g) =>
-      g.description?.includes("[tom-and-jerry]") &&
+      g.description?.includes("[his-and-hers]") &&
       g.files["tj-node-card.json"],
   );
 

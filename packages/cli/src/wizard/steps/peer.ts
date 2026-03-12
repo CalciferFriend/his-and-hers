@@ -1,6 +1,6 @@
 import * as p from "@clack/prompts";
 import pc from "picocolors";
-import { pingPeer, testSSH } from "@tom-and-jerry/core";
+import { pingPeer, testSSH } from "@his-and-hers/core";
 import { isCancelled, type WizardContext } from "../context.ts";
 
 export async function stepPeer(ctx: Partial<WizardContext>): Promise<Partial<WizardContext>> {

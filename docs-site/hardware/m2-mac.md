@@ -64,7 +64,7 @@ ollama pull codellama          # coding
 ollama pull llava              # vision tasks
 ```
 
-### 3. Install Node.js + OpenClaw + tom-and-jerry
+### 3. Install Node.js + OpenClaw + his-and-hers
 
 ```bash
 # Install Node.js 22+ via nvm (recommended)
@@ -74,8 +74,8 @@ nvm install 22 && nvm use 22
 # Install OpenClaw
 npm install -g openclaw
 
-# Install tom-and-jerry
-npm install -g tom-and-jerry
+# Install his-and-hers
+npm install -g his-and-hers
 
 # Run wizard
 tj onboard
@@ -112,14 +112,14 @@ Skills: ollama, gpu-inference
 **Option A — launchd plist (recommended):**
 
 ```bash
-cat > ~/Library/LaunchAgents/com.tom-and-jerry.gateway.plist << 'EOF'
+cat > ~/Library/LaunchAgents/com.his-and-hers.gateway.plist << 'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
   "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
   <key>Label</key>
-  <string>com.tom-and-jerry.gateway</string>
+  <string>com.his-and-hers.gateway</string>
   <key>ProgramArguments</key>
   <array>
     <string>/usr/local/bin/openclaw</string>
@@ -131,14 +131,14 @@ cat > ~/Library/LaunchAgents/com.tom-and-jerry.gateway.plist << 'EOF'
   <key>KeepAlive</key>
   <true/>
   <key>StandardOutPath</key>
-  <string>/tmp/tom-and-jerry-gateway.log</string>
+  <string>/tmp/his-and-hers-gateway.log</string>
   <key>StandardErrorPath</key>
-  <string>/tmp/tom-and-jerry-gateway.err</string>
+  <string>/tmp/his-and-hers-gateway.err</string>
 </dict>
 </plist>
 EOF
 
-launchctl load ~/Library/LaunchAgents/com.tom-and-jerry.gateway.plist
+launchctl load ~/Library/LaunchAgents/com.his-and-hers.gateway.plist
 ```
 
 **Option B — Login Items (macOS 13+):**

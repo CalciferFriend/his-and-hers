@@ -1,6 +1,6 @@
 # How it works
 
-tom-and-jerry is three things wired together: **a transport layer** (Tailscale + SSH + WOL), **a message protocol** (TJMessage), and **an agent runtime** (OpenClaw gateway).
+his-and-hers is three things wired together: **a transport layer** (Tailscale + SSH + WOL), **a message protocol** (HHMessage), and **an agent runtime** (OpenClaw gateway).
 
 ---
 
@@ -10,11 +10,11 @@ tom-and-jerry is three things wired together: **a transport layer** (Tailscale +
 ┌──────────────────────────────────────────────────────────────┐
 │  Tom (always-on)                                             │
 │  ┌────────────────┐    ┌──────────────────────────────────┐  │
-│  │  OpenClaw       │    │  tom-and-jerry CLI               │  │
+│  │  OpenClaw       │    │  his-and-hers CLI               │  │
 │  │  (main agent)  │◄──►│  tj send / tj status / tj logs   │  │
 │  └────────────────┘    └──────────────────────────────────┘  │
 │          │                                                    │
-│          │ TJMessage (JSON over HTTP)                         │
+│          │ HHMessage (JSON over HTTP)                         │
 │          ▼                                                    │
 │  ┌────────────────┐                                          │
 │  │  Gateway       │  ← loopback:3737                         │
@@ -55,22 +55,22 @@ Tom                              Jerry
  │  ✓ reachable? → skip WOL        │
  │  ✗ unreachable? → send Magic Packet + poll
  │                                 │
- │  2. build TJTaskMessage         │
+ │  2. build HHTaskMessage         │
  │     { id, from, to, payload }   │
  │─────────────────────────────►   │
  │                                 │  3. OpenClaw receives task
  │                                 │     runs it (Ollama / API / skill)
- │  4. TJResultMessage             │
+ │  4. HHResultMessage             │
  │◄─────────────────────────────   │
  │     { id, result, cost_usd }    │
  │                                 │
  │  5. save to task state          │
- │     ~/.tom-and-jerry/tasks/     │
+ │     ~/.his-and-hers/tasks/     │
 ```
 
 ### 2. Heartbeat
 
-Jerry sends a `TJHeartbeatMessage` to Tom every 60 seconds while awake. Tom uses this to track Jerry's last-seen time and whether it's idle enough to go back to sleep.
+Jerry sends a `HHHeartbeatMessage` to Tom every 60 seconds while awake. Tom uses this to track Jerry's last-seen time and whether it's idle enough to go back to sleep.
 
 ### 3. Capability advertisement
 
@@ -79,7 +79,7 @@ On startup, Jerry runs `tj capabilities advertise`:
 1. Scans for GPU (nvidia-smi / rocm-smi / Metal)
 2. Lists Ollama models via `/api/tags`
 3. Detects ComfyUI, AUTOMATIC1111, LM Studio, Whisper
-4. Writes `~/.tom-and-jerry/capabilities.json`
+4. Writes `~/.his-and-hers/capabilities.json`
 5. Tom fetches this via `tj capabilities fetch` and caches it as `peer-capabilities.json`
 
 Tom's `routeTask()` then uses these capabilities to decide which Jerry to use (if you have multiple) and whether to route locally or to the cloud.
@@ -110,12 +110,12 @@ Jerry's BIOS must have WOL enabled. The `tj onboard` wizard provides guidance fo
 
 ---
 
-## Multi-Jerry
+## Multi-H2
 
 Tom can manage multiple Jerry nodes. Each peer gets its own config entry:
 
 ```
-~/.tom-and-jerry/peers/
+~/.his-and-hers/peers/
   jerry-home.json       ← RTX 3070 Ti, Windows PC
   jerry-pi.json         ← Raspberry Pi 5, always-on
   jerry-beast.json      ← RTX 4090 workstation

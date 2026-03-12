@@ -1,6 +1,6 @@
 import * as p from "@clack/prompts";
 import { loadConfig } from "../config/store.ts";
-import { wakeAndWait } from "@tom-and-jerry/core";
+import { wakeAndWait } from "@his-and-hers/core";
 
 export async function wake() {
   const config = await loadConfig();

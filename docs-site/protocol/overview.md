@@ -1,11 +1,11 @@
 ---
 title: Protocol Overview
-description: How Tom and Jerry communicate — message flow, transport layers, and the TJMessage envelope.
+description: How Tom and Jerry communicate — message flow, transport layers, and the HHMessage envelope.
 ---
 
 # Protocol Overview
 
-tom-and-jerry uses an open, versioned message protocol called **TJMessage** for all
+his-and-hers uses an open, versioned message protocol called **HHMessage** for all
 agent-to-agent communication. Every task delegation, result, heartbeat, and handoff
 is wrapped in this envelope.
 
@@ -55,11 +55,11 @@ Tom                                         Jerry
 ────────────────────────────────────────────────────────────
 tj send "write a haiku"
 
-Turn 0:  TJMessage (type: task) ──────────►
+Turn 0:  HHMessage (type: task) ──────────►
                                             processes task
-Turn 1:  ◄──────── TJMessage (type: result, done: false)
+Turn 1:  ◄──────── HHMessage (type: result, done: false)
                                             continues...
-Turn N:  ◄──────── TJMessage (type: result, done: true)
+Turn N:  ◄──────── HHMessage (type: result, done: true)
 
 Task complete.
 ────────────────────────────────────────────────────────────
@@ -79,8 +79,8 @@ tj send "heavy inference task"
   5. Tom polls Jerry's /health endpoint
   6. /health returns 200 → gateway is running
 
-Turn 0:  TJMessage (wake_required: true) ──►
-Turn 1:  ◄──────── TJMessage (type: result, done: true)
+Turn 0:  HHMessage (wake_required: true) ──►
+Turn 1:  ◄──────── HHMessage (type: result, done: true)
 ────────────────────────────────────────────────────────────
 ```
 
@@ -91,9 +91,9 @@ Tom                                         Jerry
 ────────────────────────────────────────────────────────────
 tj send --shutdown "run this and shut down"
 
-Turn 0:  TJMessage (shutdown_after: true) ─►
+Turn 0:  HHMessage (shutdown_after: true) ─►
                                             processes task
-Turn N:  ◄──────── TJMessage (done: true)
+Turn N:  ◄──────── HHMessage (done: true)
                                             initiates OS shutdown
 ────────────────────────────────────────────────────────────
 ```
@@ -165,7 +165,7 @@ The code is never transmitted over the network.
 
 ## Schema reference
 
-- [TJMessage](/protocol/tjmessage) — the message envelope
-- [TJHandoff](/protocol/tjhandoff) — structured task handoff
-- [TJHeartbeat](/protocol/tjheartbeat) — liveness heartbeat
+- [HHMessage](/protocol/hhmessage) — the message envelope
+- [HHHandoff](/protocol/hhhandoff) — structured task handoff
+- [HHHeartbeat](/protocol/hhheartbeat) — liveness heartbeat
 - [TJCapabilityReport](/protocol/capabilities) — node capability advertisement

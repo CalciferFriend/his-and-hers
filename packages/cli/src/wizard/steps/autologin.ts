@@ -2,7 +2,7 @@ import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { sshExec } from "@tom-and-jerry/core";
+import { sshExec } from "@his-and-hers/core";
 import { isCancelled, type WizardContext } from "../context.ts";
 
 const execFileAsync = promisify(execFile);

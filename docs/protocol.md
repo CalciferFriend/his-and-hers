@@ -1,21 +1,21 @@
-# TJMessage Protocol Specification
+# HHMessage Protocol Specification
 
 Version: 0.1.0
 
 ## Overview
 
-TJMessage is the open protocol envelope for cross-machine agent communication in tom-and-jerry. Every message between Tom and Jerry nodes is wrapped in this format.
+HHMessage is the open protocol envelope for cross-machine agent communication in his-and-hers. Every message between Tom and Jerry nodes is wrapped in this format.
 
 ## Message envelope
 
 ```typescript
-interface TJMessage {
+interface HHMessage {
   version: string;           // Protocol version (semver)
   id: string;                // UUID v4
   from: string;              // Sender node name
   to: string;                // Recipient node name
   turn: number;              // Conversation turn counter (0-indexed)
-  type: TJMessageType;       // Message type
+  type: HHMessageType;       // Message type
   payload: string;           // Task description or result content
   context_summary: string | null;  // Background context for the recipient
   budget_remaining: number | null; // Token/cost budget remaining
@@ -56,10 +56,10 @@ Turns increment with each message in the conversation. A new task starts at turn
 
 ## Task handoff format
 
-For structured delegation, use the TJHandoff schema:
+For structured delegation, use the HHHandoff schema:
 
 ```typescript
-interface TJHandoff {
+interface HHHandoff {
   task_id: string;           // UUID v4
   from_role: "tom" | "jerry";
   to_role: "tom" | "jerry";
@@ -76,7 +76,7 @@ interface TJHandoff {
 ## Heartbeat format
 
 ```typescript
-interface TJHeartbeat {
+interface HHHeartbeat {
   from: string;
   role: "tom" | "jerry";
   tailscale_ip: string;
@@ -89,11 +89,11 @@ interface TJHeartbeat {
 
 ## Wake flow
 
-1. Tom creates TJMessage with `wake_required: true`
+1. Tom creates HHMessage with `wake_required: true`
 2. Tom sends WOL magic packet to Jerry's MAC via UDP broadcast
 3. Tom polls Jerry's Tailscale IP (ping every 2s, up to 60 attempts)
 4. Once Tailscale ping succeeds, Tom polls Jerry's gateway `/health` endpoint
-5. Once gateway is healthy, Tom sends the TJMessage via SSH or gateway API
+5. Once gateway is healthy, Tom sends the HHMessage via SSH or gateway API
 6. Jerry processes the task and replies
 
 ## Shutdown flow

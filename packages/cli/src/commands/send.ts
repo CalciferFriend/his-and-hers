@@ -7,7 +7,7 @@
  *   1. Check if peer is awake (Tailscale ping)
  *   2. If offline and WOL configured → send magic packet, wait for boot
  *   3. Verify peer gateway is healthy
- *   4. Build TJTaskMessage, write pending task state
+ *   4. Build HHTaskMessage, write pending task state
  *   5. Deliver via wakeAgent (injects into peer's OpenClaw session) — with retry/backoff
  *   6. If --wait:
  *        a. Start a result webhook server (Phase 5d) — Jerry POSTs back directly
@@ -16,7 +16,7 @@
  *
  * Retry safety (Phase 5e):
  *   wakeAgent delivery is wrapped in withRetry(). A RetryState file persisted at
- *   ~/.tom-and-jerry/retry/<task-id>.json prevents duplicate sends from cron runs.
+ *   ~/.his-and-hers/retry/<task-id>.json prevents duplicate sends from cron runs.
  */
 
 import * as p from "@clack/prompts";
@@ -37,7 +37,7 @@ import {
   clearRetryState,
   cronRetryDecision,
   type ResultWebhookPayload,
-} from "@tom-and-jerry/core";
+} from "@his-and-hers/core";
 import { createTaskState, pollTaskCompletion, updateTaskState } from "../state/tasks.ts";
 import { getPeer, selectBestPeer, formatPeerList } from "../peers/select.ts";
 
@@ -133,8 +133,8 @@ export async function send(task: string, opts: SendOptions = {}) {
   let kvModel: string | undefined;
 
   if (opts.latent || opts.autoLatent) {
-    const { loadPeerCapabilities, routeTask } = await import("@tom-and-jerry/core");
-    const peerCaps = await loadPeerCapabilities(peer.name).catch(() => null);
+    const { loadPeerCapabilities, routeTask } = await import("@his-and-hers/core");
+    const peerCaps = await loadPeerCapabilities().catch(() => null);
     if (peerCaps) {
       const latentDecision = routeTask(task, peerCaps);
       if (latentDecision.hint === "jerry-latent") {
@@ -172,7 +172,7 @@ export async function send(task: string, opts: SendOptions = {}) {
     p.log.warn(
       pc.yellow("⚠ Latent transport is Phase 6 / experimental. ") +
       "Vision Wormhole codec is not yet production-ready. " +
-      "Message will be sent as standard TJTaskMessage with latent metadata attached."
+      "Message will be sent as standard HHTaskMessage with latent metadata attached."
     );
   }
 
@@ -238,7 +238,7 @@ export async function send(task: string, opts: SendOptions = {}) {
   }
   gwS.stop(pc.green("✓ Gateway ready"));
 
-  // Step 3: build TJTaskMessage (attach context summary for multi-turn continuity)
+  // Step 3: build HHTaskMessage (attach context summary for multi-turn continuity)
   const contextSummary = await buildContextSummary(peer.name, 3).catch(() => null);
   if (contextSummary) {
     p.log.info(pc.dim(`Context: ${contextSummary.split("\n")[0]}`));
@@ -276,7 +276,7 @@ export async function send(task: string, opts: SendOptions = {}) {
       routing_hint: routing,
     });
     p.log.info(`Task ID: ${pc.cyan(msg.id.slice(0, 8))} (full: ${pc.dim(msg.id)})`);
-    p.log.info(pc.dim(`  State: ~/.tom-and-jerry/state/tasks/${msg.id}.json`));
+    p.log.info(pc.dim(`  State: ~/.his-and-hers/state/tasks/${msg.id}.json`));
   }
 
   // ─── Phase 5d: Start result webhook server (if --wait and not disabled) ─────
@@ -471,7 +471,7 @@ export async function send(task: string, opts: SendOptions = {}) {
  */
 function buildWakeText(from: string, taskId: string, task: string, webhookUrl: string | null): string {
   const lines = [
-    `[TJMessage:task from ${from} id=${taskId}] ${task}`,
+    `[HHMessage:task from ${from} id=${taskId}] ${task}`,
     ``,
     `When done, run: tj result ${taskId} "<your output here>"`,
   ];

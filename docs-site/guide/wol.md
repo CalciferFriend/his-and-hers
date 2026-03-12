@@ -157,7 +157,7 @@ During `tj onboard`, you'll be prompted for:
 - Broadcast IP or router IP
 - WOL port (default 9)
 
-Or update manually in `~/.tom-and-jerry/peers/jerry-home.json`:
+Or update manually in `~/.his-and-hers/peers/jerry-home.json`:
 
 ```json
 {

@@ -6,7 +6,7 @@ The OpenClaw gateway is the HTTP server that receives tasks and returns results.
 
 ## What the gateway does
 
-- Receives `TJMessage` POSTs from Tom (Jerry side) or user CLI (Tom side)
+- Receives `HHMessage` POSTs from Tom (Jerry side) or user CLI (Tom side)
 - Verifies the gateway token on each request
 - Forwards tasks to the OpenClaw agent runtime
 - Returns results synchronously or via polling
@@ -29,7 +29,7 @@ Tom machine:
 
 ### Config
 
-In `~/.tom-and-jerry/tj.json`:
+In `~/.his-and-hers/tj.json`:
 
 ```json
 {
@@ -176,7 +176,7 @@ If Tom and Jerry are both on the same machine (dev/testing):
   "gateway": { "bind": "127.0.0.1", "port": 3737 }
 }
 
-// Jerry's config (~/.tom-and-jerry-jerry/tj.json)
+// Jerry's config (~/.his-and-hers-jerry/tj.json)
 {
   "gateway": { "bind": "127.0.0.1", "port": 3738 }
 }

@@ -171,8 +171,8 @@ Custom tags can be added with `tj capabilities advertise --tags "finetune,custom
 
 | Location | Description |
 |----------|-------------|
-| `~/.tom-and-jerry/capabilities.json` | Jerry's own capability report (written by `tj capabilities advertise`) |
-| `~/.tom-and-jerry/peer-capabilities-<name>.json` | Tom's cached copy of a peer's report (written by `tj capabilities fetch`) |
+| `~/.his-and-hers/capabilities.json` | Jerry's own capability report (written by `tj capabilities advertise`) |
+| `~/.his-and-hers/peer-capabilities-<name>.json` | Tom's cached copy of a peer's report (written by `tj capabilities fetch`) |
 
 ---
 

@@ -3,11 +3,11 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { TJConfig, type ProviderConfig } from "./schema.ts";
 
-const CONFIG_DIR = join(homedir(), ".tom-and-jerry");
+const CONFIG_DIR = join(homedir(), ".his-and-hers");
 const CONFIG_PATH = join(CONFIG_DIR, "tj.json");
 
 /**
- * Load config from ~/.tom-and-jerry/tj.json
+ * Load config from ~/.his-and-hers/tj.json
  * Returns null if not found or invalid.
  */
 export async function loadConfig(): Promise<TJConfig | null> {
@@ -20,7 +20,7 @@ export async function loadConfig(): Promise<TJConfig | null> {
 }
 
 /**
- * Save config to ~/.tom-and-jerry/tj.json with restrictive permissions (0600).
+ * Save config to ~/.his-and-hers/tj.json with restrictive permissions (0600).
  * Never writes API keys — those stay in the OS keychain.
  */
 export async function saveConfig(config: TJConfig): Promise<void> {

@@ -1,4 +1,4 @@
-# tom-and-jerry — Claude Code Context
+# his-and-hers — Claude Code Context
 
 ## What is this?
 An open protocol and CLI (`tj`) for connecting two OpenClaw agents on physically separate machines. Tom (orchestrator) stays always-on. Jerry (executor) sleeps until needed, wakes via WOL, does heavy compute, goes back to sleep.
@@ -7,7 +7,7 @@ An open protocol and CLI (`tj`) for connecting two OpenClaw agents on physically
 
 ## Quick reference
 - **Binary:** `tj`
-- **Config:** `~/.tom-and-jerry/tj.json`
+- **Config:** `~/.his-and-hers/tj.json`
 - **Skills:** `~/.openclaw/workspace/skills/tj-*/`
 - **Stack:** Node >= 22, TypeScript, pnpm workspaces, tsdown, vitest
 - **UI library:** @clack/prompts (wizard), commander (CLI)
@@ -15,7 +15,7 @@ An open protocol and CLI (`tj`) for connecting two OpenClaw agents on physically
 ## Monorepo layout
 ```
 packages/core/src/
-  protocol/       — Zod schemas: TJMessage, TJHandoff, TJHeartbeat, TJPair
+  protocol/       — Zod schemas: HHMessage, HHHandoff, HHHeartbeat, TJPair
   transport/      — tailscale.ts, ssh.ts, wol.ts
   trust/          — pairing.ts (6-digit code), allowlist.ts
   gateway/        — health.ts, bind.ts
@@ -27,7 +27,7 @@ packages/cli/src/
     steps/        — 12 wizard steps (welcome → finalize)
   config/         — schema.ts (Zod), store.ts (read/write), defaults.ts
 
-packages/skills/  — tj-tom, tj-jerry, tj-handoff SKILL.md files
+packages/skills/  — hh-h1, hh-h2, hh-handoff SKILL.md files
 templates/        — SOUL.md, IDENTITY.md, AGENTS.md per role (tom/jerry)
 docs/             — protocol spec, reference implementation
 ```
@@ -63,7 +63,7 @@ tj doctor             # diagnose issues (5-check suite)
 12. `finalize.ts` — write tj.json, generate pairing code, print summary
 
 ## Architecture
-- **TJMessage** — Zod-validated protocol envelope for all cross-machine communication
+- **HHMessage** — Zod-validated protocol envelope for all cross-machine communication
 - **Transport** — Tailscale (discovery/reachability), SSH (execution), WOL (wake)
 - **Trust** — one-time pairing code (SHA-256 hashed), peer allowlist, keychain storage
 - **Gateway** — OpenClaw gateway per node: loopback (Tom) or Tailscale (Jerry)
@@ -75,6 +75,6 @@ Calcifer (Tom, EC2) / GLaDOS (Jerry, Windows home PC with RTX 3070 Ti). See `doc
 The Windows Jerry boot chain: WOL → BIOS wake → AutoAdminLogon → Tailscale wait loop → gateway bind to Tailscale. The wizard handles this end to end in steps 6-9.
 
 ## Publishing
-- `@tom-and-jerry/core` and `@tom-and-jerry/cli` publish to npm as scoped packages
-- `tom-and-jerry` publishes as the unscoped global install wrapper
+- `@his-and-hers/core` and `@his-and-hers/cli` publish to npm as scoped packages
+- `his-and-hers` publishes as the unscoped global install wrapper
 - Release via `pnpm release` or GitHub Actions release workflow on tag push

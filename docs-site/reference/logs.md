@@ -55,14 +55,14 @@ $ tj logs --task task_01j8g1fk --output
 task_01j8g1fk — complete — jerry-home — 2m ago
 Tokens: 1,243 in / 312 out — $0.00 (ollama/mistral)
 ──────────────────────────────────────────────────────────────────────────
-# tom-and-jerry
+# his-and-hers
 
-tom-and-jerry is an open protocol for connecting two OpenClaw agents
+his-and-hers is an open protocol for connecting two OpenClaw agents
 across separate machines. Tom orchestrates; Jerry executes.
 
 ## Key points:
 - WOL-based wake when Jerry is sleeping
-- TJMessage protocol for cross-machine communication
+- HHMessage protocol for cross-machine communication
 - Capability routing (GPU, Ollama, ComfyUI detection)
 - Budget tracking per task and provider
 ```
@@ -129,7 +129,7 @@ $ tj logs --json --limit 3
 
 ## Task state files
 
-Tasks are stored at `~/.tom-and-jerry/tasks/<task_id>.json`:
+Tasks are stored at `~/.his-and-hers/tasks/<task_id>.json`:
 
 ```json
 {
@@ -144,7 +144,7 @@ Tasks are stored at `~/.tom-and-jerry/tasks/<task_id>.json`:
   "tokens_in": 1243,
   "tokens_out": 312,
   "cost_usd": 0.00,
-  "output": "# tom-and-jerry\n\ntom-and-jerry is an open protocol..."
+  "output": "# his-and-hers\n\nhis-and-hers is an open protocol..."
 }
 ```
 

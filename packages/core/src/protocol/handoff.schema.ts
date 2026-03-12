@@ -1,10 +1,10 @@
 import { z } from "zod";
 
 /**
- * TJHandoff — structured task handoff format.
+ * HHHandoff — structured task handoff format.
  * Tom sends this to Jerry when delegating work.
  */
-export const TJHandoff = z.object({
+export const HHHandoff = z.object({
   task_id: z.string().uuid(),
   from_role: z.enum(["tom", "jerry"]),
   to_role: z.enum(["tom", "jerry"]),
@@ -16,4 +16,4 @@ export const TJHandoff = z.object({
   wake_if_sleeping: z.boolean().default(true),
   shutdown_when_done: z.boolean().default(false),
 });
-export type TJHandoff = z.infer<typeof TJHandoff>;
+export type HHHandoff = z.infer<typeof HHHandoff>;

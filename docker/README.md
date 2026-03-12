@@ -11,8 +11,8 @@ Jerry is *not* containerised — it's your home PC running Windows with a GPU. C
 ### 1. Clone and build
 
 ```bash
-git clone https://github.com/CalciferFriend/tom-and-jerry
-cd tom-and-jerry
+git clone https://github.com/CalciferFriend/his-and-hers
+cd his-and-hers
 
 # Build the image
 docker build -t calcifer-ai/tom -f docker/tom/Dockerfile .
@@ -67,7 +67,7 @@ On startup the container:
 
 1. **Tailscale up** — authenticates with `TS_AUTHKEY`, joins your tailnet
 2. **OpenClaw config** — writes `~/.openclaw/openclaw.json` with the gateway token + API key
-3. **TJ config** — writes `~/.tom-and-jerry/config.json` with peer info from env vars
+3. **TJ config** — writes `~/.his-and-hers/config.json` with peer info from env vars
 4. **Gateway start** — boots the OpenClaw gateway on loopback port 18789
 5. **Socat proxy** — forwards `<tailscale-ip>:18789 → 127.0.0.1:18789` so Jerry can reach Tom
 
@@ -81,7 +81,7 @@ Jerry can now send messages to Tom's Tailscale IP without any public port exposu
 |--------|---------|
 | `tailscale-state` | Tailscale machine identity (avoids re-auth on restart) |
 | `tom-openclaw` | OpenClaw config + agent state |
-| `tom-tj-config` | tom-and-jerry config (peer info, pairing code, etc.) |
+| `tom-tj-config` | his-and-hers config (peer info, pairing code, etc.) |
 
 ## SSH key for Jerry
 

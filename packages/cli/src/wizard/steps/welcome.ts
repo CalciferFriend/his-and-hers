@@ -2,7 +2,7 @@ import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { getTailscaleStatus } from "@tom-and-jerry/core";
+import { getTailscaleStatus } from "@his-and-hers/core";
 import type { WizardContext } from "../context.ts";
 
 const execFileAsync = promisify(execFile);
@@ -21,7 +21,7 @@ export async function stepWelcome(ctx: Partial<WizardContext>): Promise<Partial<
     `This wizard will configure this machine as a Tom (orchestrator) or Jerry (executor) node,\n` +
     `then pair it with a machine running the other role.\n\n` +
     `Both machines must have Tailscale installed and connected to the same tailnet.`,
-    "Welcome to tom-and-jerry"
+    "Welcome to his-and-hers"
   );
 
   const spinner = p.spinner();

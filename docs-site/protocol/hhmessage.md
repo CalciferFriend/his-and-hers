@@ -1,11 +1,11 @@
 ---
-title: TJMessage Schema
-description: The TJMessage envelope — all fields, types, and discriminated union variants.
+title: HHMessage Schema
+description: The HHMessage envelope — all fields, types, and discriminated union variants.
 ---
 
-# TJMessage Schema
+# HHMessage Schema
 
-Every message between Tom and Jerry is wrapped in a `TJMessage` envelope.
+Every message between Tom and Jerry is wrapped in a `HHMessage` envelope.
 The `type` field determines the message variant and the expected shape of `payload`.
 
 ---
@@ -13,13 +13,13 @@ The `type` field determines the message variant and the expected shape of `paylo
 ## TypeScript interface
 
 ```typescript
-interface TJMessage {
+interface HHMessage {
   version: string;                  // Protocol version (semver)
   id: string;                       // UUID v4
   from: string;                     // Sender node name
   to: string;                       // Recipient node name
   turn: number;                     // Conversation turn counter (0-indexed)
-  type: TJMessageType;              // Message type
+  type: HHMessageType;              // Message type
   payload: string;                  // Task description or result content
   context_summary: string | null;   // Background context for the recipient
   budget_remaining: number | null;  // Token/cost budget remaining (USD)
@@ -29,7 +29,7 @@ interface TJMessage {
   timestamp: string;                // ISO 8601 datetime
 }
 
-type TJMessageType = "task" | "result" | "heartbeat" | "handoff" | "wake" | "error";
+type HHMessageType = "task" | "result" | "heartbeat" | "handoff" | "wake" | "error";
 ```
 
 ---
@@ -43,7 +43,7 @@ type TJMessageType = "task" | "result" | "heartbeat" | "handoff" | "wake" | "err
 | `from` | `string` | ✓ | Sender node name (matches `tj.json` name) |
 | `to` | `string` | ✓ | Recipient node name |
 | `turn` | `number` | ✓ | Turn counter, 0-indexed. Increments per message in a conversation |
-| `type` | `TJMessageType` | ✓ | Message variant — see union types below |
+| `type` | `HHMessageType` | ✓ | Message variant — see union types below |
 | `payload` | `string` | ✓ | The task text, result content, or error message |
 | `context_summary` | `string \| null` | – | Optional background context from previous tasks |
 | `budget_remaining` | `number \| null` | – | Remaining budget in USD; `null` = no limit |
@@ -128,7 +128,7 @@ Task output. Can be partial (`done: false`) or final (`done: true`).
 
 ### `heartbeat` — Either direction
 
-Periodic liveness ping. The `payload` field contains a serialized `TJHeartbeat`
+Periodic liveness ping. The `payload` field contains a serialized `HHHeartbeat`
 JSON object.
 
 ```json
@@ -149,14 +149,14 @@ JSON object.
 }
 ```
 
-See [TJHeartbeat](/protocol/tjheartbeat) for the payload schema.
+See [HHHeartbeat](/protocol/hhheartbeat) for the payload schema.
 
 ---
 
 ### `handoff` — Either direction
 
 Structured task delegation with explicit constraints and expected output.
-The `payload` field contains a serialized `TJHandoff` JSON object.
+The `payload` field contains a serialized `HHHandoff` JSON object.
 
 ```json
 {
@@ -176,7 +176,7 @@ The `payload` field contains a serialized `TJHandoff` JSON object.
 }
 ```
 
-See [TJHandoff](/protocol/tjhandoff) for the payload schema.
+See [HHHandoff](/protocol/hhhandoff) for the payload schema.
 
 ---
 
@@ -246,5 +246,5 @@ Error report. `done: true` signals the task will not be retried.
 ## See also
 
 - [Protocol overview](/protocol/overview) — full message flow and transport
-- [TJHandoff](/protocol/tjhandoff) — structured handoff payload schema
-- [TJHeartbeat](/protocol/tjheartbeat) — heartbeat payload schema
+- [HHHandoff](/protocol/hhhandoff) — structured handoff payload schema
+- [HHHeartbeat](/protocol/hhheartbeat) — heartbeat payload schema

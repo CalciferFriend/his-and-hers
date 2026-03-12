@@ -1,6 +1,6 @@
 # Tom vs Jerry — Roles
 
-Every tom-and-jerry setup has exactly two roles: **Tom** and **Jerry**. Pick the right one for each machine in the first two minutes — changing it later is annoying.
+Every his-and-hers setup has exactly two roles: **Tom** and **Jerry**. Pick the right one for each machine in the first two minutes — changing it later is annoying.
 
 ---
 
@@ -32,7 +32,7 @@ Tom is always on. It receives user requests, breaks them into tasks, and delegat
 **What Tom does:**
 - Listens for `tj send` commands from the user or from agent workflows
 - Checks if Jerry is awake; sends a Wake-on-LAN packet if not
-- Builds a `TJMessage` and posts it to Jerry's gateway
+- Builds a `HHMessage` and posts it to Jerry's gateway
 - Waits for results, tracks cost in the task log
 - Caches Jerry's capability profile for routing decisions
 
@@ -54,7 +54,7 @@ Jerry is the muscle. It runs local models, heavy inference, image generation, an
 **What Jerry does:**
 - Runs an OpenClaw gateway bound to its Tailscale IP
 - Advertises capabilities (GPU, Ollama models, skills) to Tom
-- Receives `TJMessage` tasks, runs them through OpenClaw
+- Receives `HHMessage` tasks, runs them through OpenClaw
 - Returns results with cost info attached
 - Sends a heartbeat to Tom every 60 seconds while awake
 
@@ -88,7 +88,7 @@ Yes. Tom supports an array of Jerry peers. Each gets its own config file and cap
 
 ```bash
 # Tom can have multiple Jerrys:
-~/.tom-and-jerry/peers/
+~/.his-and-hers/peers/
   jerry-home.json       ← RTX 3070 Ti, Windows PC
   jerry-pi.json         ← Raspberry Pi 5, always-on
   jerry-beast.json      ← RTX 4090 workstation
@@ -100,7 +100,7 @@ tj send "run 70B inference" --peer jerry-beast
 tj send "embed this document" --auto
 ```
 
-See [Multi-Jerry setup](/guide/multi-jerry) for more.
+See [Multi-H2 setup](/guide/multi-h2) for more.
 
 ---
 

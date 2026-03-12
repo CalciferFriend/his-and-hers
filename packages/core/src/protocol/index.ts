@@ -1,19 +1,19 @@
 export {
-  TJMessage,
-  TJTaskMessage,
-  TJResultMessage,
-  TJHeartbeatMessage,
-  TJHandoffMessage,
+  HHMessage,
+  HHTaskMessage,
+  HHResultMessage,
+  HHHeartbeatMessage,
+  HHHandoffMessage,
   TJWakeMessage,
   TJErrorMessage,
-  TJLatentMessage,
+  HHLatentMessage,
   TJTaskPayload,
   TJResultPayload,
-  TJHeartbeatPayload,
-  TJHandoffPayload,
+  HHHeartbeatPayload,
+  HHHandoffPayload,
   TJWakePayload,
   TJErrorPayload,
-  TJLatentPayload,
+  HHLatentPayload,
   isTaskMessage,
   isResultMessage,
   isHeartbeatMessage,
@@ -29,6 +29,6 @@ export {
   serializeLatent,
   deserializeLatent,
 } from "./message.schema.ts";
-export { TJHandoff } from "./handoff.schema.ts";
-export { TJHeartbeat } from "./heartbeat.schema.ts";
+export { HHHandoff } from "./handoff.schema.ts";
+export { HHHeartbeat } from "./heartbeat.schema.ts";
 export { TJPair } from "./pair.schema.ts";

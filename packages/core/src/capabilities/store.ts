@@ -3,8 +3,8 @@
  *
  * Persist and load TJCapabilityReport to/from disk.
  *
- * Jerry writes:  ~/.tom-and-jerry/capabilities.json  (her own report)
- * Tom writes:    ~/.tom-and-jerry/peer-capabilities.json  (fetched from Jerry)
+ * Jerry writes:  ~/.his-and-hers/capabilities.json  (her own report)
+ * Tom writes:    ~/.his-and-hers/peer-capabilities.json  (fetched from Jerry)
  *
  * Both files are world-readable so the gateway can serve them without
  * extra permissions.
@@ -16,7 +16,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { TJCapabilityReport } from "./registry.schema.ts";
 
-const BASE_DIR = join(homedir(), ".tom-and-jerry");
+const BASE_DIR = join(homedir(), ".his-and-hers");
 const SELF_PATH = join(BASE_DIR, "capabilities.json");
 const PEER_PATH = join(BASE_DIR, "peer-capabilities.json");
 

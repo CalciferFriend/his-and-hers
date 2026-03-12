@@ -89,7 +89,7 @@ fi
 
 # ── 5. Write OpenClaw + TJ config ─────────────────────────────────────────────
 echo "[5/6] Writing configs..."
-mkdir -p /root/.openclaw /root/.tom-and-jerry
+mkdir -p /root/.openclaw /root/.his-and-hers
 
 # OpenClaw config — bind to Tailscale IP so Tom can reach it
 cat > /root/.openclaw/openclaw.json <<EOF
@@ -112,12 +112,12 @@ cat > /root/.openclaw/openclaw.json <<EOF
 EOF
 
 # Write TJ config if not already present (e.g. from mounted volume)
-if [ ! -f /root/.tom-and-jerry/config.json ]; then
+if [ ! -f /root/.his-and-hers/config.json ]; then
   TS_HOSTNAME=$(tailscale status --json 2>/dev/null \
     | node -e "const d=require('fs').readFileSync('/dev/stdin','utf8'); try { console.log(JSON.parse(d).Self?.HostName ?? ''); } catch { console.log(''); }" \
     || echo "jerry-docker")
 
-  cat > /root/.tom-and-jerry/config.json <<EOF
+  cat > /root/.his-and-hers/config.json <<EOF
 {
   "version": "0.1.0",
   "gateway_port": $JERRY_GATEWAY_PORT,

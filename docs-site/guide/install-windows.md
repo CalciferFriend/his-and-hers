@@ -50,11 +50,11 @@ ollama pull nomic-embed-text   # embeddings
 
 ---
 
-## 3 — Install OpenClaw + tom-and-jerry
+## 3 — Install OpenClaw + his-and-hers
 
 ```powershell
 npm install -g openclaw
-npm install -g tom-and-jerry
+npm install -g his-and-hers
 
 # Verify
 openclaw --version
@@ -123,7 +123,7 @@ Set-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" `
 
 ## 6 — Startup batch script
 
-The wizard creates this at `%APPDATA%\tom-and-jerry\start-gateway.bat`. To create it manually:
+The wizard creates this at `%APPDATA%\his-and-hers\start-gateway.bat`. To create it manually:
 
 ```bat
 @echo off
@@ -143,7 +143,7 @@ timeout /t 10 /nobreak >nul
 tj capabilities advertise
 ```
 
-Save to `%APPDATA%\tom-and-jerry\start-gateway.bat`.
+Save to `%APPDATA%\his-and-hers\start-gateway.bat`.
 
 ---
 
@@ -151,7 +151,7 @@ Save to `%APPDATA%\tom-and-jerry\start-gateway.bat`.
 
 ```powershell
 # Run as Administrator
-$batPath = "$env:APPDATA\tom-and-jerry\start-gateway.bat"
+$batPath = "$env:APPDATA\his-and-hers\start-gateway.bat"
 
 $action = New-ScheduledTaskAction `
   -Execute "cmd.exe" `
@@ -164,7 +164,7 @@ $settings = New-ScheduledTaskSettingsSet `
   -ExecutionTimeLimit (New-TimeSpan -Hours 0)  # no time limit
 
 Register-ScheduledTask `
-  -TaskName "TomAndJerryGateway" `
+  -TaskName "HisAndHersGateway" `
   -Action $action `
   -Trigger $trigger `
   -Settings $settings `
@@ -172,7 +172,7 @@ Register-ScheduledTask `
   -Force
 
 # Verify it's registered
-Get-ScheduledTask -TaskName "TomAndJerryGateway"
+Get-ScheduledTask -TaskName "HisAndHersGateway"
 ```
 
 ---
@@ -278,7 +278,7 @@ Check Windows Event Viewer → Windows Logs → Application for errors from `cmd
 
 Also verify the Scheduled Task ran:
 ```powershell
-Get-ScheduledTaskInfo -TaskName "TomAndJerryGateway"
+Get-ScheduledTaskInfo -TaskName "HisAndHersGateway"
 # Check LastRunTime and LastTaskResult (0 = success)
 ```
 

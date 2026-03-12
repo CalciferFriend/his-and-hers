@@ -1,7 +1,7 @@
 import { defineConfig } from "vitepress";
 
 export default defineConfig({
-  title: "tom-and-jerry",
+  title: "his-and-hers",
   description: "Two agents. Separate machines. One command to wire them.",
   lang: "en-US",
   base: "/",
@@ -13,10 +13,10 @@ export default defineConfig({
 
   themeConfig: {
     logo: "/logo.svg",
-    siteTitle: "tom-and-jerry",
+    siteTitle: "his-and-hers",
 
     nav: [
-      { text: "Guide", link: "/guide/what-is-tom-and-jerry" },
+      { text: "Guide", link: "/guide/what-is-his-and-hers" },
       { text: "Reference", link: "/reference/cli" },
       { text: "Protocol", link: "/protocol/overview" },
       { text: "Hardware", link: "/hardware/overview" },
@@ -24,9 +24,9 @@ export default defineConfig({
       {
         text: "Links",
         items: [
-          { text: "GitHub", link: "https://github.com/CalciferFriend/tom-and-jerry" },
-          { text: "npm", link: "https://www.npmjs.com/package/tom-and-jerry" },
-          { text: "Community Discord", link: "https://discord.gg/tom-and-jerry" },
+          { text: "GitHub", link: "https://github.com/CalciferFriend/his-and-hers" },
+          { text: "npm", link: "https://www.npmjs.com/package/his-and-hers" },
+          { text: "Community Discord", link: "https://discord.gg/his-and-hers" },
         ],
       },
     ],
@@ -36,7 +36,7 @@ export default defineConfig({
         {
           text: "Getting Started",
           items: [
-            { text: "What is tom-and-jerry?", link: "/guide/what-is-tom-and-jerry" },
+            { text: "What is his-and-hers?", link: "/guide/what-is-his-and-hers" },
             { text: "Quickstart (5 minutes)", link: "/guide/quickstart" },
             { text: "How it works", link: "/guide/how-it-works" },
             { text: "Tom vs Jerry", link: "/guide/roles" },
@@ -66,7 +66,7 @@ export default defineConfig({
             { text: "Sending tasks", link: "/guide/sending-tasks" },
             { text: "Budget tracking", link: "/guide/budget" },
             { text: "Capability routing", link: "/guide/capabilities" },
-            { text: "Multi-Jerry", link: "/guide/multi-jerry" },
+            { text: "Multi-H2", link: "/guide/multi-h2" },
           ],
         },
       ],
@@ -95,9 +95,9 @@ export default defineConfig({
           text: "Protocol",
           items: [
             { text: "Overview", link: "/protocol/overview" },
-            { text: "TJMessage", link: "/protocol/tjmessage" },
-            { text: "TJHandoff", link: "/protocol/tjhandoff" },
-            { text: "TJHeartbeat", link: "/protocol/tjheartbeat" },
+            { text: "HHMessage", link: "/protocol/hhmessage" },
+            { text: "HHHandoff", link: "/protocol/hhhandoff" },
+            { text: "HHHeartbeat", link: "/protocol/hhheartbeat" },
             { text: "Capability registry", link: "/protocol/capabilities" },
           ],
         },
@@ -127,8 +127,8 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: "github", link: "https://github.com/CalciferFriend/tom-and-jerry" },
-      { icon: "discord", link: "https://discord.gg/tom-and-jerry" },
+      { icon: "github", link: "https://github.com/CalciferFriend/his-and-hers" },
+      { icon: "discord", link: "https://discord.gg/his-and-hers" },
     ],
 
     footer: {
@@ -141,7 +141,7 @@ export default defineConfig({
     },
 
     editLink: {
-      pattern: "https://github.com/CalciferFriend/tom-and-jerry/edit/main/docs-site/:path",
+      pattern: "https://github.com/CalciferFriend/his-and-hers/edit/main/docs-site/:path",
       text: "Edit this page on GitHub",
     },
   },

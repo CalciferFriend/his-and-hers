@@ -4,7 +4,7 @@
  * Zod schema for TJCapabilityReport — what a Jerry node advertises about
  * itself so Tom can make informed routing decisions.
  *
- * Jerry writes this to ~/.tom-and-jerry/capabilities.json via `tj capabilities --advertise`.
+ * Jerry writes this to ~/.his-and-hers/capabilities.json via `tj capabilities --advertise`.
  * Tom fetches it from the peer gateway at /capabilities or via SSH.
  */
 

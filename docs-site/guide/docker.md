@@ -19,7 +19,7 @@ docker run -d \
   -e TS_AUTHKEY=tskey-auth-... \
   -e JERRY_TAILSCALE_IP=100.x.y.z \
   -e JERRY_SSH_USER=ubuntu \
-  -v tj-tom-data:/root/.tom-and-jerry \
+  -v hh-h1-data:/root/.his-and-hers \
   calcifierai/tom:latest
 ```
 
@@ -45,7 +45,7 @@ services:
       - JERRY_SSH_USER=${JERRY_SSH_USER:-ubuntu}
       - GATEWAY_PORT=${GATEWAY_PORT:-3737}
     volumes:
-      - tom-data:/root/.tom-and-jerry
+      - tom-data:/root/.his-and-hers
       - ~/.ssh:/root/.ssh:ro   # SSH keys for connecting to Jerry
     cap_add:
       - NET_ADMIN   # needed for Tailscale
@@ -92,7 +92,7 @@ services:
       - OLLAMA_MODELS=${OLLAMA_MODELS:-llama3.2:3b,nomic-embed-text}
       - GATEWAY_PORT=${GATEWAY_PORT:-3737}
     volumes:
-      - jerry-cpu-data:/root/.tom-and-jerry
+      - jerry-cpu-data:/root/.his-and-hers
       - ollama-models:/root/.ollama
     cap_add:
       - NET_ADMIN
@@ -156,7 +156,7 @@ docker run -d \
   -e TS_AUTHKEY=tskey-auth-... \
   -e TOM_TAILSCALE_IP=100.x.y.z \
   -e OLLAMA_MODELS="llama3.2,mistral,nomic-embed-text" \
-  -v jerry-data:/root/.tom-and-jerry \
+  -v jerry-data:/root/.his-and-hers \
   -v ollama-models:/root/.ollama \
   jerry-cuda:latest
 ```
@@ -187,7 +187,7 @@ services:
       - TOM_TAILSCALE_IP=${TOM_TAILSCALE_IP}
       - OLLAMA_MODELS=${OLLAMA_MODELS:-llama3.2,mistral,qwen2.5-coder:7b}
     volumes:
-      - jerry-data:/root/.tom-and-jerry
+      - jerry-data:/root/.his-and-hers
       - ollama-models:/root/.ollama
     cap_add:
       - NET_ADMIN
@@ -214,7 +214,7 @@ docker run -d \
   -e TJ_EMOJI="🍓" \
   -e TOM_TAILSCALE_IP=100.x.y.z \
   -e OLLAMA_MODELS="llama3.2:3b,nomic-embed-text" \
-  -v jerry-pi-data:/root/.tom-and-jerry \
+  -v jerry-pi-data:/root/.his-and-hers \
   -v ollama-models:/root/.ollama \
   jerry-arm64:latest
 ```

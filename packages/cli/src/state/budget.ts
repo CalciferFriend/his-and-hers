@@ -14,7 +14,7 @@
 
 import { listTaskStates } from "./tasks.ts";
 import type { TaskState } from "./tasks.ts";
-import { estimateCost, getPricing } from "@tom-and-jerry/core";
+import { estimateCost, getPricing } from "@his-and-hers/core";
 
 export interface TaskBudgetEntry {
   id: string;

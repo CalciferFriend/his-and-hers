@@ -1,17 +1,17 @@
 {
-  "name": "@tom-and-jerry/cli",
+  "name": "@his-and-hers/cli",
   "version": "0.1.0",
   "description": "The `tj` CLI \u2014 onboard wizard, pairing, status, wake, and task delegation",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CalciferFriend/tom-and-jerry",
+    "url": "https://github.com/CalciferFriend/his-and-hers",
     "directory": "packages/cli"
   },
   "main": "dist/index.js",
   "bin": {
-    "tj": "dist/index.js"
+    "hh": "dist/index.js"
   },
   "files": [
     "dist"
@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@clack/prompts": "^0.10.0",
-    "@tom-and-jerry/core": "file:../core",
+    "@his-and-hers/core": "file:../core",
     "commander": "^13.0.0",
     "keytar": "^7.9.0",
     "picocolors": "^1.1.0",

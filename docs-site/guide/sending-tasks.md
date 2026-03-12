@@ -1,6 +1,6 @@
 # Sending Tasks
 
-`tj send` is how you delegate work to Jerry. Everything else in tom-and-jerry exists to make `tj send` work reliably.
+`tj send` is how you delegate work to Jerry. Everything else in his-and-hers exists to make `tj send` work reliably.
 
 ---
 
@@ -15,7 +15,7 @@ tj send "generate a product image, dark background, minimal"
 Each call:
 1. Checks if Jerry is reachable
 2. Sends a WOL magic packet if Jerry is asleep (and waits)
-3. Builds a `TJMessage` and POSTs it to Jerry's gateway
+3. Builds a `HHMessage` and POSTs it to Jerry's gateway
 4. Assigns a task ID (e.g. `task_01j8fzq7r4`)
 5. Returns immediately (unless `--wait` is passed)
 

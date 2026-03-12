@@ -72,10 +72,10 @@ ollama pull llama3.2:3b
 ollama pull nomic-embed-text
 ```
 
-### 5 — Install OpenClaw + tom-and-jerry
+### 5 — Install OpenClaw + his-and-hers
 
 ```bash
-sudo npm install -g openclaw tom-and-jerry
+sudo npm install -g openclaw his-and-hers
 tj --version
 ```
 
@@ -106,7 +106,7 @@ Keep the gateway running across reboots:
 ```ini
 # /etc/systemd/system/tj-gateway.service
 [Unit]
-Description=tom-and-jerry gateway
+Description=his-and-hers gateway
 After=network-online.target tailscaled.service
 Wants=network-online.target
 

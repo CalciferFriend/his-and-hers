@@ -148,7 +148,7 @@ export async function stepProvider(
     const spinner = p.spinner();
     spinner.start("Storing API key in OS keychain…");
 
-    const stored = await tryStoreInKeychain("tom-and-jerry", keychainKey, apiKey as string);
+    const stored = await tryStoreInKeychain("his-and-hers", keychainKey, apiKey as string);
 
     if (stored) {
       spinner.stop("API key stored in OS keychain ✓");

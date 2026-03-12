@@ -2,7 +2,7 @@
 
 View and manage your TJ configuration from the CLI.
 
-The config file lives at `~/.tom-and-jerry/tj.json` and holds all node settings
+The config file lives at `~/.his-and-hers/tj.json` and holds all node settings
 (names, IPs, ports, roles, etc.). **Sensitive secrets** — API keys and gateway
 tokens — are **never stored here**; they live in the OS keychain (Keychain Access
 on macOS, `secret-tool` / `libsecret` on Linux, Credential Manager on Windows).
@@ -33,7 +33,7 @@ tj config show
 Output (secrets are redacted):
 
 ```
-◆ TJ Configuration — /home/nic/.tom-and-jerry/tj.json
+◆ TJ Configuration — /home/nic/.his-and-hers/tj.json
 
 {
   "this_node": {
@@ -98,7 +98,7 @@ tj config set peer_node.wol '{"enabled":true,"mac":"AA:BB:CC:DD:EE:FF"}'
 
 ```bash
 tj config path
-# /home/nic/.tom-and-jerry/tj.json
+# /home/nic/.his-and-hers/tj.json
 ```
 
 Useful for piping into editors or scripts:

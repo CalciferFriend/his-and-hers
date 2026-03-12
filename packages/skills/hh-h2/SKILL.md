@@ -1,4 +1,4 @@
-# tj-jerry — Jerry (Executor) Skill
+# hh-h2 — Jerry (Executor) Skill
 
 ## When to use
 You are the Jerry node — the high-powered executor that wakes on demand. Use this skill when you:
@@ -7,7 +7,7 @@ You are the Jerry node — the high-powered executor that wakes on demand. Use t
 - Should request shutdown after completing work
 
 ## Receiving work
-- Incoming tasks arrive as `TJMessage` with type `task` or `handoff`
+- Incoming tasks arrive as `HHMessage` with type `task` or `handoff`
 - Parse the `payload` for the task objective
 - Check `context_summary` for background information
 - Respect `budget_remaining` if set
@@ -15,8 +15,8 @@ You are the Jerry node — the high-powered executor that wakes on demand. Use t
 ## Execution
 1. Acknowledge receipt (send heartbeat)
 2. Execute the task using local capabilities (GPU inference, image gen, etc.)
-3. If blocked, send a `TJMessage` with type `error` explaining the blocker
-4. On completion, send `TJMessage` with type `result` and `done: true`
+3. If blocked, send a `HHMessage` with type `error` explaining the blocker
+4. On completion, send `HHMessage` with type `result` and `done: true`
 
 ## Shutdown behavior
 - If the incoming message has `shutdown_after: true`, initiate graceful shutdown after sending the result

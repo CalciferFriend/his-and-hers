@@ -1,8 +1,36 @@
 {
-  "name": "tom-and-jerry-docs",
+  "name": "{
+  "name": "his-and-hers-docs",
   "private": true,
   "version": "0.1.0",
-  "description": "Documentation site for tom-and-jerry",
+  "description": "Documentation site for his-and-hers",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.3"
+  }
+}
+-docs",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Documentation site for {
+  "name": "his-and-hers-docs",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Documentation site for his-and-hers",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.3"
+  }
+}
+",
   "scripts": {
     "dev": "vitepress dev",
     "build": "vitepress build",

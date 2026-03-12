@@ -69,12 +69,12 @@ ollama pull codellama          # code tasks
 ollama pull llava:7b           # vision tasks
 ```
 
-### 4. Install OpenClaw + tom-and-jerry
+### 4. Install OpenClaw + his-and-hers
 
 ```powershell
 winget install OpenJS.NodeJS.LTS
 npm install -g openclaw
-npm install -g tom-and-jerry
+npm install -g his-and-hers
 
 tj onboard
 # → Select role: Jerry

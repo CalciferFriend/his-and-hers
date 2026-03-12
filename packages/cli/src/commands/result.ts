@@ -10,7 +10,7 @@
  *   tj result <task-id> --output-file /tmp/result.txt
  *   tj result <task-id> --json '{"output":"...","artifacts":["/tmp/cat.png"]}'
  *
- * The state file is written to ~/.tom-and-jerry/state/tasks/<id>.json so
+ * The state file is written to ~/.his-and-hers/state/tasks/<id>.json so
  * Tom's `tj send --wait` polling loop picks it up automatically.
  *
  * Remote delivery:
@@ -25,7 +25,7 @@ import pc from "picocolors";
 import { readFile } from "node:fs/promises";
 import { loadTaskState, updateTaskState, type TaskResult } from "../state/tasks.ts";
 import { loadConfig } from "../config/store.ts";
-import { estimateCost, summarizeTask, appendContextEntry } from "@tom-and-jerry/core";
+import { estimateCost, summarizeTask, appendContextEntry } from "@his-and-hers/core";
 
 export interface ResultOptions {
   fail?: boolean;

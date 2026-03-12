@@ -23,9 +23,9 @@ Both machines must be connected to the same Tailscale network (same account or s
 Tom is typically your always-on server, cloud VM, or low-power machine. It orchestrates.
 
 ```bash
-npx tom-and-jerry
+npx his-and-hers
 # or
-npm install -g tom-and-jerry && tj onboard
+npm install -g his-and-hers && tj onboard
 ```
 
 When prompted:
@@ -44,7 +44,7 @@ When prompted:
 Jerry is your GPU workstation, gaming PC, Mac Mini, or Raspberry Pi. It executes.
 
 ```bash
-npx tom-and-jerry
+npx his-and-hers
 # or
 tj onboard
 ```

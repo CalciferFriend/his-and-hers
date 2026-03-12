@@ -81,7 +81,7 @@ Used by Docker and CI:
 ## Config files created
 
 ```
-~/.tom-and-jerry/
+~/.his-and-hers/
   tj.json                  ← main config (mode 0o600)
   peers/
     <peer-name>.json        ← one per peer (mode 0o600)
@@ -130,7 +130,7 @@ To start completely fresh:
 
 ```bash
 tj onboard --reset
-# ⚠️  This deletes ~/.tom-and-jerry/tj.json and all peer configs
+# ⚠️  This deletes ~/.his-and-hers/tj.json and all peer configs
 ```
 
 ---

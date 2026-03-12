@@ -1,6 +1,6 @@
 import * as p from "@clack/prompts";
 import pc from "picocolors";
-import { generatePairingCode, hashPairingCode } from "@tom-and-jerry/core";
+import { generatePairingCode, hashPairingCode } from "@his-and-hers/core";
 import { saveConfig, getConfigPath } from "../../config/store.ts";
 import type { TJConfig } from "../../config/schema.ts";
 import type { WizardContext } from "../context.ts";

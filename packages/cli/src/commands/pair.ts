@@ -1,10 +1,10 @@
 import * as p from "@clack/prompts";
 import pc from "picocolors";
-import { verifyPairingCode, pingPeer, testSSH, checkGatewayHealth } from "@tom-and-jerry/core";
+import { verifyPairingCode, pingPeer, testSSH, checkGatewayHealth } from "@his-and-hers/core";
 import { loadConfig, saveConfig } from "../config/store.ts";
 
 export async function pair(options: { code: string }) {
-  p.intro(pc.bgCyan(pc.black(" tom-and-jerry pair ")));
+  p.intro(pc.bgCyan(pc.black(" his-and-hers pair ")));
 
   const code = options.code.trim();
   if (!/^\d{6}$/.test(code)) {

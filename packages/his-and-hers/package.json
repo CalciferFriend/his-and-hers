@@ -1,17 +1,17 @@
 {
-  "name": "tom-and-jerry",
+  "name": "his-and-hers",
   "version": "0.1.0",
-  "description": "Two agents. Separate machines. One command to wire them. — npx tom-and-jerry",
+  "description": "Two agents. Separate machines. One command to wire them. — npx his-and-hers",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CalciferFriend/tom-and-jerry",
-    "directory": "packages/tom-and-jerry"
+    "url": "https://github.com/CalciferFriend/his-and-hers",
+    "directory": "packages/his-and-hers"
   },
-  "homepage": "https://github.com/CalciferFriend/tom-and-jerry",
+  "homepage": "https://github.com/CalciferFriend/his-and-hers",
   "bugs": {
-    "url": "https://github.com/CalciferFriend/tom-and-jerry/issues"
+    "url": "https://github.com/CalciferFriend/his-and-hers/issues"
   },
   "keywords": [
     "ai",
@@ -33,15 +33,15 @@
   },
   "main": "index.js",
   "bin": {
-    "tj": "index.js",
-    "tom-and-jerry": "index.js"
+    "hh": "index.js",
+    "his-and-hers": "index.js"
   },
   "files": [
     "index.js",
     "README.md"
   ],
   "dependencies": {
-    "@tom-and-jerry/cli": "workspace:*"
+    "@his-and-hers/cli": "workspace:*"
   },
   "scripts": {
     "build": "node build.mjs",

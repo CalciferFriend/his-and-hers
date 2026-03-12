@@ -72,12 +72,12 @@ EOF
 echo "[2/5] OpenClaw config written."
 
 # ── 3. Write TJ config ────────────────────────────────────────────────────────
-echo "[3/5] Writing tom-and-jerry config..."
+echo "[3/5] Writing his-and-hers config..."
 TS_HOSTNAME=$(tailscale status --json 2>/dev/null | node -e "const d=require('fs').readFileSync('/dev/stdin','utf8'); try { console.log(JSON.parse(d).Self?.HostName ?? ''); } catch { console.log(''); }" || echo "")
 
-mkdir -p /root/.tom-and-jerry
-if [ ! -f /root/.tom-and-jerry/config.json ]; then
-  cat > /root/.tom-and-jerry/config.json <<EOF
+mkdir -p /root/.his-and-hers
+if [ ! -f /root/.his-and-hers/config.json ]; then
+  cat > /root/.his-and-hers/config.json <<EOF
 {
   "version": "0.1.0",
   "gateway_port": $TOM_GATEWAY_PORT,

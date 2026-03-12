@@ -1,5 +1,6 @@
 {
-  "name": "tom-and-jerry-root",
+  "name": "{
+  "name": "his-and-hers-root",
   "private": true,
   "version": "0.1.0",
   "description": "Two agents. Separate machines. One command to wire them.",
@@ -7,7 +8,80 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CalciferFriend/tom-and-jerry"
+    "url": "https://github.com/CalciferFriend/his-and-hers"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "packageManager": "pnpm@10.23.0",
+  "scripts": {
+    "build": "pnpm -r run build",
+    "dev": "pnpm -r run dev",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "oxlint .",
+    "fmt": "oxfmt --write .",
+    "typecheck": "tsc --noEmit",
+    "clean": "pnpm -r run clean && rm -rf node_modules",
+    "release": "pnpm build && pnpm test && pnpm -r publish --no-git-checks --access public",
+    "version:bump": "pnpm -r exec -- npm version"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "oxfmt": "^0.7.0",
+    "oxlint": "^0.16.0",
+    "tsdown": "^0.9.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}
+-root",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Two agents. Separate machines. One command to wire them.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CalciferFriend/{
+  "name": "his-and-hers-root",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Two agents. Separate machines. One command to wire them.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CalciferFriend/his-and-hers"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "packageManager": "pnpm@10.23.0",
+  "scripts": {
+    "build": "pnpm -r run build",
+    "dev": "pnpm -r run dev",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "oxlint .",
+    "fmt": "oxfmt --write .",
+    "typecheck": "tsc --noEmit",
+    "clean": "pnpm -r run clean && rm -rf node_modules",
+    "release": "pnpm build && pnpm test && pnpm -r publish --no-git-checks --access public",
+    "version:bump": "pnpm -r exec -- npm version"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "oxfmt": "^0.7.0",
+    "oxlint": "^0.16.0",
+    "tsdown": "^0.9.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}
+"
   },
   "engines": {
     "node": ">=22.0.0"

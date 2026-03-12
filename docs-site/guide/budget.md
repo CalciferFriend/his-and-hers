@@ -1,6 +1,6 @@
 # Budget Tracking
 
-tom-and-jerry tracks the cost of every task — cloud API tokens and local compute both. `tj budget` shows you where your money is going and advises when to route to local instead of cloud.
+his-and-hers tracks the cost of every task — cloud API tokens and local compute both. `tj budget` shows you where your money is going and advises when to route to local instead of cloud.
 
 ---
 
@@ -23,7 +23,7 @@ Pricing tables are built in for the major providers:
 | Ollama (any) | — | $0.00 | $0.00 |
 | LM Studio (any) | — | $0.00 | $0.00 |
 
-Costs are stored in task state files at `~/.tom-and-jerry/tasks/`.
+Costs are stored in task state files at `~/.his-and-hers/tasks/`.
 
 ---
 
@@ -114,7 +114,7 @@ tj budget --json
 
 ## Cost routing
 
-tom-and-jerry can automatically route tasks to minimize cloud spend. Set thresholds in `tj.json`:
+his-and-hers can automatically route tasks to minimize cloud spend. Set thresholds in `tj.json`:
 
 ```json
 {
@@ -200,9 +200,9 @@ Budget data lives in task state files. To reset:
 
 ```bash
 # Archive old tasks (don't delete — you might want them)
-mkdir ~/.tom-and-jerry/tasks-archive
-mv ~/.tom-and-jerry/tasks/task_* ~/.tom-and-jerry/tasks-archive/
+mkdir ~/.his-and-hers/tasks-archive
+mv ~/.his-and-hers/tasks/task_* ~/.his-and-hers/tasks-archive/
 
 # Or start fresh (destructive)
-rm ~/.tom-and-jerry/tasks/task_*
+rm ~/.his-and-hers/tasks/task_*
 ```

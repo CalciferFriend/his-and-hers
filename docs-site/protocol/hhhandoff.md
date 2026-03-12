@@ -1,20 +1,20 @@
 ---
-title: TJHandoff Schema
-description: The TJHandoff payload schema for structured task delegation.
+title: HHHandoff Schema
+description: The HHHandoff payload schema for structured task delegation.
 ---
 
-# TJHandoff Schema
+# HHHandoff Schema
 
-`TJHandoff` is a structured task delegation payload used when Tom or Jerry wants
+`HHHandoff` is a structured task delegation payload used when Tom or Jerry wants
 to hand off work with explicit constraints, expected output, and execution bounds.
-It is carried in a `TJMessage` with `type: "handoff"`.
+It is carried in a `HHMessage` with `type: "handoff"`.
 
 ---
 
 ## TypeScript interface
 
 ```typescript
-interface TJHandoff {
+interface HHHandoff {
   task_id: string;               // UUID v4 — stable identifier for this handoff
   from_role: "tom" | "jerry";    // Who is delegating
   to_role: "tom" | "jerry";      // Who should execute
@@ -79,7 +79,7 @@ interface TJHandoff {
   "from_role": "tom",
   "to_role": "jerry",
   "objective": "Review the pull request diff and identify bugs or regressions.",
-  "context": "This PR adds the TJHandoff discriminated union to the Zod schema. Prior schema used a plain string payload field.",
+  "context": "This PR adds the HHHandoff discriminated union to the Zod schema. Prior schema used a plain string payload field.",
   "constraints": [
     "Focus on correctness, not style",
     "Flag any cases where backward compatibility is broken",
@@ -117,15 +117,15 @@ interface TJHandoff {
 
 ---
 
-## Carrying a TJHandoff in a TJMessage
+## Carrying a HHHandoff in a HHMessage
 
-The `TJHandoff` is JSON-serialized and placed in the `payload` field of a
-[`TJMessage`](/protocol/tjmessage) with `type: "handoff"`:
+The `HHHandoff` is JSON-serialized and placed in the `payload` field of a
+[`HHMessage`](/protocol/hhmessage) with `type: "handoff"`:
 
 ```typescript
-const handoff: TJHandoff = { /* ... */ };
+const handoff: HHHandoff = { /* ... */ };
 
-const message: TJMessage = {
+const message: HHMessage = {
   version: "0.1.0",
   id: crypto.randomUUID(),
   from: "Calcifer",
@@ -146,7 +146,7 @@ const message: TJMessage = {
 
 ## Responding to a handoff
 
-Jerry responds with a standard `TJMessage` of `type: "result"`, using the same
+Jerry responds with a standard `HHMessage` of `type: "result"`, using the same
 `task_id` to correlate. The result `payload` should match the `expected_output`
 described in the handoff.
 
@@ -154,6 +154,6 @@ described in the handoff.
 
 ## See also
 
-- [TJMessage](/protocol/tjmessage) — the outer envelope
+- [HHMessage](/protocol/hhmessage) — the outer envelope
 - [Protocol overview](/protocol/overview) — message flow and wake/shutdown sequences
 - [`tj send`](/reference/send) — how `--handoff` tasks are constructed

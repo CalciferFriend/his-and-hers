@@ -16,8 +16,58 @@
     "strict": true,
     "target": "es2023",
     "paths": {
-      "@tom-and-jerry/core": ["./packages/core/src/index.ts"],
-      "@tom-and-jerry/core/*": ["./packages/core/src/*.ts"]
+      "@{
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["ES2023"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noEmit": true,
+    "noEmitOnError": true,
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "es2023",
+    "paths": {
+      "@his-and-hers/core": ["./packages/core/src/index.ts"],
+      "@his-and-hers/core/*": ["./packages/core/src/*.ts"]
+    }
+  },
+  "include": ["packages/*/src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
+/core": ["./packages/core/src/index.ts"],
+      "@{
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["ES2023"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noEmit": true,
+    "noEmitOnError": true,
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "es2023",
+    "paths": {
+      "@his-and-hers/core": ["./packages/core/src/index.ts"],
+      "@his-and-hers/core/*": ["./packages/core/src/*.ts"]
+    }
+  },
+  "include": ["packages/*/src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
+/core/*": ["./packages/core/src/*.ts"]
     }
   },
   "include": ["packages/*/src/**/*"],

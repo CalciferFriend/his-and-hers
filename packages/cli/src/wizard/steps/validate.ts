@@ -6,7 +6,7 @@ import {
   checkGatewayHealth,
   sendMagicPacket,
   waitForPeer,
-} from "@tom-and-jerry/core";
+} from "@his-and-hers/core";
 import { isCancelled, type WizardContext } from "../context.ts";
 
 interface CheckResult {

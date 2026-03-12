@@ -1,5 +1,5 @@
 # Tom node — Docker image
-# Alpine + Node 22 + Tailscale + OpenClaw + tom-and-jerry
+# Alpine + Node 22 + Tailscale + OpenClaw + his-and-hers
 #
 # Usage:
 #   docker build -t calcifer-ai/tom -f docker/tom/Dockerfile .
@@ -29,11 +29,11 @@ RUN apk add --no-cache tailscale --repository=https://pkgs.tailscale.com/stable/
 # ── OpenClaw ──────────────────────────────────────────────────────────────────
 RUN npm install -g openclaw
 
-# ── tom-and-jerry CLI ─────────────────────────────────────────────────────────
-RUN npm install -g tom-and-jerry
+# ── his-and-hers CLI ─────────────────────────────────────────────────────────
+RUN npm install -g his-and-hers
 
 # ── Runtime config dir ────────────────────────────────────────────────────────
-RUN mkdir -p /root/.openclaw /root/.tom-and-jerry
+RUN mkdir -p /root/.openclaw /root/.his-and-hers
 
 # ── Entrypoint scripts ────────────────────────────────────────────────────────
 COPY docker/tom/entrypoint.sh /entrypoint.sh

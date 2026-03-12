@@ -29,7 +29,7 @@ tj status [flags]
 ```bash
 $ tj status
 
-tom-and-jerry v0.5.2
+his-and-hers v0.5.2
 
 Tom  (Calcifer 🔥)
   ✓  gateway healthy      127.0.0.1:3737
@@ -153,7 +153,7 @@ $ tj status --json
 3. **For each peer:**
    - Tailscale reachability — `tailscale ping <peer-ip>` (fast, cached)
    - Gateway health — HTTP GET `http://<peer-ip>:<port>/health`
-   - Last heartbeat — age of last `TJHeartbeat` received from Jerry
+   - Last heartbeat — age of last `HHHeartbeat` received from Jerry
    - WOL config — whether MAC address is configured
 
 Heartbeat is passive — it uses the last-received time. `tj status` does not actively contact Jerry's heartbeat endpoint.

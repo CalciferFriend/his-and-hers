@@ -58,7 +58,7 @@ tj capabilities advertise --tags "finetune,custom-skill"
 What it does:
 
 1. Runs `scan`
-2. Writes `~/.tom-and-jerry/capabilities.json`
+2. Writes `~/.his-and-hers/capabilities.json`
 3. POSTs the profile to Tom's gateway (if Tom is reachable)
 
 Run this on Jerry startup. The startup script / systemd unit includes it by default.
@@ -79,7 +79,7 @@ tj capabilities fetch --peer jerry-beast
 | `--peer <name>` | Fetch from a specific peer (default: all peers) |
 | `--json` | Output fetched profile as JSON |
 
-Saves to `~/.tom-and-jerry/peer-capabilities-<peer>.json`.
+Saves to `~/.his-and-hers/peer-capabilities-<peer>.json`.
 
 ---
 
@@ -165,7 +165,7 @@ Reason: only peer with image-gen skill
 
 ## Capability file format
 
-`~/.tom-and-jerry/capabilities.json` (Jerry side):
+`~/.his-and-hers/capabilities.json` (Jerry side):
 
 ```json
 {
@@ -203,5 +203,5 @@ Reason: only peer with image-gen skill
 ## See also
 
 - [Capability routing guide](/guide/capabilities) — routing logic, skill tags, keyword matching
-- [Multi-Jerry](/guide/multi-jerry) — routing across multiple peers
+- [Multi-H2](/guide/multi-h2) — routing across multiple peers
 - [Protocol: TJCapabilityReport](/protocol/capabilities) — schema specification

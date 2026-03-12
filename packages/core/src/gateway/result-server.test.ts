@@ -182,13 +182,13 @@ describe("startResultServer", () => {
 describe("parseWebhookUrl", () => {
   it("extracts webhook URL from wake message", async () => {
     const { parseWebhookUrl } = await import("./result-server.ts");
-    const msg = `[TJMessage:task from Calcifer id=abc] do something\n\nWhen done, run: tj result abc "..."\n\nTJ-Result-Webhook: http://100.116.25.69:38791/result\nTJ-Result-Token: (use your token)`;
+    const msg = `[HHMessage:task from Calcifer id=abc] do something\n\nWhen done, run: tj result abc "..."\n\nTJ-Result-Webhook: http://100.116.25.69:38791/result\nTJ-Result-Token: (use your token)`;
     expect(parseWebhookUrl(msg)).toBe("http://100.116.25.69:38791/result");
   });
 
   it("returns null when no webhook URL present", async () => {
     const { parseWebhookUrl } = await import("./result-server.ts");
-    const msg = `[TJMessage:task from Calcifer id=abc] do something`;
+    const msg = `[HHMessage:task from Calcifer id=abc] do something`;
     expect(parseWebhookUrl(msg)).toBeNull();
   });
 });

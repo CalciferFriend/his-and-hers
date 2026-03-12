@@ -66,7 +66,7 @@ Checksum finds the truth.
 
 ## Message format
 
-`tj send` builds a `TJMessage` with type `task`:
+`tj send` builds a `HHMessage` with type `task`:
 
 ```json
 {
@@ -95,8 +95,8 @@ Checksum finds the truth.
 2. Load peer config (--peer, or auto-select)
 3. Check Jerry gateway health (GET /health)
 4. If unhealthy + WOL configured: send magic packet, poll gateway
-5. Build TJMessage, POST to Jerry gateway
-6. Write task state to ~/.tom-and-jerry/tasks/<task_id>.json
+5. Build HHMessage, POST to Jerry gateway
+6. Write task state to ~/.his-and-hers/tasks/<task_id>.json
 7. If --wait: poll task state every 2s until done:true
 8. Print result (--wait) or task ID (default)
 ```

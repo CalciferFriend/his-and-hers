@@ -5,8 +5,8 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { sshExec } from "@tom-and-jerry/core";
-import { addWindowsLoopbackProxy, isWindowsLoopbackProxyInstalled } from "@tom-and-jerry/core";
+import { sshExec } from "@his-and-hers/core";
+import { addWindowsLoopbackProxy, isWindowsLoopbackProxyInstalled } from "@his-and-hers/core";
 import { ROLE_DEFAULTS } from "../../config/defaults.ts";
 import { isCancelled, type WizardContext } from "../context.ts";
 

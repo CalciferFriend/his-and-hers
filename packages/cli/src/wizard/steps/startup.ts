@@ -4,7 +4,7 @@ import { writeFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { sshExec } from "@tom-and-jerry/core";
+import { sshExec } from "@his-and-hers/core";
 import { isCancelled, type WizardContext } from "../context.ts";
 
 const execFileAsync = promisify(execFile);

@@ -1,4 +1,4 @@
-# tj-tom — Tom (Orchestrator) Skill
+# hh-h1 — Tom (Orchestrator) Skill
 
 ## When to use
 You are the Tom node — the always-on orchestrator. Use this skill when you need to:
@@ -16,13 +16,13 @@ You are the Tom node — the always-on orchestrator. Use this skill when you nee
 4. **Is the gateway healthy?** After wake, confirm Jerry's `/health` endpoint responds before sending work.
 
 ### Sending work
-- Construct a `TJMessage` with type `task` or `handoff`
+- Construct a `HHMessage` with type `task` or `handoff`
 - Include clear objective, constraints, and expected output format
 - Set `wake_required: true` if Jerry might be sleeping
 - Set `shutdown_after: true` if Jerry should power down after completion
 
 ### Handling results
-- Jerry will reply with a `TJMessage` of type `result`
+- Jerry will reply with a `HHMessage` of type `result`
 - Check `done: true` to confirm task completion
 - If `type: error`, log and retry or escalate
 

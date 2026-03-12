@@ -2,12 +2,12 @@
 layout: home
 
 hero:
-  name: "tom-and-jerry"
+  name: "his-and-hers"
   text: "Two agents. Separate machines."
   tagline: One command to wire them. Tom orchestrates. Jerry executes. They never meet but they build things together.
   image:
     src: /hero.svg
-    alt: tom-and-jerry
+    alt: his-and-hers
   actions:
     - theme: brand
       text: Get Started →
@@ -17,12 +17,12 @@ hero:
       link: /guide/how-it-works
     - theme: alt
       text: View on GitHub
-      link: https://github.com/CalciferFriend/tom-and-jerry
+      link: https://github.com/CalciferFriend/his-and-hers
 
 features:
   - icon: ⚡
     title: Under 10 minutes
-    details: Run `npx tom-and-jerry` on each machine. The wizard handles Tailscale pairing, gateway config, Wake-on-LAN, Windows AutoLogin, and startup scripts. No YAML, no manual config files.
+    details: Run `npx his-and-hers` on each machine. The wizard handles Tailscale pairing, gateway config, Wake-on-LAN, Windows AutoLogin, and startup scripts. No YAML, no manual config files.
 
   - icon: 🛌
     title: Wake on demand
@@ -49,7 +49,7 @@ features:
 
 ```bash
 # On your always-on machine (Tom)
-$ npx tom-and-jerry
+$ npx his-and-hers
 ✔ Role: Tom (orchestrator)
 ✔ Name: Calcifer 🔥
 ✔ Provider: Anthropic → claude-sonnet-4-6
@@ -63,7 +63,7 @@ $ npx tom-and-jerry
 Everything's wired. Run `tj send` to give Jerry something to do.
 
 # Send Jerry a task
-$ tj send "generate a landing page hero image for tom-and-jerry, dark theme, two robots"
+$ tj send "generate a landing page hero image for his-and-hers, dark theme, two robots"
 🌙 Jerry is asleep — sending Magic Packet...
 ⏳ Waiting for Jerry to boot (up to 90s)...
 ✓ Jerry online (62s) — forwarding task...

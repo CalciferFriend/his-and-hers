@@ -4,7 +4,7 @@
  * Persistent task state for the tj send pipeline.
  *
  * When Tom sends a task via `tj send`, a pending task record is written to
- * ~/.tom-and-jerry/state/tasks/<id>.json. Jerry (GLaDOS) processes the task
+ * ~/.his-and-hers/state/tasks/<id>.json. Jerry (GLaDOS) processes the task
  * and signals completion via `tj result <id> <output>` (or by writing the
  * result directly over SSH/socat). Tom can poll for the result with
  * `tj send --wait` or check any time with `tj status`.
@@ -20,7 +20,7 @@ import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-const STATE_DIR = join(homedir(), ".tom-and-jerry", "state", "tasks");
+const STATE_DIR = join(homedir(), ".his-and-hers", "state", "tasks");
 
 export type TaskStatus = "pending" | "running" | "completed" | "failed" | "timeout";
 

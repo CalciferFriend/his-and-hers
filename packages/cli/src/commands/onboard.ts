@@ -15,7 +15,7 @@ import { stepValidate } from "../wizard/steps/validate.ts";
 import { stepFinalize } from "../wizard/steps/finalize.ts";
 
 export async function onboard() {
-  p.intro(pc.bgCyan(pc.black(" tom-and-jerry onboard ")));
+  p.intro(pc.bgCyan(pc.black(" his-and-hers onboard ")));
 
   let ctx = createEmptyContext();
 

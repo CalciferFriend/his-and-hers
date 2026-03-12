@@ -1,7 +1,7 @@
 /**
  * providers/index.ts
  *
- * Model provider abstraction for tom-and-jerry.
+ * Model provider abstraction for his-and-hers.
  * Supports any OpenClaw-compatible provider so the setup works with
  * whatever models the user already has.
  */

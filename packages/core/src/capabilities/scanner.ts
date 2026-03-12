@@ -170,7 +170,7 @@ async function inferSkills(
 /**
  * Detect Vision Wormhole codec files on disk.
  *
- * Convention: codecs live at ~/.tom-and-jerry/codecs/<id>.pt or <id>.gguf.
+ * Convention: codecs live at ~/.his-and-hers/codecs/<id>.pt or <id>.gguf.
  * Codec filename must match the pattern: "vw-<arch>-v<n>" (e.g. vw-qwen3vl2b-v1).
  *
  * This is forward-looking: no production codecs exist yet (Phase 6 / experimental).
@@ -180,7 +180,7 @@ async function probeLatentCodecs(): Promise<string[]> {
   const { readdir } = await import("node:fs/promises");
   const { join } = await import("node:path");
   const { homedir } = await import("node:os");
-  const codecDir = join(homedir(), ".tom-and-jerry", "codecs");
+  const codecDir = join(homedir(), ".his-and-hers", "codecs");
   try {
     const files = await readdir(codecDir);
     const CODEC_RE = /^(vw-[\w]+-v\d+)\.(pt|gguf|bin|safetensors)$/;
@@ -238,6 +238,8 @@ export async function scanCapabilities(opts: ScanOptions): Promise<TJCapabilityR
 
   const kv_compatible_models = inferKVCompatibleModels(ollama);
 
+  const latent_support = latent_codecs.length > 0 || kv_compatible_models.length > 0;
+
   return {
     version: "0.1.0",
     node: opts.nodeName,
@@ -250,5 +252,6 @@ export async function scanCapabilities(opts: ScanOptions): Promise<TJCapabilityR
     wol_enabled: opts.wolEnabled ?? false,
     latent_codecs,
     kv_compatible_models,
+    latent_support,
   };
 }

@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 /**
- * TJHeartbeat — periodic liveness ping between paired nodes.
+ * HHHeartbeat — periodic liveness ping between paired nodes.
  */
-export const TJHeartbeat = z.object({
+export const HHHeartbeat = z.object({
   from: z.string(),
   role: z.enum(["tom", "jerry"]),
   tailscale_ip: z.string(),
@@ -12,4 +12,4 @@ export const TJHeartbeat = z.object({
   uptime_seconds: z.number().nonnegative(),
   timestamp: z.string().datetime(),
 });
-export type TJHeartbeat = z.infer<typeof TJHeartbeat>;
+export type HHHeartbeat = z.infer<typeof HHHeartbeat>;

@@ -1,15 +1,15 @@
 {
-  "name": "tom-and-jerry",
+  "name": "his-and-hers",
   "version": "0.1.0",
   "description": "Two agents. Separate machines. One command to wire them.",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CalciferFriend/tom-and-jerry"
+    "url": "https://github.com/CalciferFriend/his-and-hers"
   },
   "bin": {
-    "tj": "bin/tj.js"
+    "hh": "bin/hh.js"
   },
   "files": [
     "bin"
@@ -29,8 +29,8 @@
     "node": ">=22.0.0"
   },
   "dependencies": {
-    "@tom-and-jerry/cli": "workspace:*",
-    "@tom-and-jerry/core": "workspace:*"
+    "@his-and-hers/cli": "workspace:*",
+    "@his-and-hers/core": "workspace:*"
   },
   "publishConfig": {
     "access": "public"

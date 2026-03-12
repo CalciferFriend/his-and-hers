@@ -18,7 +18,7 @@ import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { loadConfig } from "../config/store.ts";
 import { getPeer, formatPeerList } from "../peers/select.ts";
-import { pingPeer, checkGatewayHealth, createWakeMessage, wakeAgent } from "@tom-and-jerry/core";
+import { pingPeer, checkGatewayHealth, createWakeMessage, wakeAgent } from "@his-and-hers/core";
 
 export interface TestOptions {
   peer?: string;
@@ -123,7 +123,7 @@ export async function tjTest(opts: TestOptions = {}) {
       peer.name,
       "tj test connectivity check",
     );
-    const wakeText = `[TJMessage:wake from ${wakeMsg.from} id=${wakeMsg.id}] connectivity test`;
+    const wakeText = `[HHMessage:wake from ${wakeMsg.from} id=${wakeMsg.id}] connectivity test`;
 
     if (!opts.json) {
       const s = p.spinner();

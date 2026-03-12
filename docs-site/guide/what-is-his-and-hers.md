@@ -1,6 +1,6 @@
-# What is tom-and-jerry?
+# What is his-and-hers?
 
-tom-and-jerry is an open protocol and setup wizard for connecting two [OpenClaw](https://github.com/openclaw/openclaw) agents on physically separate machines.
+his-and-hers is an open protocol and setup wizard for connecting two [OpenClaw](https://github.com/openclaw/openclaw) agents on physically separate machines.
 
 **Tom** is the orchestrator — always-on, always watching, delegates work outward.  
 **Jerry** is the executor — sleeps until needed, wakes on demand, does the heavy lifting.
@@ -20,7 +20,7 @@ But a lot of people have powerful hardware sitting idle:
 - A Raspberry Pi 5 running 24/7 as a home server
 - A workstation with a 4090 that could be running 70B models when you're not gaming
 
-tom-and-jerry is the plumbing that makes those machines useful to your agent workflows.
+his-and-hers is the plumbing that makes those machines useful to your agent workflows.
 
 ---
 
@@ -39,7 +39,7 @@ tom-and-jerry is the plumbing that makes those machines useful to your agent wor
 ## What it is not
 
 - **Not a cloud service.** Everything runs on your machines over Tailscale. No data leaves your network except to your chosen LLM provider.
-- **Not locked to OpenClaw.** The protocol is open. Any agent runtime that can speak the TJMessage format can be a Tom or Jerry.
+- **Not locked to OpenClaw.** The protocol is open. Any agent runtime that can speak the HHMessage format can be a Tom or Jerry.
 - **Not magic.** You need two machines, Tailscale on both, and Node ≥ 22. That's it.
 
 ---

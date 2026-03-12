@@ -1,4 +1,4 @@
-# docker-compose.yml — tom-and-jerry
+# docker-compose.yml — his-and-hers
 #
 # Profiles:
 #   - default (no profile): Tom only
@@ -19,7 +19,7 @@
 # is useful when you want to prototype both sides locally or run a Jerry
 # in a Linux container on the same Tailscale network.
 
-name: tom-and-jerry
+name: his-and-hers
 
 # ─── Tom (orchestrator) ───────────────────────────────────────────────────────
 services:
@@ -65,7 +65,7 @@ services:
     volumes:
       - tailscale-tom:/var/lib/tailscale
       - tom-openclaw:/root/.openclaw
-      - tom-tj-config:/root/.tom-and-jerry
+      - tom-tj-config:/root/.his-and-hers
       # Mount SSH key if using SSH to Jerry:
       # - ./ssh/id_ed25519:/root/.ssh/id_ed25519:ro
 
@@ -121,7 +121,7 @@ services:
     volumes:
       - tailscale-jerry:/var/lib/tailscale
       - jerry-openclaw:/root/.openclaw
-      - jerry-tj-config:/root/.tom-and-jerry
+      - jerry-tj-config:/root/.his-and-hers
       - jerry-ollama:/root/.ollama  # persist downloaded models
 
     healthcheck:
@@ -182,7 +182,7 @@ services:
     volumes:
       - tailscale-jerry:/var/lib/tailscale
       - jerry-openclaw:/root/.openclaw
-      - jerry-tj-config:/root/.tom-and-jerry
+      - jerry-tj-config:/root/.his-and-hers
       - jerry-ollama:/root/.ollama
 
     healthcheck:

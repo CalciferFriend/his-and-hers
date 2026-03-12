@@ -1,6 +1,6 @@
 # CLI Reference — `tj`
 
-`tj` is the command-line interface for tom-and-jerry. All commands work on both Tom and Jerry nodes unless noted.
+`tj` is the command-line interface for his-and-hers. All commands work on both Tom and Jerry nodes unless noted.
 
 ---
 

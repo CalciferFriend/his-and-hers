@@ -23,10 +23,11 @@ import { discover } from "./commands/discover.ts";
 import { logs } from "./commands/logs.ts";
 import { configShow, configGet, configSet, configPath } from "./commands/config.ts";
 import { tjTest } from "./commands/test.ts";
+import { upgrade } from "./commands/upgrade.ts";
 import { loadConfig } from "./config/store.ts";
 
 const program = new Command()
-  .name("tj")
+  .name("hh")
   .description("Tom & Jerry — two agents, separate machines, one command to wire them.")
   .version("0.1.0")
   // Default action when no subcommand given: onboard if unconfigured, status if already set up
@@ -149,7 +150,9 @@ program
 program
   .command("doctor")
   .description("Diagnose connectivity and configuration issues")
-  .action(doctor);
+  .option("--peer <name>", "Run checks only for a specific peer (by name)")
+  .option("--json", "Output results as machine-readable JSON")
+  .action((opts: { peer?: string; json?: boolean }) => doctor(opts));
 
 program
   .command("budget")
@@ -274,6 +277,13 @@ program
   .option("--peer <name>", "Target peer name")
   .option("--json", "Output as JSON")
   .action((opts: { peer?: string; json?: boolean }) => tjTest(opts));
+
+program
+  .command("upgrade")
+  .description("Check for newer versions of his-and-hers on npm")
+  .option("--check", "Exit 0 if up to date, 1 if upgrade available (CI-friendly)")
+  .option("--json", "Output result as JSON")
+  .action((opts: { check?: boolean; json?: boolean }) => upgrade(opts));
 
 program
   .command("discover")

@@ -1,4 +1,4 @@
-# Multi-Jerry Setup
+# Multi-H2 Setup
 
 Tom supports multiple Jerry nodes. Each peer gets its own config file. Tom routes tasks to the best available peer automatically, or you can target a specific one with `--peer`.
 
@@ -41,7 +41,7 @@ tj pair
 # → Test connection: ✓
 ```
 
-Or edit `~/.tom-and-jerry/peers/jerry-beast.json` directly:
+Or edit `~/.his-and-hers/peers/jerry-beast.json` directly:
 
 ```json
 {
@@ -70,7 +70,7 @@ The `gateway_token` must match what Jerry Beast's gateway is configured with. To
 Tom stores one config file per Jerry:
 
 ```
-~/.tom-and-jerry/peers/
+~/.his-and-hers/peers/
   jerry-home.json       ← RTX 3070 Ti, Windows
   jerry-pi.json         ← Raspberry Pi 5
   jerry-beast.json      ← RTX 4090
@@ -183,7 +183,7 @@ tj budget --peer jerry-pi --all
 
 ```bash
 tj pair remove jerry-beast
-# → Removes ~/.tom-and-jerry/peers/jerry-beast.json
+# → Removes ~/.his-and-hers/peers/jerry-beast.json
 # → Removes cached peer-capabilities-jerry-beast.json
 ```
 
@@ -196,7 +196,7 @@ Or just delete the peer config file manually.
 Tom maintains a separate conversation context for each Jerry (last 10 task summaries). This means long-running work on `jerry-home` doesn't pollute the context for `jerry-beast`.
 
 ```
-~/.tom-and-jerry/context/
+~/.his-and-hers/context/
   jerry-home.json
   jerry-beast.json
   jerry-pi.json
@@ -205,7 +205,7 @@ Tom maintains a separate conversation context for each Jerry (last 10 task summa
 Clear context for a peer:
 
 ```bash
-echo "[]" > ~/.tom-and-jerry/context/jerry-home.json
+echo "[]" > ~/.his-and-hers/context/jerry-home.json
 ```
 
 ---

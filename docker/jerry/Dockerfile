@@ -1,5 +1,5 @@
 # Jerry node — Docker image (CPU / generic Linux)
-# Ollama + Node 22 + Tailscale + OpenClaw + tom-and-jerry
+# Ollama + Node 22 + Tailscale + OpenClaw + his-and-hers
 #
 # Usage:
 #   docker build -t calcifer-ai/jerry -f docker/jerry/Dockerfile .
@@ -39,11 +39,11 @@ RUN curl -fsSL https://ollama.com/install.sh | sh
 # ── OpenClaw ──────────────────────────────────────────────────────────────────
 RUN npm install -g openclaw
 
-# ── tom-and-jerry CLI ─────────────────────────────────────────────────────────
-RUN npm install -g tom-and-jerry
+# ── his-and-hers CLI ─────────────────────────────────────────────────────────
+RUN npm install -g his-and-hers
 
 # ── Runtime config dirs ───────────────────────────────────────────────────────
-RUN mkdir -p /root/.openclaw /root/.tom-and-jerry /root/.ollama
+RUN mkdir -p /root/.openclaw /root/.his-and-hers /root/.ollama
 
 # ── SSH server setup (for tj send over SSH from Tom) ─────────────────────────
 RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh

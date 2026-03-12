@@ -3,7 +3,7 @@
 > *"We do not have organs of communication. Our brains can display our thoughts to the outside world, thereby achieving communication."*
 > — Cixin Liu, The Dark Forest
 
-Today, tom-and-jerry speaks text. Tom sends a prompt. Jerry sends back a completion. That works — and it's how every multi-agent system in production works right now.
+Today, his-and-hers speaks text. Tom sends a prompt. Jerry sends back a completion. That works — and it's how every multi-agent system in production works right now.
 
 But text is a lossy compression of thought.
 
@@ -43,24 +43,24 @@ Neither paper ships a production transport layer. That's the gap we're positione
 
 ---
 
-## The TJLatentMessage vision
+## The HHLatentMessage vision
 
-The TJMessage protocol today carries text payloads:
+The HHMessage protocol today carries text payloads:
 
 ```typescript
 // Today
-type TJTaskMessage = {
+type HHTaskMessage = {
   type: "task";
   payload: string;        // a prompt
   context_summary?: string; // prior context as text
 };
 ```
 
-A future `TJLatentMessage` carries continuous representations:
+A future `HHLatentMessage` carries continuous representations:
 
 ```typescript
 // Tomorrow
-type TJLatentMessage = {
+type HHLatentMessage = {
   type: "latent_task";
   format: "interlat_v1" | "kv_cache" | "embedding";
   layers_computed: number;       // how far Tom got before handing off
@@ -90,7 +90,7 @@ If Jerry doesn't support latent communication, Tom falls back to text transparen
 
 | Step | Description | Notes |
 |------|-------------|-------|
-| 6a | `TJLatentMessage` schema (Zod) | Discriminated union extension |
+| 6a | `HHLatentMessage` schema (Zod) | Discriminated union extension |
 | 6b | Capability negotiation at pair time | `latent_interlat_v1` token in TJPair |
 | 6c | Hidden state serialization | Float32 → gzip → base64 for HTTP transport |
 | 6d | Interlat adapter (Tom side) | Hook into OpenClaw inference for mid-layer extraction |
@@ -125,7 +125,7 @@ But "same machine" imposes hard constraints:
 - Redundancy: a crash takes both agents down
 - Ownership: you can't run your Tom on a VPS and lend your Jerry's GPU cycles to a friend
 
-tom-and-jerry is specifically about **cross-machine, cross-network agent communication**. The Tailscale tunnel is load-bearing. The WOL mechanism matters. The async result delivery exists because Jerry might be asleep.
+his-and-hers is specifically about **cross-machine, cross-network agent communication**. The Tailscale tunnel is load-bearing. The WOL mechanism matters. The async result delivery exists because Jerry might be asleep.
 
 The latent communication layer adds a high-bandwidth, low-loss channel on top of that existing transport — it doesn't replace the separation constraint. It makes the separation cheaper.
 
@@ -147,7 +147,7 @@ The latent communication layer adds a high-bandwidth, low-loss channel on top of
 
 If you're working in this space — implementing Interlat adapters, experimenting with KV sharing, or building on LatentMAS — we want to hear from you.
 
-Open an issue on [GitHub](https://github.com/CalciferFriend/tom-and-jerry) or join the [Community Discord](https://discord.gg/tom-and-jerry).
+Open an issue on [GitHub](https://github.com/CalciferFriend/his-and-hers) or join the [Community Discord](https://discord.gg/his-and-hers).
 
 The transport layer is being built now. The signal running through it will get stranger and more powerful over time.
 

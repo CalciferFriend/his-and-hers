@@ -10,12 +10,12 @@
  *     Does NOT save — use `--save` to persist.
  *
  *   tj capabilities advertise
- *     Scan + save to ~/.tom-and-jerry/capabilities.json.
+ *     Scan + save to ~/.his-and-hers/capabilities.json.
  *     Jerry should run this after setup and periodically (or via cron).
  *
  *   tj capabilities fetch
  *     Tom fetches Jerry's report via the peer gateway (/capabilities endpoint)
- *     or via SSH fallback, saves to ~/.tom-and-jerry/peer-capabilities.json.
+ *     or via SSH fallback, saves to ~/.his-and-hers/peer-capabilities.json.
  *
  *   tj capabilities show [--peer]
  *     Print this node's (or peer's) last known capability report.
@@ -36,8 +36,8 @@ import {
   loadPeerCapabilities,
   isPeerCapabilityStale,
   type TJCapabilityReport,
-} from "@tom-and-jerry/core";
-import { routeTask } from "@tom-and-jerry/core";
+} from "@his-and-hers/core";
+import { routeTask } from "@his-and-hers/core";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -116,7 +116,7 @@ export async function capabilitiesScan(opts: { save?: boolean; notes?: string } 
 
   if (opts.save) {
     await saveCapabilities(report);
-    p.log.success(`Saved → ~/.tom-and-jerry/capabilities.json`);
+    p.log.success(`Saved → ~/.his-and-hers/capabilities.json`);
   } else {
     p.log.info(pc.dim("Use `tj capabilities advertise` to save and share this report."));
   }
@@ -147,7 +147,7 @@ export async function capabilitiesAdvertise(opts: { notes?: string } = {}) {
   formatReport(report, "Advertising as");
 
   await saveCapabilities(report);
-  p.log.success(`Saved → ~/.tom-and-jerry/capabilities.json`);
+  p.log.success(`Saved → ~/.his-and-hers/capabilities.json`);
 
   const skillCount = report.skills.length;
   const modelCount = report.ollama.models.length;
@@ -195,13 +195,13 @@ export async function capabilitiesFetch() {
     formatReport(report, `${peer.emoji ?? ""} ${peer.name} capabilities`);
 
     await savePeerCapabilities(report);
-    p.log.success("Saved → ~/.tom-and-jerry/peer-capabilities.json");
+    p.log.success("Saved → ~/.his-and-hers/peer-capabilities.json");
     p.log.info(pc.dim("`tj send` will now use these capabilities for routing."));
 
   } catch (err) {
     s.stop(pc.red("Fetch failed"));
     p.log.error(`${err}`);
-    p.log.info(`Try: ssh ${peer.ssh_user}@${peer.tailscale_ip} "cat ~/.tom-and-jerry/capabilities.json"`);
+    p.log.info(`Try: ssh ${peer.ssh_user}@${peer.tailscale_ip} "cat ~/.his-and-hers/capabilities.json"`);
   }
 
   p.outro("");

@@ -38,7 +38,7 @@ tj discover [flags]
 ```bash
 $ tj discover
 
-tom-and-jerry community nodes  (registry: github gist)
+his-and-hers community nodes  (registry: github gist)
 Updated: 2m ago · 47 nodes total
 
 #  Name           OS        GPU                   Skills                    WOL
@@ -58,7 +58,7 @@ Run `tj discover --json` for full details.
 ```bash
 $ tj discover --skill image-gen --wol
 
-tom-and-jerry community nodes  (registry: github gist)
+his-and-hers community nodes  (registry: github gist)
 Filtered: skill=image-gen, wol=true · 12 matches
 
 #  Name          OS       GPU                   Skills                    WOL

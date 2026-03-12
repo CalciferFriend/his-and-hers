@@ -1,6 +1,6 @@
 # LLM Providers
 
-tom-and-jerry works with any LLM provider that OpenClaw supports. Tom typically uses a cloud provider for lightweight orchestration; Jerry typically uses a local provider for heavy inference.
+his-and-hers works with any LLM provider that OpenClaw supports. Tom typically uses a cloud provider for lightweight orchestration; Jerry typically uses a local provider for heavy inference.
 
 ---
 
@@ -28,12 +28,12 @@ Manual config update:
 
 ```bash
 tj onboard --reconfigure-provider
-# Or edit ~/.tom-and-jerry/tj.json directly
+# Or edit ~/.his-and-hers/tj.json directly
 ```
 
 ### Cost routing
 
-By default, tom-and-jerry routes lightweight tasks (summarization, task planning, short text) to Claude Haiku (cheapest) and complex reasoning to Claude Sonnet. 70B+ inference goes to Jerry.
+By default, his-and-hers routes lightweight tasks (summarization, task planning, short text) to Claude Haiku (cheapest) and complex reasoning to Claude Sonnet. 70B+ inference goes to Jerry.
 
 ```json
 {
@@ -101,7 +101,7 @@ winget install Ollama.Ollama
 
 ### Auto-detection
 
-tom-and-jerry checks `http://localhost:11434/api/tags` on startup. If Ollama is running, it's auto-detected and you'll see your installed models listed during `tj onboard`.
+his-and-hers checks `http://localhost:11434/api/tags` on startup. If Ollama is running, it's auto-detected and you'll see your installed models listed during `tj onboard`.
 
 ```bash
 # Verify Ollama is running

@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
 import {
-  TJMessage,
-  TJTaskMessage,
-  TJResultMessage,
-  TJHeartbeatMessage,
-  TJLatentMessage,
+  HHMessage,
+  HHTaskMessage,
+  HHResultMessage,
+  HHHeartbeatMessage,
+  HHLatentMessage,
   createTaskMessage,
   createResultMessage,
   createHeartbeatMessage,
@@ -19,9 +19,9 @@ import {
 } from "./message.schema.ts";
 import { randomUUID } from "node:crypto";
 
-describe("TJMessage discriminated union", () => {
+describe("HHMessage discriminated union", () => {
   it("parses a task message with typed payload", () => {
-    const msg = TJMessage.parse({
+    const msg = HHMessage.parse({
       from: "Calcifer",
       to: "GLaDOS",
       type: "task",
@@ -41,7 +41,7 @@ describe("TJMessage discriminated union", () => {
 
   it("parses a result message with typed payload", () => {
     const taskId = randomUUID();
-    const msg = TJResultMessage.parse({
+    const msg = HHResultMessage.parse({
       from: "GLaDOS",
       to: "Calcifer",
       type: "result",
@@ -64,7 +64,7 @@ describe("TJMessage discriminated union", () => {
   });
 
   it("parses a heartbeat message", () => {
-    const msg = TJHeartbeatMessage.parse({
+    const msg = HHHeartbeatMessage.parse({
       from: "GLaDOS",
       to: "Calcifer",
       type: "heartbeat",
@@ -84,7 +84,7 @@ describe("TJMessage discriminated union", () => {
   });
 
   it("parses via discriminated union — task", () => {
-    const msg = TJMessage.parse({
+    const msg = HHMessage.parse({
       from: "Calcifer",
       to: "GLaDOS",
       type: "task",
@@ -95,7 +95,7 @@ describe("TJMessage discriminated union", () => {
   });
 
   it("parses via discriminated union — wake", () => {
-    const msg = TJMessage.parse({
+    const msg = HHMessage.parse({
       from: "Calcifer",
       to: "GLaDOS",
       type: "wake",
@@ -105,7 +105,7 @@ describe("TJMessage discriminated union", () => {
   });
 
   it("parses via discriminated union — error", () => {
-    const msg = TJMessage.parse({
+    const msg = HHMessage.parse({
       from: "GLaDOS",
       to: "Calcifer",
       type: "error",
@@ -120,7 +120,7 @@ describe("TJMessage discriminated union", () => {
 
   it("rejects invalid type", () => {
     expect(() =>
-      TJMessage.parse({
+      HHMessage.parse({
         from: "A",
         to: "B",
         type: "invalid",
@@ -130,7 +130,7 @@ describe("TJMessage discriminated union", () => {
   });
 
   it("rejects missing required fields", () => {
-    expect(() => TJMessage.parse({})).toThrow();
+    expect(() => HHMessage.parse({})).toThrow();
   });
 
   it("fills defaults via factory helpers", () => {
@@ -162,10 +162,10 @@ describe("TJMessage discriminated union", () => {
   });
 });
 
-describe("TJLatentMessage — latent space communication", () => {
+describe("HHLatentMessage — latent space communication", () => {
   it("parses a latent message with Vision Wormhole codec", () => {
     const taskId = randomUUID();
-    const msg = TJLatentMessage.parse({
+    const msg = HHLatentMessage.parse({
       from: "Calcifer",
       to: "GLaDOS",
       type: "latent",
@@ -194,7 +194,7 @@ describe("TJLatentMessage — latent space communication", () => {
 
   it("parses a latent message with KV cache (LatentMAS path)", () => {
     const taskId = randomUUID();
-    const msg = TJLatentMessage.parse({
+    const msg = HHLatentMessage.parse({
       from: "Calcifer",
       to: "GLaDOS",
       type: "latent",
@@ -219,7 +219,7 @@ describe("TJLatentMessage — latent space communication", () => {
 
   it("parses via discriminated union — latent", () => {
     const taskId = randomUUID();
-    const msg = TJMessage.parse({
+    const msg = HHMessage.parse({
       from: "Calcifer",
       to: "GLaDOS",
       type: "latent",
@@ -251,6 +251,7 @@ describe("TJLatentMessage — latent space communication", () => {
       codec_tokens: 8,
       compressed_latent: "Y29tcHJlc3NlZF9kYXRh",
       fallback_text: "Task description",
+      fallback_required: false,
     });
 
     expect(msg.type).toBe("latent");
@@ -262,7 +263,7 @@ describe("TJLatentMessage — latent space communication", () => {
   it("requires fallback_text field", () => {
     const taskId = randomUUID();
     expect(() =>
-      TJLatentMessage.parse({
+      HHLatentMessage.parse({
         from: "Calcifer",
         to: "GLaDOS",
         type: "latent",

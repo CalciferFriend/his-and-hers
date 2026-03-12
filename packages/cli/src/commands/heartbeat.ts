@@ -4,7 +4,7 @@
  * Manage and display heartbeat state for the Tom/Jerry pair.
  *
  * Subcommands:
- *   tj heartbeat send   — build a TJHeartbeatMessage, deliver via wakeAgent,
+ *   tj heartbeat send   — build a HHHeartbeatMessage, deliver via wakeAgent,
  *                         record receipt time in config
  *   tj heartbeat show   — display last heartbeat info (default)
  *
@@ -30,7 +30,7 @@ import {
   pingPeer,
   createHeartbeatMessage,
   wakeAgent,
-} from "@tom-and-jerry/core";
+} from "@his-and-hers/core";
 
 export type HeartbeatAction = "send" | "show" | "record";
 
@@ -180,7 +180,7 @@ async function sendHeartbeat(config: Awaited<ReturnType<typeof loadConfig>>) {
   // Format heartbeat as a human-readable + machine-readable wake text so
   // the peer's OpenClaw session can parse it and run `tj heartbeat record`
   const wakeText =
-    `[TJHeartbeat from ${msg.from}] ` +
+    `[HHHeartbeat from ${msg.from}] ` +
     `gateway=${msg.payload.gateway_healthy} ` +
     `uptime=${msg.payload.uptime_seconds}s ` +
     `model=${msg.payload.model ?? "unknown"} ` +

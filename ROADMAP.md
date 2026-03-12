@@ -1,4 +1,4 @@
-# Roadmap — tom-and-jerry
+# Roadmap — his-and-hers
 
 > Goal: someone with two machines runs `npx tj onboard`, answers a few questions,
 > and has two agents talking in under 10 minutes — with whatever models they want.
@@ -7,7 +7,7 @@
 
 ## Phase 1 — Foundation ✅ (2026-03-11)
 
-- [x] Protocol design (TJMessage, TJHandoff, TJHeartbeat, TJPair)
+- [x] Protocol design (HHMessage, HHHandoff, HHHeartbeat, TJPair)
 - [x] Core transport (Tailscale, SSH, WOL)
 - [x] Gateway wake implementation (reverse-engineered OpenClaw WS protocol)
 - [x] Socat proxy pattern for Tom (loopback + tailscale)
@@ -46,7 +46,7 @@
 - [x] Cost-routing: lightweight tasks → cloud, heavy → local (Jerry/Ollama)
 
 ### 2d. `tj send` pipeline (both)
-- [x] Tom: ping peer → WOL if needed → build TJMessage → send via wakeAgent
+- [x] Tom: ping peer → WOL if needed → build HHMessage → send via wakeAgent
 - [x] Timeout + retry logic
 - [x] `tj send --wait` polls for result via task state file
 - [ ] Jerry: `tj result <id> <output>` — receive + store result back (GLaDOS)
@@ -61,13 +61,13 @@
 - [x] WOL capability indicator
 
 ### 2f. Docker Tom template (Calcifer) ✅ (2026-03-11)
-- [x] `Dockerfile` for Tom node (Alpine + Node + OpenClaw + tom-and-jerry)
+- [x] `Dockerfile` for Tom node (Alpine + Node + OpenClaw + his-and-hers)
 - [x] `docker-compose.yml` with env-var config
 - [x] One-liner: `docker run -e ANTHROPIC_API_KEY=... calcifierai/tom`
 - [x] Auto-registers with Tailscale on first boot (entrypoint.sh)
 
-### 2g. TJMessage discriminated union (both) ✅ (2026-03-11)
-- [x] `TJTaskMessage`, `TJResultMessage`, `TJHeartbeatMessage` typed envelopes
+### 2g. HHMessage discriminated union (both) ✅ (2026-03-11)
+- [x] `HHTaskMessage`, `HHResultMessage`, `HHHeartbeatMessage` typed envelopes
 - [x] Zod discriminated union on `type` field
 - [x] Typed payload per message type (no more `JSON.parse(payload)`)
 
@@ -84,7 +84,7 @@
 - [x] `TJCapabilityReport` Zod schema: GPU info, Ollama models, skill tags
 - [x] Auto-scanner: probes nvidia-smi / rocm-smi / Metal, Ollama /api/tags,
       SD/ComfyUI ports, LM Studio, whisper binary
-- [x] Persistent store: `~/.tom-and-jerry/capabilities.json` (Jerry) +
+- [x] Persistent store: `~/.his-and-hers/capabilities.json` (Jerry) +
       `peer-capabilities.json` (Tom caches peer's report)
 - [x] `tj capabilities scan|advertise|fetch|show|route` CLI
 - [x] `routeTask()` — capability-aware routing with keyword heuristic fallback
@@ -103,11 +103,11 @@
 
 ### 3d. Handoff continuity (both) ✅ (2026-03-12, Tom side)
 - [x] Context summary auto-generated when task completes (template-based, LLM-upgradeable)
-- [x] Summary passed in `TJTaskMessage.context_summary` on next task
-- [x] Tom retains last N=10 summaries per peer (~/.tom-and-jerry/context/<peer>.json)
-- [ ] Jerry side: include `context_summary` in TJResultMessage on result delivery (GLaDOS)
+- [x] Summary passed in `HHTaskMessage.context_summary` on next task
+- [x] Tom retains last N=10 summaries per peer (~/.his-and-hers/context/<peer>.json)
+- [ ] Jerry side: include `context_summary` in HHResultMessage on result delivery (GLaDOS)
 
-### 3e. Multi-Jerry support (Calcifer) ✅ (2026-03-12)
+### 3e. Multi-H2 support (Calcifer) ✅ (2026-03-12)
 - [x] Config: `peer_nodes[]` array added alongside `peer_node` (backwards-compatible)
 - [x] `tj send --peer <name>` to target a specific Jerry
 - [x] `tj send --auto` — capability-aware auto-selection via cached capabilities
@@ -145,7 +145,7 @@
 - [x] --follow mode: live tail with 2s polling, highlights new/updated tasks
 
 ### 4d. Discord community + showcase
-- [ ] Discord community for tom-and-jerry setups
+- [ ] Discord community for his-and-hers setups
 - [ ] Showcase: what are people building with it?
 - [x] Docs site (VitePress) ✅ (2026-03-12) — 34 pages across guide/reference/protocol/hardware
 
@@ -185,7 +185,7 @@
 ### 5e. Exponential backoff + retry (Calcifer) ✅ (2026-03-12)
 - [x] `tj send` retries on transient failures (gateway down, WS timeout) via `withRetry()`
 - [x] Configurable max retries + base delay (`--max-retries` CLI flag)
-- [x] Backoff state persisted so cron retries don't duplicate (`~/.tom-and-jerry/retry/<id>.json`)
+- [x] Backoff state persisted so cron retries don't duplicate (`~/.his-and-hers/retry/<id>.json`)
 - [x] `cronRetryDecision()` — send/skip/retry/backoff logic for cron safety
 - [x] Tests: 19 tests covering withRetry, RetryState persistence, cronRetryDecision, nextRetryAt
 
@@ -197,8 +197,8 @@
 
 **Vision:** Enable agents to communicate via compressed hidden states instead of text tokens, reducing information loss and improving bandwidth efficiency. Based on Vision Wormhole (arXiv:2602.15382), Interlat (arXiv:2511.09149), and LatentMAS (arXiv:2511.20639).
 
-### 6a. TJLatentMessage protocol type ✅ (2026-03-12)
-- [x] TJLatentMessage Zod schema added to discriminated union
+### 6a. HHLatentMessage protocol type ✅ (2026-03-12)
+- [x] HHLatentMessage Zod schema added to discriminated union
 - [x] Support for Vision Wormhole codec path (heterogeneous models via visual encoder)
 - [x] Support for LatentMAS KV-cache path (same-family models, training-free)
 - [x] Mandatory text fallback for backwards compatibility
@@ -218,7 +218,7 @@
 - [x] Fallback: if peer doesn't advertise latent support, send text instead
 
 ### 6c. HLCA receiver integration (GLaDOS)
-- [ ] OpenClaw gateway endpoint to accept TJLatentMessage
+- [ ] OpenClaw gateway endpoint to accept HHLatentMessage
 - [ ] Inject compressed latent via visual encoder pathway (Vision Wormhole approach)
 - [ ] Parse and validate sender_model and codec_version match
 - [ ] KV cache injection for LatentMAS path (same-family models)
@@ -232,8 +232,8 @@
 
 ### 6e. Automatic routing and fallback (Calcifer)
 - [x] `routeTask()` checks if peer supports latent before choosing message type
-- [x] If latent supported: extract hidden state, compress, send TJLatentMessage
-- [x] If not supported: fall back to text (existing TJTaskMessage)
+- [x] If latent supported: extract hidden state, compress, send HHLatentMessage
+- [x] If not supported: fall back to text (existing HHTaskMessage)
 - [x] Log compression ratio and bandwidth savings to task state
 
 ### 6f. Benchmarks and validation (both)
@@ -267,7 +267,7 @@ context and `docs/latent-communication.md` for implementation guide.
 | `tj status` | Calcifer 🔥 |
 | Docker Tom template | Calcifer 🔥 |
 | Ollama/local model integration | GLaDOS 🤖 |
-| TJMessage discriminated union | Calcifer 🔥 |
+| HHMessage discriminated union | Calcifer 🔥 |
 | Windows boot chain testing | GLaDOS 🤖 |
 | npm publish + CI | Calcifer 🔥 |
 
@@ -280,4 +280,4 @@ chunk of work and pushes to the repo, they send a wake to the other with a summa
 and next ask. Nic can check `git log` or ask either agent for a status update at
 any time.
 
-Repo: https://github.com/CalciferFriend/tom-and-jerry
+Repo: https://github.com/CalciferFriend/his-and-hers

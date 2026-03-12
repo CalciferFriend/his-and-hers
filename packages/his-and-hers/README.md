@@ -1,9 +1,9 @@
-# tom-and-jerry
+# his-and-hers
 
 > Two agents. Separate machines. One command to wire them.
 
 ```bash
-npx tom-and-jerry
+npx his-and-hers
 ```
 
 That's it. The guided wizard handles everything:
@@ -19,4 +19,4 @@ That's it. The guided wizard handles everything:
 
 ---
 
-Full docs: [github.com/CalciferFriend/tom-and-jerry](https://github.com/CalciferFriend/tom-and-jerry)
+Full docs: [github.com/CalciferFriend/his-and-hers](https://github.com/CalciferFriend/his-and-hers)

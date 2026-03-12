@@ -1,6 +1,6 @@
 ---
 title: "tj pair"
-description: Pair two tom-and-jerry nodes using a one-time 6-digit code.
+description: Pair two his-and-hers nodes using a one-time 6-digit code.
 ---
 
 # `tj pair` — Reference
@@ -76,7 +76,7 @@ Connecting to Tom (100.x.y.z)...
 ✓  Code verified
 ✓  Tailscale IPs exchanged
 ✓  SSH fingerprints exchanged
-✓  Pair state written to ~/.tom-and-jerry/tj.json
+✓  Pair state written to ~/.his-and-hers/tj.json
 
 Pairing complete. Tom can now reach this node.
 ```
@@ -90,7 +90,7 @@ Both nodes confirm the pairing succeeded:
 ```bash
 # Tom's output updates:
 ✓  Jerry paired: jerry-home (100.a.b.c)
-Pair state written to ~/.tom-and-jerry/tj.json
+Pair state written to ~/.his-and-hers/tj.json
 
 # Verify with:
 tj status
