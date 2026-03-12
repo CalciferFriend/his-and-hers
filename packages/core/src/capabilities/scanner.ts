@@ -165,6 +165,49 @@ async function inferSkills(
   return Array.from(skills);
 }
 
+// ─── Latent capability detection (Phase 6) ───────────────────────────────────
+
+/**
+ * Detect Vision Wormhole codec files on disk.
+ *
+ * Convention: codecs live at ~/.tom-and-jerry/codecs/<id>.pt or <id>.gguf.
+ * Codec filename must match the pattern: "vw-<arch>-v<n>" (e.g. vw-qwen3vl2b-v1).
+ *
+ * This is forward-looking: no production codecs exist yet (Phase 6 / experimental).
+ * Returns an empty array until codec files are placed on disk.
+ */
+async function probeLatentCodecs(): Promise<string[]> {
+  const { readdir } = await import("node:fs/promises");
+  const { join } = await import("node:path");
+  const { homedir } = await import("node:os");
+  const codecDir = join(homedir(), ".tom-and-jerry", "codecs");
+  try {
+    const files = await readdir(codecDir);
+    const CODEC_RE = /^(vw-[\w]+-v\d+)\.(pt|gguf|bin|safetensors)$/;
+    return files
+      .map((f) => CODEC_RE.exec(f)?.[1])
+      .filter((id): id is string => id !== undefined);
+  } catch {
+    // Directory doesn't exist yet — that's fine
+    return [];
+  }
+}
+
+/**
+ * Detect Ollama models that are KV-cache compatible with known same-family peers.
+ *
+ * If Ollama is running, return a normalized list of model base IDs suitable for
+ * LatentMAS (same model family, same weights). Strips tags/quantization suffixes
+ * to produce a canonical ID (e.g. "llama3.2:latest" → "llama3.2").
+ *
+ * Tom uses this to know if he can do lossless KV-cache handoff instead of text.
+ */
+function inferKVCompatibleModels(ollama: TJOllamaInfo): string[] {
+  if (!ollama.running || ollama.models.length === 0) return [];
+  // Normalize: strip ":tag" suffix to get base model ID
+  return ollama.models.map((m) => m.split(":")[0]).filter(Boolean);
+}
+
 // ─── Main export ─────────────────────────────────────────────────────────────
 
 export interface ScanOptions {
@@ -188,7 +231,12 @@ export async function scanCapabilities(opts: ScanOptions): Promise<TJCapabilityR
     probeGPU().catch(() => ({ available: false, backend: "none" as const })),
   ]);
 
-  const skills = await inferSkills(ollama, gpu).catch(() => [] as TJSkillTag[]);
+  const [skills, latent_codecs] = await Promise.all([
+    inferSkills(ollama, gpu).catch(() => [] as TJSkillTag[]),
+    probeLatentCodecs().catch(() => [] as string[]),
+  ]);
+
+  const kv_compatible_models = inferKVCompatibleModels(ollama);
 
   return {
     version: "0.1.0",
@@ -200,5 +248,7 @@ export async function scanCapabilities(opts: ScanOptions): Promise<TJCapabilityR
     skills,
     notes: opts.notes,
     wol_enabled: opts.wolEnabled ?? false,
+    latent_codecs,
+    kv_compatible_models,
   };
 }

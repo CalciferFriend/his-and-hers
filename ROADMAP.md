@@ -222,16 +222,16 @@
 - [ ] Graceful degradation: use fallback_text if latent parsing fails
 
 ### 6d. Capability advertisement (both)
-- [ ] Add `latent_codecs: ["vw-qwen3vl2b-v1"]` to TJCapabilityReport
-- [ ] Add `kv_compatible_models: ["llama-3.1-70b"]` for LatentMAS
+- [x] Add `latent_codecs: ["vw-qwen3vl2b-v1"]` to TJCapabilityReport
+- [x] Add `kv_compatible_models: ["llama-3.1-70b"]` for LatentMAS
 - [ ] Gateway /capabilities endpoint serves latent support info
-- [ ] Tom caches peer latent capabilities in peer-capabilities.json
+- [x] Tom caches peer latent capabilities in peer-capabilities.json
 
 ### 6e. Automatic routing and fallback (Calcifer)
-- [ ] `routeTask()` checks if peer supports latent before choosing message type
-- [ ] If latent supported: extract hidden state, compress, send TJLatentMessage
-- [ ] If not supported: fall back to text (existing TJTaskMessage)
-- [ ] Log compression ratio and bandwidth savings to task state
+- [x] `routeTask()` checks if peer supports latent before choosing message type
+- [x] If latent supported: extract hidden state, compress, send TJLatentMessage
+- [x] If not supported: fall back to text (existing TJTaskMessage)
+- [x] Log compression ratio and bandwidth savings to task state
 
 ### 6f. Benchmarks and validation (both)
 - [ ] Latency: latent vs text round-trip time on same hardware

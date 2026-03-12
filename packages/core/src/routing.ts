@@ -14,13 +14,31 @@
 
 import type { TJCapabilityReport } from "./capabilities/registry.schema.ts";
 
-export type RoutingHint = "local" | "jerry-local" | "cloud";
+export type RoutingHint = "local" | "jerry-local" | "jerry-latent" | "cloud";
 
 export interface RoutingDecision {
   hint: RoutingHint;
   reason: string;
   /** Specific Ollama model to use on Jerry, if applicable */
   suggested_model?: string;
+  /**
+   * Phase 6: Vision Wormhole codec ID to use for latent send.
+   * Only set when hint === "jerry-latent".
+   * Example: "vw-qwen3vl2b-v1"
+   */
+  latent_codec?: string;
+  /**
+   * Phase 6: Canonical codec ID for the chosen latent path.
+   * Alias for latent_codec when using Vision Wormhole; kv_model when using LatentMAS.
+   * Only set when hint === "jerry-latent".
+   */
+  codec_id?: string;
+  /**
+   * Phase 6: KV-compatible model ID for LatentMAS path.
+   * Only set when hint === "jerry-latent" and both peers share the same model family.
+   * Example: "llama3.2"
+   */
+  kv_model?: string;
 }
 
 // ─── Keyword heuristics (fallback) ──────────────────────────────────────────
@@ -82,6 +100,18 @@ function capabilityRouting(
 ): RoutingDecision {
   const lower = task.toLowerCase();
 
+  // Latent communication — Vision Wormhole path (Phase 6)
+  if (peer.latent_support && peer.latent_codecs.length > 0) {
+    if (lower.split(" ").length > 5) {
+      return {
+        hint: "jerry-latent",
+        reason: `peer supports latent comm (codec: ${peer.latent_codecs[0]})`,
+        codec_id: peer.latent_codecs[0],
+        latent_codec: peer.latent_codecs[0],
+      };
+    }
+  }
+
   // Image generation
   if (
     peer.skills.includes("image-gen") &&
@@ -141,6 +171,38 @@ function capabilityRouting(
     }
   }
 
+  // Phase 6: Latent routing — prefer Vision Wormhole when peer has a matching codec
+  // and the task is complex enough to benefit from latent state transfer.
+  // Only activates when Tom also has a matching codec (checked by caller via --latent flag).
+  if (
+    peer.latent_codecs &&
+    peer.latent_codecs.length > 0 &&
+    isLatentWorthy(task)
+  ) {
+    const codec = peer.latent_codecs[0];
+    return {
+      hint: "jerry-latent",
+      reason: `peer supports Vision Wormhole (codec: ${codec}) — latent send preferred`,
+      latent_codec: codec,
+      codec_id: codec,
+    };
+  }
+
+  // Phase 6: KV-cache path (LatentMAS) — same model family, same weights
+  if (
+    peer.kv_compatible_models &&
+    peer.kv_compatible_models.length > 0 &&
+    isLatentWorthy(task)
+  ) {
+    const model = peer.kv_compatible_models[0];
+    return {
+      hint: "jerry-latent",
+      reason: `peer shares KV-compatible model (${model}) — LatentMAS path available`,
+      kv_model: model,
+      codec_id: model,
+    };
+  }
+
   // Heuristic fallback within capability context
   const heuristic = heuristicRouting(task);
   if (heuristic.hint === "jerry-local" && peer.gpu.available) {
@@ -148,6 +210,38 @@ function capabilityRouting(
   }
 
   return { hint: "cloud", reason: "peer capabilities checked, task best handled by cloud" };
+}
+
+// ─── Latent worthiness heuristic ────────────────────────────────────────────
+
+/**
+ * Determines whether a task is complex enough to benefit from latent communication.
+ *
+ * Latent send has a fixed overhead (~5ms codec + transport). It only pays off
+ * for multi-step reasoning, long-context tasks, or tasks where information density
+ * matters (e.g. math proofs, code synthesis, chain-of-thought generation).
+ *
+ * Cheap single-step tasks (weather lookups, simple Q&A) should stay text.
+ */
+function isLatentWorthy(task: string): boolean {
+  const lower = task.toLowerCase();
+  const wordCount = task.split(/\s+/).length;
+
+  // Length threshold — short queries aren't worth the codec overhead
+  if (wordCount < 6) return false;
+
+  const LATENT_PATTERNS: RegExp[] = [
+    /\b(reason|think|step[ -]by[ -]step|chain[ -]of[ -]thought|explain)\b/i,
+    /\b(proof|prove|verify|deduc(e|tion)|infer)\b/i,
+    /\b(refactor|rewrite|architecture|design\s+pattern)\b/i,
+    /\b(analyz[es]?|analys[ei]s|evaluate|assess)\b/i,
+    /\b(generate|synthesize|create)\b.*\b(code|function|class|module)\b/i,
+    /\b(math|calcul|equat|theorem|lemma|formula)\b/i,
+    /\b(summarize|compress|distill)\b.*\b(long|document|paper|text)\b/i,
+    /\b(multi[-\s]?step|complex|detailed|comprehensive)\b/i,
+  ];
+
+  return LATENT_PATTERNS.some((re) => re.test(lower));
 }
 
 // ─── Public API ───────────────────────────────────────────────────────────────

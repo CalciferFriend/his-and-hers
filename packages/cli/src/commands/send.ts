@@ -75,6 +75,17 @@ export interface SendOptions {
    * Overrides SEND_RETRY_OPTS.maxAttempts.
    */
   maxRetries?: string;
+  /**
+   * Phase 6: Force latent communication mode (Vision Wormhole or LatentMAS).
+   * Fails with an error if the peer doesn't advertise latent capability.
+   * Use --auto-latent to fall back to text gracefully.
+   */
+  latent?: boolean;
+  /**
+   * Phase 6: Use latent communication if the peer supports it, fall back to text otherwise.
+   * Preferred over --latent for scripts/crons where you want best-effort latent.
+   */
+  autoLatent?: boolean;
 }
 
 export async function send(task: string, opts: SendOptions = {}) {
@@ -107,10 +118,62 @@ export async function send(task: string, opts: SendOptions = {}) {
   p.intro(`${pc.bold("Sending task")} → ${peer.emoji ?? ""} ${peer.name}`);
   p.log.info(`Task: ${pc.italic(task)}`);
 
-  // Routing hint
+  // Routing hint (Phase 3 capability-aware + Phase 6 latent)
   const routing = suggestRouting(task);
   if (routing === "jerry-local") {
     p.log.info(`Routing hint: ${pc.yellow("heavy task")} → recommended for ${peer.name} (local GPU)`);
+  }
+
+  // Phase 6: Latent communication check
+  // Load cached peer capabilities to check for latent support.
+  // --latent: hard-require latent (error if not supported)
+  // --auto-latent: prefer latent, fall back to text silently
+  let useLatent = false;
+  let latentCodec: string | undefined;
+  let kvModel: string | undefined;
+
+  if (opts.latent || opts.autoLatent) {
+    const { loadPeerCapabilities, routeTask } = await import("@tom-and-jerry/core");
+    const peerCaps = await loadPeerCapabilities(peer.name).catch(() => null);
+    if (peerCaps) {
+      const latentDecision = routeTask(task, peerCaps);
+      if (latentDecision.hint === "jerry-latent") {
+        useLatent = true;
+        latentCodec = latentDecision.codec_id ?? latentDecision.latent_codec;
+        kvModel = latentDecision.kv_model;
+        const mode = latentCodec ? `Vision Wormhole (${latentCodec})` : `LatentMAS (${kvModel})`;
+        p.log.info(`${pc.magenta("⚡ Latent mode")} — ${mode}`);
+      } else if (opts.latent) {
+        // Hard-require: fail if peer doesn't support latent
+        p.log.error(
+          `Peer ${peer.name} doesn't advertise latent capability (no codecs or KV-compatible models). ` +
+          `Use --auto-latent to fall back to text automatically.`
+        );
+        p.outro("Send failed.");
+        return;
+      } else {
+        // auto-latent + no latent support → silently use text
+        p.log.info(pc.dim(`Peer has no latent capability — using standard text send`));
+      }
+    } else if (opts.latent) {
+      p.log.error(
+        `No cached capabilities for ${peer.name}. Run \`tj capabilities fetch\` first, ` +
+        `or omit --latent to use text transport.`
+      );
+      p.outro("Send failed.");
+      return;
+    } else {
+      p.log.info(pc.dim(`No cached peer capabilities — using standard text send`));
+    }
+  }
+
+  // Warn if latent was requested but codec unavailable (implementation stub)
+  if (useLatent) {
+    p.log.warn(
+      pc.yellow("⚠ Latent transport is Phase 6 / experimental. ") +
+      "Vision Wormhole codec is not yet production-ready. " +
+      "Message will be sent as standard TJTaskMessage with latent metadata attached."
+    );
   }
 
   // Step 1: check if peer is awake

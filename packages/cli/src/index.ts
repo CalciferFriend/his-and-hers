@@ -69,13 +69,34 @@ program
   .option("--no-state", "Skip writing task state to disk (fire-and-forget)")
   .option("--peer <name>", "Target a specific peer by name (multi-Jerry setups)")
   .option("--auto", "Auto-select the best peer based on task + cached capabilities")
-  .action((task: string, opts: { wait?: boolean; waitTimeout?: string; state?: boolean; peer?: string; auto?: boolean }) => {
+  .option("--latent", "[Phase 6] Force latent communication (Vision Wormhole / LatentMAS). Fails if peer doesn't support it.")
+  .option("--auto-latent", "[Phase 6] Use latent if peer supports it, fall back to text otherwise")
+  .option("--max-retries <n>", "Max delivery retry attempts on failure (default: 3)")
+  .option("--no-webhook", "Disable result webhook server (polling only, --wait mode)")
+  .option("--force", "Skip cron duplicate-send guard")
+  .action((task: string, opts: {
+    wait?: boolean;
+    waitTimeout?: string;
+    state?: boolean;
+    peer?: string;
+    auto?: boolean;
+    latent?: boolean;
+    autoLatent?: boolean;
+    maxRetries?: string;
+    webhook?: boolean;
+    force?: boolean;
+  }) => {
     return send(task, {
       wait: opts.wait,
       waitTimeoutSeconds: opts.waitTimeout,
       noState: opts.state === false,
       peer: opts.peer,
       auto: opts.auto,
+      latent: opts.latent,
+      autoLatent: opts.autoLatent,
+      maxRetries: opts.maxRetries,
+      noWebhook: opts.webhook === false,
+      force: opts.force,
     });
   });
 

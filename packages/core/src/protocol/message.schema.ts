@@ -258,17 +258,11 @@ export function serializeLatent(tensor: Float32Array, tokens: number, dim: numbe
     throw new Error(`Tensor size mismatch: expected ${tokens * dim}, got ${tensor.length}`);
   }
 
-  // Convert Float32 to Float16 (half precision) for bandwidth savings
-  // Note: This is a simplified implementation. Production would use a proper float16 library.
-  const buffer = Buffer.alloc(tokens * dim * 2); // 2 bytes per float16
-  for (let i = 0; i < tensor.length; i++) {
-    // Simple float32 to float16 conversion (loses precision but saves bandwidth)
-    const view = new DataView(buffer.buffer);
-    const f32 = tensor[i];
-    // Store as float32 for now (would use proper float16 in production)
-    view.setFloat32(i * 2, f32, true);
-  }
-
+  // Serialize as float32 (4 bytes/element). Production Vision Wormhole codecs will
+  // output float16 (2 bytes/element) for bandwidth efficiency — swap in a float16
+  // library (e.g. @petamoriken/float16) when upstream codecs are available.
+  const f32 = new Float32Array(tensor); // copy to ensure clean buffer ownership
+  const buffer = Buffer.from(f32.buffer, f32.byteOffset, f32.byteLength);
   return buffer.toString("base64");
 }
 
@@ -282,19 +276,14 @@ export function serializeLatent(tensor: Float32Array, tokens: number, dim: numbe
  */
 export function deserializeLatent(encoded: string, tokens: number, dim: number): Float32Array {
   const buffer = Buffer.from(encoded, "base64");
-  const expectedSize = tokens * dim * 2; // 2 bytes per float16
+  const expectedSize = tokens * dim * 4; // 4 bytes per float32
 
   if (buffer.length !== expectedSize) {
-    throw new Error(`Buffer size mismatch: expected ${expectedSize}, got ${buffer.length}`);
+    throw new Error(`Buffer size mismatch: expected ${expectedSize} bytes, got ${buffer.length}`);
   }
 
-  const result = new Float32Array(tokens * dim);
-  const view = new DataView(buffer.buffer);
-
-  for (let i = 0; i < result.length; i++) {
-    // Read back from float32 (would use proper float16 in production)
-    result[i] = view.getFloat32(i * 2, true);
-  }
-
-  return result;
+  // Wrap the buffer's underlying ArrayBuffer into a Float32Array.
+  // Use slice() to get a clean copy with correct byteOffset alignment.
+  const ab = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+  return new Float32Array(ab);
 }

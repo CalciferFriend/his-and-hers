@@ -42,6 +42,7 @@ export type TJOllamaInfo = z.infer<typeof TJOllamaInfo>;
  *   - "gpu-inference"  → generic GPU-accelerated inference
  *   - "video-gen"      → video generation (Wan, CogVideo, etc.)
  *   - "tts"            → local text-to-speech
+ *   - "latent-comm"    → supports Vision Wormhole / LatentMAS latent communication
  */
 export const TJSkillTag = z.enum([
   "image-gen",
@@ -54,6 +55,7 @@ export const TJSkillTag = z.enum([
   "tts",
   "web-scrape",
   "browser-automation",
+  "latent-comm",
 ]);
 export type TJSkillTag = z.infer<typeof TJSkillTag>;
 
@@ -79,6 +81,21 @@ export const TJCapabilityReport = z.object({
   notes: z.string().optional(),
   /** Whether WOL is available (can be woken remotely) */
   wol_enabled: z.boolean().default(false),
+  /**
+   * Vision Wormhole codec IDs this node supports, e.g. `["vw-qwen3vl2b-v1"]`.
+   * Empty = no latent send support.
+   */
+  latent_codecs: z.array(z.string()).default([]),
+  /**
+   * Model IDs for LatentMAS KV cache path, e.g. `["llama-3.1-70b"]`.
+   * Empty = no KV-cache latent support.
+   */
+  kv_compatible_models: z.array(z.string()).default([]),
+  /**
+   * Shorthand: true if node supports any latent path (Vision Wormhole or LatentMAS).
+   * Set this to true when latent_codecs or kv_compatible_models are non-empty.
+   */
+  latent_support: z.boolean().default(false),
   /**
    * Peer-set field: Tom stamps this when he receives the report so he knows
    * when he last fetched fresh capability data from Jerry.
