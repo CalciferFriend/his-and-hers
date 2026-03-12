@@ -78,14 +78,40 @@
 
 ---
 
-## Phase 3 — Intelligence Layer
+## Phase 3 — Intelligence Layer 🚧 (current)
 
-- [ ] Task routing: Tom decides when to use cloud vs wake Jerry
-- [ ] Budget tracking: token/cost limits per session
-- [ ] Handoff continuity: context summary passed between agents
-- [ ] Multi-Jerry support: more than one executor node
-- [ ] Jerry skill registry: advertise capabilities (GPU inference, image gen, etc.)
-- [ ] Tom can query Jerry's available models before routing
+### 3a. Capability registry (Calcifer) ✅ (2026-03-12)
+- [x] `TJCapabilityReport` Zod schema: GPU info, Ollama models, skill tags
+- [x] Auto-scanner: probes nvidia-smi / rocm-smi / Metal, Ollama /api/tags,
+      SD/ComfyUI ports, LM Studio, whisper binary
+- [x] Persistent store: `~/.tom-and-jerry/capabilities.json` (Jerry) +
+      `peer-capabilities.json` (Tom caches peer's report)
+- [x] `tj capabilities scan|advertise|fetch|show|route` CLI
+- [x] `routeTask()` — capability-aware routing with keyword heuristic fallback
+- [x] 10 new tests (34 total, all passing)
+
+### 3b. Gateway /capabilities endpoint (GLaDOS)
+- [ ] Jerry's gateway serves GET /capabilities → returns capabilities.json
+- [ ] Auth: verify gateway token before serving (same as /health)
+
+### 3c. Budget tracking (Calcifer)
+- [ ] Token/cost tracking per session in task state
+- [ ] `tj budget` command: show spend across recent tasks
+- [ ] Route cheap tasks to cloud, expensive ones to local when budget running low
+
+### 3d. Handoff continuity (both)
+- [ ] Context summary auto-generated when task completes (use LLM, short)
+- [ ] Summary passed in `TJTaskMessage.context_summary` on next task
+- [ ] Tom retains last N summaries per peer for multi-turn context
+
+### 3e. Multi-Jerry support (Calcifer)
+- [ ] Config: `peer_nodes[]` array instead of single `peer_node`
+- [ ] `tj send --peer <name>` to target a specific Jerry
+- [ ] Capability-aware auto-selection: pick the Jerry best suited to the task
+
+### 3f. Jerry skill registry endpoint (GLaDOS)
+- [ ] `tj capabilities advertise` runs on Jerry startup (add to startup.bat / systemd)
+- [ ] Auto-refresh: re-scan when Ollama model list changes
 
 ---
 
