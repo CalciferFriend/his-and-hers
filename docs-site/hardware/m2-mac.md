@@ -1,10 +1,17 @@
-# Jerry on Apple M2/M3 Mac
+---
+title: Apple M2/M3 Mac
+description: Set up a Jerry node on an Apple Silicon Mac — excellent inference performance with unified memory.
+---
 
-Apple Silicon Macs are excellent Jerry nodes. Unified memory means the GPU and CPU share the same fast RAM pool — an M2 with 16 GB can run 13B models comfortably, and an M3 Max with 128 GB can run 70B+.
+# Jerry Profile — Apple M2/M3 Mac (macOS)
+
+Apple Silicon Macs are excellent Jerry nodes — unified memory means the GPU and
+CPU share the same fast RAM pool. An M2 with 16 GB can run 13B models comfortably.
+An M3 Max with 128 GB can run 70B+ models.
 
 ---
 
-## Hardware configs
+## Specs (common configs)
 
 | Chip | Unified Memory | Effective VRAM | Best for |
 |------|---------------|----------------|---------|
@@ -13,32 +20,34 @@ Apple Silicon Macs are excellent Jerry nodes. Unified memory means the GPU and C
 | M2 Pro | 32 GB | ~28 GB | 30B models |
 | M3 Max | 128 GB | ~120 GB | 70B+ models |
 
-> Apple's Metal backend in Ollama is mature and fast. M2/M3 performance often matches NVIDIA GPUs for inference thanks to memory bandwidth advantage.
+> Apple's Metal backend in Ollama is mature and fast. M2/M3 performance often
+> matches NVIDIA GPUs for inference thanks to the memory bandwidth advantage.
 
 ---
 
-## What it can run (M2 16 GB)
+## What it can run
 
-| Model | Min Memory | Speed |
-|-------|-----------|-------|
+| Model | Min Memory | Speed on M2 16GB |
+|-------|-----------|-----------------|
 | Llama 3.2 3B | 4 GB | ⚡ ~70 tok/s |
 | Mistral 7B | 8 GB | ⚡ ~45 tok/s |
 | Llama 3.1 8B | 8 GB | ✓ ~40 tok/s |
 | Llama 3.1 13B (Q4) | 10 GB | ✓ ~25 tok/s |
-| Llama 3.1 70B (Q4) | 48 GB | ✗ needs M2 Pro 64 GB+ |
+| Llama 3.1 70B (Q4) | 48 GB | ❌ needs M2 Pro 64GB+ |
 | Whisper large-v3 | 3 GB | ⚡ Fast |
 
 ---
 
-## Installation
+## Setup
 
-### 1 — Install Ollama
+### 1. Install Ollama
 
 ```bash
-# Homebrew
+# Download from https://ollama.com/download/Ollama-darwin.pkg
+# Or via Homebrew:
 brew install ollama
 
-# Start Ollama service
+# Start Ollama
 ollama serve &
 
 # Verify Metal GPU detection
@@ -46,60 +55,61 @@ ollama run llama3.2
 # Should show: loaded on Metal
 ```
 
-### 2 — Pull models
+### 2. Download recommended models
 
 ```bash
-ollama pull llama3.2          # general purpose
+ollama pull llama3.2          # general purpose, fast
 ollama pull mistral            # best 7B quality
 ollama pull codellama          # coding
 ollama pull llava              # vision tasks
-ollama pull nomic-embed-text   # embeddings
 ```
 
-### 3 — Install Node + OpenClaw + tom-and-jerry
+### 3. Install Node.js + OpenClaw + tom-and-jerry
 
 ```bash
-# Node 22 via nvm
+# Install Node.js 22+ via nvm (recommended)
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 nvm install 22 && nvm use 22
 
-# OpenClaw + tj
-npm install -g openclaw tom-and-jerry
+# Install OpenClaw
+npm install -g openclaw
+
+# Install tom-and-jerry
+npm install -g tom-and-jerry
+
+# Run wizard
+tj onboard
+# → Role: Jerry
+# → Provider: Ollama (auto-detected)
 ```
 
-### 4 — Install Tailscale
+### 4. Install Tailscale
 
 ```bash
+# https://tailscale.com/download/macos
+# Or via Homebrew:
 brew install tailscale
 tailscale up --authkey tskey-auth-...
-tailscale ip -4   # note this for Tom
 ```
 
-### 5 — Run the wizard
-
-```bash
-tj onboard
-# Role: Jerry
-# Provider: Ollama (auto-detected)
-```
-
-### 6 — Advertise capabilities
+### 5. Advertise capabilities
 
 ```bash
 tj capabilities advertise
 tj capabilities show
 ```
 
+Expected output:
 ```
 🖥  My Mac (jerry) — macOS
 GPU:    Apple M2 · Metal backend · ~16 GB unified
-Ollama: running · 5 models
-Skills: ollama, gpu-inference, code, vision
+Ollama: running · 4 models
+Skills: ollama, gpu-inference
 ```
 
----
+### 6. Start gateway on login
 
-## Gateway autostart (launchd)
+**Option A — launchd plist (recommended):**
 
 ```bash
 cat > ~/Library/LaunchAgents/com.tom-and-jerry.gateway.plist << 'EOF'
@@ -121,9 +131,9 @@ cat > ~/Library/LaunchAgents/com.tom-and-jerry.gateway.plist << 'EOF'
   <key>KeepAlive</key>
   <true/>
   <key>StandardOutPath</key>
-  <string>/tmp/tj-gateway.log</string>
+  <string>/tmp/tom-and-jerry-gateway.log</string>
   <key>StandardErrorPath</key>
-  <string>/tmp/tj-gateway.err</string>
+  <string>/tmp/tom-and-jerry-gateway.err</string>
 </dict>
 </plist>
 EOF
@@ -131,81 +141,71 @@ EOF
 launchctl load ~/Library/LaunchAgents/com.tom-and-jerry.gateway.plist
 ```
 
----
+**Option B — Login Items (macOS 13+):**
 
-## WOL on Mac
-
-Macs support "Wake for network access" but it's less reliable than PC WOL. Enable in:
-
-**System Settings → Energy → Options → "Wake for network access"**
-
-For best results:
-- Leave Mac in **sleep** (not shutdown) — Mac WOL works from sleep, not from off
-- Ensure Tailscale maintains connection during sleep
-- Consider keeping the Mac always-on if it's a Mini — power draw is only ~10W idle
+System Settings → General → Login Items → add `openclaw` binary.
 
 ---
 
-## Image generation (optional)
-
-Stable Diffusion runs well on M2/M3 via Metal:
+## Image generation on Apple Silicon
 
 ```bash
-# ComfyUI with MPS backend
+# Option 1: Diffusers + MPS backend (Python)
+pip install diffusers transformers accelerate torch
+
+# Option 2: ComfyUI with MPS
 git clone https://github.com/comfyanonymous/ComfyUI
 cd ComfyUI && pip install -r requirements.txt
 python main.py --force-fp16
-
-# Or: Draw Things (native macOS app, optimized for Apple Silicon)
-# https://apps.apple.com/app/draw-things/id6444050820
 ```
 
-Advertise:
-
+Advertise the image-gen skill once ComfyUI is running:
 ```bash
 tj capabilities advertise --notes "SDXL via ComfyUI, Metal backend"
 ```
 
 ---
 
-## Capability profile
+## WOL on Mac
 
-```json
-{
-  "hardware": "m2-mac",
-  "gpu": { "name": "Apple M2", "vram_gb": 16, "backend": "metal" },
-  "skill_tags": ["ollama", "gpu-inference", "code", "vision"],
-  "ollama_models": ["llama3.2", "mistral", "codellama", "llava", "nomic-embed-text"]
-}
-```
+Macs support "Wake for network access" but it's less reliable than PC WOL.
+Enable in: System Settings → Energy → Options → **Wake for network access**.
+
+For best results: leave Mac in sleep (not shutdown) and ensure Tailscale is
+configured to maintain its connection during sleep.
 
 ---
 
 ## Troubleshooting
 
 **Ollama not using Metal GPU:**
-
 ```bash
+# Check Metal availability
 system_profiler SPDisplaysDataType | grep "Metal"
-# Should show: Metal Family: Metal 3
+
+# Force Metal
 OLLAMA_GPU_OVERHEAD=0 ollama run llama3.2
 ```
 
 **Out of memory:**
-
-Reduce context: `ollama run llama3.2 --ctx-size 2048`
+```bash
+# Reduce context size
+ollama run llama3.2 --ctx-size 2048
+```
 
 **Gateway not reachable from Tom:**
-
 ```bash
-tailscale ip          # check Tailscale is up
-openclaw gateway status   # check gateway is running
+# Check Tailscale IP
+tailscale ip
+
+# Check gateway is running
+openclaw gateway status
 ```
 
 ---
 
 ## See also
 
-- [Hardware overview](/hardware/overview) — comparison with other Jerrys
-- [Linux/Mac setup](/guide/install-linux) — detailed setup guide
-- [LLM providers](/guide/providers) — Ollama and Metal configuration
+- [Hardware overview](/hardware/overview) — compare with other profiles
+- [`tj capabilities`](/reference/capabilities) — scan, advertise, fetch
+- [Sending tasks](/guide/sending-tasks) — `tj send` flags and options
