@@ -9,6 +9,13 @@ import { doctor } from "./commands/doctor.ts";
 import { heartbeat } from "./commands/heartbeat.ts";
 import { result } from "./commands/result.ts";
 import { taskStatus } from "./commands/task-status.ts";
+import {
+  capabilitiesScan,
+  capabilitiesAdvertise,
+  capabilitiesFetch,
+  capabilitiesShow,
+  capabilitiesRoute,
+} from "./commands/capabilities.ts";
 import { loadConfig } from "./config/store.ts";
 
 const program = new Command()
@@ -111,5 +118,42 @@ program
   .command("doctor")
   .description("Diagnose connectivity and configuration issues")
   .action(doctor);
+
+// ─── Capabilities ────────────────────────────────────────────────────────────
+
+const caps = program
+  .command("capabilities")
+  .aliases(["caps"])
+  .description("Manage and query Jerry node capability registry");
+
+caps
+  .command("scan")
+  .description("Probe this machine and print a capability report")
+  .option("--save", "Save the report to disk after scanning")
+  .option("--notes <text>", "Free-form notes to include in the report")
+  .action((opts: { save?: boolean; notes?: string }) => capabilitiesScan(opts));
+
+caps
+  .command("advertise")
+  .description("Scan capabilities and save to disk (run on Jerry node)")
+  .option("--notes <text>", "Free-form notes to include in the report")
+  .action((opts: { notes?: string }) => capabilitiesAdvertise(opts));
+
+caps
+  .command("fetch")
+  .description("Fetch peer capabilities from Jerry gateway (run on Tom node)")
+  .action(() => capabilitiesFetch());
+
+caps
+  .command("show")
+  .description("Show last known capability report")
+  .option("--peer", "Show peer (Jerry) capabilities instead of local")
+  .action((opts: { peer?: boolean }) => capabilitiesShow(opts));
+
+caps
+  .command("route")
+  .description("Show routing decision for a task, using peer capabilities")
+  .argument("<task>", "Task description to evaluate")
+  .action((task: string) => capabilitiesRoute(task));
 
 program.parseAsync();

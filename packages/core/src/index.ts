@@ -66,5 +66,22 @@ export {
 } from "./gateway/proxy.ts";
 export type { ProxyConfig } from "./gateway/proxy.ts";
 
-// Routing heuristics
-export { suggestRouting } from "./routing.ts";
+// Routing (capability-aware + heuristic fallback)
+export { suggestRouting, routeTask } from "./routing.ts";
+export type { RoutingHint, RoutingDecision } from "./routing.ts";
+
+// Capability registry
+export {
+  TJCapabilityReport,
+  TJGPUInfo,
+  TJOllamaInfo,
+  TJSkillTag,
+  UNKNOWN_CAPABILITIES,
+  scanCapabilities,
+  saveCapabilities,
+  loadCapabilities,
+  savePeerCapabilities,
+  loadPeerCapabilities,
+  isPeerCapabilityStale,
+} from "./capabilities/index.ts";
+export type { ScanOptions } from "./capabilities/index.ts";
