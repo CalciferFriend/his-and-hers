@@ -31,11 +31,11 @@
 - [x] Round-trip validation before declaring success
 
 ### 2b. Onboard wizard — Windows/H2 steps (GLaDOS)
-- [ ] AutoLogin registry setup (with recovery prompt)
-- [ ] Startup bat generation (`start-gateway.bat`)
-- [ ] Scheduled Task installation (logon trigger, belt-and-suspenders)
-- [ ] Windows Firewall rule for gateway port
-- [ ] WOL prerequisites check (BIOS guidance, NIC settings)
+- [x] AutoLogin registry setup (with recovery prompt)
+- [x] Startup bat generation (`start-hh.bat` — gateway + hh watch --serve-capabilities)
+- [x] Scheduled Task installation (logon trigger, belt-and-suspenders)
+- [x] Windows Firewall rule for gateway port (stepFirewall, wizard step 9)
+- [x] WOL prerequisites check (BIOS guidance, NIC settings)
 - [ ] Test boot chain end-to-end
 
 ### 2c. Model provider abstraction (Calcifer) ✅ (2026-03-12)

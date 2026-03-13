@@ -10,8 +10,11 @@ import { isCancelled, type WizardContext } from "../context.ts";
 const execFileAsync = promisify(execFile);
 
 const STARTUP_BAT = `@echo off
-:: start-gateway.bat — Waits for Tailscale then starts OpenClaw gateway
+:: start-hh.bat — Waits for Tailscale, then starts OpenClaw gateway + hh watch daemon
 :: Installed by hh onboard
+::
+:: Both services run in separate console windows so this script can exit cleanly.
+:: The Scheduled Task (HH-OpenClawGateway) calls this file on every logon.
 
 echo [HH] Waiting for Tailscale to come online...
 :wait_tailscale
@@ -22,13 +25,21 @@ if errorlevel 1 (
 )
 echo [HH] Tailscale is online.
 
-echo [HH] Starting OpenClaw gateway...
+echo [HH] Refreshing capability report...
 cd /d "%USERPROFILE%"
-openclaw gateway
+hh capabilities scan --quiet 2>nul
+
+echo [HH] Starting OpenClaw gateway...
+start "HH-Gateway" /min openclaw gateway
+
+echo [HH] Starting hh watch daemon (capabilities server)...
+start "HH-Watch" /min hh watch --serve-capabilities
+
+echo [HH] All services started.
 `;
 
 const STARTUP_SH = `#!/usr/bin/env bash
-# start-gateway.sh — Waits for Tailscale then starts OpenClaw gateway
+# start-hh.sh — Waits for Tailscale, then starts OpenClaw gateway + hh watch daemon
 # Installed by hh onboard
 
 echo "[HH] Waiting for Tailscale to come online..."
@@ -37,9 +48,22 @@ until tailscale status &>/dev/null; do
 done
 echo "[HH] Tailscale is online."
 
+echo "[HH] Refreshing capability report..."
+hh capabilities scan --quiet 2>/dev/null || true
+
 echo "[HH] Starting OpenClaw gateway..."
-cd ~
-exec openclaw gateway
+openclaw gateway &
+HH_GATEWAY_PID=$!
+
+echo "[HH] Starting hh watch daemon (capabilities server)..."
+hh watch --serve-capabilities &
+HH_WATCH_PID=$!
+
+echo "[HH] Gateway PID: $HH_GATEWAY_PID  Watch PID: $HH_WATCH_PID"
+
+# Wait for either service to exit (unexpected); restart on failure would require
+# a supervisor — for now just log and exit so the @reboot entry doesn't loop.
+wait $HH_GATEWAY_PID $HH_WATCH_PID
 `;
 
 // ── Windows local helpers ──────────────────────────────────────────────────
@@ -59,7 +83,7 @@ async function getWindowsStartupDir(): Promise<string> {
 async function installWindowsLocalStartup(): Promise<{ ok: boolean; batPath: string; error?: string }> {
   try {
     const startupDir = await getWindowsStartupDir();
-    const batPath = join(startupDir, "start-gateway.bat");
+    const batPath = join(startupDir, "start-hh.bat");
     await writeFile(batPath, STARTUP_BAT, { encoding: "ascii" });
 
     // Scheduled Task as belt-and-suspenders (survives if Startup folder is skipped)
@@ -86,12 +110,12 @@ async function installWindowsLocalStartup(): Promise<{ ok: boolean; batPath: str
 }
 
 async function installLinuxLocalStartup(): Promise<{ ok: boolean; shPath: string }> {
-  const shPath = join(process.env["HOME"] ?? "~", "start-gateway.sh");
+  const shPath = join(process.env["HOME"] ?? "~", "start-hh.sh");
   await writeFile(shPath, STARTUP_SH, { mode: 0o755 });
   // Add @reboot crontab entry
   await execFileAsync("bash", [
     "-c",
-    `(crontab -l 2>/dev/null | grep -v start-gateway; echo "@reboot ${shPath}") | crontab -`,
+    `(crontab -l 2>/dev/null | grep -v start-hh; echo "@reboot ${shPath}") | crontab -`,
   ], { timeout: 10_000 });
   return { ok: true, shPath };
 }
@@ -129,7 +153,7 @@ export async function stepStartup(ctx: Partial<WizardContext>): Promise<Partial<
     } else {
       s.stop(pc.yellow("⚠ Automated install failed — writing script to Desktop"));
       // Last resort: write to desktop so user can copy it manually
-      const desktop = join(process.env["USERPROFILE"] ?? "", "Desktop", "start-gateway.bat");
+      const desktop = join(process.env["USERPROFILE"] ?? "", "Desktop", "start-hh.bat");
       await writeFile(desktop, STARTUP_BAT, { encoding: "ascii" }).catch(() => {});
       p.log.warn(`Script written to: ${desktop}`);
       p.log.warn("Copy it to your Startup folder: shell:startup");
@@ -166,14 +190,14 @@ export async function stepStartup(ctx: Partial<WizardContext>): Promise<Partial<
       const psWriteCmd = [
         `$startup = [Environment]::GetFolderPath('Startup')`,
         `$bat = @'\n${STARTUP_BAT.replace(/'/g, "''")}\n'@`,
-        `Set-Content -Path "$startup\\start-gateway.bat" -Value $bat -Encoding ASCII`,
+        `Set-Content -Path "$startup\\start-hh.bat" -Value $bat -Encoding ASCII`,
       ].join("; ");
       await sshExec(sshConfig, `powershell -NoProfile -Command "${psWriteCmd.replace(/"/g, '\\"')}"`, 20_000);
 
       // Scheduled Task on remote
       await sshExec(
         sshConfig,
-        `schtasks /Create /TN "HH-OpenClawGateway" /TR "%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\start-gateway.bat" /SC ONLOGON /RL HIGHEST /F`,
+        `schtasks /Create /TN "HH-OpenClawGateway" /TR "%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\start-hh.bat" /SC ONLOGON /RL HIGHEST /F`,
         15_000,
       );
       s.stop(pc.green("✓ Startup script + Scheduled Task installed on Windows H2"));
@@ -181,12 +205,12 @@ export async function stepStartup(ctx: Partial<WizardContext>): Promise<Partial<
       // Write shell script + crontab on Linux/macOS H2
       await sshExec(
         sshConfig,
-        `cat > ~/start-gateway.sh << 'HHEOF'\n${STARTUP_SH}\nHHEOF\nchmod +x ~/start-gateway.sh`,
+        `cat > ~/start-hh.sh << 'HHEOF'\n${STARTUP_SH}\nHHEOF\nchmod +x ~/start-hh.sh`,
         15_000,
       );
       await sshExec(
         sshConfig,
-        `(crontab -l 2>/dev/null | grep -v start-gateway; echo "@reboot ~/start-gateway.sh") | crontab -`,
+        `(crontab -l 2>/dev/null | grep -v start-hh; echo "@reboot ~/start-hh.sh") | crontab -`,
         15_000,
       );
       s.stop(pc.green("✓ Startup script + @reboot crontab installed on Linux/macOS H2"));

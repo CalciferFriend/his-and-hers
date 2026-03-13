@@ -24,6 +24,7 @@ import { logs } from "./commands/logs.ts";
 import { configShow, configGet, configSet, configPath } from "./commands/config.ts";
 import { hhTest } from "./commands/test.ts";
 import { upgrade } from "./commands/upgrade.ts";
+import { watch } from "./commands/watch.ts";
 import { loadConfig } from "./config/store.ts";
 
 const program = new Command()
@@ -299,5 +300,17 @@ program
   .action((opts: { role?: string; gpu?: string; skill?: string; provider?: string; os?: string; limit?: string; json?: boolean; token?: string }) => {
     return discover({ ...opts, limit: opts.limit ? parseInt(opts.limit) : undefined });
   });
+
+program
+  .command("watch")
+  .description("H2-side task listener: poll for pending tasks and dispatch to an executor")
+  .option("--interval <seconds>", "Poll interval in seconds (default: 5)", "5")
+  .option("--exec <cmd>", "Shell command to run for each task (receives task JSON on stdin)")
+  .option("--once", "Poll once and exit (single-pass mode)")
+  .option("--dry-run", "Detect tasks but do not execute or mutate state")
+  .option("--json", "Output machine-readable JSON lines")
+  .action((opts: { interval?: string; exec?: string; once?: boolean; dryRun?: boolean; json?: boolean }) =>
+    watch(opts),
+  );
 
 program.parseAsync();

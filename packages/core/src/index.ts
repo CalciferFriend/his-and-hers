@@ -71,6 +71,8 @@ export {
   parseWebhookUrl,
 } from "./gateway/result-server.ts";
 export type { ResultServerHandle, ResultServerOptions, ResultWebhookPayload } from "./gateway/result-server.ts";
+export { startCapabilitiesServer } from "./gateway/capabilities-server.ts";
+export type { CapabilitiesServerHandle, CapabilitiesServerOptions } from "./gateway/capabilities-server.ts";
 
 // Retry / backoff
 export {

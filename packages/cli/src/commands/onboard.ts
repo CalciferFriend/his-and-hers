@@ -9,6 +9,7 @@ import { stepPeer } from "../wizard/steps/peer.ts";
 import { stepWOL } from "../wizard/steps/wol.ts";
 import { stepGatewayBind } from "../wizard/steps/gateway_bind.ts";
 import { stepAutologin } from "../wizard/steps/autologin.ts";
+import { stepFirewall } from "../wizard/steps/firewall.ts";
 import { stepStartup } from "../wizard/steps/startup.ts";
 import { stepSoul } from "../wizard/steps/soul.ts";
 import { stepValidate } from "../wizard/steps/validate.ts";
@@ -43,16 +44,19 @@ export async function onboard() {
   // Step 8: AutoLogin — Windows registry for headless WOL boot
   ctx = await stepAutologin(ctx);
 
-  // Step 9: Startup — install gateway startup script on H2
+  // Step 9: Firewall — Windows inbound rule for gateway port (H2/Windows only)
+  ctx = await stepFirewall(ctx);
+
+  // Step 10: Startup — install gateway + watch daemon startup script on H2
   ctx = await stepStartup(ctx);
 
-  // Step 10: Soul — install SOUL.md / IDENTITY.md templates
+  // Step 11: Soul — install SOUL.md / IDENTITY.md templates
   ctx = await stepSoul(ctx);
 
-  // Step 11: Validate — full round-trip connectivity test
+  // Step 12: Validate — full round-trip connectivity test
   ctx = await stepValidate(ctx);
 
-  // Step 12: Finalize — write config, generate pairing code, print summary
+  // Step 13: Finalize — write config, generate pairing code, print summary
   ctx = await stepFinalize(ctx);
 
   p.outro(`Setup complete. Run ${pc.cyan("hh status")} to check your pair.`);

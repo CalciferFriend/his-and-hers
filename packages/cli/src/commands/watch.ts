@@ -36,6 +36,19 @@
  *   emits them to stdout so a parent process / shell pipeline can handle them.
  *   This is useful during initial setup or for building custom integrations.
  *
+ * ## Capabilities server (--serve-capabilities)
+ *
+ *   When H2 runs `hh watch --serve-capabilities`, it also starts a lightweight
+ *   HTTP server that H1 can query with `hh capabilities fetch`:
+ *
+ *     GET /capabilities  →  returns ~/.his-and-hers/capabilities.json
+ *     (auth: X-HH-Token header, same token as the gateway)
+ *
+ *   This is the implementation of ROADMAP item 3b. Add it to startup.bat:
+ *
+ *     hh watch --exec "node run-task.js" --serve-capabilities
+ *     hh watch --exec "node run-task.js" --serve-capabilities 18790
+ *
  * Usage:
  *   hh watch                                   # poll every 5s, print pending
  *   hh watch --interval 10                     # poll every 10s
@@ -43,12 +56,16 @@
  *   hh watch --once                            # single-pass (no loop)
  *   hh watch --dry-run                         # detect without executing
  *   hh watch --json                            # machine-readable output
+ *   hh watch --serve-capabilities              # also serve /capabilities on gateway port
+ *   hh watch --serve-capabilities 18790        # serve on explicit port
  */
 
 import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { spawn } from "node:child_process";
-import { listTaskStates, loadTaskState, updateTaskState, type TaskState } from "../state/tasks.ts";
+import { listTaskStates, updateTaskState, type TaskState } from "../state/tasks.ts";
+import { startCapabilitiesServer, type CapabilitiesServerHandle } from "@his-and-hers/core";
+import { loadConfig } from "../config/store.ts";
 
 export interface WatchOptions {
   /** Poll interval in seconds (default: 5) */
@@ -61,6 +78,13 @@ export interface WatchOptions {
   dryRun?: boolean;
   /** Output raw JSON lines instead of pretty-print */
   json?: boolean;
+  /**
+   * Also start the capabilities HTTP server (ROADMAP 3b).
+   * H1 can then call `hh capabilities fetch` to get this node's report.
+   * If a string, it's treated as the port number. If true/present, uses
+   * the gateway port from config (or falls back to 18790).
+   */
+  serveCapabilities?: boolean | string;
 }
 
 // ─── Executor ────────────────────────────────────────────────────────────────
@@ -224,6 +248,46 @@ export async function watch(opts: WatchOptions): Promise<void> {
   const intervalSec = parseInt(opts.interval ?? "5", 10);
   const intervalMs = Math.max(1, intervalSec) * 1000;
 
+  // ── Capabilities server (optional, --serve-capabilities) ──────────────────
+  let capSrv: CapabilitiesServerHandle | null = null;
+  if (opts.serveCapabilities !== undefined && opts.serveCapabilities !== false) {
+    try {
+      const cfg = await loadConfig();
+      const token = cfg?.this_node?.gateway?.gateway_token ?? "";
+      if (!token) {
+        if (!opts.json) {
+          p.log.warn(
+            "Cannot start capabilities server — no gateway token in config. " +
+            "Run `hh onboard` or set this_node.gateway.gateway_token.",
+          );
+        }
+      } else {
+        const capPort =
+          typeof opts.serveCapabilities === "string"
+            ? parseInt(opts.serveCapabilities, 10)
+            : (cfg?.this_node?.gateway?.port ?? cfg?.gateway_port ?? 18790);
+        capSrv = await startCapabilitiesServer({
+          token,
+          bindAddress: "0.0.0.0",
+          port: capPort,
+        });
+        if (!opts.json) {
+          p.log.success(
+            `Capabilities server listening on ${pc.cyan(capSrv.url + "/capabilities")}`,
+          );
+        } else {
+          process.stdout.write(
+            JSON.stringify({ event: "capabilities_server_started", url: capSrv.url, port: capSrv.port }) + "\n",
+          );
+        }
+      }
+    } catch (err: unknown) {
+      if (!opts.json) {
+        p.log.warn(`Could not start capabilities server: ${(err as Error).message}`);
+      }
+    }
+  }
+
   // ── Pretty header ──
   if (!opts.json) {
     p.intro(pc.bgYellow(pc.black(" hh watch ")));
@@ -240,15 +304,19 @@ export async function watch(opts: WatchOptions): Promise<void> {
 
   // ── Graceful shutdown ──
   let running = true;
-  const stop = (signal: string) => {
+  const stop = async (signal: string) => {
     if (!opts.json) {
       process.stdout.write("\n");
       p.log.info(`Received ${signal}, shutting down…`);
     }
     running = false;
+    if (capSrv) {
+      try { await capSrv.close(); } catch { /* ignore */ }
+      capSrv = null;
+    }
   };
-  process.on("SIGINT", () => stop("SIGINT"));
-  process.on("SIGTERM", () => stop("SIGTERM"));
+  process.on("SIGINT", () => void stop("SIGINT"));
+  process.on("SIGTERM", () => void stop("SIGTERM"));
 
   // ── Poll loop ──
   let totalDispatched = 0;
@@ -284,6 +352,11 @@ export async function watch(opts: WatchOptions): Promise<void> {
         setTimeout(() => clearInterval(check), intervalMs + 200);
       });
     });
+  }
+
+  // Ensure capabilities server is closed on normal loop exit (--once mode)
+  if (capSrv) {
+    try { await capSrv.close(); } catch { /* ignore */ }
   }
 
   if (!opts.json) {

@@ -48,13 +48,16 @@ export interface WizardContext {
   // Step 8: autologin
   windowsAutologinConfigured: boolean;
 
-  // Step 9: startup
+  // Step 9: firewall
+  firewallRuleInstalled: boolean;
+
+  // Step 10: startup
   startupScriptInstalled: boolean;
 
-  // Step 10: soul
+  // Step 11: soul
   soulTemplateCopied: boolean;
 
-  // Step 11: validate
+  // Step 12: validate
   validationPassed: boolean;
 
   // Step 12: finalize
