@@ -26,7 +26,6 @@ import {
   wakeAgent,
   pingPeer,
   checkGatewayHealth,
-  sendMagicPacket,
   wakeAndWait,
   suggestRouting,
   createTaskMessage,
@@ -470,17 +469,22 @@ export async function send(task: string, opts: SendOptions = {}) {
  * Includes the webhook URL when available so H2 knows where to push the result.
  */
 function buildWakeText(from: string, taskId: string, task: string, webhookUrl: string | null): string {
+  // Build the `hh result` invocation hint — include --webhook-url flag if available
+  // so H2 can deliver the result back to H1 instantly without polling.
+  const resultCmd = webhookUrl
+    ? `hh result ${taskId} "<your output here>" --webhook-url ${webhookUrl}`
+    : `hh result ${taskId} "<your output here>"`;
+
   const lines = [
     `[HHMessage:task from ${from} id=${taskId}] ${task}`,
     ``,
-    `When done, run: hh result ${taskId} "<your output here>"`,
+    `When done, run: ${resultCmd}`,
   ];
 
   if (webhookUrl) {
     lines.push(``);
     lines.push(`HH-Result-Webhook: ${webhookUrl}`);
-    lines.push(`HH-Result-Token: (use your configured gateway_token)`);
-    lines.push(`(POST JSON to the webhook URL to deliver result instantly, skipping polling)`);
+    lines.push(`(--webhook-url delivers the result to H1 immediately; omit to fall back to polling)`);
   }
 
   return lines.join("\n");

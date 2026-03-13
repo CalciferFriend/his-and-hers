@@ -113,6 +113,7 @@ program
   .option("--tokens <n>", "Number of tokens used")
   .option("--duration-ms <ms>", "Processing duration in milliseconds")
   .option("--artifact <path>", "Add an artifact path (repeatable)", (v: string, prev: string[]) => [...prev, v], [] as string[])
+  .option("--webhook-url <url>", "POST result back to H1 immediately (URL from HH-Result-Webhook in wake message)")
   .action((taskId: string, output: string | undefined, opts: {
     fail?: boolean;
     outputFile?: string;
@@ -120,6 +121,7 @@ program
     tokens?: string;
     durationMs?: string;
     artifact?: string[];
+    webhookUrl?: string;
   }) => {
     return result(taskId, output, {
       fail: opts.fail,
@@ -128,6 +130,7 @@ program
       tokens: opts.tokens,
       durationMs: opts.durationMs,
       artifacts: opts.artifact,
+      webhookUrl: opts.webhookUrl,
     });
   });
 

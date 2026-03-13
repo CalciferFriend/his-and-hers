@@ -45,6 +45,8 @@ export const NodeConfig = z.object({
   tailscale_ip: z.string(),
   /** Provider config for this node's agent */
   provider: ProviderConfig.optional(),
+  /** Gateway config for this node's own gateway service */
+  gateway: GatewayConfig.optional(),
 });
 
 export const PeerNodeConfig = NodeConfig.extend({

@@ -49,7 +49,7 @@
 - [x] H1: ping peer → WOL if needed → build HHMessage → send via wakeAgent
 - [x] Timeout + retry logic
 - [x] `hh send --wait` polls for result via task state file
-- [ ] H2: `hh result <id> <output>` — receive + store result back (GLaDOS)
+- [x] H2: `hh result <id> <output>` — receive + store result back (code complete + 17 tests; GLaDOS pending real-machine test)
 - [ ] Streaming results (partial updates while H2 works) — Phase 3
 - [ ] `hh send "generate an image of X"` → wakes GLaDOS, runs diffusion, returns path — Phase 3
 
@@ -91,8 +91,9 @@
 - [x] 10 new tests (34 total, all passing)
 
 ### 3b. Gateway /capabilities endpoint (GLaDOS)
-- [ ] H2's gateway serves GET /capabilities → returns capabilities.json
-- [ ] Auth: verify gateway token before serving (same as /health)
+- [x] H2's gateway serves GET /capabilities → returns capabilities.json (`hh watch --serve-capabilities`)
+- [x] Auth: verify gateway token before serving (same token as /health)
+- [ ] GLaDOS: verify endpoint on real Windows machine after boot
 
 ### 3c. Budget tracking (Calcifer) ✅ (2026-03-12)
 - [x] Token/cost tracking per session in task state (`TaskResult.cost_usd`, auto-computed)
@@ -114,8 +115,8 @@
 - [x] `hh peers` — list all peers with GPU/Ollama/skill info; --ping for live check
 
 ### 3f. H2 skill registry endpoint (GLaDOS)
-- [ ] `hh capabilities advertise` runs on H2 startup (add to startup.bat / systemd)
-- [ ] Auto-refresh: re-scan when Ollama model list changes
+- [x] `hh capabilities advertise` runs on H2 startup (wired into `start-hh.bat` via `hh capabilities scan --quiet`)
+- [ ] Auto-refresh: re-scan when Ollama model list changes (Phase 4+)
 
 ---
 
@@ -169,10 +170,12 @@
 - [x] Exit code 1 on any failure (useful for CI/health scripts)
 
 ### 5c. `hh watch` daemon — H2-side task listener (GLaDOS)
-- [ ] Persistent process that polls for pending tasks from H1
-- [ ] Auto-calls `hh result <id> <output>` when task state file is created
-- [ ] Configurable poll interval (default: 5s)
-- [ ] Graceful shutdown on SIGINT/SIGTERM
+- [x] Persistent process that polls for pending tasks from H1
+- [x] Auto-dispatches via `--exec <cmd>` executor; emits to stdout when no executor
+- [x] Configurable poll interval (default: 5s, `--interval`)
+- [x] Graceful shutdown on SIGINT/SIGTERM
+- [x] Auto-starts via `start-hh.bat` / `start-hh.sh` (startup scripts wired in Phase 2b)
+- [ ] GLaDOS: validate end-to-end on real Windows machine
 
 ### 5d. Webhook result push (Calcifer) ✅ (2026-03-12)
 - [x] H1 exposes POST /result on its gateway (authenticated, token-gated, one-shot)

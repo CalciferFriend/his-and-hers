@@ -2,6 +2,8 @@
  * commands/result.ts — `hh result <task-id> [output]`
  *
  * Marks a pending task as completed or failed and writes the result payload.
+ * When --webhook-url is provided (embedded in the H1 wake message), the result
+ * is POSTed back to H1 immediately — no polling needed.
  *
  * Usage (typically called by GLaDOS after processing a delegated task):
  *
@@ -10,14 +12,18 @@
  *   hh result <task-id> --output-file /tmp/result.txt
  *   hh result <task-id> --json '{"output":"...","artifacts":["/tmp/cat.png"]}'
  *
+ *   # With webhook delivery (URL comes from the HH-Result-Webhook line in the wake msg):
+ *   hh result <task-id> "done" --webhook-url http://100.x.x.x:38791/result
+ *
  * The state file is written to ~/.his-and-hers/state/tasks/<id>.json so
- * H1's `hh send --wait` polling loop picks it up automatically.
+ * H1's `hh send --wait` polling loop picks it up as a fallback.
+ * When --webhook-url is supplied the result is POSTed to H1 directly,
+ * resolving `hh send --wait` immediately without polling delay.
  *
  * Remote delivery:
  *   GLaDOS can call this over SSH:
  *     ssh calcifer "hh result <id> 'task done'"
- *   Or via wakeAgent (the result text is injected into Calcifer's session
- *   which can then run `hh result` directly).
+ *   Or via the webhook URL embedded in the wake message (recommended — faster).
  */
 
 import * as p from "@clack/prompts";
@@ -25,7 +31,7 @@ import pc from "picocolors";
 import { readFile } from "node:fs/promises";
 import { loadTaskState, updateTaskState, type TaskResult } from "../state/tasks.ts";
 import { loadConfig } from "../config/store.ts";
-import { estimateCost, summarizeTask, appendContextEntry } from "@his-and-hers/core";
+import { estimateCost, summarizeTask, appendContextEntry, deliverResultWebhook } from "@his-and-hers/core";
 
 export interface ResultOptions {
   fail?: boolean;
@@ -34,6 +40,12 @@ export interface ResultOptions {
   tokens?: string;
   durationMs?: string;
   artifacts?: string[];
+  /**
+   * Webhook URL to POST the result back to H1 immediately.
+   * Extracted from the `HH-Result-Webhook:` line in the wake message.
+   * Uses this node's gateway_token as the auth header.
+   */
+  webhookUrl?: string;
 }
 
 export async function result(taskId: string, output: string | undefined, opts: ResultOptions) {
@@ -91,9 +103,11 @@ export async function result(taskId: string, output: string | undefined, opts: R
     };
   }
 
+  // Load config once — needed for cost estimation, context summary, and webhook auth
+  const config = await loadConfig();
+
   // Auto-compute cost if tokens are known and cost wasn't explicitly provided
   if (resultPayload.tokens_used && resultPayload.cost_usd === undefined) {
-    const config = await loadConfig();
     const model = config?.this_node?.provider?.model
       ? `${config.this_node.provider.kind ?? "anthropic"}/${config.this_node.provider.model}`
       : "anthropic/claude-sonnet-4-6";
@@ -125,10 +139,45 @@ export async function result(taskId: string, output: string | undefined, opts: R
       p.log.info(`  Duration: ${(resultPayload.duration_ms / 1000).toFixed(1)}s`);
     }
 
+    // ── Phase 5d: Webhook delivery back to H1 ────────────────────────────────
+    // If H1 included a webhook URL in the wake message, POST the result there
+    // immediately so `hh send --wait` resolves without polling.
+    if (opts.webhookUrl) {
+      const token = config?.this_node?.gateway?.gateway_token ?? "";
+      if (!token) {
+        p.log.warn(
+          "  Webhook delivery skipped — no gateway_token in config. " +
+          "Run `hh onboard` or set this_node.gateway.gateway_token.",
+        );
+      } else {
+        const webhookS = p.spinner();
+        webhookS.start(`  Delivering result to H1 via webhook…`);
+        const webhookResult = await deliverResultWebhook(opts.webhookUrl, token, {
+          task_id: taskId,
+          output: resultPayload.output,
+          success: resultPayload.success,
+          error: resultPayload.error,
+          artifacts: resultPayload.artifacts ?? [],
+          tokens_used: resultPayload.tokens_used,
+          duration_ms: resultPayload.duration_ms,
+          cost_usd: resultPayload.cost_usd,
+        });
+        if (webhookResult.ok) {
+          webhookS.stop(pc.green("  ✓ Result delivered to H1 via webhook."));
+        } else {
+          webhookS.stop(
+            pc.yellow(
+              `  ⚠ Webhook delivery failed: ${webhookResult.error ?? "unknown error"}. ` +
+              "H1 will pick up the result via polling.",
+            ),
+          );
+        }
+      }
+    }
+
     // Generate and store a context summary for multi-turn handoff continuity.
     // This summary will be forwarded as context_summary on the next outbound task.
     try {
-      const config = await loadConfig();
       const peerName = config?.peer_node?.name ?? updated.to;
       const summary = summarizeTask({
         task_id: taskId,
