@@ -53,6 +53,7 @@ export interface CrontabEntry {
   task: string;
   peer?: string;
   latent?: boolean;
+  notify_webhook?: string;
   enabled: boolean;
 }
 
@@ -76,7 +77,8 @@ export async function installCronEntry(entry: CrontabEntry): Promise<void> {
   const logPath = join(LOG_DIR, `${entry.id}.log`);
   const peerFlag = entry.peer ? ` --peer ${entry.peer}` : "";
   const latentFlag = entry.latent ? " --latent" : "";
-  const cmd = `hh send "${entry.task}"${peerFlag}${latentFlag} --no-wait >> ${logPath} 2>&1`;
+  const notifyFlag = entry.notify_webhook ? ` --notify "${entry.notify_webhook}"` : "";
+  const cmd = `hh send "${entry.task}"${peerFlag}${latentFlag}${notifyFlag} --no-wait >> ${logPath} 2>&1`;
 
   // Add marker comment + cron line
   const marker = `${HH_MARKER_PREFIX}${entry.id}`;

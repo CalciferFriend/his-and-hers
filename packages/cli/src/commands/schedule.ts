@@ -31,6 +31,7 @@ export async function scheduleAdd(opts: {
   peer?: string;
   latent?: boolean;
   name?: string;
+  notify?: string;
 }) {
   // Validate cron expression
   if (!validateCron(opts.cron)) {
@@ -48,6 +49,7 @@ export async function scheduleAdd(opts: {
     peer: opts.peer,
     latent: opts.latent,
     name: opts.name,
+    notify_webhook: opts.notify,
   };
 
   const schedule = await addSchedule(input);
@@ -66,6 +68,7 @@ export async function scheduleAdd(opts: {
       task: opts.task,
       peer: opts.peer,
       latent: opts.latent,
+      notify_webhook: opts.notify,
       enabled: true,
     });
     s.stop(pc.green("✓ Crontab entry installed"));
@@ -82,6 +85,7 @@ export async function scheduleAdd(opts: {
   if (schedule.peer) p.log.info(`${pc.bold("Peer:")} ${schedule.peer}`);
   if (schedule.latent) p.log.info(`${pc.bold("Mode:")} latent`);
   if (schedule.name) p.log.info(`${pc.bold("Name:")} ${schedule.name}`);
+  if (schedule.notify_webhook) p.log.info(`${pc.bold("Notify:")} ${pc.cyan(schedule.notify_webhook)}`);
   p.log.info(`${pc.bold("Next run:")} ${pc.yellow(nextRun.toLocaleString())}`);
 
   p.outro("Schedule added.");
@@ -120,6 +124,7 @@ export async function scheduleList(opts: { json?: boolean }) {
     p.log.info(`  ${pc.bold("Task:")} ${taskPreview}`);
     if (schedule.peer) p.log.info(`  ${pc.bold("Peer:")} ${schedule.peer}`);
     if (schedule.latent) p.log.info(`  ${pc.bold("Mode:")} latent`);
+    if (schedule.notify_webhook) p.log.info(`  ${pc.bold("Notify:")} ${pc.cyan(schedule.notify_webhook)}`);
     if (schedule.last_run) {
       const lastRun = new Date(schedule.last_run);
       p.log.info(`  ${pc.bold("Last run:")} ${lastRun.toLocaleString()}`);
@@ -268,11 +273,12 @@ export async function scheduleRun(idOrPrefix: string) {
   // Update last_run timestamp
   await updateLastRun(schedule.id);
 
-  // Invoke hh send
+  // Invoke hh send (with notification webhook if configured)
   await send(schedule.task, {
     peer: schedule.peer,
     latent: schedule.latent,
     wait: false,
+    notify: schedule.notify_webhook,
   });
 
   p.outro("Task sent.");

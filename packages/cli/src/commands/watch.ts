@@ -64,7 +64,11 @@ import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { spawn } from "node:child_process";
 import { listTaskStates, updateTaskState, type TaskState } from "../state/tasks.ts";
-import { startCapabilitiesServer, type CapabilitiesServerHandle } from "@his-and-hers/core";
+import {
+  startCapabilitiesServer,
+  type CapabilitiesServerHandle,
+  createChunkStreamer,
+} from "@his-and-hers/core";
 import { loadConfig } from "../config/store.ts";
 
 export interface WatchOptions {
@@ -92,12 +96,25 @@ export interface WatchOptions {
 /**
  * Run the configured executor command for a task.
  * Returns { output, success, tokens_used?, duration_ms? }
+ *
+ * Streaming (Phase 2d/3):
+ *   If HH_STREAM_URL and HH_STREAM_TOKEN environment variables are set (injected
+ *   by H1's wake message), stdout chunks are forwarded in real-time so the
+ *   operator can follow progress with `hh send --wait`.
  */
 async function runExecutor(
   execCmd: string,
   task: TaskState,
 ): Promise<{ output: string; success: boolean; error?: string; durationMs: number }> {
   const start = Date.now();
+
+  // Read streaming config from env (set by H1's wake message env injection)
+  const streamUrl = process.env.HH_STREAM_URL ?? null;
+  const streamToken = process.env.HH_STREAM_TOKEN ?? null;
+  const streamer =
+    streamUrl && streamToken
+      ? createChunkStreamer(streamUrl, streamToken, task.id)
+      : null;
 
   return new Promise((resolve, reject) => {
     const [cmd, ...args] = execCmd.split(/\s+/);
@@ -121,11 +138,26 @@ async function runExecutor(
 
     let stdout = "";
     let stderr = "";
-    child.stdout.on("data", (d: Buffer) => { stdout += d.toString(); });
+
+    child.stdout.on("data", (d: Buffer) => {
+      const text = d.toString();
+      stdout += text;
+      // Stream chunk to H1 in real-time (fire-and-forget)
+      if (streamer) {
+        streamer.push(text);
+      }
+    });
+
     child.stderr.on("data", (d: Buffer) => { stderr += d.toString(); });
 
     child.on("close", (code) => {
       const durationMs = Date.now() - start;
+
+      // Signal stream completion (done: true) — best-effort, don't block on it
+      if (streamer) {
+        void streamer.finish();
+      }
+
       if (code === 0) {
         resolve({ output: stdout.trim() || "(no output)", success: true, durationMs });
       } else {
@@ -142,6 +174,10 @@ async function runExecutor(
       // Spawn errors (ENOENT, EACCES) are infrastructure failures — reject so
       // the caller can revert the task to "pending" for retry rather than
       // marking it permanently "failed".
+      // Also signal stream done so H1 doesn't hang.
+      if (streamer) {
+        void streamer.finish();
+      }
       reject(new Error(`Executor spawn error: ${err.message}`));
     });
   });

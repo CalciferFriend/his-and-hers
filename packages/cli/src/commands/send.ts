@@ -31,11 +31,14 @@ import {
   createTaskMessage,
   loadContextSummary,
   startResultServer,
+  startStreamServer,
+  type StreamServerHandle,
   withRetry,
   setRetryState,
   clearRetryState,
   cronRetryDecisionAsync,
   type ResultWebhookPayload,
+  deliverNotification,
 } from "@his-and-hers/core";
 import { createTaskState, pollTaskCompletion, updateTaskState } from "../state/tasks.ts";
 import { getPeer, selectBestPeer, formatPeerList } from "../peers/select.ts";
@@ -85,6 +88,12 @@ export interface SendOptions {
    * Preferred over --latent for scripts/crons where you want best-effort latent.
    */
   autoLatent?: boolean;
+  /**
+   * Webhook URL to POST a completion notification to when the task finishes.
+   * Supports Discord (discord.com/api/webhooks/…), Slack (hooks.slack.com/…),
+   * and any generic HTTP endpoint. Used with --wait or --no-wait (fires async).
+   */
+  notify?: string;
 }
 
 export async function send(task: string, opts: SendOptions = {}) {
@@ -282,6 +291,11 @@ export async function send(task: string, opts: SendOptions = {}) {
   let webhookUrl: string | null = null;
   let webhookHandle: Awaited<ReturnType<typeof startResultServer>> | null = null;
 
+  // ─── Phase 3: Start streaming server (partial updates while H2 works) ────────
+  let streamUrl: string | null = null;
+  let streamToken: string | null = null;
+  let streamHandle: StreamServerHandle | null = null;
+
   if (opts.wait && !opts.noWebhook) {
     const tomIP = config.this_node?.tailscale_ip ?? null;
     if (tomIP && peer.gateway_token) {
@@ -301,6 +315,22 @@ export async function send(task: string, opts: SendOptions = {}) {
         // Webhook setup failed — fall through to polling silently
         p.log.info(pc.dim("Webhook server unavailable — will use polling fallback."));
       }
+
+      // Start streaming server on a separate port — fire-and-forget setup
+      try {
+        streamToken = peer.gateway_token;
+        streamHandle = await startStreamServer({
+          taskId: msg.id,
+          token: streamToken,
+          bindAddress: tomIP,
+        });
+        streamUrl = streamHandle.url;
+        p.log.info(pc.dim(`Streaming: ${streamUrl} (H2 posts live output here)`));
+      } catch {
+        // Stream server is optional — degrade silently
+        streamHandle = null;
+        streamUrl = null;
+      }
     }
   }
 
@@ -311,10 +341,11 @@ export async function send(task: string, opts: SendOptions = {}) {
     p.log.error("Peer gateway token not set. Run `hh pair` first.");
     p.outro("Send failed.");
     webhookHandle?.close();
+    streamHandle?.close();
     return;
   }
 
-  const wakeText = buildWakeText(msg.from, msg.id, task, webhookUrl);
+  const wakeText = buildWakeText(msg.from, msg.id, task, webhookUrl, streamUrl, streamToken);
 
   const maxRetries = opts.maxRetries ? parseInt(opts.maxRetries, 10) : SEND_RETRY_OPTS.maxAttempts;
   const retryOpts = { ...SEND_RETRY_OPTS, maxAttempts: maxRetries };
@@ -371,6 +402,7 @@ export async function send(task: string, opts: SendOptions = {}) {
     p.log.info(pc.dim(`Retry state persisted. Next cron run will retry automatically.`));
     p.outro("Send failed.");
     webhookHandle?.close();
+    streamHandle?.close();
     return;
   }
 
@@ -390,10 +422,40 @@ export async function send(task: string, opts: SendOptions = {}) {
         `Waiting for ${peer.name} to POST result (webhook)... ${pc.dim("(Ctrl+C to detach)")}`,
       );
 
+      // ─── Phase 3: Stream live output while waiting ─────────────────────────
+      // If a stream server is running, display partial chunks as they arrive.
+      // We race the stream against the webhook result — whichever settles first.
+      if (streamHandle) {
+        let chunkCount = 0;
+        streamHandle.on("chunk", (chunk: string) => {
+          if (chunkCount === 0) {
+            // First chunk — stop spinner and switch to streaming display mode
+            waitS.stop(pc.cyan(`⟳ Live output from ${peer.name}:`));
+            process.stdout.write(pc.dim("─".repeat(40)) + "\n");
+          }
+          chunkCount++;
+          // Write raw chunk without extra formatting — preserve newlines
+          process.stdout.write(chunk);
+        });
+
+        streamHandle.on("done", () => {
+          if (chunkCount > 0) {
+            process.stdout.write("\n" + pc.dim("─".repeat(40)) + "\n");
+          }
+        });
+      }
+
       const webhookResult = await webhookHandle.waitForResult();
 
+      // Clean up stream server
+      streamHandle?.close();
+
       if (webhookResult) {
-        waitS.stop(pc.green(`✓ Result received via webhook!`));
+        if (!streamHandle) {
+          waitS.stop(pc.green(`✓ Result received via webhook!`));
+        } else {
+          p.log.success(`✓ Result received from ${peer.name}`);
+        }
         displayResult(webhookResult, p);
 
         // Update task state with the webhook delivery
@@ -411,6 +473,25 @@ export async function send(task: string, opts: SendOptions = {}) {
             },
           }).catch(() => {});
         }
+
+        // ─── Notify webhook ────────────────────────────────────────────────
+        if (opts.notify) {
+          const notifyOk = await deliverNotification(opts.notify, {
+            task,
+            taskId: msg.id,
+            success: webhookResult.success,
+            output: webhookResult.output,
+            peer: peer.name,
+            durationMs: webhookResult.duration_ms,
+            costUsd: webhookResult.cost_usd,
+          });
+          if (notifyOk) {
+            p.log.info(pc.dim("✓ Notification sent."));
+          } else {
+            p.log.warn(pc.yellow("⚠ Notification delivery failed (non-fatal)."));
+          }
+        }
+
         p.outro("Done.");
         return;
       }
@@ -449,9 +530,39 @@ export async function send(task: string, opts: SendOptions = {}) {
       if (finalState.result?.tokens_used) {
         p.log.info(pc.dim(`Tokens used: ${finalState.result.tokens_used.toLocaleString()}`));
       }
+
+      // ─── Notify webhook (poll path) ──────────────────────────────────────
+      if (opts.notify) {
+        const notifyOk = await deliverNotification(opts.notify, {
+          task,
+          taskId: msg.id,
+          success: true,
+          output: finalState.result?.output,
+          peer: peer.name,
+          durationMs: finalState.result?.duration_ms,
+          costUsd: finalState.result?.cost_usd,
+        });
+        if (notifyOk) {
+          p.log.info(pc.dim("✓ Notification sent."));
+        } else {
+          p.log.warn(pc.yellow("⚠ Notification delivery failed (non-fatal)."));
+        }
+      }
     } else if (finalState.status === "failed") {
       pollS.stop(pc.red("Task failed."));
       p.log.error(finalState.result?.error ?? finalState.result?.output ?? "Unknown error");
+
+      // ─── Notify webhook (failure path) ───────────────────────────────────
+      if (opts.notify) {
+        await deliverNotification(opts.notify, {
+          task,
+          taskId: msg.id,
+          success: false,
+          output: finalState.result?.error ?? finalState.result?.output,
+          peer: peer.name,
+          durationMs: finalState.result?.duration_ms,
+        }).catch(() => {});
+      }
     }
 
     p.outro("Done.");
@@ -467,8 +578,16 @@ export async function send(task: string, opts: SendOptions = {}) {
 /**
  * Build the wake message text sent to the peer agent.
  * Includes the webhook URL when available so H2 knows where to push the result.
+ * Includes the stream URL when available so H2 can push partial output chunks.
  */
-function buildWakeText(from: string, taskId: string, task: string, webhookUrl: string | null): string {
+function buildWakeText(
+  from: string,
+  taskId: string,
+  task: string,
+  webhookUrl: string | null,
+  streamUrl?: string | null,
+  streamToken?: string | null,
+): string {
   // Build the `hh result` invocation hint — include --webhook-url flag if available
   // so H2 can deliver the result back to H1 instantly without polling.
   const resultCmd = webhookUrl
@@ -485,6 +604,16 @@ function buildWakeText(from: string, taskId: string, task: string, webhookUrl: s
     lines.push(``);
     lines.push(`HH-Result-Webhook: ${webhookUrl}`);
     lines.push(`(--webhook-url delivers the result to H1 immediately; omit to fall back to polling)`);
+  }
+
+  // Phase 3 streaming: H2's hh watch picks this up via HH_STREAM_URL env
+  if (streamUrl && streamToken) {
+    lines.push(``);
+    lines.push(`HH-Stream-URL: ${streamUrl}`);
+    lines.push(`HH-Stream-Token: ${streamToken}`);
+    lines.push(
+      `(hh watch reads these to POST stdout chunks in real-time; H1 displays live progress)`,
+    );
   }
 
   return lines.join("\n");

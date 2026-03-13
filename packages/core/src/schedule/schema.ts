@@ -17,6 +17,7 @@ export const HHSchedule = z.object({
   last_run: z.string().optional(), // ISO of last execution
   next_run: z.string().optional(), // ISO of next expected run
   enabled: z.boolean(), // schedule is active
+  notify_webhook: z.string().optional(), // Discord/Slack/generic webhook URL for completion notifications
 });
 
 export type HHSchedule = z.infer<typeof HHSchedule>;

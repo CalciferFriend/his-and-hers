@@ -84,6 +84,7 @@ program
   .option("--max-retries <n>", "Max delivery retry attempts on failure (default: 3)")
   .option("--no-webhook", "Disable result webhook server (polling only, --wait mode)")
   .option("--force", "Skip cron duplicate-send guard")
+  .option("--notify <url>", "Webhook URL for task completion notification (Discord/Slack/generic)")
   .action((task: string, opts: {
     wait?: boolean;
     waitTimeout?: string;
@@ -95,6 +96,7 @@ program
     maxRetries?: string;
     webhook?: boolean;
     force?: boolean;
+    notify?: string;
   }) => {
     return send(task, {
       wait: opts.wait,
@@ -107,6 +109,7 @@ program
       maxRetries: opts.maxRetries,
       noWebhook: opts.webhook === false,
       force: opts.force,
+      notify: opts.notify,
     });
   });
 
@@ -338,13 +341,15 @@ scheduleCmd
   .option("--peer <name>", "Target a specific peer by name")
   .option("--latent", "Use latent communication mode")
   .option("--name <label>", "Human-friendly label for this schedule")
-  .action((task: string, opts: { cron: string; peer?: string; latent?: boolean; name?: string }) => {
+  .option("--notify <url>", "Webhook URL for task completion notifications (Discord/Slack/generic)")
+  .action((task: string, opts: { cron: string; peer?: string; latent?: boolean; name?: string; notify?: string }) => {
     return scheduleAdd({
       cron: opts.cron,
       task,
       peer: opts.peer,
       latent: opts.latent,
       name: opts.name,
+      notify: opts.notify,
     });
   });
 

@@ -73,6 +73,10 @@ export {
 export type { ResultServerHandle, ResultServerOptions, ResultWebhookPayload } from "./gateway/result-server.ts";
 export { startCapabilitiesServer } from "./gateway/capabilities-server.ts";
 export type { CapabilitiesServerHandle, CapabilitiesServerOptions } from "./gateway/capabilities-server.ts";
+export { startStreamServer, parseStreamUrl, parseStreamToken } from "./gateway/stream-server.ts";
+export type { StreamChunkPayload, StreamServerOptions, StreamServerHandle } from "./gateway/stream-server.ts";
+export { postChunk, createChunkStreamer } from "./gateway/stream-client.ts";
+export type { PostChunkResult } from "./gateway/stream-client.ts";
 
 // Retry / backoff
 export {
@@ -153,3 +157,7 @@ export {
   calculateNextRun,
 } from "./schedule/crontab.ts";
 export type { CrontabEntry } from "./schedule/crontab.ts";
+
+// ─── Notifications ────────────────────────────────────────────────────────────
+export { deliverNotification } from "./notify/notify.ts";
+export type { NotificationContext, GenericWebhookPayload } from "./notify/notify.ts";
