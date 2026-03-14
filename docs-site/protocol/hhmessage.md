@@ -243,8 +243,23 @@ Error report. `done: true` signals the task will not be retried.
 
 ---
 
+## The `latent` message type
+
+`HHLatentMessage` (type: `"latent"`) carries compressed hidden states instead of decoded text.
+It extends the base fields with a payload containing the serialized tensor and fallback text.
+
+Two codec paths are supported:
+- **Vision Wormhole** — for heterogeneous models (different families)
+- **LatentMAS KV cache** — for same-family models (training-free)
+
+See the [Latent Communication Guide](/docs/latent-communication) for full implementation details,
+serialization helpers, and stub adapter code.
+
+---
+
 ## See also
 
 - [Protocol overview](/protocol/overview) — full message flow and transport
 - [HHHandoff](/protocol/hhhandoff) — structured handoff payload schema
 - [HHHeartbeat](/protocol/hhheartbeat) — heartbeat payload schema
+- [Latent Communication Guide](/docs/latent-communication) — Phase 6 implementation guide

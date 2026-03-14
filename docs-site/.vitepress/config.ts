@@ -143,6 +143,7 @@ export default defineConfig({
           text: "Research & Vision",
           items: [
             { text: "Future: Beyond Text", link: "/docs/future" },
+            { text: "Latent Communication Guide", link: "/docs/latent-communication" },
           ],
         },
       ],

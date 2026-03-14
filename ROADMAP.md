@@ -300,7 +300,7 @@
 **Note:** Phase 6 is marked experimental because the upstream codec implementations
 are not production-ready. The protocol design is complete and ready to use once
 the research implementations mature. See `docs/future.md` for detailed research
-context and `docs/latent-communication.md` for implementation guide.
+context and `docs/latent-communication.md` for implementation guide. ✅ (2026-03-14 Calcifer)
 
 ---
 
