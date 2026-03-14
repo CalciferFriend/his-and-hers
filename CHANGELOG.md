@@ -14,10 +14,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   touches `docs-site/`. Set `VITE_DOCS_BASE=/` to use a custom domain instead.
 - **VitePress base path** — configurable via `VITE_DOCS_BASE` env var; defaults to `/`
   for local dev, set to `/his-and-hers/` in CI for GitHub Pages compatibility.
+- **`hh monitor` reference page** — full docs for the live terminal dashboard: layout
+  diagram, per-column descriptions, JSON schema (`MonitorSnapshot`), usage examples,
+  and exit codes. Wired into sidebar and `reference/cli.md` overview.
 
 ### Tests
 - **Budget test suite** — 25 new Vitest tests for `buildBudgetSummary()` and
-  `budgetRoutingAdvice()` (no command had been missing coverage). Total: 342 tests.
+  `budgetRoutingAdvice()` (no command had been missing coverage). Total: 363 tests.
 
 ---
 

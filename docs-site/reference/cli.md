@@ -74,6 +74,21 @@ Displays: Tailscale reachability, gateway health, last heartbeat, current model,
 
 ---
 
+### `hh monitor`
+
+Live terminal dashboard — peer health, recent tasks, and today's budget, refreshed every N seconds.
+
+```bash
+hh monitor               # refresh every 5s (Ctrl+C to quit)
+hh monitor --interval 10 # custom refresh interval
+hh monitor --once        # single snapshot, no loop
+hh monitor --json        # print MonitorSnapshot as JSON and exit
+```
+
+See [`hh monitor` reference](/reference/monitor) for the full JSON schema and layout docs.
+
+---
+
 ### `hh wake`
 
 Send a Wake-on-LAN Magic Packet to H2.

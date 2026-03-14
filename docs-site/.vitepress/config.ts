@@ -89,6 +89,7 @@ export default defineConfig({
             { text: "hh onboard", link: "/reference/onboard" },
             { text: "hh send", link: "/reference/send" },
             { text: "hh status", link: "/reference/status" },
+            { text: "hh monitor", link: "/reference/monitor" },
             { text: "hh wake", link: "/reference/wake" },
             { text: "hh logs", link: "/reference/logs" },
             { text: "hh budget", link: "/reference/budget" },

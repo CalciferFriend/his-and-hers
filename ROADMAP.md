@@ -167,6 +167,11 @@
 - [x] Docs site (VitePress) ✅ (2026-03-12) — 37 pages across guide/reference/protocol/hardware
 - [x] GitHub Pages deploy workflow ✅ (2026-03-14 Calcifer) — `docs.yml` + env-based `VITE_DOCS_BASE`
 
+### 4g. `hh monitor` reference docs (Calcifer) ✅ (2026-03-14)
+- [x] `reference/monitor.md` — layout diagram, per-column descriptions, JSON schema, usage examples, exit codes
+- [x] Sidebar entry added (`hh status` → `hh monitor` → `hh wake`)
+- [x] `reference/cli.md` overview updated with monitor section
+
 ---
 
 ## Phase 5 — Resilience & Developer Experience 🚧
