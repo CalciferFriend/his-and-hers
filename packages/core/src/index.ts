@@ -161,3 +161,12 @@ export type { CrontabEntry } from "./schedule/crontab.ts";
 // ─── Notifications ────────────────────────────────────────────────────────────
 export { deliverNotification } from "./notify/notify.ts";
 export type { NotificationContext, GenericWebhookPayload } from "./notify/notify.ts";
+export {
+  loadNotifyWebhooks,
+  saveNotifyWebhooks,
+  addNotifyWebhook,
+  removeNotifyWebhook,
+  filterWebhooksByEvent,
+  getActiveWebhooks,
+} from "./notify/config.ts";
+export type { HHNotifyWebhook, HHNotifyEvent } from "./notify/config.ts";

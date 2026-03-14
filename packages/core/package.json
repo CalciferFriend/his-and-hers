@@ -23,6 +23,14 @@
     "./transport": {
       "import": "./dist/transport/index.js",
       "types": "./dist/transport/index.d.ts"
+    },
+    "./notify/config": {
+      "import": "./dist/notify/config.js",
+      "types": "./dist/notify/config.d.ts"
+    },
+    "./notify/notify": {
+      "import": "./dist/notify/notify.js",
+      "types": "./dist/notify/notify.d.ts"
     }
   },
   "files": [

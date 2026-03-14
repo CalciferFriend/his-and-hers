@@ -42,6 +42,8 @@ import {
 } from "@his-and-hers/core";
 import { createTaskState, pollTaskCompletion, updateTaskState } from "../state/tasks.ts";
 import { getPeer, selectBestPeer, formatPeerList } from "../peers/select.ts";
+import { getActiveWebhooks } from "@his-and-hers/core/notify/config.ts";
+import type { NotificationContext } from "@his-and-hers/core/notify/notify.ts";
 
 const WAKE_TIMEOUT_ATTEMPTS = 45; // 45 × 2s = 90s max
 const WAKE_POLL_MS = 2000;
@@ -53,6 +55,47 @@ const SEND_RETRY_OPTS = {
   maxDelayMs: 15_000,
   jitter: true,
 };
+
+/**
+ * Fire the --notify URL (if provided) plus all persistent webhooks matching
+ * the task outcome. Errors are soft-logged and never propagate.
+ */
+async function fireNotifications(
+  ctx: NotificationContext,
+  adHocUrl?: string,
+): Promise<void> {
+  const tasks: Promise<void>[] = [];
+
+  // Ad-hoc --notify URL
+  if (adHocUrl) {
+    tasks.push(
+      deliverNotification(adHocUrl, ctx).then((ok) => {
+        if (ok) {
+          p.log.info(pc.dim("✓ Notification sent."));
+        } else {
+          p.log.warn(pc.yellow("⚠ Notification delivery failed (non-fatal)."));
+        }
+      }),
+    );
+  }
+
+  // Persistent webhooks from hh notify add
+  const persisted = await getActiveWebhooks(ctx.success).catch(() => []);
+  for (const wh of persisted) {
+    tasks.push(
+      deliverNotification(wh.url, ctx).then((ok) => {
+        const label = wh.name ?? wh.url;
+        if (ok) {
+          p.log.info(pc.dim(`✓ Notification sent (${label}).`));
+        } else {
+          p.log.warn(pc.yellow(`⚠ Notification to ${label} failed (non-fatal).`));
+        }
+      }),
+    );
+  }
+
+  await Promise.allSettled(tasks);
+}
 
 export interface SendOptions {
   wait?: boolean;
@@ -474,9 +517,9 @@ export async function send(task: string, opts: SendOptions = {}) {
           }).catch(() => {});
         }
 
-        // ─── Notify webhook ────────────────────────────────────────────────
-        if (opts.notify) {
-          const notifyOk = await deliverNotification(opts.notify, {
+        // ─── Notify webhook (webhook path) ────────────────────────────────
+        await fireNotifications(
+          {
             task,
             taskId: msg.id,
             success: webhookResult.success,
@@ -484,13 +527,9 @@ export async function send(task: string, opts: SendOptions = {}) {
             peer: peer.name,
             durationMs: webhookResult.duration_ms,
             costUsd: webhookResult.cost_usd,
-          });
-          if (notifyOk) {
-            p.log.info(pc.dim("✓ Notification sent."));
-          } else {
-            p.log.warn(pc.yellow("⚠ Notification delivery failed (non-fatal)."));
-          }
-        }
+          },
+          opts.notify,
+        );
 
         p.outro("Done.");
         return;
@@ -532,8 +571,8 @@ export async function send(task: string, opts: SendOptions = {}) {
       }
 
       // ─── Notify webhook (poll path) ──────────────────────────────────────
-      if (opts.notify) {
-        const notifyOk = await deliverNotification(opts.notify, {
+      await fireNotifications(
+        {
           task,
           taskId: msg.id,
           success: true,
@@ -541,28 +580,25 @@ export async function send(task: string, opts: SendOptions = {}) {
           peer: peer.name,
           durationMs: finalState.result?.duration_ms,
           costUsd: finalState.result?.cost_usd,
-        });
-        if (notifyOk) {
-          p.log.info(pc.dim("✓ Notification sent."));
-        } else {
-          p.log.warn(pc.yellow("⚠ Notification delivery failed (non-fatal)."));
-        }
-      }
+        },
+        opts.notify,
+      );
     } else if (finalState.status === "failed") {
       pollS.stop(pc.red("Task failed."));
       p.log.error(finalState.result?.error ?? finalState.result?.output ?? "Unknown error");
 
       // ─── Notify webhook (failure path) ───────────────────────────────────
-      if (opts.notify) {
-        await deliverNotification(opts.notify, {
+      await fireNotifications(
+        {
           task,
           taskId: msg.id,
           success: false,
           output: finalState.result?.error ?? finalState.result?.output,
           peer: peer.name,
           durationMs: finalState.result?.duration_ms,
-        }).catch(() => {});
-      }
+        },
+        opts.notify,
+      );
     }
 
     p.outro("Done.");

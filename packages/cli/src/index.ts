@@ -27,6 +27,7 @@ import { upgrade } from "./commands/upgrade.ts";
 import { replay } from "./commands/replay.ts";
 import { cancel } from "./commands/cancel.ts";
 import { watch } from "./commands/watch.ts";
+import { monitor } from "./commands/monitor.ts";
 import {
   scheduleAdd,
   scheduleList,
@@ -36,6 +37,7 @@ import {
   scheduleRun,
 } from "./commands/schedule.ts";
 import { loadConfig } from "./config/store.ts";
+import { notify } from "./commands/notify.ts";
 
 const program = new Command()
   .name("hh")
@@ -345,6 +347,14 @@ program
   .action((opts: { check?: boolean; json?: boolean }) => upgrade(opts));
 
 program
+  .command("monitor")
+  .description("Live terminal dashboard — peer health, recent tasks, and budget at a glance")
+  .option("--interval <seconds>", "Refresh interval in seconds (default: 5)", "5")
+  .option("--once", "Print a single snapshot and exit (no live loop)")
+  .option("--json", "Output snapshot as JSON and exit")
+  .action((opts: { interval?: string; once?: boolean; json?: boolean }) => monitor(opts));
+
+program
   .command("discover")
   .description("Browse the community node registry — nodes published with hh publish")
   .option("--role <role>", "Filter by role: h1 | h2")
@@ -427,5 +437,23 @@ scheduleCmd
   .description("Manually trigger a schedule (run now)")
   .argument("<id>", "Schedule ID or prefix")
   .action((id: string) => scheduleRun(id));
+
+// ─── Notify ──────────────────────────────────────────────────────────────────
+
+program
+  .command("notify")
+  .description("Manage persistent notification webhooks for task completion events")
+  .argument("[subcommand]", "add | list | remove | test")
+  .argument("[args...]", "Subcommand arguments")
+  .option("--name <label>", "Friendly label for the webhook (used with add)")
+  .option("--on <events>", "Event filter: all | complete | failure (used with add, default: all)")
+  .allowUnknownOption()
+  .action((_subcommand: string | undefined, _args: string[], _opts, cmd: Command) => {
+    // Pass raw argv after "notify" so the subcommand parser sees flags like --name
+    const rawArgs = cmd.parent?.args ?? [];
+    const notifyIdx = rawArgs.indexOf("notify");
+    const rest = notifyIdx >= 0 ? rawArgs.slice(notifyIdx + 1) : [];
+    return notify({ _: rest });
+  });
 
 program.parseAsync();
