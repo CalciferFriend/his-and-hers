@@ -94,6 +94,7 @@ export default defineConfig({
             { text: "hh logs", link: "/reference/logs" },
             { text: "hh budget", link: "/reference/budget" },
             { text: "hh capabilities", link: "/reference/capabilities" },
+            { text: "hh notify", link: "/reference/notify" },
             { text: "hh schedule", link: "/reference/schedule" },
             { text: "hh discover", link: "/reference/discover" },
             { text: "hh publish", link: "/reference/publish" },

@@ -166,6 +166,23 @@ hh discover --json
 
 ---
 
+### `hh notify`
+
+Manage **persistent notification webhooks** that fire automatically on every task result.
+
+```bash
+hh notify add <url>                          # register a webhook
+hh notify add <url> --name "label" --on failure  # failure-only
+hh notify list                               # show all registered webhooks
+hh notify remove <id>                        # unregister by ID prefix
+hh notify test                               # fire test payload to all webhooks
+```
+
+Webhooks fire automatically after every `hh send --wait` result — no `--notify` flag needed.
+See [`hh notify` reference](/reference/notify) for full details and payload formats.
+
+---
+
 ### `hh publish`
 
 Publish your node card to the community registry (anonymized GitHub Gist).

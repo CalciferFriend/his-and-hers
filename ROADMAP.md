@@ -238,6 +238,17 @@
 - [x] 22 tests for stream server/client; integration test in roundtrip.integration.test.ts
 - [x] Docs: streaming guide + updated send reference (2026-03-13 Calcifer)
 
+### 5h. Persistent notification webhooks — `hh notify` (Calcifer) ✅ (2026-03-14)
+- [x] `HHNotifyWebhook` Zod schema + `HHNotifyEvent` enum (`all` / `complete` / `failure`)
+- [x] `loadNotifyWebhooks()`, `saveNotifyWebhooks()` — `~/.his-and-hers/notify-webhooks.json`
+- [x] `addNotifyWebhook()` — UUID generation, duplicate URL guard, event default
+- [x] `removeNotifyWebhook()` — ID-prefix match + removal
+- [x] `filterWebhooksByEvent()` / `getActiveWebhooks()` — filter by task success/failure
+- [x] `hh notify add/list/remove/test` command — full subcommand CLI with @clack prompts
+- [x] `hh send` auto-fires persistent webhooks via `getActiveWebhooks()` (no --notify needed)
+- [x] 18 tests covering load/add/remove/filter/getActive edge cases
+- [x] `reference/notify.md` docs page + sidebar wired + `reference/cli.md` overview section
+
 ---
 
 ## Phase 6 — Latent Communication (Experimental) 🔬

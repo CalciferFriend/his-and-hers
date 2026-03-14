@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`hh notify` command** — persistent notification webhook manager. Register Discord,
+  Slack, or generic HTTPS webhooks once; they fire automatically on every `hh send --wait`
+  result without needing `--notify` per invocation. Subcommands: `add`, `list`, `remove`,
+  `test`. Event filters: `all` (default), `complete`, `failure`. Stored in
+  `~/.his-and-hers/notify-webhooks.json`.
+- **`hh notify` reference page** — full docs with platform payload formats, event filter
+  table, storage schema, and integration notes for `hh send`. Wired into sidebar.
+- **`hh monitor` command** (wired into CLI) — live terminal dashboard: peer health, recent
+  tasks, and budget summary. `--once`/`--json` for scripting.
 - **GitHub Pages docs deploy** (`docs.yml` workflow) — VitePress site auto-deploys to
   `https://calcierfriend.github.io/his-and-hers/` on every push to `main`/`master` that
   touches `docs-site/`. Set `VITE_DOCS_BASE=/` to use a custom domain instead.
