@@ -38,6 +38,7 @@ import {
 } from "./commands/schedule.ts";
 import { loadConfig } from "./config/store.ts";
 import { notify } from "./commands/notify.ts";
+import { chat } from "./commands/chat.ts";
 
 const program = new Command()
   .name("hh")
@@ -455,5 +456,15 @@ program
     const rest = notifyIdx >= 0 ? rawArgs.slice(notifyIdx + 1) : [];
     return notify({ _: rest });
   });
+
+// ─── Chat ────────────────────────────────────────────────────────────────────
+
+program
+  .command("chat")
+  .description("Interactive multi-turn session with the peer node")
+  .option("--peer <name>", "Target a specific peer by name (multi-H2 setups)")
+  .option("--no-context", "Start fresh — don't carry forward prior context")
+  .option("--timeout <seconds>", "Max seconds to wait per turn (default: 300)", "300")
+  .action((opts: { peer?: string; noContext?: boolean; timeout?: string }) => chat(opts));
 
 program.parseAsync();

@@ -1,6 +1,6 @@
 {
   "name": "@his-and-hers/skills",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "OpenClaw skills for cross-node agent communication",
   "type": "module",
   "license": "MIT",

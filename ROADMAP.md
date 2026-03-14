@@ -249,6 +249,17 @@
 - [x] 18 tests covering load/add/remove/filter/getActive edge cases
 - [x] `reference/notify.md` docs page + sidebar wired + `reference/cli.md` overview section
 
+### 5i. Notify integration tests + persistent webhook guide (Calcifer) ✅ (2026-03-14)
+- [x] `notify.integration.test.ts` — 10 end-to-end tests against a real loopback HTTP server:
+      generic payload shape, non-2xx handling, unreachable server, event filter routing,
+      `getActiveWebhooks()` pipeline, parallel delivery resilience, empty registry
+- [x] `guide/notifications.md` — dedicated guide for the persistent webhook registry:
+      quick start, all subcommand examples, event filter table, platform payload formats
+      (Discord embed / Slack Block Kit / generic JSON), storage schema, send+schedule integration,
+      troubleshooting section
+- [x] Sidebar updated: "Live streaming & notifications" → "Live streaming" + "Persistent notifications"
+- [x] Total tests: **461** (all passing)
+
 ---
 
 ## Phase 6 — Latent Communication (Experimental) 🔬

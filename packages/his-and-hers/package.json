@@ -1,6 +1,6 @@
 {
   "name": "his-and-hers",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Two agents. Separate machines. One command to wire them. — npx his-and-hers",
   "type": "module",
   "license": "MIT",

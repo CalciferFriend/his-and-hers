@@ -5,7 +5,7 @@ All notable changes to his-and-hers will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] — v0.2.0
+## [0.2.0] — 2026-03-14
 
 ### Added
 
@@ -29,7 +29,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Tests
 - **Budget test suite** — 25 new Vitest tests for `buildBudgetSummary()` and
-  `budgetRoutingAdvice()` (no command had been missing coverage). Total: 363 tests.
+  `budgetRoutingAdvice()`. 
+- **`hh notify` config test suite** — 18 new Vitest tests for the persistent webhook
+  registry (load/add/remove/filter/getActiveWebhooks). Total: **451 tests**.
 
 ---
 
@@ -131,10 +133,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Wake ID tracking for duplicate detection
 - systemd path resolution on Linux
 - GitHub Actions branch filters (master + main support)
-
-## [Unreleased]
-
-_Nothing yet._
 
 ---
 

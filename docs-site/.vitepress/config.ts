@@ -66,7 +66,8 @@ export default defineConfig({
           text: "Usage",
           items: [
             { text: "Sending tasks", link: "/guide/sending-tasks" },
-            { text: "Live streaming & notifications", link: "/guide/streaming" },
+            { text: "Live streaming", link: "/guide/streaming" },
+            { text: "Persistent notifications", link: "/guide/notifications" },
             { text: "Scheduling recurring tasks", link: "/guide/scheduling" },
             { text: "Budget tracking", link: "/guide/budget" },
             { text: "Capability routing", link: "/guide/capabilities" },
