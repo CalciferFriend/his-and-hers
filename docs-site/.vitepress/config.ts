@@ -120,6 +120,7 @@ export default defineConfig({
             { text: "hh sync", link: "/reference/sync" },
             { text: "hh cluster", link: "/reference/cluster" },
             { text: "hh pipeline", link: "/reference/pipeline" },
+            { text: "hh workflow", link: "/reference/workflow" },
           ],
         },
         {

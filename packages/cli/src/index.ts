@@ -53,6 +53,13 @@ import {
 import { web } from "./commands/web.ts";
 import { broadcast } from "./commands/broadcast.ts";
 import { pipeline } from "./commands/pipeline.ts";
+import {
+  workflowAdd,
+  workflowList,
+  workflowShow,
+  workflowRemove,
+  workflowRun,
+} from "./commands/workflow.ts";
 import { sync } from "./commands/sync.ts";
 import {
   clusterList,
@@ -780,6 +787,64 @@ program
   .option("--json", "Output results as JSON")
   .action((spec: string | undefined, opts: { file?: string; timeout?: string; json?: boolean }) =>
     pipeline(spec, opts),
+  );
+
+// ── hh workflow ───────────────────────────────────────────────────────────────
+
+const workflowCmd = program
+  .command("workflow")
+  .description(
+    "[Phase 8a] Manage saved named pipeline workflows.\n\n" +
+    "Save any pipeline spec once, run it by name any time.\n\n" +
+    "Add:    hh workflow add review \"glados:write tests -> piper:review {{previous.output}}\"\n" +
+    "Run:    hh workflow run review\n" +
+    "List:   hh workflow list",
+  );
+
+workflowCmd
+  .command("add <name> [spec]")
+  .description("Save a new named pipeline workflow")
+  .option("--file <path>", "Load pipeline definition from a JSON file instead of inline spec")
+  .option("--desc <text>", "Optional human-readable description")
+  .option("--timeout <seconds>", "Default per-step timeout in seconds", parseInt)
+  .action(
+    (
+      name: string,
+      spec: string | undefined,
+      opts: { file?: string; desc?: string; timeout?: number },
+    ) => workflowAdd({ name, spec, ...opts }),
+  );
+
+workflowCmd
+  .command("list")
+  .alias("ls")
+  .description("List all saved workflows")
+  .option("--json", "Output as JSON")
+  .action((opts: { json?: boolean }) => workflowList(opts));
+
+workflowCmd
+  .command("show <name>")
+  .description("Show full details of a saved workflow including steps")
+  .option("--json", "Output as JSON")
+  .action((name: string, opts: { json?: boolean }) => workflowShow(name, opts));
+
+workflowCmd
+  .command("run <name>")
+  .description("Execute a saved workflow")
+  .option("--timeout <seconds>", "Override per-step timeout in seconds")
+  .option("--json", "Output results as JSON")
+  .action((name: string, opts: { timeout?: string; json?: boolean }) =>
+    workflowRun(name, opts),
+  );
+
+workflowCmd
+  .command("remove <name>")
+  .alias("rm")
+  .description("Remove a saved workflow")
+  .option("--force", "Skip confirmation prompt")
+  .option("--json", "Output result as JSON")
+  .action((name: string, opts: { force?: boolean; json?: boolean }) =>
+    workflowRemove(name, opts),
   );
 
 program.parseAsync();

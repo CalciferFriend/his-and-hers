@@ -161,6 +161,14 @@ export const COMMANDS: CompletionCommand[] = [
 
   // Shell completion
   { name: "completion", description: "Print shell completion script", flags: [] },
+
+  // Saved pipeline workflows
+  {
+    name: "workflow",
+    description: "Manage saved named pipeline workflows",
+    subcommands: ["add", "list", "show", "run", "remove"],
+    flags: ["--file", "--desc", "--timeout", "--force", "--json"],
+  },
 ];
 
 // ─── Shell script generators ──────────────────────────────────────────────────

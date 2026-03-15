@@ -205,3 +205,17 @@ export type {
   PipelineStepResult,
   PipelineRunResult,
 } from "./pipeline.ts";
+export {
+  loadWorkflows,
+  saveWorkflows,
+  addWorkflow,
+  removeWorkflow,
+  findWorkflow,
+  recordWorkflowRun,
+  workflowToPipelineDefinition,
+} from "./workflow/store.ts";
+export type {
+  HHWorkflow,
+  HHWorkflowStep,
+  AddWorkflowInput,
+} from "./workflow/store.ts";

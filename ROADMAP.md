@@ -485,6 +485,51 @@ context and `docs/latent-communication.md` for implementation guide. ✅ (2026-0
 
 ---
 
+## Phase 8 — Automation & Polish 🚧 (current)
+
+> Owned by: Calcifer (H1) + GLaDOS (H2) in parallel
+
+### 8a. `hh workflow` — named pipeline workflows (Calcifer) ✅ (2026-03-15)
+- [x] `HHWorkflow` / `HHWorkflowStep` types + Zod schema in `@his-and-hers/core`
+- [x] Persistent registry: `~/.his-and-hers/workflows.json` via `loadWorkflows` / `addWorkflow` / `removeWorkflow` / `findWorkflow`
+- [x] `recordWorkflowRun()` — increments `run_count`, updates `last_run_at` after each run
+- [x] `workflowToPipelineDefinition()` — converts `HHWorkflow` to `PipelineDefinition` for execution
+- [x] `hh workflow add <name> "<spec>"` — save from inline spec (validates with `parsePipelineSpec`)
+- [x] `hh workflow add <name> --file pipeline.json` — save from JSON file
+- [x] `--desc` / `--timeout` flags on `workflow add`
+- [x] `hh workflow list [--json]` — list all workflows with step count + run history
+- [x] `hh workflow show <name> [--json]` — inspect steps, timeout, run stats
+- [x] `hh workflow run <name> [--timeout <s>] [--json]` — execute via temp-file → `pipeline()` reuse (no logic duplication)
+- [x] `hh workflow remove <name> [--force]` — delete with confirm prompt
+- [x] Name validation: `[a-zA-Z0-9_-]+` enforced
+- [x] Fixed: `parsePipelineSpec` returns `PipelineStep[]` directly (not `{ steps }`) — corrected type annotation and destructuring in `workflow.ts`
+- [x] 23 tests covering all operations, error paths, JSON output, run tracking
+- [x] Wired into `packages/cli/src/index.ts`
+- [x] `docs/reference/workflow.md` reference page + sidebar wired
+
+### 8b. `hh run` — shorthand for common task patterns (Calcifer)
+- [ ] `hh run summarise <path>` — send file to default peer with summarise prompt
+- [ ] `hh run review <path>` — code review shorthand
+- [ ] `hh run diff <base> <head>` — diff-aware review (git diff piped as attachment)
+- [ ] `--peer <name>` override; falls back to `routeTask()` auto-selection
+- [ ] Alias registry: user can define custom `hh run` shorthands in hh.json
+
+### 8c. `hh alias` — user-defined CLI shortcuts (Calcifer)
+- [ ] `hh alias add pr-review "workflow run code-review --peer glados"` — map a short name to any `hh` subcommand string
+- [ ] `hh alias list` — list all aliases
+- [ ] `hh alias remove <name>`
+- [ ] Aliases persisted to `~/.his-and-hers/aliases.json`
+- [ ] Tab completion for alias names via `hh completion`
+
+### 8d. E2E integration test suite (both)
+- [ ] Mock H2 gateway server for full send→result round-trip tests (no real network)
+- [ ] Test `hh send --wait`, streaming, retries, timeout against mock gateway
+- [ ] Test pipeline + workflow execution against mock peers
+- [ ] CI job: runs mock-gateway tests on every PR
+- [ ] GLaDOS: contribute Windows-side mock gateway for `hh watch` integration tests
+
+---
+
 ## Who Owns What
 
 | Area | Owner |
