@@ -1,6 +1,25 @@
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
 
+// ─── Attachment schema ────────────────────────────────────────────────────────
+
+/**
+ * A single file attachment embedded in a task message (base64-encoded).
+ * Supported: PDF, images (PNG/JPEG/WebP/GIF), text, code, markdown, JSON.
+ * Hard size limit: 10 MB per attachment (enforced by loadAttachment()).
+ */
+export const AttachmentPayload = z.object({
+  /** Original filename (e.g. "report.pdf") */
+  filename: z.string(),
+  /** MIME type (e.g. "application/pdf", "image/png", "text/plain") */
+  mime_type: z.string(),
+  /** Base64-encoded file contents */
+  data: z.string(),
+  /** Original file size in bytes (pre-encoding) */
+  size_bytes: z.number().int().nonnegative(),
+});
+export type AttachmentPayload = z.infer<typeof AttachmentPayload>;
+
 // ─── Shared base fields ──────────────────────────────────────────────────────
 
 const HHMessageBase = z.object({
@@ -26,6 +45,12 @@ export const HHTaskPayload = z.object({
   constraints: z.array(z.string()).default([]),
   expected_output: z.string().optional(),
   timeout_seconds: z.number().int().positive().optional(),
+  /**
+   * File attachments for this task (Phase 7d).
+   * H2 strips these from the wake text and injects them via multimodal message API.
+   * Max 10 MB soft cap per file; max ~50 MB total per task (transport limit).
+   */
+  attachments: z.array(AttachmentPayload).default([]),
 });
 export type HHTaskPayload = z.infer<typeof HHTaskPayload>;
 

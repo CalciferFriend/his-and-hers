@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`hh pipeline`** — run a sequence of tasks across peers, chaining each step's output
+  into the next via `{{previous.output}}` / `{{steps.N.output}}` placeholders. Define
+  pipelines inline (`"glados:write code -> piper:review {{previous.output}}"`) or load
+  from a JSON file (`--file pipeline.json`). Per-step timeout, `continueOnError`, and
+  skip-on-abort semantics. `--json` emits `PipelineRunResult` with step-level breakdown,
+  total cost/tokens/duration. `parsePipelineSpec`, `parsePipelineFile`,
+  `interpolatePipelineTask` exported from `@his-and-hers/core`. Fixed: test mock now uses
+  `vi.importActual` to preserve pure parsers. 19 tests. Reference page at
+  `docs/reference/pipeline.md`.
 - **`hh sync`** — push a local path to H2 over Tailscale SSH using `rsync`.
   `--dry-run` previews without writing; `--delete` mirrors destructively; `--watch`
   re-syncs on every local file change (debounced, Ctrl-C to stop); `--dest` sets an

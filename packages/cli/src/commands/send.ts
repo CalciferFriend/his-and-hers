@@ -44,6 +44,8 @@ import { createTaskState, pollTaskCompletion, updateTaskState } from "../state/t
 import { getPeer, selectBestPeer, formatPeerList } from "../peers/select.ts";
 import { getActiveWebhooks } from "@his-and-hers/core/notify/config.ts";
 import type { NotificationContext } from "@his-and-hers/core/notify/notify.ts";
+import { loadAttachments, formatAttachmentSummary } from "@his-and-hers/core";
+import type { AttachmentPayload } from "@his-and-hers/core";
 
 const WAKE_TIMEOUT_ATTEMPTS = 45; // 45 × 2s = 90s max
 const WAKE_POLL_MS = 2000;
@@ -143,6 +145,14 @@ export interface SendOptions {
    * Sync failure is non-fatal: a warning is shown and send continues.
    */
   sync?: string;
+  /**
+   * Phase 7d: One or more local file paths to attach to the task.
+   * Supported: PDF, images (PNG/JPEG/WebP/GIF), text, code, markdown, JSON.
+   * Files are base64-encoded and embedded in HHTaskMessage.payload.attachments[].
+   * Soft cap: 10 MB per file (warns but continues). Hard cap: 50 MB (error).
+   * H2 injects multimodal types via message API; text/code as fenced blocks.
+   */
+  attach?: string[];
 }
 
 export async function send(task: string, opts: SendOptions = {}) {
@@ -308,6 +318,37 @@ export async function send(task: string, opts: SendOptions = {}) {
   }
   gwS.stop(pc.green("✓ Gateway ready"));
 
+  // Phase 7d: load file attachments
+  let attachments: AttachmentPayload[] = [];
+  if (opts.attach && opts.attach.length > 0) {
+    const attachS = p.spinner();
+    attachS.start(`Loading ${opts.attach.length} attachment${opts.attach.length === 1 ? "" : "s"}…`);
+    const loaded = await loadAttachments(opts.attach);
+
+    // Surface warnings (soft cap exceeded)
+    for (const warn of loaded.warnings) {
+      attachS.message(warn);
+    }
+
+    // Hard errors: abort if any file failed to load
+    if (loaded.errors.length > 0) {
+      attachS.stop(pc.red("✗ Attachment error"));
+      for (const err of loaded.errors) {
+        p.log.error(err);
+      }
+      p.outro("Send failed.");
+      return;
+    }
+
+    attachments = loaded.attachments;
+    const totalMB = (attachments.reduce((s, a) => s + a.size_bytes, 0) / 1024 / 1024).toFixed(2);
+    attachS.stop(pc.green(`✓ ${attachments.length} attachment${attachments.length === 1 ? "" : "s"} loaded (${totalMB} MB total)`));
+
+    for (const a of attachments) {
+      p.log.info(pc.dim(`  · ${a.filename} (${a.mime_type}, ${(a.size_bytes / 1024).toFixed(0)} KB)`));
+    }
+  }
+
   // Step 3: build HHTaskMessage (attach context summary for multi-turn continuity)
   const contextSummary = await loadContextSummary(peer.name, 3).catch(() => null);
   if (contextSummary) {
@@ -316,6 +357,7 @@ export async function send(task: string, opts: SendOptions = {}) {
   const msg = createTaskMessage(config.this_node.name, peer.name, {
     objective: task,
     constraints: [],
+    attachments,
   }, { context_summary: contextSummary });
 
   // ─── Phase 5e: Cron duplicate-send guard ────────────────────────────────────
@@ -407,7 +449,7 @@ export async function send(task: string, opts: SendOptions = {}) {
     return;
   }
 
-  const wakeText = buildWakeText(msg.from, msg.id, task, webhookUrl, streamUrl, streamToken);
+  const wakeText = buildWakeText(msg.from, msg.id, task, webhookUrl, streamUrl, streamToken, attachments);
 
   const maxRetries = opts.maxRetries ? parseInt(opts.maxRetries, 10) : SEND_RETRY_OPTS.maxAttempts;
   const retryOpts = { ...SEND_RETRY_OPTS, maxAttempts: maxRetries };
@@ -634,6 +676,7 @@ export async function send(task: string, opts: SendOptions = {}) {
  * Build the wake message text sent to the peer agent.
  * Includes the webhook URL when available so H2 knows where to push the result.
  * Includes the stream URL when available so H2 can push partial output chunks.
+ * Includes attachment summary when files are attached (Phase 7d).
  */
 function buildWakeText(
   from: string,
@@ -642,6 +685,7 @@ function buildWakeText(
   webhookUrl: string | null,
   streamUrl?: string | null,
   streamToken?: string | null,
+  attachments?: AttachmentPayload[],
 ): string {
   // Build the `hh result` invocation hint — include --webhook-url flag if available
   // so H2 can deliver the result back to H1 instantly without polling.
@@ -654,6 +698,12 @@ function buildWakeText(
     ``,
     `When done, run: ${resultCmd}`,
   ];
+
+  // Phase 7d: attachment summary
+  if (attachments && attachments.length > 0) {
+    lines.push(``);
+    lines.push(formatAttachmentSummary(attachments));
+  }
 
   if (webhookUrl) {
     lines.push(``);

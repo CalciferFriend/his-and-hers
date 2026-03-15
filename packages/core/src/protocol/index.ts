@@ -14,6 +14,7 @@ export {
   HHWakePayload,
   HHErrorPayload,
   HHLatentPayload,
+  AttachmentPayload,
   isTaskMessage,
   isResultMessage,
   isHeartbeatMessage,

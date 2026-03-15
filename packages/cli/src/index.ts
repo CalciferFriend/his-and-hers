@@ -52,6 +52,7 @@ import {
 } from "./commands/template.ts";
 import { web } from "./commands/web.ts";
 import { broadcast } from "./commands/broadcast.ts";
+import { pipeline } from "./commands/pipeline.ts";
 import { sync } from "./commands/sync.ts";
 import {
   clusterList,
@@ -116,6 +117,7 @@ program
   .option("--force", "Skip cron duplicate-send guard")
   .option("--notify <url>", "Webhook URL for task completion notification (Discord/Slack/generic)")
   .option("--sync <path>", "[Phase 7b] Sync a local path to H2 before dispatching the task")
+  .option("--attach <paths...>", "[Phase 7d] Attach one or more files to the task (PDF, images, text, code, JSON). Max 10 MB/file.")
   .action((task: string, opts: {
     wait?: boolean;
     waitTimeout?: string;
@@ -129,6 +131,7 @@ program
     force?: boolean;
     notify?: string;
     sync?: string;
+    attach?: string[];
   }) => {
     return send(task, {
       wait: opts.wait,
@@ -143,6 +146,7 @@ program
       force: opts.force,
       notify: opts.notify,
       sync: opts.sync,
+      attach: opts.attach,
     });
   });
 
@@ -758,6 +762,24 @@ clusterPeersCmd
   .option("--json", "Output updated cluster as JSON")
   .action((clusterName: string, peerName: string, opts: { json?: boolean }) =>
     clusterPeersRemove(clusterName, peerName, opts),
+  );
+
+// ── hh pipeline ───────────────────────────────────────────────────────────────
+program
+  .command("pipeline")
+  .description(
+    "[Phase 7e] Run a multi-step chained task pipeline across peers.\n\n" +
+    "Each step's output is available in the next step via {{previous.output}}\n" +
+    "or {{steps.N.output}} (1-based index).\n\n" +
+    "Inline spec:  hh pipeline \"peer1:task one -> peer2:review {{previous.output}}\"\n" +
+    "File:         hh pipeline --file pipeline.json",
+  )
+  .argument("[spec]", "Inline pipeline spec: \"peer1:task -> peer2:task\"")
+  .option("--file <path>", "Load pipeline definition from a JSON file")
+  .option("--timeout <seconds>", "Per-step wait timeout in seconds (default: 120)")
+  .option("--json", "Output results as JSON")
+  .action((spec: string | undefined, opts: { file?: string; timeout?: string; json?: boolean }) =>
+    pipeline(spec, opts),
   );
 
 program.parseAsync();

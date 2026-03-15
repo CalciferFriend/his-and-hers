@@ -451,13 +451,37 @@ context and `docs/latent-communication.md` for implementation guide. ✅ (2026-0
 - [x] 33 tests covering all operations, JSON shapes, error paths, stale detection
 - [x] `docs/reference/cluster.md` reference page + sidebar wired
 
-### 7d. `hh attach` — file/context attachment for tasks (Calcifer) 🔲
-- [ ] `hh send "review this" --attach ./report.pdf` — file attached to task message
-- [ ] Supported: PDF, images (PNG/JPEG/WebP), text, code, markdown, JSON
-- [ ] `AttachmentPayload` in HHTaskMessage (base64 + mime + filename)
-- [ ] H2 side: strip attachment from wake text; inject via multimodal message API
-- [ ] Size limit: 10 MB soft cap with truncation warning
-- [ ] Reference docs + tests
+### 7d. `hh attach` — file/context attachment for tasks (Calcifer) ✅ (2026-03-15)
+- [x] `hh send "review this" --attach ./report.pdf` — file(s) attached to task message
+- [x] Supported: PDF, images (PNG/JPEG/WebP/GIF), text, code, markdown, JSON, CSV, YAML, TOML, HTML, CSS, SQL, and 10+ code languages
+- [x] `AttachmentPayload` schema in `HHTaskPayload` (base64 + mime + filename + size_bytes)
+- [x] `loadAttachment()` / `loadAttachments()` utilities in `@his-and-hers/core`
+- [x] `detectMimeType()` — extension-based MIME detection with 30+ type map
+- [x] `isMultimodalType()` — PDF + images go to multimodal API; text/code as fenced blocks
+- [x] `formatAttachmentSummary()` — wake text injection with per-file type hints for H2
+- [x] `decodeAttachment()` — H2-side Buffer decode utility
+- [x] 10 MB soft cap (warning), 50 MB hard cap (error), graceful per-file error collection
+- [x] `--attach <paths...>` flag on `hh send` (multi-file via CLI variadic)
+- [x] H2 integration guide documented (GLaDOS: decode + inject via multimodal API)
+- [x] `ATTACH_SIZE_LIMIT_BYTES` / `ATTACH_HARD_LIMIT_BYTES` exported constants
+- [x] 33 tests covering MIME detection, encoding, limits, schema validation, round-trips
+- [x] `docs/reference/attach.md` reference page + SDK usage + H2 integration guide
+
+### 7e. `hh pipeline` — chained multi-step task workflows (Calcifer) ✅ (2026-03-15)
+- [x] Inline spec parser: `"peer1:task one -> peer2:review {{previous.output}}"`
+- [x] JSON pipeline file support: `--file pipeline.json`
+- [x] `PipelineDefinition` / `PipelineStep` / `PipelineStepResult` / `PipelineRunResult` types
+- [x] `{{previous.output}}` / `{{steps.N.output}}` / `{{previous.error}}` placeholder interpolation
+- [x] Sequential step execution with per-step timeout (default 120s)
+- [x] `continueOnError` per step (default: abort pipeline on failure)
+- [x] Skipped step tracking when pipeline is aborted mid-run
+- [x] Aggregated `PipelineRunResult`: total cost, tokens, duration, step-level breakdown
+- [x] Human-readable progress output (clack) + `--json` machine-readable output
+- [x] `--timeout <s>` global override for all steps
+- [x] `parsePipelineSpec` / `parsePipelineFile` / `interpolatePipelineTask` exported from `@his-and-hers/core`
+- [x] Fixed: test suite mock — `vi.importActual` preserves pure parsers; 19 tests passing
+- [x] Wired into CLI `index.ts` with `[spec]` positional + `--file`, `--timeout`, `--json` flags
+- [x] `docs/reference/pipeline.md` reference page + sidebar wired
 
 ---
 

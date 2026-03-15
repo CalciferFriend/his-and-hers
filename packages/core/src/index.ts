@@ -13,6 +13,7 @@ export {
   HHHandoffPayload,
   HHWakePayload,
   HHErrorPayload,
+  AttachmentPayload,
   isTaskMessage,
   isResultMessage,
   isHeartbeatMessage,
@@ -27,6 +28,19 @@ export {
   HHHeartbeat,
   HHPair,
 } from "./protocol/index.ts";
+
+// Attachment utilities (Phase 7d)
+export {
+  loadAttachment,
+  loadAttachments,
+  detectMimeType,
+  isMultimodalType,
+  formatAttachmentSummary,
+  decodeAttachment,
+  ATTACH_SIZE_LIMIT_BYTES,
+  ATTACH_HARD_LIMIT_BYTES,
+} from "./attach.ts";
+export type { LoadAttachmentResult } from "./attach.ts";
 
 // Transport layer
 export {
@@ -180,3 +194,14 @@ export {
   substituteVars,
 } from "./template/store.ts";
 export type { HHTemplate, AddTemplateInput, SubstituteOptions } from "./template/store.ts";
+export {
+  interpolatePipelineTask,
+  parsePipelineSpec,
+  parsePipelineFile,
+} from "./pipeline.ts";
+export type {
+  PipelineStep,
+  PipelineDefinition,
+  PipelineStepResult,
+  PipelineRunResult,
+} from "./pipeline.ts";
