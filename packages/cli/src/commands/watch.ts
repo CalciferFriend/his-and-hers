@@ -68,6 +68,7 @@ import {
   startCapabilitiesServer,
   type CapabilitiesServerHandle,
   createChunkStreamer,
+  appendAuditEntry,
 } from "@his-and-hers/core";
 import { loadConfig } from "../config/store.ts";
 
@@ -228,6 +229,15 @@ async function poll(opts: WatchOptions): Promise<number> {
       continue;
     }
 
+    // Phase 10b: Write audit entry for task_received
+    await appendAuditEntry("task_received", {
+      peer: task.from,
+      task_id: task.id,
+      objective: task.objective,
+    }).catch(() => {
+      // Soft fail — audit entry is best-effort
+    });
+
     if (!opts.json) {
       p.log.step(`  Running executor for ${pc.dim(shortId)}…`);
     }
@@ -244,6 +254,17 @@ async function poll(opts: WatchOptions): Promise<number> {
           artifacts: [],
           duration_ms: durationMs,
         },
+      });
+
+      // Phase 10b: Write audit entry for task_completed
+      await appendAuditEntry("task_completed", {
+        peer: task.from,
+        task_id: task.id,
+        objective: task.objective,
+        status: success ? "completed" : "failed",
+        cost_usd: 0, // TODO: extract from result if available
+      }).catch(() => {
+        // Soft fail — audit entry is best-effort
       });
 
       if (opts.json) {

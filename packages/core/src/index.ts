@@ -231,3 +231,12 @@ export type { HHAlias, AddAliasInput } from "./alias/store.ts";
 
 export { MockGateway } from "./gateway/mock-gateway.ts";
 export type { MockGatewayOptions, ReceivedWake } from "./gateway/mock-gateway.ts";
+
+// ─── Audit (Phase 10b) ────────────────────────────────────────────────────────
+export {
+  appendAuditEntry,
+  readAuditLog,
+  verifyAuditChain,
+  getOrCreateAuditKey,
+} from "./audit/audit.ts";
+export type { AuditEntry, AuditFilter, VerifyResult } from "./audit/audit.ts";

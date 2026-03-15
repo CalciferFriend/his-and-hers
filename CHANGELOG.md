@@ -9,6 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`hh profile`** — named config profiles for switching between multiple setups (home/work, dev/prod).
+  Profiles stored in `~/.his-and-hers/profiles/<name>.json` with active tracking in `active-profile.json`.
+  `HH_PROFILE` env var overrides active selection. Commands: `list`, `use`, `create`, `show`, `delete`.
+  Backward compatible: existing `~/.his-and-hers/hh.json` treated as "default" profile. Gateway tokens
+  masked in `profile show` output. 18 tests. Reference page at `docs/reference/profile.md`.
+- **`hh audit`** — tamper-evident append-only audit log for task send/receive/completion events.
+  Each entry chained via SHA-256 hashes (`prev_hash` → `hash`). Log stored at
+  `~/.his-and-hers/audit.log` (newline-delimited JSON). Per-install HMAC key generated at
+  `~/.his-and-hers/audit-key`. Commands: `list` (with `--peer`, `--since`, `--limit` filters),
+  `verify` (hash chain integrity check), `export` (JSON/CSV). Auto-appends on `hh send`,
+  `hh watch` (task_received), and task completion. 32 tests. Reference page at
+  `docs/reference/audit.md`.
+- **`hh ci`** — CI-friendly task delegation for GitHub Actions and automation. No spinners, no colors,
+  no interactive prompts. Always blocks waiting for result. Exits 0 on success, 1 on failure/timeout.
+  Reads config from env vars (`HH_PEER`, `HH_TIMEOUT`, `HH_PROFILE`). `--json` outputs
+  `{ ok, task_id, result, cost_usd, duration_ms }`. `--output-file` writes result text.
+  GitHub Actions composite action at `packages/action/action.yml` with inputs (task, peer, timeout,
+  hh_config) and outputs (result, cost_usd, task_id). 15 tests.
+- Tests: 941 → **998** (all passing)
+
+### Added (earlier in Unreleased)
+
 - **`hh pipeline`** — run a sequence of tasks across peers, chaining each step's output
   into the next via `{{previous.output}}` / `{{steps.N.output}}` placeholders. Define
   pipelines inline (`"glados:write code -> piper:review {{previous.output}}"`) or load

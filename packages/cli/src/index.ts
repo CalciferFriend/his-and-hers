@@ -80,6 +80,15 @@ import {
 } from "./commands/alias.ts";
 import { stats } from "./commands/stats.ts";
 import { release } from "./commands/release.ts";
+import {
+  profileList,
+  profileUse,
+  profileCreate,
+  profileShow,
+  profileDelete,
+} from "./commands/profile.ts";
+import { auditList, auditVerify, auditExport } from "./commands/audit.ts";
+import { ci } from "./commands/ci.ts";
 
 const _require = createRequire(import.meta.url);
 const { version: _hhVersion } = _require("../package.json") as { version: string };
@@ -1018,5 +1027,78 @@ program
       yes?: boolean;
     }) => release(opts),
   );
+
+// ── hh profile ────────────────────────────────────────────────────────────────
+const profileCmd = program
+  .command("profile")
+  .description("[Phase 10a] Manage named config profiles for switching between setups");
+
+profileCmd
+  .command("list")
+  .alias("ls")
+  .description("List all profiles, mark active with star symbol")
+  .option("--json", "Output as JSON")
+  .action((opts: { json?: boolean }) => profileList(opts));
+
+profileCmd
+  .command("use <name>")
+  .description("Switch active profile")
+  .action((name: string) => profileUse(name));
+
+profileCmd
+  .command("create <name>")
+  .description("Create new profile (blank or copied from existing)")
+  .option("--from <existing>", "Copy from an existing profile")
+  .action((name: string, opts: { from?: string }) => profileCreate(name, opts));
+
+profileCmd
+  .command("show [name]")
+  .description("Print profile config (mask gateway tokens)")
+  .option("--json", "Output as JSON")
+  .action((name: string | undefined, opts: { json?: boolean }) => profileShow(name, opts));
+
+profileCmd
+  .command("delete <name>")
+  .alias("rm")
+  .description("Delete a profile (refuses if active)")
+  .option("--force", "Force delete even if active")
+  .action((name: string, opts: { force?: boolean }) => profileDelete(name, opts));
+
+// ── hh audit ──────────────────────────────────────────────────────────────────
+const auditCmd = program
+  .command("audit")
+  .description("[Phase 10b] View and verify the append-only audit log");
+
+auditCmd
+  .command("list")
+  .description("Display audit log entries with optional filters")
+  .option("--peer <name>", "Filter by peer node name")
+  .option("--since <duration>", "Show entries from last N time units (e.g. 7d, 24h, 30m)")
+  .option("--limit <n>", "Limit number of entries shown (default: all)")
+  .option("--json", "Output as JSON")
+  .action((opts: { peer?: string; since?: string; limit?: string; json?: boolean }) =>
+    auditList(opts),
+  );
+
+auditCmd
+  .command("verify")
+  .description("Verify hash chain integrity of the audit log")
+  .action(() => auditVerify());
+
+auditCmd
+  .command("export")
+  .description("Export full audit log")
+  .option("--json", "Export as JSON (default)")
+  .option("--csv", "Export as CSV")
+  .option("--output <path>", "Write to file instead of stdout")
+  .action((opts: { json?: boolean; csv?: boolean; output?: string }) => auditExport(opts));
+
+// ── hh ci ─────────────────────────────────────────────────────────────────────
+program
+  .command("ci <task>")
+  .description("[Phase 10c] CI-friendly task delegation (no TTY, machine-readable, blocking wait)")
+  .option("--json", "Output result as JSON (for parsing in CI scripts)")
+  .option("--output-file <path>", "Write result text to a file")
+  .action((task: string, opts: { json?: boolean; outputFile?: string }) => ci(task, opts));
 
 program.parseAsync();

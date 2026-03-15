@@ -566,6 +566,59 @@ context and `docs/latent-communication.md` for implementation guide. ✅ (2026-0
 
 ---
 
+## Phase 10 — Named Profiles, Audit Log, CI Mode ✅ (2026-03-15)
+
+> Owned by: Calcifer (H1)
+
+### 10a. `hh profile` — named config profiles (Calcifer) ✅ (2026-03-15)
+- [x] Multiple config support via `~/.his-and-hers/profiles/<name>.json`
+- [x] Active profile tracking in `~/.his-and-hers/active-profile.json`
+- [x] `HH_PROFILE` env var override for per-command profile switching
+- [x] `hh profile list [--json]` — list all profiles, mark active with ★
+- [x] `hh profile use <name>` — switch active profile
+- [x] `hh profile create <name> [--from <existing>]` — create new profile (blank or copy)
+- [x] `hh profile show [<name>] [--json]` — print profile config (mask gateway tokens)
+- [x] `hh profile delete <name> [--force]` — delete profile (refuse if active)
+- [x] Backward compat: `~/.his-and-hers/hh.json` treated as "default" profile
+- [x] `loadConfig()` / `saveConfig()` respect active profile automatically
+- [x] 18 tests covering list, use, create, show, delete, env var override
+- [x] `docs/reference/profile.md` reference page
+
+### 10b. `hh audit` — tamper-evident audit log (Calcifer) ✅ (2026-03-15)
+- [x] Append-only log at `~/.his-and-hers/audit.log` (newline-delimited JSON)
+- [x] Per-install HMAC key at `~/.his-and-hers/audit-key` (32-byte hex)
+- [x] Each entry has: ts, seq, event, peer, task_id, objective, status, cost_usd, prev_hash, hash
+- [x] Hash chain: first entry has `prev_hash: "genesis"`, subsequent entries link via SHA-256
+- [x] `appendAuditEntry()` — create new entry with hash chain verification
+- [x] `readAuditLog(filter)` — read entries with optional peer/since/limit filters
+- [x] `verifyAuditChain()` — verify hash chain integrity, return { ok, brokenAt? }
+- [x] `getOrCreateAuditKey()` — generate per-install key on first use
+- [x] `hh audit list [--peer <name>] [--since 7d] [--limit 50] [--json]` — display log
+- [x] `hh audit verify` — verify hash chain, print OK or which entry broke
+- [x] `hh audit export [--json] [--csv] [--output file]` — export full log
+- [x] Auto-append on `hh send` (task_sent), `hh watch` (task_received, task_completed)
+- [x] 20 tests in `audit.test.ts` + 12 tests in `audit.test.ts` (CLI)
+- [x] `docs/reference/audit.md` reference page
+
+### 10c. `hh ci` — CI-friendly run mode (Calcifer) ✅ (2026-03-15)
+- [x] No spinners, no colors, no interactive prompts
+- [x] Always blocks waiting for result (like `--wait` mode)
+- [x] Exits 0 on success, 1 on failure/timeout
+- [x] `hh ci "<task>" [--json] [--output-file <path>]` command
+- [x] Reads config from env vars: `HH_PEER`, `HH_TIMEOUT`, `HH_PROFILE`
+- [x] `--json` flag: outputs `{ ok, task_id, result, cost_usd, duration_ms }` to stdout
+- [x] `--output-file <path>`: writes result text to a file
+- [x] GitHub Actions composite action at `packages/action/action.yml`
+      — inputs: task, peer, timeout, hh_config (base64-encoded)
+      — outputs: result, cost_usd, task_id
+      — installs `npm install -g his-and-hers`, writes config, runs `hh ci --json`, extracts outputs
+- [x] 15 tests covering env var reading, JSON output, exit codes, output file
+- [x] Example GitHub Actions workflow in docs
+
+**Phase 10 complete: 998 tests passing (up from 941). Named profiles, audit log, and CI mode shipped.**
+
+---
+
 ## Who Owns What
 
 | Area | Owner |

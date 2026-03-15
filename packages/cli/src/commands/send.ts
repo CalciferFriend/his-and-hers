@@ -44,7 +44,7 @@ import { createTaskState, pollTaskCompletion, updateTaskState } from "../state/t
 import { getPeer, selectBestPeer, formatPeerList } from "../peers/select.ts";
 import { getActiveWebhooks } from "@his-and-hers/core/notify/config.ts";
 import type { NotificationContext } from "@his-and-hers/core/notify/notify.ts";
-import { loadAttachments, formatAttachmentSummary } from "@his-and-hers/core";
+import { loadAttachments, formatAttachmentSummary, appendAuditEntry } from "@his-and-hers/core";
 import type { AttachmentPayload } from "@his-and-hers/core";
 
 const WAKE_TIMEOUT_ATTEMPTS = 45; // 45 × 2s = 90s max
@@ -511,6 +511,15 @@ export async function send(task: string, opts: SendOptions = {}) {
   }
 
   sendS.stop(pc.green(`✓ Task delivered to ${peer.name}`));
+
+  // Phase 10b: Write audit entry for task_sent
+  await appendAuditEntry("task_sent", {
+    peer: peer.name,
+    task_id: msg.id,
+    objective: task,
+  }).catch(() => {
+    // Soft fail — audit entry is best-effort
+  });
 
   // Step 6: wait for result if --wait flag
   if (opts.wait) {

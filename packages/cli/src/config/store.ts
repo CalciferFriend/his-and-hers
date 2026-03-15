@@ -5,31 +5,104 @@ import { HHConfig, type ProviderConfig } from "./schema.ts";
 
 const CONFIG_DIR = join(homedir(), ".his-and-hers");
 const CONFIG_PATH = join(CONFIG_DIR, "hh.json");
+const PROFILES_DIR = join(CONFIG_DIR, "profiles");
+const ACTIVE_PROFILE_PATH = join(CONFIG_DIR, "active-profile.json");
 
 /**
- * Load config from ~/.his-and-hers/hh.json
- * Returns null if not found or invalid.
+ * Get the active profile name.
+ * Priority:
+ * 1. HH_PROFILE env var
+ * 2. ~/.his-and-hers/active-profile.json
+ * 3. "default" (for backward compat with ~/.his-and-hers/config.json)
  */
-export async function loadConfig(): Promise<HHConfig | null> {
-  try {
-    const raw = await readFile(CONFIG_PATH, "utf-8");
-    return HHConfig.parse(JSON.parse(raw));
-  } catch {
-    return null;
+export async function getActiveProfileName(): Promise<string> {
+  // Check env var first
+  if (process.env.HH_PROFILE) {
+    return process.env.HH_PROFILE;
   }
+
+  // Check active-profile.json
+  try {
+    const raw = await readFile(ACTIVE_PROFILE_PATH, "utf-8");
+    const data = JSON.parse(raw);
+    if (data.active && typeof data.active === "string") {
+      return data.active;
+    }
+  } catch {
+    // Fall through
+  }
+
+  // Default to "default" for backward compat
+  return "default";
 }
 
 /**
- * Save config to ~/.his-and-hers/hh.json with restrictive permissions (0600).
- * Never writes API keys — those stay in the OS keychain.
+ * Set the active profile name by writing to active-profile.json.
+ */
+export async function setActiveProfile(name: string): Promise<void> {
+  await mkdir(CONFIG_DIR, { recursive: true });
+  await writeFile(ACTIVE_PROFILE_PATH, JSON.stringify({ active: name }, null, 2));
+}
+
+/**
+ * Load config from the active profile.
+ * Priority:
+ * 1. HH_PROFILE env var → ~/.his-and-hers/profiles/<name>.json
+ * 2. active-profile.json → ~/.his-and-hers/profiles/<name>.json
+ * 3. Backward compat: ~/.his-and-hers/hh.json (treated as "default" profile)
+ */
+export async function loadConfig(): Promise<HHConfig | null> {
+  const profileName = await getActiveProfileName();
+
+  // Try profile directory first
+  const profilePath = join(PROFILES_DIR, `${profileName}.json`);
+  try {
+    const raw = await readFile(profilePath, "utf-8");
+    return HHConfig.parse(JSON.parse(raw));
+  } catch {
+    // Fall through
+  }
+
+  // Backward compat: if profile is "default" and profiles/<default>.json doesn't exist,
+  // try ~/.his-and-hers/hh.json
+  if (profileName === "default") {
+    try {
+      const raw = await readFile(CONFIG_PATH, "utf-8");
+      return HHConfig.parse(JSON.parse(raw));
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Save config to the active profile.
+ * Writes to ~/.his-and-hers/profiles/<profile>.json.
+ * For backward compat, if profile is "default" and profiles/<default>.json doesn't exist,
+ * writes to ~/.his-and-hers/hh.json.
  */
 export async function saveConfig(config: HHConfig): Promise<void> {
   await mkdir(CONFIG_DIR, { recursive: true });
+  await mkdir(PROFILES_DIR, { recursive: true });
+
+  const profileName = await getActiveProfileName();
+  const profilePath = join(PROFILES_DIR, `${profileName}.json`);
+
   // Strip runtime secrets before writing
   const safe = stripRuntimeSecrets(config);
-  await writeFile(CONFIG_PATH, JSON.stringify(safe, null, 2), {
+
+  await writeFile(profilePath, JSON.stringify(safe, null, 2), {
     mode: 0o600,
   });
+
+  // Also write to hh.json for backward compat if profile is "default"
+  if (profileName === "default") {
+    await writeFile(CONFIG_PATH, JSON.stringify(safe, null, 2), {
+      mode: 0o600,
+    });
+  }
 }
 
 /**

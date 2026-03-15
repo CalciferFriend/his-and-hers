@@ -1,0 +1,59 @@
+name: "his-and-hers"
+description: "Delegate tasks to your H2 agent from CI"
+author: "Anthropic"
+
+inputs:
+  task:
+    description: "Task objective to send to H2"
+    required: true
+  peer:
+    description: "Target peer name (uses primary peer if omitted)"
+    required: false
+  timeout:
+    description: "Seconds to wait for result"
+    required: false
+    default: "300"
+  hh_config:
+    description: "Base64-encoded config JSON (write to ~/.his-and-hers/config.json)"
+    required: false
+
+outputs:
+  result:
+    description: "Task result text"
+    value: ${{ steps.hh_run.outputs.result }}
+  cost_usd:
+    description: "Cost in USD"
+    value: ${{ steps.hh_run.outputs.cost_usd }}
+  task_id:
+    description: "Task ID"
+    value: ${{ steps.hh_run.outputs.task_id }}
+
+runs:
+  using: composite
+  steps:
+    - name: Install his-and-hers
+      shell: bash
+      run: npm install -g his-and-hers
+
+    - name: Write config
+      if: inputs.hh_config != ''
+      shell: bash
+      run: |
+        mkdir -p ~/.his-and-hers
+        echo "${{ inputs.hh_config }}" | base64 -d > ~/.his-and-hers/config.json
+
+    - name: Run task
+      id: hh_run
+      shell: bash
+      env:
+        HH_PEER: ${{ inputs.peer }}
+        HH_TIMEOUT: ${{ inputs.timeout }}
+      run: |
+        output=$(hh ci "${{ inputs.task }}" --json)
+        echo "result=$(echo $output | jq -r .result | head -c 65535)" >> $GITHUB_OUTPUT
+        echo "cost_usd=$(echo $output | jq -r .cost_usd)" >> $GITHUB_OUTPUT
+        echo "task_id=$(echo $output | jq -r .task_id)" >> $GITHUB_OUTPUT
+
+branding:
+  icon: "zap"
+  color: "purple"
