@@ -121,6 +121,8 @@ export default defineConfig({
             { text: "hh cluster", link: "/reference/cluster" },
             { text: "hh pipeline", link: "/reference/pipeline" },
             { text: "hh workflow", link: "/reference/workflow" },
+            { text: "hh run", link: "/reference/run" },
+            { text: "hh alias", link: "/reference/alias" },
           ],
         },
         {

@@ -507,19 +507,23 @@ context and `docs/latent-communication.md` for implementation guide. ✅ (2026-0
 - [x] Wired into `packages/cli/src/index.ts`
 - [x] `docs/reference/workflow.md` reference page + sidebar wired
 
-### 8b. `hh run` — shorthand for common task patterns (Calcifer)
-- [ ] `hh run summarise <path>` — send file to default peer with summarise prompt
-- [ ] `hh run review <path>` — code review shorthand
-- [ ] `hh run diff <base> <head>` — diff-aware review (git diff piped as attachment)
-- [ ] `--peer <name>` override; falls back to `routeTask()` auto-selection
-- [ ] Alias registry: user can define custom `hh run` shorthands in hh.json
+### 8b. `hh run` — shorthand for common task patterns (Calcifer) ✅ (2026-03-15)
+- [x] `hh run summarise <path>` — send file to default peer with summarise prompt
+- [x] `hh run review <path>` — code review shorthand
+- [x] `hh run diff [<base> [<head>]]` — diff-aware review (git diff piped inline)
+- [x] `--peer <name>` override; falls back to `routeTask()` auto-selection
+- [x] `--prompt` override to customise the task sent to H2
+- [x] `docs/reference/run.md` reference page + sidebar wired
 
-### 8c. `hh alias` — user-defined CLI shortcuts (Calcifer)
-- [ ] `hh alias add pr-review "workflow run code-review --peer glados"` — map a short name to any `hh` subcommand string
-- [ ] `hh alias list` — list all aliases
-- [ ] `hh alias remove <name>`
-- [ ] Aliases persisted to `~/.his-and-hers/aliases.json`
-- [ ] Tab completion for alias names via `hh completion`
+### 8c. `hh alias` — user-defined CLI shortcuts (Calcifer) ✅ (2026-03-15)
+- [x] `hh alias add <name> "<command>"` — map a short name to any `hh` subcommand string
+- [x] `hh alias list [--json]` — list all aliases
+- [x] `hh alias show <name> [--json]` — inspect a specific alias
+- [x] `hh alias run <name> [args...]` — expand + execute (re-invokes CLI)
+- [x] `hh alias remove <name> [--force]`
+- [x] Aliases persisted to `~/.his-and-hers/aliases.json`
+- [x] Tab completion for `run` and `alias` subcommands via `hh completion`
+- [x] `docs/reference/alias.md` reference page + sidebar wired
 
 ### 8d. E2E integration test suite (both)
 - [ ] Mock H2 gateway server for full send→result round-trip tests (no real network)

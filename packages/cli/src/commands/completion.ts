@@ -169,6 +169,22 @@ export const COMMANDS: CompletionCommand[] = [
     subcommands: ["add", "list", "show", "run", "remove"],
     flags: ["--file", "--desc", "--timeout", "--force", "--json"],
   },
+
+  // Ergonomic task shorthands
+  {
+    name: "run",
+    description: "Ergonomic shorthands for common task patterns (summarise / review / diff)",
+    subcommands: ["summarise", "review", "diff", "alias"],
+    flags: ["--peer", "--wait", "--json", "--notify", "--prompt", "--stat"],
+  },
+
+  // User-defined CLI shortcuts
+  {
+    name: "alias",
+    description: "Manage user-defined CLI shortcuts persisted in ~/.his-and-hers/aliases.json",
+    subcommands: ["add", "list", "show", "run", "remove"],
+    flags: ["--desc", "--force", "--json"],
+  },
 ];
 
 // ─── Shell script generators ──────────────────────────────────────────────────

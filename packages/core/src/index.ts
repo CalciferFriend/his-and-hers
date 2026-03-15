@@ -219,3 +219,12 @@ export type {
   HHWorkflowStep,
   AddWorkflowInput,
 } from "./workflow/store.ts";
+
+export {
+  loadAliases,
+  saveAliases,
+  addAlias,
+  removeAlias,
+  findAlias,
+} from "./alias/store.ts";
+export type { HHAlias, AddAliasInput } from "./alias/store.ts";

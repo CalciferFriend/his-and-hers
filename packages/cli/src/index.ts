@@ -69,6 +69,15 @@ import {
   clusterPeersAdd,
   clusterPeersRemove,
 } from "./commands/cluster.ts";
+import { runSummarise, runReview, runDiff } from "./commands/run.ts";
+import {
+  aliasAdd,
+  aliasList,
+  aliasShow,
+  aliasRemove,
+  aliasRun,
+  tryRunAlias,
+} from "./commands/alias.ts";
 
 const _require = createRequire(import.meta.url);
 const { version: _hhVersion } = _require("../package.json") as { version: string };
@@ -846,5 +855,130 @@ workflowCmd
   .action((name: string, opts: { force?: boolean; json?: boolean }) =>
     workflowRemove(name, opts),
   );
+
+// ── hh run ────────────────────────────────────────────────────────────────────
+
+const runCmd = program
+  .command("run")
+  .description(
+    "[Phase 8b] Ergonomic shorthands for the most common one-shot task patterns.\n\n" +
+    "  hh run summarise <file>           — executive summary + bullet points\n" +
+    "  hh run review <file>              — structured code review\n" +
+    "  hh run diff [<base> [<head>]]     — review git diff (defaults to HEAD)\n" +
+    "  hh run alias <name> [args...]     — expand and execute a user-defined alias",
+  );
+
+runCmd
+  .command("summarise <path>")
+  .alias("summarize")
+  .description("Send a file to H2 for summarisation")
+  .option("--peer <name>", "Target a specific peer by name")
+  .option("--wait", "Wait for the result before exiting")
+  .option("--json", "Output task receipt as JSON")
+  .option("--notify <url>", "Webhook URL to notify on completion")
+  .option("--prompt <text>", "Override the default summarise prompt")
+  .action(
+    (
+      filePath: string,
+      opts: { peer?: string; wait?: boolean; json?: boolean; notify?: string; prompt?: string },
+    ) => runSummarise(filePath, opts),
+  );
+
+runCmd
+  .command("review <path>")
+  .description("Send a file or directory to H2 for code review")
+  .option("--peer <name>", "Target a specific peer by name")
+  .option("--wait", "Wait for the result before exiting")
+  .option("--json", "Output task receipt as JSON")
+  .option("--notify <url>", "Webhook URL to notify on completion")
+  .option("--prompt <text>", "Override the default review prompt")
+  .action(
+    (
+      filePath: string,
+      opts: { peer?: string; wait?: boolean; json?: boolean; notify?: string; prompt?: string },
+    ) => runReview(filePath, opts),
+  );
+
+runCmd
+  .command("diff [base] [head]")
+  .description(
+    "Review a git diff via H2. Defaults to `git diff HEAD` (working tree).\n" +
+    "Pass a base ref, or base + head for historical/branch diffs.",
+  )
+  .option("--peer <name>", "Target a specific peer by name")
+  .option("--wait", "Wait for the result before exiting")
+  .option("--json", "Output task receipt as JSON")
+  .option("--notify <url>", "Webhook URL to notify on completion")
+  .option("--prompt <text>", "Override the default diff review prompt")
+  .option("--stat", "Print git diff --stat before sending")
+  .action(
+    (
+      base: string | undefined,
+      head: string | undefined,
+      opts: {
+        peer?: string;
+        wait?: boolean;
+        json?: boolean;
+        notify?: string;
+        prompt?: string;
+        stat?: boolean;
+      },
+    ) => runDiff({ base, head, ...opts }),
+  );
+
+runCmd
+  .command("alias <name> [args...]")
+  .description("Expand and execute a user-defined alias")
+  .allowUnknownOption()
+  .action((name: string, args: string[]) => aliasRun(name, args));
+
+// ── hh alias ──────────────────────────────────────────────────────────────────
+
+const aliasCmd = program
+  .command("alias")
+  .description(
+    "[Phase 8c] Manage user-defined CLI shortcuts persisted in ~/.his-and-hers/aliases.json.\n\n" +
+    "  hh alias add pr-review \"workflow run code-review --peer glados\"\n" +
+    "  hh alias list\n" +
+    "  hh alias run pr-review\n" +
+    "  hh alias remove pr-review",
+  );
+
+aliasCmd
+  .command("add <name> <command>")
+  .description("Create or update a named alias for any hh subcommand string")
+  .option("--desc <text>", "Human-readable description of this alias")
+  .action((name: string, command: string, opts: { desc?: string }) =>
+    aliasAdd(name, command, opts),
+  );
+
+aliasCmd
+  .command("list")
+  .alias("ls")
+  .description("List all defined aliases")
+  .option("--json", "Output as JSON")
+  .action((opts: { json?: boolean }) => aliasList(opts));
+
+aliasCmd
+  .command("show <name>")
+  .description("Show details of a specific alias")
+  .option("--json", "Output as JSON")
+  .action((name: string, opts: { json?: boolean }) => aliasShow(name, opts));
+
+aliasCmd
+  .command("remove <name>")
+  .alias("rm")
+  .description("Remove an alias")
+  .option("--force", "Skip confirmation prompt")
+  .option("--json", "Output result as JSON")
+  .action((name: string, opts: { force?: boolean; json?: boolean }) =>
+    aliasRemove(name, opts),
+  );
+
+aliasCmd
+  .command("run <name> [args...]")
+  .description("Expand and execute an alias (with optional extra args)")
+  .allowUnknownOption()
+  .action((name: string, args: string[]) => aliasRun(name, args));
 
 program.parseAsync();
