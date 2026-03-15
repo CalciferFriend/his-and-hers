@@ -51,6 +51,7 @@ import {
   templateRemove,
 } from "./commands/template.ts";
 import { web } from "./commands/web.ts";
+import { broadcast } from "./commands/broadcast.ts";
 
 const _require = createRequire(import.meta.url);
 const { version: _hhVersion } = _require("../package.json") as { version: string };
@@ -601,5 +602,41 @@ program
   .option("--port <port>", "Port to listen on (default: 3847)")
   .option("--no-open", "Do not automatically open the browser")
   .action((opts: { port?: string; open?: boolean }) => web(opts));
+
+// ── hh broadcast ──────────────────────────────────────────────────────────────
+program
+  .command("broadcast")
+  .description("Send the same task to multiple peer nodes concurrently")
+  .argument("<task>", "Task or question to broadcast")
+  .option("--peers <names>", "Comma-separated peer names (default: all configured peers)")
+  .option("--wait", "Wait for result(s) before exiting")
+  .option("--wait-timeout <seconds>", "Timeout for waiting (default: 120s)")
+  .option(
+    "--strategy <mode>",
+    "all — wait for every peer, first — stop after the first response (default: all)",
+  )
+  .option("--no-check", "Skip gateway health check per peer (faster)")
+  .option("--json", "Emit JSON output")
+  .action(
+    (
+      task: string,
+      opts: {
+        peers?: string;
+        wait?: boolean;
+        waitTimeout?: string;
+        strategy?: string;
+        check?: boolean;
+        json?: boolean;
+      },
+    ) =>
+      broadcast(task, {
+        peers: opts.peers,
+        wait: opts.wait,
+        waitTimeoutSeconds: opts.waitTimeout,
+        strategy: (opts.strategy as "all" | "first") ?? "all",
+        noCheck: opts.check === false,
+        json: opts.json,
+      }),
+  );
 
 program.parseAsync();

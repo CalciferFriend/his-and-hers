@@ -116,6 +116,7 @@ export default defineConfig({
             { text: "hh chat", link: "/reference/chat" },
             { text: "hh completion", link: "/reference/completion" },
             { text: "hh web", link: "/reference/web" },
+            { text: "hh broadcast", link: "/reference/broadcast" },
           ],
         },
         {

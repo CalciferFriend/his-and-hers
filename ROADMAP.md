@@ -315,6 +315,18 @@
 - [x] Tests: 33 tests (store.test.ts) covering all CRUD + substitution + edge cases; bug fix: malformed JSON test mkdir
 - [x] `reference/template.md` docs page + sidebar wired + `reference/cli.md` overview section
 
+### 5p. `hh web` — local dashboard (Calcifer) ✅ (2026-03-15)
+- [x] Single-page HTTP dashboard (Node built-ins only, no extra deps)
+- [x] Live task feed via SSE (`GET /events`) — updates without page refresh
+- [x] Peer status sidebar: gateway health + Tailscale ping per peer
+- [x] Budget panel: weekly cloud/local/total spend + savings estimate
+- [x] Send-task form in sidebar: select peer, type task, submit via `POST /send`
+- [x] Task list with status badges, elapsed time, peer label, output preview
+- [x] Click-to-expand task detail (full output + cost + timestamps)
+- [x] Status filter: All / Pending / Running / Completed / Failed
+- [x] `hh web --port <n>` custom port (default 3847); `--no-open` to skip browser launch
+- [x] `reference/web.md` docs page + sidebar wired + `reference/cli.md` overview section
+
 ### 5o. `@his-and-hers/sdk` — programmatic API (Calcifer) ✅ (2026-03-14)
 - [x] `HH` class with `send()`, `status()`, `ping()`, `peers()`, `tasks()`, `getTask()`, `waitFor()`, `config()`
 - [x] `createHH()` factory alias
@@ -390,6 +402,45 @@
 are not production-ready. The protocol design is complete and ready to use once
 the research implementations mature. See `docs/future.md` for detailed research
 context and `docs/latent-communication.md` for implementation guide. ✅ (2026-03-14 Calcifer)
+
+---
+
+## Phase 7 — Fleet Orchestration 🚧 (current)
+
+> Owned by: Calcifer (H1) + GLaDOS (H2) in parallel
+
+### 7a. `hh broadcast` — concurrent multi-peer dispatch (Calcifer) ✅ (2026-03-15)
+- [x] `broadcast()` — concurrent `sendToPeer()` per peer using `Promise.allSettled` / `Promise.race`
+- [x] `BroadcastStrategy`: `all` (wait for every peer) and `first` (stop on first response)
+- [x] Peer resolution: `--peers <names>` subset or all configured `peer_nodes[]`
+- [x] Per-peer retry via `withRetry()` (same 3-attempt logic as `hh send`)
+- [x] Optional gateway health check per peer; `--no-check` for faster dispatch
+- [x] `BroadcastResult` type: peer, task_id, status, output, tokens, cost, timing
+- [x] Aggregated summary: total/ok/failed counts, total cost/tokens, first-response peer
+- [x] Human-readable output: dispatch table + per-peer result sections with status badges
+- [x] `--json` output: `{ broadcast_id, task, peers, strategy, results[], summary }` schema
+- [x] 18 tests covering peer resolution, strategy semantics, JSON shape, error paths
+- [x] `reference/broadcast.md` docs page + sidebar wired + `reference/cli.md` overview section
+- [x] Wired into completion registry (`--peers`, `--wait`, `--wait-timeout`, `--strategy`, `--no-check`, `--json`)
+
+### 7b. `hh replay` — re-run completed tasks (Calcifer) 🔲
+- [ ] Load a past task by ID (`hh replay <task_id>`)
+- [ ] Re-dispatch to same or different peer (`--peer <name>`)
+- [ ] Diff mode: compare new output against original (`--diff`)
+- [ ] Useful for regression testing: "did this task break between model versions?"
+- [ ] Wired into `hh logs` as `hh logs --replay <id>`
+
+### 7c. `hh sync` — push workspace files to H2 (Calcifer) 🔲
+- [ ] `hh sync <path> [--peer <name>]` — rsync a local path to H2 over Tailscale SSH
+- [ ] `--dry-run` flag; `--delete` flag for destructive sync
+- [ ] Progress bar via clack spinner
+- [ ] Wired into `hh send` as `--sync <path>` to auto-push before task dispatch
+
+### 7d. `hh cluster` — named peer groups (Calcifer) 🔲
+- [ ] Define named groups in config: `clusters: { gpu: ["glados", "piper"], fast: ["forge"] }`
+- [ ] `hh broadcast "task" --cluster gpu` targets the group
+- [ ] `hh clusters` command: list, add, remove groups
+- [ ] `hh peers --cluster <name>` filters peer list to the group
 
 ---
 

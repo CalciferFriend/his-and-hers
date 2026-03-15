@@ -5,6 +5,20 @@ All notable changes to his-and-hers will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **`hh broadcast`** — send the same task to multiple peer nodes concurrently. Supports
+  `--strategy all` (wait for every peer) and `--strategy first` (stop on first response).
+  `--peers <names>` targets a subset; default targets all configured `peer_nodes[]`.
+  Per-peer retry, optional gateway health check (`--no-check`), aggregated summary with
+  ok/fail counts + total cost/tokens. `--json` emits structured output. 18 tests.
+  Reference page wired into docs sidebar.
+- Tests: 640 → **658** (all passing)
+
+---
+
 ## [0.3.0] — 2026-03-14
 
 > **Phase 5 complete.** All resilience and developer-experience features shipped.

@@ -156,6 +156,8 @@ export const COMMANDS: CompletionCommand[] = [
 
   // Local web dashboard
   { name: "web", description: "Launch local web dashboard (task feed, peer status, send form)", flags: ["--port", "--no-open"] },
+  // Broadcast
+  { name: "broadcast", description: "Send the same task to multiple peer nodes concurrently", flags: ["--peers", "--wait", "--wait-timeout", "--strategy", "--no-check", "--json"] },
 
   // Shell completion
   { name: "completion", description: "Print shell completion script", flags: [] },

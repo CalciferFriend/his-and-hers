@@ -437,6 +437,23 @@ See [hh web reference](/reference/web) for full docs.
 
 ---
 
+### `hh broadcast`
+
+Send the same task to multiple peer nodes concurrently. All peers fire in parallel;
+optionally wait for every result or stop on the first response.
+
+```bash
+hh broadcast "run tests"                       # all peers, fire-and-forget
+hh broadcast "code-review diff" --wait         # all peers, wait for results
+hh broadcast "quick check" --peers glados,piper  # specific subset
+hh broadcast "race query" --wait --strategy first  # stop on fastest response
+hh broadcast "analyze data" --json             # machine-readable output
+```
+
+See [hh broadcast reference](/reference/broadcast) for full docs.
+
+---
+
 ## Programmatic API
 
 ### `@his-and-hers/sdk`
