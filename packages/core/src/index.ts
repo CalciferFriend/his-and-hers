@@ -264,3 +264,23 @@ export {
   broadcastNotification,
   NotifyTarget,
 } from "./notify/targets.ts";
+
+// ─── Phase 16: Execution Tracing ──────────────────────────────────────────────
+export {
+  createTraceContext,
+  saveTrace,
+  loadTrace,
+  listTraces,
+  clearTrace,
+  clearAllTraces,
+  formatStepLabel,
+  renderBar,
+  TRACE_DIR,
+} from "./trace/trace.ts";
+export type {
+  TraceEvent,
+  TraceLog,
+  TraceContext,
+  StepFinisher,
+  TraceStepName,
+} from "./trace/trace.ts";

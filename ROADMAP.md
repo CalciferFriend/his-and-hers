@@ -786,6 +786,30 @@ Missing: a programmable HTTP API. `hh serve` fills that gap.
 
 ---
 
+## Phase 16 — Execution Tracing ✅ (2026-03-16)
+
+> Owned by: Calcifer (H1)
+
+### 16a. `hh trace` — per-step pipeline timeline (Calcifer) ✅ (2026-03-16)
+- [x] `TraceEvent` + `TraceLog` Zod schemas in `@his-and-hers/core`
+- [x] Well-known step names: `preflight_ping`, `preflight_gateway`, `wol_wake`, `gateway_connect/challenge/auth/wake`, `result_server_start`, `stream_server_start`, `stream_chunk`, `result_received`, `task_complete`
+- [x] `appendTraceEvent()` — append a step with timestamp + duration + ok + meta
+- [x] `finalizeTrace()` — compute `total_ms` + `ended_at`, write to `~/.his-and-hers/traces/<task_id>.json`
+- [x] `loadTrace()`, `listTraces()`, `clearTrace()`, `clearAllTraces()` storage helpers
+- [x] `formatStepLabel()` / `renderBar()` — human-readable formatting utilities
+- [x] `hh trace <task_id>` — render full timeline with per-step icons, durations, meta
+- [x] `hh trace list [--json]` — tabular list of all stored traces
+- [x] `hh trace show <id> [--json]` — explicit show with optional JSON output
+- [x] `hh trace clear [<id>] [--force]` — delete one or all traces
+- [x] `HH_TRACE=1` env var triggers tracing in `hh send` pipeline
+- [x] 24 tests in `core/src/trace/trace.test.ts`
+- [x] 17 tests in `cli/src/commands/trace.test.ts`; total: **1267 tests** (all passing)
+- [x] `docs/reference/trace.md` reference page + sidebar wired
+
+**Phase 16 complete: 1267 tests passing (up from 1226). `hh trace` execution tracing shipped.**
+
+---
+
 ## Who Owns What
 
 | Area | Owner |

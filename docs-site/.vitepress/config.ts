@@ -123,6 +123,7 @@ export default defineConfig({
             { text: "hh workflow", link: "/reference/workflow" },
             { text: "hh run", link: "/reference/run" },
             { text: "hh alias", link: "/reference/alias" },
+            { text: "hh trace", link: "/reference/trace" },
           ],
         },
         {

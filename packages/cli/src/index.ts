@@ -93,6 +93,7 @@ import { ci } from "./commands/ci.ts";
 import { mcp } from "./commands/mcp.ts";
 import { ask } from "./commands/ask.ts";
 import { serve } from "./commands/serve.ts";
+import { trace } from "./commands/trace.ts";
 import {
   budgetList,
   budgetSet,
@@ -1294,5 +1295,58 @@ program
     (opts: { port?: string; token?: string; noAuth?: boolean; readonly?: boolean }) =>
       serve(opts),
   );
+
+// ── hh trace ─────────────────────────────────────────────────────────────────
+const traceCmd = program
+  .command("trace")
+  .description(
+    "Display, list, and clear structured execution traces for task pipelines.\n\n" +
+      "Each trace captures a per-step timeline for a task send:\n" +
+      "  Tailscale ping → gateway health → WOL wake →\n" +
+      "  WS connect/auth/wake inject → streaming → result received\n\n" +
+      "Useful for diagnosing Windows boot-chain issues and latency bottlenecks.\n\n" +
+      "Examples:\n" +
+      "  hh trace abc123             Show timeline for a specific task\n" +
+      "  hh trace list               List all stored traces\n" +
+      "  hh trace clear abc123       Remove a single trace\n" +
+      "  hh trace clear --force      Wipe all traces without prompting\n" +
+      "  hh trace list --json        Machine-readable list",
+  );
+
+// hh trace list
+traceCmd
+  .command("list")
+  .alias("ls")
+  .description("List all stored traces")
+  .option("--json", "Output as JSON array")
+  .action((opts: { json?: boolean }) => trace("list", opts));
+
+// hh trace show <task_id>
+traceCmd
+  .command("show <task_id>")
+  .description("Show timeline for a specific task")
+  .option("--json", "Output as JSON")
+  .action((taskId: string, opts: { json?: boolean }) => trace("show", opts, taskId));
+
+// hh trace clear [task_id]
+traceCmd
+  .command("clear [task_id]")
+  .description("Clear a specific trace (or all traces if no ID given)")
+  .option("--force", "Skip confirmation when clearing all traces")
+  .action((taskId: string | undefined, opts: { force?: boolean }) =>
+    trace("clear", opts, taskId),
+  );
+
+// Default action: hh trace <task_id>
+traceCmd
+  .argument("[task_id]", "Task ID to display trace for")
+  .option("--json", "Output as JSON")
+  .action((taskId: string | undefined, opts: { json?: boolean }) => {
+    if (!taskId) {
+      // No subcommand and no ID → show list
+      return trace("list", opts);
+    }
+    return trace(taskId, opts);
+  });
 
 program.parseAsync();
