@@ -94,6 +94,7 @@ import { mcp } from "./commands/mcp.ts";
 import { ask } from "./commands/ask.ts";
 import { serve } from "./commands/serve.ts";
 import { trace } from "./commands/trace.ts";
+import { healthReport } from "./commands/health-report.ts";
 import {
   budgetList,
   budgetSet,
@@ -1348,5 +1349,26 @@ traceCmd
     }
     return trace(taskId, opts);
   });
+
+// ── hh health-report ──────────────────────────────────────────────────────────
+program
+  .command("health-report")
+  .description("Generate a comprehensive weekly health digest for a node pair.\n\nCombines stats, budget, audit chain verification, peer uptime, and anomaly detection into a shareable Markdown report.\n\nExamples:\n  hh health-report               Last 7 days, Markdown to stdout\n  hh health-report --days 30     Last 30 days\n  hh health-report --peer glados Filter to one peer\n  hh health-report --out r.md    Write to file\n  hh health-report --json        Raw JSON output\n  hh health-report --webhook <url>  POST report to webhook")
+  .option("--days <n>", "Number of days to cover (default: 7)")
+  .option("--peer <name>", "Filter to a specific peer")
+  .option("--out <path>", "Write report to file instead of stdout")
+  .option("--json", "Output raw JSON data")
+  .option("--webhook <url>", "POST report to webhook URL")
+  .option("--no-verify-audit", "Skip audit chain integrity check")
+  .action((opts: { days?: string; peer?: string; out?: string; json?: boolean; webhook?: string; verifyAudit?: boolean }) =>
+    healthReport({
+      days: opts.days ? parseInt(opts.days, 10) : undefined,
+      peer: opts.peer,
+      out: opts.out,
+      json: opts.json,
+      webhook: opts.webhook,
+      verifyAudit: opts.verifyAudit !== false,
+    })
+  );
 
 program.parseAsync();
