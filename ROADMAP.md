@@ -741,6 +741,51 @@ context and `docs/latent-communication.md` for implementation guide. ✅ (2026-0
 
 ---
 
+## Phase 15 — `hh serve` REST API Server ✅ (2026-03-16)
+
+> Owned by: Calcifer
+
+A lightweight HTTP REST API that exposes his-and-hers to language-agnostic integrations — CI scripts,
+custom apps, external dashboards, webhooks, and any tooling that speaks HTTP.
+
+### Motivation
+
+Interfaces so far:
+- **CLI** — interactive terminal use
+- **`hh mcp`** — LLM clients (Claude Desktop, Cursor, Zed)
+- **`hh web`** — browser monitoring dashboard
+
+Missing: a programmable HTTP API. `hh serve` fills that gap.
+
+### What shipped
+
+- [x] `hh serve [--port 3848] [--token TOKEN] [--no-auth] [--readonly]`
+- [x] Auto-generated API token on first run (`~/.his-and-hers/serve-token`, mode 0600)
+- [x] `GET /health` — liveness check (no auth)
+- [x] `GET /openapi.json` — OpenAPI 3.1 spec (no auth) — importable by Postman, Insomnia, Swagger
+- [x] `GET /` — API root with endpoint listing (no auth)
+- [x] `GET /peers` + `GET /peers/:name` — list/show configured peers
+- [x] `POST /peers/:name/ping` — live Tailscale ping
+- [x] `POST /peers/:name/wake` — wake a peer via gateway
+- [x] `GET /status` — all peers: gateway health + Tailscale reachability
+- [x] `GET /tasks` — list tasks with filters (`status`, `peer`, `since`, `limit`)
+- [x] `GET /tasks/:id` — get a specific task (supports prefix match)
+- [x] `POST /tasks` — send a task (`wait`, `timeout`, `peer` options)
+- [x] `DELETE /tasks/:id` — cancel a pending/running task
+- [x] `POST /broadcast` — broadcast to peers with `strategy: "all" | "first"`
+- [x] `GET /budget` — weekly cost summary
+- [x] `GET /capabilities` — cached peer capability report
+- [x] `GET /events` — SSE stream (`task_sent`, `task_completed`, `task_failed`, `task_cancelled`)
+- [x] CORS headers on all responses (for browser clients)
+- [x] Node built-ins only — no new dependencies
+- [x] `docs/reference/serve.md` — full reference with examples
+- [x] 43 tests in `serve.test.ts`
+- [x] Wired into `index.ts` as `program.command("serve")`
+
+**Phase 15 complete: 1226 tests passing (up from 1183). `hh serve` REST API + OpenAPI 3.1 spec shipped.**
+
+---
+
 ## Who Owns What
 
 | Area | Owner |

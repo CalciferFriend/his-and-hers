@@ -92,6 +92,7 @@ import { auditList, auditVerify, auditExport } from "./commands/audit.ts";
 import { ci } from "./commands/ci.ts";
 import { mcp } from "./commands/mcp.ts";
 import { ask } from "./commands/ask.ts";
+import { serve } from "./commands/serve.ts";
 import {
   budgetList,
   budgetSet,
@@ -1263,6 +1264,35 @@ program
         json: opts.json,
         noStream: opts.stream === false,
       }),
+  );
+
+// ── hh serve ─────────────────────────────────────────────────────────────────
+program
+  .command("serve")
+  .description(
+    "Start a REST API server exposing his-and-hers over HTTP.\n" +
+      "Complements `hh mcp` (LLM clients) and `hh web` (browser dashboard).\n" +
+      "Generates an OpenAPI 3.1 spec at /openapi.json.\n\n" +
+      "Auth: X-HH-Token header or ?token= query param.\n" +
+      "Token is auto-generated on first run → ~/.his-and-hers/serve-token\n\n" +
+      "Endpoints: GET /health, /openapi.json, /peers, /status, /tasks, /budget,\n" +
+      "           /capabilities, /events (SSE)\n" +
+      "           POST /tasks, /broadcast, /peers/:name/ping, /peers/:name/wake\n" +
+      "           DELETE /tasks/:id\n\n" +
+      "Examples:\n" +
+      "  hh serve\n" +
+      "  hh serve --port 9000\n" +
+      "  hh serve --token mytoken\n" +
+      "  hh serve --no-auth     # local dev only\n" +
+      "  hh serve --readonly    # disable mutating endpoints",
+  )
+  .option("--port <n>", "Port to listen on (default: 3848)")
+  .option("--token <token>", "Override API token (default: from ~/.his-and-hers/serve-token)")
+  .option("--no-auth", "Disable authentication (local dev only)")
+  .option("--readonly", "Disable mutating endpoints (POST/DELETE)")
+  .action(
+    (opts: { port?: string; token?: string; noAuth?: boolean; readonly?: boolean }) =>
+      serve(opts),
   );
 
 program.parseAsync();
