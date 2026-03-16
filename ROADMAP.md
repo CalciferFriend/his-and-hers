@@ -709,6 +709,38 @@ context and `docs/latent-communication.md` for implementation guide. ✅ (2026-0
 
 ---
 
+## Phase 14 — `hh ask` + `hh mcp` commands ✅ (2026-03-16)
+
+> Owned by: Calcifer (H1)
+
+### 14a. `hh ask` — lightweight single-question command (Calcifer) ✅ (2026-03-16)
+- [x] `ask(question, opts)` — no audit log, no budget gate, no context tracking
+- [x] Default 60s timeout (vs 120s for `hh send`)
+- [x] Streaming via `startStreamServer` with live spinner progress (truncated 70-char preview)
+- [x] Result webhook fallback via `startResultServer`
+- [x] Last-resort poll via `pollTaskCompletion` when result server unavailable
+- [x] `buildAskText()` — HHMessage:ask format with result/stream URLs embedded
+- [x] `--peer <name>` — target peer by name
+- [x] `--timeout <seconds>` — configurable wait
+- [x] `--json` — machine-readable output (ok, answer, peer, duration_ms, error)
+- [x] `--no-stream` — disable streaming, poll/webhook only
+- [x] Fail-open for server startup errors (result/stream servers)
+- [x] Wired into `index.ts` as `program.command("ask")`
+- [x] 26 tests in `ask.test.ts` covering happy path, validation, peer selection, send failure, offline peer, poll fallback, JSON mode, server startup failures
+
+### 14b. `hh mcp` — MCP stdio server (Calcifer) ✅ (2026-03-16)
+- [x] MCP (Model Context Protocol) stdio server — `hh_send`, `hh_status`, `hh_peers`, `hh_tasks`, `hh_broadcast`, `hh_wake` tool schemas
+- [x] `--list-tools` — print tool schemas as JSON and exit
+- [x] `handleInitialize`, `handleToolsList`, `handleUnknownMethod`, `processMessage` protocol handlers
+- [x] MCP-spec-correct `isError: true` for missing tool names (not JSON-RPC protocol errors)
+- [x] Fixed `restoreAllMocks` leak in tests — `clearAllMocks` in beforeEach is sufficient
+- [x] 33 tests in `mcp.test.ts`
+- [x] Wired into `index.ts` as `program.command("mcp")`
+
+**Phase 14 complete: 1183 tests passing (up from 1157). `hh ask` lightweight Q&A command + `hh mcp` stdio server shipped.**
+
+---
+
 ## Who Owns What
 
 | Area | Owner |

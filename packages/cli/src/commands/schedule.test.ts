@@ -57,18 +57,33 @@ vi.mock("picocolors", () => ({
   },
 }));
 
-const mockLoadSchedules = vi.fn();
-const mockAddSchedule = vi.fn();
-const mockFindSchedule = vi.fn();
-const mockRemoveSchedule = vi.fn();
-const mockEnableSchedule = vi.fn();
-const mockDisableSchedule = vi.fn();
-const mockUpdateLastRun = vi.fn();
-const mockUpdateNextRun = vi.fn();
-const mockInstallCronEntry = vi.fn();
-const mockRemoveCronEntry = vi.fn();
-const mockValidateCron = vi.fn();
-const mockCalculateNextRun = vi.fn();
+const {
+  mockLoadSchedules,
+  mockAddSchedule,
+  mockFindSchedule,
+  mockRemoveSchedule,
+  mockEnableSchedule,
+  mockDisableSchedule,
+  mockUpdateLastRun,
+  mockUpdateNextRun,
+  mockInstallCronEntry,
+  mockRemoveCronEntry,
+  mockValidateCron,
+  mockCalculateNextRun,
+} = vi.hoisted(() => ({
+  mockLoadSchedules: vi.fn(),
+  mockAddSchedule: vi.fn(),
+  mockFindSchedule: vi.fn(),
+  mockRemoveSchedule: vi.fn(),
+  mockEnableSchedule: vi.fn(),
+  mockDisableSchedule: vi.fn(),
+  mockUpdateLastRun: vi.fn(),
+  mockUpdateNextRun: vi.fn(),
+  mockInstallCronEntry: vi.fn(),
+  mockRemoveCronEntry: vi.fn(),
+  mockValidateCron: vi.fn(),
+  mockCalculateNextRun: vi.fn(),
+}));
 
 vi.mock("@his-and-hers/core", async (importActual) => {
   const actual = await importActual<typeof import("@his-and-hers/core")>();

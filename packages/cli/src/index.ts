@@ -90,6 +90,8 @@ import {
 } from "./commands/profile.ts";
 import { auditList, auditVerify, auditExport } from "./commands/audit.ts";
 import { ci } from "./commands/ci.ts";
+import { mcp } from "./commands/mcp.ts";
+import { ask } from "./commands/ask.ts";
 import {
   budgetList,
   budgetSet,
@@ -1223,5 +1225,44 @@ program
   .option("--json", "Output result as JSON (for parsing in CI scripts)")
   .option("--output-file <path>", "Write result text to a file")
   .action((task: string, opts: { json?: boolean; outputFile?: string }) => ci(task, opts));
+
+// ── hh mcp ────────────────────────────────────────────────────────────────────
+program
+  .command("mcp")
+  .description(
+    "Start an MCP (Model Context Protocol) stdio server — exposes hh_send, hh_status, " +
+      "hh_peers, hh_tasks, hh_broadcast, hh_wake as tools for Claude Desktop, Cursor, Zed, etc.",
+  )
+  .option("--list-tools", "Print tool schemas as JSON and exit (no server started)")
+  .action((opts: { listTools?: boolean }) => mcp(opts));
+
+// ── hh ask ────────────────────────────────────────────────────────────────────
+program
+  .command("ask")
+  .description(
+    "Ask your peer a quick question and stream the answer directly to the terminal.\n" +
+      "Unlike `hh send`, ask is lightweight: no task state file, no polling loop, just a fast round-trip.\n\n" +
+      "Examples:\n" +
+      "  hh ask \"what is the weather like on your side?\"\n" +
+      "  hh ask --peer glados \"list your loaded ollama models\"\n" +
+      "  hh ask --timeout 30 \"run a quick disk usage check\"",
+  )
+  .argument("<question>", "The question or one-liner to send to the peer")
+  .option("--peer <name>", "Target peer by name (default: first configured peer)")
+  .option("--timeout <seconds>", "Seconds to wait for an answer (default: 60)", "60")
+  .option("--json", "Output raw JSON response")
+  .option("--no-stream", "Disable streaming output (print full answer at end)")
+  .action(
+    (
+      question: string,
+      opts: { peer?: string; timeout?: string; json?: boolean; stream?: boolean },
+    ) =>
+      ask(question, {
+        peer: opts.peer,
+        timeoutSeconds: opts.timeout ? parseInt(opts.timeout, 10) : 60,
+        json: opts.json,
+        noStream: opts.stream === false,
+      }),
+  );
 
 program.parseAsync();
