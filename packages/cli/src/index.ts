@@ -130,6 +130,11 @@ const program = new Command()
 program
   .command("onboard")
   .description("Run the setup wizard to configure this node and pair with a remote machine")
+  .option("-y, --yes", "Fast onboarding with sane defaults (non-interactive)")
+  .option("--role <role>", "Node role: h1 (orchestrator) or h2 (executor)")
+  .option("--name <name>", "Agent name (default: system hostname)")
+  .option("--model <model>", "LLM model (default: claude-sonnet-4.5)")
+  .option("--peer <hostname>", "Peer Tailscale hostname (optional, can pair later)")
   .action(onboard);
 
 program

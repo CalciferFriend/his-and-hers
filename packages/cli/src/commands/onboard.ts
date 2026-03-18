@@ -14,8 +14,28 @@ import { stepStartup } from "../wizard/steps/startup.ts";
 import { stepSoul } from "../wizard/steps/soul.ts";
 import { stepValidate } from "../wizard/steps/validate.ts";
 import { stepFinalize } from "../wizard/steps/finalize.ts";
+import {
+  createDefaultContext,
+  validateFastOnboardOptions,
+  canRunFastMode,
+  type FastOnboardOptions
+} from "../wizard/defaults.ts";
 
-export async function onboard() {
+export interface OnboardOptions {
+  yes?: boolean;
+  role?: "h1" | "h2";
+  name?: string;
+  model?: string;
+  peer?: string;
+}
+
+export async function onboard(options: OnboardOptions = {}) {
+  // Fast onboarding mode (--yes)
+  if (options.yes) {
+    return await fastOnboard(options);
+  }
+
+  // Normal interactive wizard
   p.intro(pc.bgCyan(pc.black(" his-and-hers onboard ")));
 
   let ctx = createEmptyContext();
@@ -60,4 +80,67 @@ export async function onboard() {
   ctx = await stepFinalize(ctx);
 
   p.outro(`Setup complete. Run ${pc.cyan("hh status")} to check your pair.`);
+}
+
+/**
+ * Fast onboarding mode - non-interactive setup with sane defaults
+ * Usage: hh onboard --yes --role=h1 --name=Alice --model=sonnet
+ */
+async function fastOnboard(options: OnboardOptions) {
+  p.intro(pc.bgCyan(pc.black(" his-and-hers fast onboard ")));
+
+  // Validate options
+  const errors = validateFastOnboardOptions(options as FastOnboardOptions);
+  if (errors.length > 0) {
+    p.log.error(errors.join("\n"));
+    p.outro(pc.red("Fast onboard failed. Use --role=h1 or --role=h2"));
+    process.exit(1);
+  }
+
+  // Check prerequisites
+  const prereqCheck = await canRunFastMode();
+  if (!prereqCheck.ok) {
+    p.log.error(prereqCheck.reason || "Prerequisites not met");
+    p.outro(pc.red("Fast onboard failed"));
+    process.exit(1);
+  }
+
+  // Create default context
+  const spinner = p.spinner();
+  spinner.start("Configuring with defaults...");
+
+  let ctx = createDefaultContext(options as FastOnboardOptions);
+
+  // Run minimal required steps
+  try {
+    // Step 1: Welcome (just gather system info, no prompts)
+    ctx = await stepWelcome(ctx);
+
+    // Skip steps 2-3 (role, identity) - already set via defaults
+    spinner.message("Configuring gateway...");
+
+    // Step 7: Gateway bind (auto-configure based on role)
+    ctx = await stepGatewayBind(ctx);
+
+    // Step 11: Soul templates (install defaults)
+    spinner.message("Installing templates...");
+    ctx = await stepSoul(ctx);
+
+    // Step 13: Finalize (write config, skip pairing code for now)
+    spinner.message("Writing config...");
+    ctx = await stepFinalize(ctx);
+
+    spinner.stop("Configuration complete!");
+
+    // Success message
+    p.log.success(`Node configured as ${pc.cyan(ctx.role || "unknown")} - ${pc.cyan(ctx.name || "unknown")}`);
+    p.log.info(`To pair with a remote node, exchange pairing codes or run ${pc.cyan("hh pair --code <code>")}`);
+    p.outro(`Run ${pc.cyan("hh status")} to check configuration`);
+
+  } catch (error) {
+    spinner.stop("Failed");
+    p.log.error(String(error));
+    p.outro(pc.red("Fast onboard failed"));
+    process.exit(1);
+  }
 }
