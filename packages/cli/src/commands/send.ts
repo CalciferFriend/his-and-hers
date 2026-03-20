@@ -1,5 +1,5 @@
 /**
- * commands/send.ts — `hh send <task>`
+ * commands/send.ts — `cofounder send <task>`
  *
  * Send a task to the peer node.
  *
@@ -7,7 +7,7 @@
  *   1. Check if peer is awake (Tailscale ping)
  *   2. If offline and WOL configured → send magic packet, wait for boot
  *   3. Verify peer gateway is healthy
- *   4. Build HHTaskMessage, write pending task state
+ *   4. Build CofounderTaskMessage, write pending task state
  *   5. Deliver via wakeAgent (injects into peer's OpenClaw session) — with retry/backoff
  *   6. If --wait:
  *        a. Start a result webhook server (Phase 5d) — H2 POSTs back directly
@@ -16,7 +16,7 @@
  *
  * Retry safety (Phase 5e):
  *   wakeAgent delivery is wrapped in withRetry(). A RetryState file persisted at
- *   ~/.his-and-hers/retry/<task-id>.json prevents duplicate sends from cron runs.
+ *   ~/.cofounder/retry/<task-id>.json prevents duplicate sends from cron runs.
  */
 
 import * as p from "@clack/prompts";
@@ -41,13 +41,13 @@ import {
   deliverNotification,
   checkBudget,
   broadcastNotification,
-} from "@his-and-hers/core";
+} from "@cofounder/core";
 import { createTaskState, pollTaskCompletion, updateTaskState } from "../state/tasks.ts";
 import { getPeer, selectBestPeer, formatPeerList } from "../peers/select.ts";
-import { getActiveWebhooks } from "@his-and-hers/core/notify/config";
-import type { NotificationContext } from "@his-and-hers/core/notify/notify";
-import { loadAttachments, formatAttachmentSummary, appendAuditEntry } from "@his-and-hers/core";
-import type { AttachmentPayload } from "@his-and-hers/core";
+import { getActiveWebhooks } from "@cofounder/core/notify/config";
+import type { NotificationContext } from "@cofounder/core/notify/notify";
+import { loadAttachments, formatAttachmentSummary, appendAuditEntry } from "@cofounder/core";
+import type { AttachmentPayload } from "@cofounder/core";
 
 const WAKE_TIMEOUT_ATTEMPTS = 45; // 45 × 2s = 90s max
 const WAKE_POLL_MS = 2000;
@@ -83,7 +83,7 @@ async function fireNotifications(
     );
   }
 
-  // Legacy persistent webhooks from `hh notify add` (notify/config.ts store)
+  // Legacy persistent webhooks from `cofounder notify add` (notify/config.ts store)
   const persisted = await getActiveWebhooks(ctx.success).catch(() => []);
   for (const wh of persisted) {
     tasks.push(
@@ -159,14 +159,14 @@ export interface SendOptions {
   notify?: string;
   /**
    * Phase 7b: Path to sync to H2 before dispatching the task.
-   * Equivalent to running `hh sync <path>` immediately before `hh send`.
+   * Equivalent to running `cofounder sync <path>` immediately before `cofounder send`.
    * Sync failure is non-fatal: a warning is shown and send continues.
    */
   sync?: string;
   /**
    * Phase 7d: One or more local file paths to attach to the task.
    * Supported: PDF, images (PNG/JPEG/WebP/GIF), text, code, markdown, JSON.
-   * Files are base64-encoded and embedded in HHTaskMessage.payload.attachments[].
+   * Files are base64-encoded and embedded in CofounderTaskMessage.payload.attachments[].
    * Soft cap: 10 MB per file (warns but continues). Hard cap: 50 MB (error).
    * H2 injects multimodal types via message API; text/code as fenced blocks.
    */
@@ -177,7 +177,7 @@ export async function send(task: string, opts: SendOptions = {}) {
   const config = await loadConfig();
 
   if (!config) {
-    p.log.error("No configuration found. Run `hh onboard` first.");
+    p.log.error("No configuration found. Run `cofounder onboard` first.");
     return;
   }
 
@@ -231,7 +231,7 @@ export async function send(task: string, opts: SendOptions = {}) {
   let kvModel: string | undefined;
 
   if (opts.latent || opts.autoLatent) {
-    const { loadPeerCapabilities, routeTask } = await import("@his-and-hers/core");
+    const { loadPeerCapabilities, routeTask } = await import("@cofounder/core");
     const peerCaps = await loadPeerCapabilities().catch(() => null);
     if (peerCaps) {
       const latentDecision = routeTask(task, peerCaps);
@@ -255,7 +255,7 @@ export async function send(task: string, opts: SendOptions = {}) {
       }
     } else if (opts.latent) {
       p.log.error(
-        `No cached capabilities for ${peer.name}. Run \`hh capabilities fetch\` first, ` +
+        `No cached capabilities for ${peer.name}. Run \`cofounder capabilities fetch\` first, ` +
         `or omit --latent to use text transport.`
       );
       p.outro("Send failed.");
@@ -270,7 +270,7 @@ export async function send(task: string, opts: SendOptions = {}) {
     p.log.warn(
       pc.yellow("⚠ Latent transport is Phase 6 / experimental. ") +
       "Vision Wormhole codec is not yet production-ready. " +
-      "Message will be sent as standard HHTaskMessage with latent metadata attached."
+      "Message will be sent as standard CofounderTaskMessage with latent metadata attached."
     );
   }
 
@@ -351,7 +351,7 @@ export async function send(task: string, opts: SendOptions = {}) {
             `Cap: $${budgetCheck.limit.toFixed(2)} (${budgetCheck.limit_type})`,
           ),
         );
-        p.log.info(pc.dim(`Adjust the cap with: hh budget-cap set ${peer.name} --action warn`));
+        p.log.info(pc.dim(`Adjust the cap with: cofounder budget-cap set ${peer.name} --action warn`));
         p.outro("Send blocked by budget policy.");
         // Fire budget_warn notification to all registered targets
         broadcastNotification("budget_warn", {
@@ -418,7 +418,7 @@ export async function send(task: string, opts: SendOptions = {}) {
     }
   }
 
-  // Step 3: build HHTaskMessage (attach context summary for multi-turn continuity)
+  // Step 3: build CofounderTaskMessage (attach context summary for multi-turn continuity)
   const contextSummary = await loadContextSummary(peer.name, 3).catch(() => null);
   if (contextSummary) {
     p.log.info(pc.dim(`Context: ${contextSummary.split("\n")[0]}`));
@@ -457,7 +457,7 @@ export async function send(task: string, opts: SendOptions = {}) {
       routing_hint: routing,
     });
     p.log.info(`Task ID: ${pc.cyan(msg.id.slice(0, 8))} (full: ${pc.dim(msg.id)})`);
-    p.log.info(pc.dim(`  State: ~/.his-and-hers/state/tasks/${msg.id}.json`));
+    p.log.info(pc.dim(`  State: ~/.cofounder/state/tasks/${msg.id}.json`));
   }
 
   // ─── Phase 5d: Start result webhook server (if --wait and not disabled) ─────
@@ -511,7 +511,7 @@ export async function send(task: string, opts: SendOptions = {}) {
   const sendS = p.spinner();
   sendS.start("Delivering task...");
   if (!peer.gateway_token) {
-    p.log.error("Peer gateway token not set. Run `hh pair` first.");
+    p.log.error("Peer gateway token not set. Run `cofounder pair` first.");
     p.outro("Send failed.");
     webhookHandle?.close();
     streamHandle?.close();
@@ -705,7 +705,7 @@ export async function send(task: string, opts: SendOptions = {}) {
       pollS.stop(pc.red("Task state lost — the state file may have been removed."));
     } else if (finalState.status === "timeout") {
       pollS.stop(pc.yellow("Timed out waiting for result. Task is still pending."));
-      p.log.info(`Check later with: ${pc.cyan(`hh task-status ${msg.id}`)}`);
+      p.log.info(`Check later with: ${pc.cyan(`cofounder task-status ${msg.id}`)}`);
     } else if (finalState.status === "completed") {
       pollS.stop(pc.green("✓ Task completed!"));
       p.log.info(`\n${pc.bold("Result:")}`);
@@ -750,8 +750,8 @@ export async function send(task: string, opts: SendOptions = {}) {
 
     p.outro("Done.");
   } else {
-    p.log.info(pc.dim(`To wait for result: hh send --wait "${task}"`));
-    p.log.info(pc.dim(`To check status:   hh task-status ${msg.id.slice(0, 8)}`));
+    p.log.info(pc.dim(`To wait for result: cofounder send --wait "${task}"`));
+    p.log.info(pc.dim(`To check status:   cofounder task-status ${msg.id.slice(0, 8)}`));
     p.outro("Task sent.");
   }
 }
@@ -773,14 +773,14 @@ function buildWakeText(
   streamToken?: string | null,
   attachments?: AttachmentPayload[],
 ): string {
-  // Build the `hh result` invocation hint — include --webhook-url flag if available
+  // Build the `cofounder result` invocation hint — include --webhook-url flag if available
   // so H2 can deliver the result back to H1 instantly without polling.
   const resultCmd = webhookUrl
-    ? `hh result ${taskId} "<your output here>" --webhook-url ${webhookUrl}`
-    : `hh result ${taskId} "<your output here>"`;
+    ? `cofounder result ${taskId} "<your output here>" --webhook-url ${webhookUrl}`
+    : `cofounder result ${taskId} "<your output here>"`;
 
   const lines = [
-    `[HHMessage:task from ${from} id=${taskId}] ${task}`,
+    `[CofounderMessage:task from ${from} id=${taskId}] ${task}`,
     ``,
     `When done, run: ${resultCmd}`,
   ];
@@ -797,13 +797,13 @@ function buildWakeText(
     lines.push(`(--webhook-url delivers the result to H1 immediately; omit to fall back to polling)`);
   }
 
-  // Phase 3 streaming: H2's hh watch picks this up via HH_STREAM_URL env
+  // Phase 3 streaming: H2's cofounder watch picks this up via COFOUNDER_STREAM_URL env
   if (streamUrl && streamToken) {
     lines.push(``);
     lines.push(`HH-Stream-URL: ${streamUrl}`);
     lines.push(`HH-Stream-Token: ${streamToken}`);
     lines.push(
-      `(hh watch reads these to POST stdout chunks in real-time; H1 displays live progress)`,
+      `(cofounder watch reads these to POST stdout chunks in real-time; H1 displays live progress)`,
     );
   }
 

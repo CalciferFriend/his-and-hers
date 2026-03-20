@@ -1,5 +1,5 @@
 /**
- * discover.test.ts — unit tests for `hh discover`
+ * discover.test.ts — unit tests for `cofounder discover`
  *
  * Covers: empty registry, filter by role/gpu/skill/provider/os, limit,
  * --json output, sorting (h2 first then by date), partial fetch failures,
@@ -29,14 +29,14 @@ function makeGist(
 ) {
   const files: Record<string, { filename: string; raw_url: string }> = {};
   if (card !== null) {
-    files["hh-node-card.json"] = {
-      filename: "hh-node-card.json",
+    files["cofounder-node-card.json"] = {
+      filename: "cofounder-node-card.json",
       raw_url: `https://gist.githubusercontent.com/raw/${id}`,
     };
   }
   return {
     id,
-    description: "[his-and-hers] test node",
+    description: "[cofounder] test node",
     html_url: `https://gist.github.com/${id}`,
     updated_at: updatedAt,
     forks_url: `https://api.github.com/gists/${id}/forks`,
@@ -117,7 +117,7 @@ beforeEach(() => {
 // Empty registry
 // ---------------------------------------------------------------------------
 
-describe("hh discover — empty registry", () => {
+describe("cofounder discover — empty registry", () => {
   it("prints a helpful message when no nodes published", async () => {
     mockFetch.mockResolvedValueOnce(mockGistList([]));
     const logs: string[] = [];
@@ -125,7 +125,7 @@ describe("hh discover — empty registry", () => {
 
     await discover({});
 
-    expect(logs.some((l) => l.includes("No nodes") || l.includes("hh publish"))).toBe(true);
+    expect(logs.some((l) => l.includes("No nodes") || l.includes("cofounder publish"))).toBe(true);
   });
 
   it("outputs empty JSON array when no nodes and --json", async () => {
@@ -143,7 +143,7 @@ describe("hh discover — empty registry", () => {
 // Basic listing
 // ---------------------------------------------------------------------------
 
-describe("hh discover — basic listing", () => {
+describe("cofounder discover — basic listing", () => {
   beforeEach(() => {
     const gist1 = makeGist("gist-001", CARD_H2_GPU, "2026-03-14T00:00:00Z");
     const gist2 = makeGist("gist-002", CARD_H1_CPU, "2026-03-13T00:00:00Z");
@@ -183,7 +183,7 @@ describe("hh discover — basic listing", () => {
 // Sorting: h2 first, then by updated_at desc
 // ---------------------------------------------------------------------------
 
-describe("hh discover — sorting", () => {
+describe("cofounder discover — sorting", () => {
   it("puts h2 nodes before h1 nodes", async () => {
     const gist1 = makeGist("gist-h1", CARD_H1_CPU, "2026-03-14T10:00:00Z");
     const gist2 = makeGist("gist-h2", CARD_H2_GPU, "2026-03-13T10:00:00Z");
@@ -229,7 +229,7 @@ describe("hh discover — sorting", () => {
 // Filters
 // ---------------------------------------------------------------------------
 
-describe("hh discover — filter by role", () => {
+describe("cofounder discover — filter by role", () => {
   beforeEach(() => {
     const gist1 = makeGist("gist-h2", CARD_H2_GPU);
     const gist2 = makeGist("gist-h1", CARD_H1_CPU);
@@ -263,7 +263,7 @@ describe("hh discover — filter by role", () => {
   });
 });
 
-describe("hh discover — filter by gpu backend", () => {
+describe("cofounder discover — filter by gpu backend", () => {
   beforeEach(() => {
     const gist1 = makeGist("gist-gpu", CARD_H2_GPU);
     const gist2 = makeGist("gist-pi", CARD_H2_LINUX);
@@ -295,7 +295,7 @@ describe("hh discover — filter by gpu backend", () => {
   });
 });
 
-describe("hh discover — filter by skill", () => {
+describe("cofounder discover — filter by skill", () => {
   beforeEach(() => {
     const gist1 = makeGist("gist-gpu", CARD_H2_GPU);
     const gist2 = makeGist("gist-pi", CARD_H2_LINUX);
@@ -327,7 +327,7 @@ describe("hh discover — filter by skill", () => {
   });
 });
 
-describe("hh discover — filter by provider", () => {
+describe("cofounder discover — filter by provider", () => {
   beforeEach(() => {
     const gist1 = makeGist("gist-ollama", CARD_H2_GPU);
     const gist2 = makeGist("gist-anthropic", CARD_H1_CPU);
@@ -360,7 +360,7 @@ describe("hh discover — filter by provider", () => {
   });
 });
 
-describe("hh discover — filter by OS", () => {
+describe("cofounder discover — filter by OS", () => {
   beforeEach(() => {
     const gist1 = makeGist("gist-win", CARD_H2_GPU);
     const gist2 = makeGist("gist-linux", CARD_H2_LINUX);
@@ -398,7 +398,7 @@ describe("hh discover — filter by OS", () => {
 // Limit
 // ---------------------------------------------------------------------------
 
-describe("hh discover — limit", () => {
+describe("cofounder discover — limit", () => {
   it("caps results to --limit value", async () => {
     const gist1 = makeGist("gist-1", CARD_H2_GPU, "2026-03-14T00:00:00Z");
     const gist2 = makeGist("gist-2", CARD_H2_LINUX, "2026-03-13T00:00:00Z");
@@ -425,7 +425,7 @@ describe("hh discover — limit", () => {
 // GitHub API error
 // ---------------------------------------------------------------------------
 
-describe("hh discover — API errors", () => {
+describe("cofounder discover — API errors", () => {
   it("logs error and exits when GitHub API returns non-200", async () => {
     mockFetch.mockResolvedValueOnce({
       ok: false,
@@ -482,7 +482,7 @@ describe("hh discover — API errors", () => {
 // Auth token passthrough
 // ---------------------------------------------------------------------------
 
-describe("hh discover — auth token", () => {
+describe("cofounder discover — auth token", () => {
   it("passes provided token as Authorization header", async () => {
     mockFetch.mockResolvedValueOnce(mockGistList([]));
 
@@ -517,18 +517,18 @@ describe("hh discover — auth token", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Gist description filter — only [his-and-hers] gists
+// Gist description filter — only [cofounder] gists
 // ---------------------------------------------------------------------------
 
-describe("hh discover — gist description filter", () => {
-  it("ignores gists without [his-and-hers] description", async () => {
+describe("cofounder discover — gist description filter", () => {
+  it("ignores gists without [cofounder] description", async () => {
     const unrelated = {
       id: "unrelated",
       description: "some random gist",
       html_url: "https://gist.github.com/unrelated",
       updated_at: "2026-03-14T00:00:00Z",
       forks_url: "",
-      files: { "hh-node-card.json": { filename: "hh-node-card.json", raw_url: "https://x.com/raw" } },
+      files: { "cofounder-node-card.json": { filename: "cofounder-node-card.json", raw_url: "https://x.com/raw" } },
     };
     const real = makeGist("gist-real", CARD_H2_GPU);
 

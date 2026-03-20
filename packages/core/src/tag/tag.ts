@@ -1,7 +1,7 @@
 /**
  * core/src/tag/tag.ts — task tagging helpers
  *
- * Tags are stored in ~/.his-and-hers/tags/<task_id>.json as:
+ * Tags are stored in ~/.cofounder/tags/<task_id>.json as:
  *   { task_id: string; tags: string[]; note?: string; tagged_at: string }
  *
  * Tag names: lowercase, alphanumeric + hyphen, max 32 chars.
@@ -31,7 +31,7 @@ const MAX_TAGS_PER_TASK = 20;
 // ─── Storage path ─────────────────────────────────────────────────────────────
 
 function tagsDir(): string {
-  return join(homedir(), ".his-and-hers", "tags");
+  return join(homedir(), ".cofounder", "tags");
 }
 
 function tagPath(taskId: string): string {
@@ -118,7 +118,7 @@ export async function removeTag(taskId: string, tags: string[]): Promise<TagReco
   return record;
 }
 
-/** List all tag records from ~/.his-and-hers/tags/. */
+/** List all tag records from ~/.cofounder/tags/. */
 export async function listTagRecords(): Promise<TagRecord[]> {
   const dir = tagsDir();
   if (!existsSync(dir)) return [];

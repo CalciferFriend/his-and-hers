@@ -1,13 +1,13 @@
 /**
- * commands/pipeline.ts — `hh pipeline`
+ * commands/pipeline.ts — `cofounder pipeline`
  *
  * Run a sequence of tasks across peers, feeding each step's output into the next.
  *
  * Usage:
- *   hh pipeline "glados:write tests -> piper:review code"      # inline spec
- *   hh pipeline --file pipeline.json                           # from file
- *   hh pipeline --file pipeline.json --json                    # JSON output
- *   hh pipeline --file pipeline.json --timeout 180             # per-step timeout
+ *   cofounder pipeline "glados:write tests -> piper:review code"      # inline spec
+ *   cofounder pipeline --file pipeline.json                           # from file
+ *   cofounder pipeline --file pipeline.json --json                    # JSON output
+ *   cofounder pipeline --file pipeline.json --timeout 180             # per-step timeout
  *
  * Each task may use placeholders:
  *   {{previous.output}}      — output of the immediately preceding step
@@ -29,7 +29,7 @@ import {
   loadContextSummary,
   withRetry,
   checkGatewayHealth,
-} from "@his-and-hers/core";
+} from "@cofounder/core";
 import {
   interpolatePipelineTask,
   parsePipelineSpec,
@@ -38,7 +38,7 @@ import {
   type PipelineStepResult,
   type PipelineRunResult,
   type PipelineDefinition,
-} from "@his-and-hers/core";
+} from "@cofounder/core";
 import { createTaskState, pollTaskCompletion } from "../state/tasks.ts";
 import { findPeerByName } from "../peers/select.ts";
 
@@ -87,7 +87,7 @@ function stepLabel(step: PipelineStep, idx: number): string {
 export async function pipeline(spec: string | undefined, opts: PipelineOptions = {}) {
   const config = await loadConfig();
   if (!config) {
-    p.log.error("No configuration found. Run `hh onboard` first.");
+    p.log.error("No configuration found. Run `cofounder onboard` first.");
     return;
   }
 
@@ -118,7 +118,7 @@ export async function pipeline(spec: string | undefined, opts: PipelineOptions =
     }
   } else {
     p.log.error("Provide a pipeline spec or --file <path>");
-    p.log.info("Example: hh pipeline \"glados:generate code -> piper:review it\"");
+    p.log.info("Example: cofounder pipeline \"glados:generate code -> piper:review it\"");
     return;
   }
 

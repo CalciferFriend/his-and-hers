@@ -1,10 +1,10 @@
 /**
  * notify/config.ts
  *
- * Persistent notification webhook registry — ~/.his-and-hers/notify-webhooks.json
+ * Persistent notification webhook registry — ~/.cofounder/notify-webhooks.json
  *
  * Stores one or more webhooks (Discord, Slack, generic) that fire automatically
- * on task completion without requiring --notify on every `hh send` invocation.
+ * on task completion without requiring --notify on every `cofounder send` invocation.
  *
  * Webhooks can be scoped to event types:
  *   "all"      — fires on any task completion (success or failure)
@@ -46,7 +46,7 @@ export const HHNotifyWebhookListSchema = z.array(HHNotifyWebhookSchema);
 // ─── Paths ───────────────────────────────────────────────────────────────────
 
 function getBaseDir(): string {
-  return join(homedir(), ".his-and-hers");
+  return join(homedir(), ".cofounder");
 }
 
 function getNotifyPath(): string {

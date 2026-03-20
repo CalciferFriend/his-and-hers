@@ -1,4 +1,4 @@
-# `hh schedule` — Reference
+# `cofounder schedule` — Reference
 
 Register recurring tasks that run automatically on a cron schedule and are
 delegated to your H2 peer.
@@ -8,7 +8,7 @@ delegated to your H2 peer.
 ## Synopsis
 
 ```bash
-hh schedule <subcommand> [flags]
+cofounder schedule <subcommand> [flags]
 ```
 
 ---
@@ -26,10 +26,10 @@ hh schedule <subcommand> [flags]
 
 ---
 
-## `hh schedule add`
+## `cofounder schedule add`
 
 ```bash
-hh schedule add --cron "<expr>" "<task>" [flags]
+cofounder schedule add --cron "<expr>" "<task>" [flags]
 ```
 
 ### Flags
@@ -59,13 +59,13 @@ minute  hour  day  month  weekday
 
 ```bash
 # Generate a daily summary every morning
-hh schedule add --cron "0 8 * * *" "Generate a project status summary and save to ~/summaries/"
+cofounder schedule add --cron "0 8 * * *" "Generate a project status summary and save to ~/summaries/"
 
 # Weekly code review — target a specific peer
-hh schedule add --cron "0 10 * * 1" "Review the git diff from the last 7 days and suggest improvements" --peer h2-home --name "weekly-review"
+cofounder schedule add --cron "0 10 * * 1" "Review the git diff from the last 7 days and suggest improvements" --peer h2-home --name "weekly-review"
 
 # Every 30 minutes — lightweight local task
-hh schedule add --cron "*/30 * * * *" "Check disk usage and alert if above 90%" --peer h2-home
+cofounder schedule add --cron "*/30 * * * *" "Check disk usage and alert if above 90%" --peer h2-home
 ```
 
 ### Output
@@ -80,15 +80,15 @@ hh schedule add --cron "*/30 * * * *" "Check disk usage and alert if above 90%" 
   Peer:        auto
   Next run:    Sat Mar 14 08:00:00 UTC 2026
 
-◆  Schedule added. View all: hh schedule list
+◆  Schedule added. View all: cofounder schedule list
 ```
 
 ---
 
-## `hh schedule list`
+## `cofounder schedule list`
 
 ```bash
-hh schedule list [--json]
+cofounder schedule list [--json]
 ```
 
 ```
@@ -103,7 +103,7 @@ Schedules (3)
 ### JSON output
 
 ```bash
-hh schedule list --json
+cofounder schedule list --json
 ```
 
 ```json
@@ -125,57 +125,57 @@ hh schedule list --json
 
 ---
 
-## `hh schedule remove <id>`
+## `cofounder schedule remove <id>`
 
 Remove a schedule and uninstall its crontab entry. Accepts a full UUID or
 a short prefix (first 8 characters, as shown in `list`).
 
 ```bash
-hh schedule remove a7f3c2b1
+cofounder schedule remove a7f3c2b1
 ```
 
 ---
 
-## `hh schedule enable / disable <id>`
+## `cofounder schedule enable / disable <id>`
 
 Pause or resume a schedule without removing it. Disabling removes the crontab
 entry but keeps the schedule in `schedules.json` so it can be re-enabled later.
 
 ```bash
-hh schedule disable b8a9c0d1
-hh schedule enable  b8a9c0d1
+cofounder schedule disable b8a9c0d1
+cofounder schedule enable  b8a9c0d1
 ```
 
 ---
 
-## `hh schedule run <id>`
+## `cofounder schedule run <id>`
 
 Immediately fire a schedule as if its cron time had arrived. Updates `last_run`
-and delegates the task via `hh send`. Useful for testing.
+and delegates the task via `cofounder send`. Useful for testing.
 
 ```bash
-hh schedule run a7f3c2b1
+cofounder schedule run a7f3c2b1
 ```
 
 ---
 
 ## Storage
 
-Schedules are persisted at `~/.his-and-hers/schedules.json`. Logs from cron
-executions are written to `~/.his-and-hers/schedule-logs/<id>.log`.
+Schedules are persisted at `~/.cofounder/schedules.json`. Logs from cron
+executions are written to `~/.cofounder/schedule-logs/<id>.log`.
 
 ---
 
 ## How it works
 
-`hh schedule add` installs a crontab entry of the form:
+`cofounder schedule add` installs a crontab entry of the form:
 
 ```
-0 8 * * *  hh send "Generate a project status summary..." >> ~/.his-and-hers/schedule-logs/<id>.log 2>&1
+0 8 * * *  cofounder send "Generate a project status summary..." >> ~/.cofounder/schedule-logs/<id>.log 2>&1
 # HH_SCHEDULE_ID=a7f3c2b1-...
 ```
 
-The comment line is used by `hh schedule remove` / `disable` to find and
+The comment line is used by `cofounder schedule remove` / `disable` to find and
 remove the entry without touching your other crontab rules.
 
 ---
@@ -183,5 +183,5 @@ remove the entry without touching your other crontab rules.
 ## See also
 
 - [Scheduling guide](/guide/scheduling) — use cases, tips, and best practices
-- [hh send](/reference/send) — manual task delegation
-- [hh logs](/reference/logs) — view task history from scheduled runs
+- [cofounder send](/reference/send) — manual task delegation
+- [cofounder logs](/reference/logs) — view task history from scheduled runs

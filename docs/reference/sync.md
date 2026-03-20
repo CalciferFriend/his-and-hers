@@ -1,4 +1,4 @@
-# `hh sync` — Push Local Files to H2
+# `cofounder sync` — Push Local Files to H2
 
 Push a local file or directory to the H2 peer over Tailscale SSH using `rsync`.
 Useful for keeping a working directory in sync before delegating a task, sharing
@@ -11,7 +11,7 @@ data files, or live-editing code on H2 with `--watch`.
 ## Usage
 
 ```sh
-hh sync <path> [options]
+cofounder sync <path> [options]
 ```
 
 ---
@@ -20,25 +20,25 @@ hh sync <path> [options]
 
 ```sh
 # Sync a project directory to ~/project on H2
-hh sync ./project
+cofounder sync ./project
 
 # Sync to an explicit remote destination
-hh sync ./data --dest /mnt/data
+cofounder sync ./data --dest /mnt/data
 
 # Preview what would transfer without writing anything
-hh sync . --dry-run
+cofounder sync . --dry-run
 
 # Delete remote files that no longer exist locally
-hh sync ./src --delete
+cofounder sync ./src --delete
 
 # Watch for local changes and re-sync automatically
-hh sync ./workspace --watch
+cofounder sync ./workspace --watch
 
 # Target a specific peer in a multi-H2 setup
-hh sync ./repo --peer piper
+cofounder sync ./repo --peer piper
 
-# Sync before sending a task (hh send flag)
-hh send "run tests on the latest code" --sync ./project
+# Sync before sending a task (cofounder send flag)
+cofounder send "run tests on the latest code" --sync ./project
 ```
 
 ---
@@ -58,7 +58,7 @@ hh send "run tests on the latest code" --sync ./project
 
 ## How It Works
 
-`hh sync` wraps `rsync` with an SSH transport over Tailscale. It builds the
+`cofounder sync` wraps `rsync` with an SSH transport over Tailscale. It builds the
 following rsync invocation:
 
 ```
@@ -73,7 +73,7 @@ Key details:
 
 - **Trailing slash** is appended to directory sources automatically so rsync
   mirrors the contents of the directory (not a subdirectory named after it).
-- **SSH key** is sourced from `peer_node.ssh_key_path` in your `~/.his-and-hers/config.json`.
+- **SSH key** is sourced from `peer_node.ssh_key_path` in your `~/.cofounder/config.json`.
   If not set, rsync uses SSH agent / default key discovery.
 - **`--stats`** is always passed to collect file/byte counts for the summary output.
 - **`--delete`** is destructive — it removes files on H2 that don't exist locally.
@@ -83,12 +83,12 @@ Key details:
 
 ## `--watch` mode
 
-With `--watch`, `hh sync` performs an initial sync, then monitors the local path
+With `--watch`, `cofounder sync` performs an initial sync, then monitors the local path
 with `fs.watch()` (recursive). Any file change triggers a debounced re-sync after
 the configured interval (default 1 s). Press **Ctrl-C** to stop.
 
 ```
-$ hh sync ./workspace --watch
+$ cofounder sync ./workspace --watch
 ◆ watch  /home/nic/workspace → nic@100.119.44.38:~/workspace
   Syncing now, then watching for changes. Ctrl-C to stop.
 ✓ Initial sync complete — 47 files in 312ms
@@ -102,12 +102,12 @@ $ hh sync ./workspace --watch
 
 ## Sending with `--sync`
 
-The `--sync <path>` flag on `hh send` runs `hh sync` immediately before
+The `--sync <path>` flag on `cofounder send` runs `cofounder sync` immediately before
 dispatching the task. Sync failure is **non-fatal**: a warning is printed and
 the send continues.
 
 ```sh
-hh send "run the test suite" --sync ./project --peer glados --wait
+cofounder send "run the test suite" --sync ./project --peer glados --wait
 ```
 
 Flow:
@@ -137,20 +137,20 @@ With `--dry-run`:
 
 ## Requirements
 
-- `rsync` must be installed on H1 (the machine running `hh sync`)
+- `rsync` must be installed on H1 (the machine running `cofounder sync`)
 - The H2 peer must be reachable via Tailscale SSH
-- `ssh_user` and `tailscale_ip` must be set in `~/.his-and-hers/config.json`
+- `ssh_user` and `tailscale_ip` must be set in `~/.cofounder/config.json`
 
-> **Note:** `hh sync` does **not** wake H2 from sleep before syncing.
-> If H2 may be asleep, run `hh wake` first or use `hh send --sync <path>` which
+> **Note:** `cofounder sync` does **not** wake H2 from sleep before syncing.
+> If H2 may be asleep, run `cofounder wake` first or use `cofounder send --sync <path>` which
 > goes through the full wake + health-check flow.
 
 ---
 
-## SyncResult (programmatic API via `@his-and-hers/sdk`)
+## SyncResult (programmatic API via `@cofounder/sdk`)
 
 ```ts
-import { sync } from "@his-and-hers/sdk";
+import { sync } from "@cofounder/sdk";
 
 const result = await sync("./project", { dryRun: true });
 // {
@@ -169,7 +169,7 @@ const result = await sync("./project", { dryRun: true });
 
 ## See Also
 
-- [`hh send`](./cli.md#hh-send) — send a task to H2 (supports `--sync`)
-- [`hh broadcast`](./broadcast.md) — send the same task to multiple peers
-- [`hh peers`](./cli.md#hh-peers) — list configured peer nodes
+- [`cofounder send`](./cli.md#hh-send) — send a task to H2 (supports `--sync`)
+- [`cofounder broadcast`](./broadcast.md) — send the same task to multiple peers
+- [`cofounder peers`](./cli.md#hh-peers) — list configured peer nodes
 - [Calcifer / GLaDOS reference setup](./calcifer-glados.md)

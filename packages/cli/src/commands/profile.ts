@@ -1,15 +1,15 @@
 /**
- * commands/profile.ts — `hh profile`
+ * commands/profile.ts — `cofounder profile`
  *
  * Named config profiles for switching between multiple setups.
  *
  * Usage:
- *   hh profile list                      → list all profiles, mark active
- *   hh profile use <name>                → switch active profile
- *   hh profile create <name>             → create new blank profile
- *   hh profile create <name> --from existing → copy from existing profile
- *   hh profile show [<name>]             → print profile config (mask tokens)
- *   hh profile delete <name>             → delete profile (refuse if active)
+ *   cofounder profile list                      → list all profiles, mark active
+ *   cofounder profile use <name>                → switch active profile
+ *   cofounder profile create <name>             → create new blank profile
+ *   cofounder profile create <name> --from existing → copy from existing profile
+ *   cofounder profile show [<name>]             → print profile config (mask tokens)
+ *   cofounder profile delete <name>             → delete profile (refuse if active)
  */
 
 import * as p from "@clack/prompts";
@@ -20,7 +20,7 @@ import { join } from "node:path";
 import { HHConfig } from "../config/schema.ts";
 import { getActiveProfileName, setActiveProfile } from "../config/store.ts";
 
-const PROFILES_DIR = join(homedir(), ".his-and-hers", "profiles");
+const PROFILES_DIR = join(homedir(), ".cofounder", "profiles");
 
 export interface ProfileListOptions {
   json?: boolean;
@@ -64,14 +64,14 @@ export async function profileList(opts: ProfileListOptions = {}) {
     }
 
     if (profiles.length === 0) {
-      p.intro(pc.bgMagenta(pc.white(" hh profile list ")));
+      p.intro(pc.bgMagenta(pc.white(" cofounder profile list ")));
       p.log.info("No profiles found.");
-      p.log.info(`Create one with: ${pc.cyan("hh profile create <name>")}`);
+      p.log.info(`Create one with: ${pc.cyan("cofounder profile create <name>")}`);
       p.outro("Done.");
       return;
     }
 
-    p.intro(pc.bgMagenta(pc.white(" hh profile list ")));
+    p.intro(pc.bgMagenta(pc.white(" cofounder profile list ")));
 
     for (const name of profiles.sort()) {
       const marker = name === activeProfile ? pc.green("★") : pc.dim(" ");
@@ -99,13 +99,13 @@ export async function profileUse(name: string) {
       await readFile(profilePath, "utf-8");
     } catch {
       p.log.error(`Profile ${pc.cyan(name)} not found.`);
-      p.log.info(`Available profiles: run ${pc.cyan("hh profile list")}`);
+      p.log.info(`Available profiles: run ${pc.cyan("cofounder profile list")}`);
       process.exit(1);
     }
 
     await setActiveProfile(name);
 
-    p.intro(pc.bgMagenta(pc.white(" hh profile use ")));
+    p.intro(pc.bgMagenta(pc.white(" cofounder profile use ")));
     p.log.success(`Switched to profile ${pc.cyan(name)}`);
     p.outro("Done.");
   } catch (err) {
@@ -161,14 +161,14 @@ export async function profileCreate(name: string, opts: ProfileCreateOptions = {
 
     await writeFile(profilePath, JSON.stringify(config, null, 2), { mode: 0o600 });
 
-    p.intro(pc.bgMagenta(pc.white(" hh profile create ")));
+    p.intro(pc.bgMagenta(pc.white(" cofounder profile create ")));
     p.log.success(`Created profile ${pc.cyan(name)}`);
     if (opts.from) {
       p.log.info(`Copied from: ${pc.dim(opts.from)}`);
     }
     p.log.info(`Path: ${pc.dim(profilePath)}`);
     p.log.message("");
-    p.log.info(`Switch to it with: ${pc.cyan(`hh profile use ${name}`)}`);
+    p.log.info(`Switch to it with: ${pc.cyan(`cofounder profile use ${name}`)}`);
     p.outro("Done.");
   } catch (err) {
     p.log.error(`Failed to create profile: ${err instanceof Error ? err.message : String(err)}`);
@@ -201,7 +201,7 @@ export async function profileShow(name?: string, opts: ProfileShowOptions = {}) 
       return;
     }
 
-    p.intro(pc.bgMagenta(pc.white(` hh profile show — ${profileName} `)));
+    p.intro(pc.bgMagenta(pc.white(` cofounder profile show — ${profileName} `)));
     p.log.info(JSON.stringify(masked, null, 2));
     p.outro("Done.");
   } catch (err) {
@@ -232,7 +232,7 @@ export async function profileDelete(name: string, opts: ProfileDeleteOptions = {
       process.exit(1);
     }
 
-    p.intro(pc.bgMagenta(pc.white(" hh profile delete ")));
+    p.intro(pc.bgMagenta(pc.white(" cofounder profile delete ")));
     p.log.success(`Deleted profile ${pc.cyan(name)}`);
     p.outro("Done.");
   } catch (err) {

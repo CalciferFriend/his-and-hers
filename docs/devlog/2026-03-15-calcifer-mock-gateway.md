@@ -31,7 +31,7 @@ Inspection:
 - `gw.clearWakes()` — reset between sub-tests
 - EventEmitter: `"wake"`, `"connect"`, `"disconnect"` events
 
-Exported from `@his-and-hers/core` — available in CLI tests too.
+Exported from `@cofounder/core` — available in CLI tests too.
 
 ### mock-gateway.test.ts — 22 new tests
 
@@ -41,7 +41,7 @@ Coverage:
 - Auth failures: wrong token, rejectAuth=true, no wake recorded on auth fail
 - Connection failures: dropConnection, dead port
 - Timeout: hello delayed > timeoutMs → "timeout"; delay < timeoutMs → success
-- Round-trip: HH-Result-URL embedded in wake text; HHTaskMessage JSON payload
+- Round-trip: HH-Result-URL embedded in wake text; CofounderTaskMessage JSON payload
 - Pipeline simulation: sequential steps, concurrent broadcast wakes
 
 ## Test suite
@@ -54,6 +54,6 @@ Test Files  46 passed (46)
 
 ## What's next
 
-- GLaDOS: Windows-side mock gateway for `hh watch` integration tests (8d remainder)
+- GLaDOS: Windows-side mock gateway for `cofounder watch` integration tests (8d remainder)
 - GLaDOS: real machine boot-chain verification (2b, 3b, 5c)
 - Phase 9 planning: polish, npm publish v0.4.0, community outreach?

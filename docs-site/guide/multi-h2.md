@@ -23,7 +23,7 @@ On the new H2 machine, run the setup wizard normally:
 
 ```bash
 # On the new H2 machine
-hh onboard
+cofounder onboard
 # → Role: H2
 # → Name: h2-beast
 # → H1's Tailscale IP: 100.x.y.z
@@ -33,7 +33,7 @@ On H1, add the new peer:
 
 ```bash
 # On H1
-hh pair
+cofounder pair
 # → Add peer
 # → Enter H2's Tailscale IP: 100.a.b.c
 # → Enter name: h2-beast
@@ -41,7 +41,7 @@ hh pair
 # → Test connection: ✓
 ```
 
-Or edit `~/.his-and-hers/peers/h2-beast.json` directly:
+Or edit `~/.cofounder/peers/h2-beast.json` directly:
 
 ```json
 {
@@ -70,7 +70,7 @@ The `gateway_token` must match what H2 Beast's gateway is configured with. H1's 
 H1 stores one config file per H2:
 
 ```
-~/.his-and-hers/peers/
+~/.cofounder/peers/
   h2-home.json       ← RTX 3070 Ti, Windows
   h2-pi.json         ← Raspberry Pi 5
   h2-beast.json      ← RTX 4090
@@ -78,10 +78,10 @@ H1 stores one config file per H2:
 
 ---
 
-## `hh peers` — list all peers
+## `cofounder peers` — list all peers
 
 ```bash
-hh peers
+cofounder peers
 ```
 
 Output:
@@ -98,7 +98,7 @@ h2-beast   RTX 4090     ✗ offline  WOL: configured  last seen: 4h ago
 Add `--ping` to force live reachability checks instead of using cached heartbeat data:
 
 ```bash
-hh peers --ping
+cofounder peers --ping
 ```
 
 ---
@@ -106,9 +106,9 @@ hh peers --ping
 ## Targeting a specific peer
 
 ```bash
-hh send "run 70B inference on this document" --peer h2-beast
-hh send "generate SDXL image" --peer h2-home
-hh send "embed this corpus" --peer h2-pi
+cofounder send "run 70B inference on this document" --peer h2-beast
+cofounder send "generate SDXL image" --peer h2-home
+cofounder send "embed this corpus" --peer h2-pi
 ```
 
 The `--peer` flag bypasses capability routing and always targets that peer. If the peer is offline, H1 sends a WOL magic packet (unless `--no-wol`).
@@ -120,16 +120,16 @@ The `--peer` flag bypasses capability routing and always targets that peer. If t
 Let H1 pick based on capability matching:
 
 ```bash
-hh send "generate an image of a sunset" --auto
+cofounder send "generate an image of a sunset" --auto
 # → Checking peers...
 # → h2-home: online, image-gen skill ✓
 # → Routing to h2-home
 
-hh send "summarize this document" --auto
+cofounder send "summarize this document" --auto
 # → h2-pi: online, embeddings ✓  (lightest peer — good fit)
 # → Routing to h2-pi
 
-hh send "run llama3:70b on this" --auto
+cofounder send "run llama3:70b on this" --auto
 # → h2-beast: offline (WOL configured)
 # → Waking h2-beast...
 # → Routing to h2-beast
@@ -142,8 +142,8 @@ hh send "run llama3:70b on this" --auto
 ## Per-peer status
 
 ```bash
-hh status --peer h2-home
-hh status --peer h2-beast
+cofounder status --peer h2-home
+cofounder status --peer h2-beast
 ```
 
 Output:
@@ -164,8 +164,8 @@ H2 (h2-beast) — RTX 4090
 ## Per-peer logs
 
 ```bash
-hh logs --peer h2-beast --since 7d
-hh logs --peer h2-home --status failed
+cofounder logs --peer h2-beast --since 7d
+cofounder logs --peer h2-home --status failed
 ```
 
 ---
@@ -173,8 +173,8 @@ hh logs --peer h2-home --status failed
 ## Per-peer budget
 
 ```bash
-hh budget --peer h2-home --month
-hh budget --peer h2-pi --all
+cofounder budget --peer h2-home --month
+cofounder budget --peer h2-pi --all
 ```
 
 ---
@@ -182,8 +182,8 @@ hh budget --peer h2-pi --all
 ## Removing a peer
 
 ```bash
-hh pair remove h2-beast
-# → Removes ~/.his-and-hers/peers/h2-beast.json
+cofounder pair remove h2-beast
+# → Removes ~/.cofounder/peers/h2-beast.json
 # → Removes cached peer-capabilities-h2-beast.json
 ```
 
@@ -196,7 +196,7 @@ Or just delete the peer config file manually.
 H1 maintains a separate conversation context for each H2 (last 10 task summaries). This means long-running work on `h2-home` doesn't pollute the context for `h2-beast`.
 
 ```
-~/.his-and-hers/context/
+~/.cofounder/context/
   h2-home.json
   h2-beast.json
   h2-pi.json
@@ -205,7 +205,7 @@ H1 maintains a separate conversation context for each H2 (last 10 task summaries
 Clear context for a peer:
 
 ```bash
-echo "[]" > ~/.his-and-hers/context/h2-home.json
+echo "[]" > ~/.cofounder/context/h2-home.json
 ```
 
 ---
@@ -213,7 +213,7 @@ echo "[]" > ~/.his-and-hers/context/h2-home.json
 ## Testing all peers
 
 ```bash
-hh pair test
+cofounder pair test
 ```
 
 Output:

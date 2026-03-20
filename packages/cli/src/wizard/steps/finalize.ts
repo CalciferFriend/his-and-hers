@@ -1,6 +1,6 @@
 import * as p from "@clack/prompts";
 import pc from "picocolors";
-import { generatePairingCode, hashPairingCode } from "@his-and-hers/core";
+import { generatePairingCode, hashPairingCode } from "@cofounder/core";
 import { saveConfig, getConfigPath } from "../../config/store.ts";
 import type { HHConfig } from "../../config/schema.ts";
 import type { WizardContext } from "../context.ts";
@@ -101,7 +101,7 @@ export async function stepFinalize(ctx: Partial<WizardContext>): Promise<Partial
     `Share this code with the peer machine to complete pairing:\n\n` +
     `  ${pc.bold(pc.cyan(pairingCode))}\n\n` +
     `On the peer machine, run:\n` +
-    `  ${pc.cyan(`hh pair --code ${pairingCode}`)}`,
+    `  ${pc.cyan(`cofounder pair --code ${pairingCode}`)}`,
     "Pairing Code"
   );
 

@@ -1,5 +1,5 @@
 /**
- * commands/result.ts — `hh result <task-id> [output]`
+ * commands/result.ts — `cofounder result <task-id> [output]`
  *
  * Marks a pending task as completed or failed and writes the result payload.
  * When --webhook-url is provided (embedded in the H1 wake message), the result
@@ -7,22 +7,22 @@
  *
  * Usage (typically called by GLaDOS after processing a delegated task):
  *
- *   hh result <task-id> "Image saved to /tmp/cat.png"
- *   hh result <task-id> --fail "Ollama model not available"
- *   hh result <task-id> --output-file /tmp/result.txt
- *   hh result <task-id> --json '{"output":"...","artifacts":["/tmp/cat.png"]}'
+ *   cofounder result <task-id> "Image saved to /tmp/cat.png"
+ *   cofounder result <task-id> --fail "Ollama model not available"
+ *   cofounder result <task-id> --output-file /tmp/result.txt
+ *   cofounder result <task-id> --json '{"output":"...","artifacts":["/tmp/cat.png"]}'
  *
  *   # With webhook delivery (URL comes from the HH-Result-Webhook line in the wake msg):
- *   hh result <task-id> "done" --webhook-url http://100.x.x.x:38791/result
+ *   cofounder result <task-id> "done" --webhook-url http://100.x.x.x:38791/result
  *
- * The state file is written to ~/.his-and-hers/state/tasks/<id>.json so
- * H1's `hh send --wait` polling loop picks it up as a fallback.
+ * The state file is written to ~/.cofounder/state/tasks/<id>.json so
+ * H1's `cofounder send --wait` polling loop picks it up as a fallback.
  * When --webhook-url is supplied the result is POSTed to H1 directly,
- * resolving `hh send --wait` immediately without polling delay.
+ * resolving `cofounder send --wait` immediately without polling delay.
  *
  * Remote delivery:
  *   GLaDOS can call this over SSH:
- *     ssh calcifer "hh result <id> 'task done'"
+ *     ssh calcifer "cofounder result <id> 'task done'"
  *   Or via the webhook URL embedded in the wake message (recommended — faster).
  */
 
@@ -31,7 +31,7 @@ import pc from "picocolors";
 import { readFile } from "node:fs/promises";
 import { loadTaskState, updateTaskState, type TaskResult } from "../state/tasks.ts";
 import { loadConfig } from "../config/store.ts";
-import { estimateCost, summarizeTask, appendContextEntry, deliverResultWebhook } from "@his-and-hers/core";
+import { estimateCost, summarizeTask, appendContextEntry, deliverResultWebhook } from "@cofounder/core";
 
 export interface ResultOptions {
   fail?: boolean;
@@ -54,7 +54,7 @@ export async function result(taskId: string, output: string | undefined, opts: R
 
   if (!task) {
     p.log.error(`Task not found: ${taskId}`);
-    p.log.info("Run `hh status --tasks` to list known tasks.");
+    p.log.info("Run `cofounder status --tasks` to list known tasks.");
     process.exitCode = 1;
     return;
   }
@@ -166,14 +166,14 @@ export async function result(taskId: string, output: string | undefined, opts: R
 
     // ── Phase 5d: Webhook delivery back to H1 ────────────────────────────────
     // If H1 included a webhook URL in the wake message, POST the result there
-    // immediately so `hh send --wait` resolves without polling.
+    // immediately so `cofounder send --wait` resolves without polling.
     // context_summary is included so H1 can store it for the next outbound task.
     if (opts.webhookUrl) {
       const token = config?.this_node?.gateway?.gateway_token ?? "";
       if (!token) {
         p.log.warn(
           "  Webhook delivery skipped — no gateway_token in config. " +
-          "Run `hh onboard` or set this_node.gateway.gateway_token.",
+          "Run `cofounder onboard` or set this_node.gateway.gateway_token.",
         );
       } else {
         const webhookS = p.spinner();

@@ -1,6 +1,6 @@
-# Devlog — 2026-03-15 — Calcifer — Phase 7e: `hh pipeline`
+# Devlog — 2026-03-15 — Calcifer — Phase 7e: `cofounder pipeline`
 
-**Session:** hh-sync-check cron, 06:39 UTC  
+**Session:** cofounder-sync-check cron, 06:39 UTC  
 **Agent:** Calcifer 🔥  
 **Phase:** 7e — Pipeline (Fleet Orchestration)
 
@@ -25,7 +25,7 @@ TypeError: Cannot read properties of undefined (reading 'length')
  ❯ pipeline.ts:140  for (let i = 0; i < def.steps.length; i++) {
 ```
 
-**Root cause:** `vi.mock("@his-and-hers/core")` blanket-stubs every export to
+**Root cause:** `vi.mock("@cofounder/core")` blanket-stubs every export to
 `vi.fn()`, including the pure parser utilities `parsePipelineSpec` and
 `parsePipelineFile`. Those return `undefined` from the mock, so `def.steps` is
 undefined when the loop starts.
@@ -35,8 +35,8 @@ only the side-effectful network/IO functions (`wakeAgent`, `checkGatewayHealth`,
 `loadContextSummary`, `createTaskMessage`, `withRetry`) get stubbed.
 
 ```ts
-vi.mock("@his-and-hers/core", async () => {
-  const actual = await vi.importActual<typeof import("@his-and-hers/core")>("@his-and-hers/core");
+vi.mock("@cofounder/core", async () => {
+  const actual = await vi.importActual<typeof import("@cofounder/core")>("@cofounder/core");
   return {
     ...actual,
     checkGatewayHealth: vi.fn(),
@@ -81,11 +81,11 @@ Result: 19/19 pipeline tests pass, 794/794 full suite green.
 Phase 7 (Fleet Orchestration) is complete — 7a through 7e all done. Thinking about
 Phase 8. Top candidates:
 
-- **8a. `hh schedule`** — cron-like scheduled task dispatch (send task to peer at
+- **8a. `cofounder schedule`** — cron-like scheduled task dispatch (send task to peer at
   interval or specific time, persist state across sessions)
-- **8b. `hh dashboard`** — TUI fleet monitor (active tasks, peer health, cost
+- **8b. `cofounder dashboard`** — TUI fleet monitor (active tasks, peer health, cost
   rolling total — like `htop` for the fleet)
-- **8c. `hh audit`** — searchable task history with cost analytics and export
+- **8c. `cofounder audit`** — searchable task history with cost analytics and export
 
 GLaDOS still needs to verify Phase 2b and 3b on the real Windows machine. Will
 send a wake with the full status and Phase 8 plan once defined.

@@ -1,5 +1,5 @@
 /**
- * chat.test.ts — unit tests for `hh chat` interactive multi-turn session
+ * chat.test.ts — unit tests for `cofounder chat` interactive multi-turn session
  *
  * Strategy: mock readline, wakeAgent, pingPeer, checkGatewayHealth,
  * startResultServer, startStreamServer, and all state/context functions.
@@ -51,7 +51,7 @@ const {
 
 vi.mock("../config/store.ts", () => ({ loadConfig: mockLoadConfig }));
 vi.mock("../peers/select.ts", () => ({ getPeer: mockGetPeer }));
-vi.mock("@his-and-hers/core", () => ({
+vi.mock("@cofounder/core", () => ({
   wakeAgent: mockWakeAgent,
   pingPeer: mockPingPeer,
   checkGatewayHealth: mockCheckGatewayHealth,
@@ -60,7 +60,7 @@ vi.mock("@his-and-hers/core", () => ({
   createTaskMessage: mockCreateTaskMessage,
   wakeAndWait: mockWakeAndWait,
 }));
-vi.mock("@his-and-hers/core/context/store", () => ({
+vi.mock("@cofounder/core/context/store", () => ({
   loadContextSummary: mockLoadContextSummary,
   appendContextEntry: mockAppendContextEntry,
   buildContextSummary: mockBuildContextSummary,
@@ -131,7 +131,7 @@ function makeReadlineInterface(responses: string[]): EventEmitter & {
 
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
-describe("hh chat — happy path", () => {
+describe("cofounder chat — happy path", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockLoadConfig.mockResolvedValue(CONFIG);
@@ -223,7 +223,7 @@ describe("hh chat — happy path", () => {
   });
 });
 
-describe("hh chat — .context and .clear commands", () => {
+describe("cofounder chat — .context and .clear commands", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockLoadConfig.mockResolvedValue(CONFIG);
@@ -313,7 +313,7 @@ describe("hh chat — .context and .clear commands", () => {
   });
 });
 
-describe("hh chat — polling fallback", () => {
+describe("cofounder chat — polling fallback", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockLoadConfig.mockResolvedValue(CONFIG);
@@ -367,7 +367,7 @@ describe("hh chat — polling fallback", () => {
   }, 10000);
 });
 
-describe("hh chat — WOL wake path", () => {
+describe("cofounder chat — WOL wake path", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockLoadConfig.mockResolvedValue(CONFIG);
@@ -449,7 +449,7 @@ describe("hh chat — WOL wake path", () => {
   });
 });
 
-describe("hh chat — gateway down", () => {
+describe("cofounder chat — gateway down", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockLoadConfig.mockResolvedValue(CONFIG);
@@ -484,7 +484,7 @@ describe("hh chat — gateway down", () => {
   });
 });
 
-describe("hh chat — send failure", () => {
+describe("cofounder chat — send failure", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockLoadConfig.mockResolvedValue(CONFIG);
@@ -522,7 +522,7 @@ describe("hh chat — send failure", () => {
   });
 });
 
-describe("hh chat — --no-context flag", () => {
+describe("cofounder chat — --no-context flag", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockLoadConfig.mockResolvedValue(CONFIG);
@@ -575,7 +575,7 @@ describe("hh chat — --no-context flag", () => {
   });
 });
 
-describe("hh chat — context carry-over", () => {
+describe("cofounder chat — context carry-over", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockLoadConfig.mockResolvedValue(CONFIG);
@@ -652,7 +652,7 @@ describe("hh chat — context carry-over", () => {
   });
 });
 
-describe("hh chat — --peer option", () => {
+describe("cofounder chat — --peer option", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockLoadConfig.mockResolvedValue(CONFIG);
@@ -702,7 +702,7 @@ describe("hh chat — --peer option", () => {
   });
 });
 
-describe("hh chat — session summary", () => {
+describe("cofounder chat — session summary", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockLoadConfig.mockResolvedValue(CONFIG);
@@ -786,7 +786,7 @@ describe("hh chat — session summary", () => {
   });
 });
 
-describe("hh chat — timeout path", () => {
+describe("cofounder chat — timeout path", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockLoadConfig.mockResolvedValue(CONFIG);
@@ -834,7 +834,7 @@ describe("hh chat — timeout path", () => {
   });
 });
 
-describe("hh chat — turn failure recovery", () => {
+describe("cofounder chat — turn failure recovery", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockLoadConfig.mockResolvedValue(CONFIG);

@@ -53,7 +53,7 @@ docker run -d -p 5432:5432 postgres:15
 
 ```bash
 cd ~/.openclaw
-hh templates init data-processing
+cofounder templates init data-processing
 ```
 
 ## Example Code
@@ -64,7 +64,7 @@ hh templates init data-processing
 // ingest-server.ts on H1
 import express from 'express';
 import { Queue } from 'bullmq';
-import { sendTask } from '@his-and-hers/sdk';
+import { sendTask } from '@cofounder/sdk';
 
 const app = express();
 app.use(express.json());
@@ -128,7 +128,7 @@ app.listen(8000, () => {
 
 ```typescript
 // batch-processor.ts on H2
-import { onTask } from '@his-and-hers/sdk';
+import { onTask } from '@cofounder/sdk';
 import pandas from 'pandas-js';
 import { Client as PgClient } from 'pg';
 
@@ -271,7 +271,7 @@ onTask(async (task) => {
 
 ## Monitoring
 
-Track with `hh web`:
+Track with `cofounder web`:
 - **Events queued:** Backlog size
 - **Processing throughput:** Events/second on H2
 - **Batch size:** Optimize for efficiency

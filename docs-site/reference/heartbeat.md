@@ -1,19 +1,19 @@
-# `hh heartbeat`
+# `cofounder heartbeat`
 
 Manage and display heartbeat state for the H1/H2 pair. Heartbeats are lightweight liveness pings that let each agent verify the other is awake, healthy, and reachable.
 
 ## Usage
 
 ```bash
-hh heartbeat           # show last heartbeat (default)
-hh heartbeat show      # same as above
-hh heartbeat send      # send a heartbeat to peer
-hh heartbeat record --from <name> --at <iso>  # record an incoming heartbeat
+cofounder heartbeat           # show last heartbeat (default)
+cofounder heartbeat show      # same as above
+cofounder heartbeat send      # send a heartbeat to peer
+cofounder heartbeat record --from <name> --at <iso>  # record an incoming heartbeat
 ```
 
 ## Subcommands
 
-### `hh heartbeat show` (default)
+### `cofounder heartbeat show` (default)
 
 Display the timestamp and status of the last heartbeat received from your peer.
 
@@ -25,9 +25,9 @@ Model: llama3.2:3b (local)
 Tailscale IP: 100.x.x.x
 ```
 
-### `hh heartbeat send`
+### `cofounder heartbeat send`
 
-Build a `HHHeartbeatMessage` and deliver it to the configured peer via `wakeAgent`. Includes:
+Build a `CofounderHeartbeatMessage` and deliver it to the configured peer via `wakeAgent`. Includes:
 
 - Whether our local gateway `/health` is live
 - Process uptime (seconds)
@@ -35,14 +35,14 @@ Build a `HHHeartbeatMessage` and deliver it to the configured peer via `wakeAgen
 - Configured LLM model
 - GPU availability flag
 
-The receiving agent's OpenClaw session reads the heartbeat and can call `hh heartbeat record` to update its own config.
+The receiving agent's OpenClaw session reads the heartbeat and can call `cofounder heartbeat record` to update its own config.
 
-### `hh heartbeat record`
+### `cofounder heartbeat record`
 
 Record a heartbeat from an incoming wake message. Typically called by the receiving agent's session after parsing the wake text — not usually called manually.
 
 ```bash
-hh heartbeat record --from GLaDOS --at 2026-03-13T22:37:22.000Z
+cofounder heartbeat record --from GLaDOS --at 2026-03-13T22:37:22.000Z
 ```
 
 | Flag | Description |
@@ -55,11 +55,11 @@ hh heartbeat record --from GLaDOS --at 2026-03-13T22:37:22.000Z
 ```
 H1 (Calcifer 🔥)                            H2 (GLaDOS 🤖)
 ─────────────────                            ─────────────────
-hh heartbeat send →                         ← wakeAgent delivers heartbeat text
-                                             Session parses "[HHHeartbeat from ...]"
-                                             hh heartbeat record --from Calcifer --at ...
+cofounder heartbeat send →                         ← wakeAgent delivers heartbeat text
+                                             Session parses "[CofounderHeartbeat from ...]"
+                                             cofounder heartbeat record --from Calcifer --at ...
                                              ← config updated: last_heartbeat = now
-H1: hh status shows "last heartbeat: X ago"
+H1: cofounder status shows "last heartbeat: X ago"
 ```
 
 ## Heartbeat payload
@@ -67,10 +67,10 @@ H1: hh status shows "last heartbeat: X ago"
 The heartbeat is delivered as a human-readable wake text (so the peer's OpenClaw session can parse it) with a structured prefix:
 
 ```
-[HHHeartbeat from Calcifer] gateway=true uptime=11572s model=claude-sonnet-4 ip=100.x.x.x at=2026-03-13T22:00:00.000Z
+[CofounderHeartbeat from Calcifer] gateway=true uptime=11572s model=claude-sonnet-4 ip=100.x.x.x at=2026-03-13T22:00:00.000Z
 ```
 
-This is also a valid `HHHeartbeatMessage` in the discriminated union (`type: "heartbeat"`).
+This is also a valid `CofounderHeartbeatMessage` in the discriminated union (`type: "heartbeat"`).
 
 ## Automatic heartbeats
 
@@ -79,15 +79,15 @@ Heartbeats are typically sent on a cron schedule, not manually. Add to your Open
 ```json
 {
   "schedule": "*/30 * * * *",
-  "task": "hh heartbeat send"
+  "task": "cofounder heartbeat send"
 }
 ```
 
-Or use `hh schedule add` to set a recurring heartbeat from H1 to H2.
+Or use `cofounder schedule add` to set a recurring heartbeat from H1 to H2.
 
-## What `hh status` shows
+## What `cofounder status` shows
 
-`hh status` reads `last_heartbeat` from config and displays a human-readable age:
+`cofounder status` reads `last_heartbeat` from config and displays a human-readable age:
 
 ```
 Last heartbeat: 4 minutes ago
@@ -104,7 +104,7 @@ If the age exceeds a threshold (e.g. >1h), status will warn that H2 may be offli
 
 ## See also
 
-- [`hh status`](/reference/status) — full peer health check including heartbeat age
-- [`hh send`](/reference/send) — send a task (includes implicit reachability check)
-- [`hh watch`](/reference/watch) — H2 daemon (receives tasks and can trigger heartbeat responses)
-- [`hh schedule`](/reference/schedule) — set up recurring heartbeat crons
+- [`cofounder status`](/reference/status) — full peer health check including heartbeat age
+- [`cofounder send`](/reference/send) — send a task (includes implicit reachability check)
+- [`cofounder watch`](/reference/watch) — H2 daemon (receives tasks and can trigger heartbeat responses)
+- [`cofounder schedule`](/reference/schedule) — set up recurring heartbeat crons

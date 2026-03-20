@@ -83,8 +83,8 @@ heavy inference or image generation. Cost-efficient and responsive.
 | RTX 3070 Ti | `ollama`, `gpu-inference`, `image-gen` (with ComfyUI) |
 | RTX 4090 | `ollama`, `gpu-inference`, `inference:70b`, `image-gen`, `code`, `vision` |
 
-These are auto-detected by `hh capabilities scan`. Add custom tags with
-`hh capabilities advertise --tags "your-tag"`.
+These are auto-detected by `cofounder capabilities scan`. Add custom tags with
+`cofounder capabilities advertise --tags "your-tag"`.
 
 ---
 
@@ -189,8 +189,8 @@ heavy inference or image generation. Cost-efficient and responsive.
 | RTX 3070 Ti | `ollama`, `gpu-inference`, `image-gen` (with ComfyUI) |
 | RTX 4090 | `ollama`, `gpu-inference`, `inference:70b`, `image-gen`, `code`, `vision` |
 
-These are auto-detected by `hh capabilities scan`. Add custom tags with
-`hh capabilities advertise --tags "your-tag"`.
+These are auto-detected by `cofounder capabilities scan`. Add custom tags with
+`cofounder capabilities advertise --tags "your-tag"`.
 
 ---
 
@@ -210,7 +210,7 @@ can reduce that to **$20–50/month** depending on usage.
 | RTX 4090 WOL (2h/day) | ~$15–25 |
 
 **Tip:** Enable WOL on your GPU machines and let H1 wake them only when needed.
-See [`hh wake`](/reference/wake) and the [WOL guide](/guide/wol).
+See [`cofounder wake`](/reference/wake) and the [WOL guide](/guide/wol).
 
 ---
 

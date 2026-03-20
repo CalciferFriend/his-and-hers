@@ -1,7 +1,7 @@
 /**
  * providers/index.ts
  *
- * Model provider abstraction for his-and-hers.
+ * Model provider abstraction for cofounder.
  * Supports any OpenClaw-compatible provider so the setup works with
  * whatever models the user already has.
  */
@@ -54,7 +54,7 @@ export const PROVIDER_DEFAULTS: Record<ProviderKind, Partial<ProviderConfig>> = 
 
 /**
  * Build the OpenClaw agent config block for this provider.
- * Written to the node's openclaw.json during `hh onboard`.
+ * Written to the node's openclaw.json during `cofounder onboard`.
  */
 export function buildOpenClawProviderConfig(provider: ProviderConfig): object {
   const base = {

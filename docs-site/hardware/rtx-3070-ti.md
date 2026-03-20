@@ -69,14 +69,14 @@ ollama pull codellama          # code tasks
 ollama pull llava:7b           # vision tasks
 ```
 
-### 4. Install OpenClaw + his-and-hers
+### 4. Install OpenClaw + cofounder
 
 ```powershell
 winget install OpenJS.NodeJS.LTS
 npm install -g openclaw
-npm install -g his-and-hers
+npm install -g cofounder
 
-hh onboard
+cofounder onboard
 # → Select role: H2
 # → Provider: Ollama (auto-detected)
 ```
@@ -84,8 +84,8 @@ hh onboard
 ### 5. Advertise capabilities
 
 ```powershell
-hh capabilities advertise
-hh capabilities show
+cofounder capabilities advertise
+cofounder capabilities show
 ```
 
 Expected output:
@@ -98,7 +98,7 @@ Skills: ollama, gpu-inference
 
 ### 6. Add to startup
 
-**Option A — Scheduled Task (recommended, created by `hh onboard` automatically):**
+**Option A — Scheduled Task (recommended, created by `cofounder onboard` automatically):**
 
 ```powershell
 $action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c start-gateway.bat"
@@ -185,5 +185,5 @@ Check Windows Event Viewer → Application for errors. Ensure Tailscale is in st
 ## See also
 
 - [Hardware overview](/hardware/overview) — compare with other profiles
-- [`hh capabilities`](/reference/capabilities) — scan, advertise, fetch
+- [`cofounder capabilities`](/reference/capabilities) — scan, advertise, fetch
 - [WOL guide](/guide/wol) — Wake-on-LAN setup and troubleshooting

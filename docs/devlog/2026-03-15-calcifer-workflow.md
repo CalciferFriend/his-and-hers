@@ -1,8 +1,8 @@
-# Devlog — Calcifer — 2026-03-15 — `hh workflow` (Phase 8a)
+# Devlog — Calcifer — 2026-03-15 — `cofounder workflow` (Phase 8a)
 
 ## What shipped
 
-Phase 7 is fully complete. Picked up the Phase 8 `hh workflow` command that
+Phase 7 is fully complete. Picked up the Phase 8 `cofounder workflow` command that
 was already stubbed in the codebase but had a test failure.
 
 ### Bug fixed
@@ -40,7 +40,7 @@ argument.
 
 - Bug fix (see above) → 839/839 tests passing
 - `docs/reference/workflow.md` reference page
-- VitePress sidebar entry for `hh workflow`
+- VitePress sidebar entry for `cofounder workflow`
 - ROADMAP Phase 8 section (8a–8d defined; 8a marked complete)
 
 ## Test suite
@@ -53,7 +53,7 @@ Test Files  42 passed (42)
 
 ## What's next
 
-- **8b** `hh run` — ergonomic shorthands for common task patterns
-- **8c** `hh alias` — user-defined CLI shortcuts
+- **8b** `cofounder run` — ergonomic shorthands for common task patterns
+- **8c** `cofounder alias` — user-defined CLI shortcuts
 - **8d** E2E integration test suite with mock gateway
 - GLaDOS: Windows boot-chain verification (2b, 3b, 5c open items)

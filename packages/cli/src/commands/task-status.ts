@@ -1,11 +1,11 @@
 /**
- * commands/task-status.ts — `hh task-status [task-id]`
+ * commands/task-status.ts — `cofounder task-status [task-id]`
  *
  * Show the status of pending/completed tasks.
  *
  * Usage:
- *   hh task-status                — list all recent tasks
- *   hh task-status <id-or-prefix> — show one task in detail
+ *   cofounder task-status                — list all recent tasks
+ *   cofounder task-status <id-or-prefix> — show one task in detail
  */
 
 import * as p from "@clack/prompts";
@@ -38,7 +38,7 @@ export async function taskStatus(idPrefix?: string) {
       return;
     }
 
-    p.intro(pc.bgCyan(pc.black(" hh task-status ")));
+    p.intro(pc.bgCyan(pc.black(" cofounder task-status ")));
 
     const colorFn = STATUS_COLORS[task.status];
     p.log.info(`${pc.bold("Task ID:")}   ${task.id}`);
@@ -80,11 +80,11 @@ export async function taskStatus(idPrefix?: string) {
     const tasks = await listTaskStates();
 
     if (tasks.length === 0) {
-      p.log.info("No tasks found. Send one with: hh send \"<task>\"");
+      p.log.info("No tasks found. Send one with: cofounder send \"<task>\"");
       return;
     }
 
-    p.intro(pc.bgCyan(pc.black(" hh task-status ")));
+    p.intro(pc.bgCyan(pc.black(" cofounder task-status ")));
     p.log.info(`${pc.bold("Recent tasks:")} (${tasks.length} total)\n`);
 
     for (const task of tasks.slice(0, 20)) {
@@ -101,7 +101,7 @@ export async function taskStatus(idPrefix?: string) {
     }
 
     p.log.info("");
-    p.log.info(pc.dim("  Use: hh task-status <id-prefix> for details"));
+    p.log.info(pc.dim("  Use: cofounder task-status <id-prefix> for details"));
     p.outro("");
   }
 }

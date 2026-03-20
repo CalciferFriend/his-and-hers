@@ -1,7 +1,7 @@
 /**
  * defaults.ts - Sane defaults for --yes fast onboarding
  *
- * When user runs `hh onboard --yes`, skip interactive prompts
+ * When user runs `cofounder onboard --yes`, skip interactive prompts
  * and use these defaults to get them up and running in <2 minutes.
  */
 

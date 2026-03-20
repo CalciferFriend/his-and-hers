@@ -1,4 +1,4 @@
-# `hh capabilities` — Reference
+# `cofounder capabilities` — Reference
 
 Scan, advertise, fetch, show, and route via the capability registry.
 
@@ -7,19 +7,19 @@ Scan, advertise, fetch, show, and route via the capability registry.
 ## Synopsis
 
 ```bash
-hh capabilities <subcommand> [flags]
+cofounder capabilities <subcommand> [flags]
 ```
 
 ---
 
 ## Subcommands
 
-### `hh capabilities scan`
+### `cofounder capabilities scan`
 
 Probe local hardware and software without saving or advertising.
 
 ```bash
-hh capabilities scan
+cofounder capabilities scan
 ```
 
 Output:
@@ -40,13 +40,13 @@ Skill tags:    ollama, gpu-inference
 
 ---
 
-### `hh capabilities advertise`
+### `cofounder capabilities advertise`
 
 Scan, save to disk, and push the profile to H1.
 
 ```bash
-hh capabilities advertise
-hh capabilities advertise --tags "finetune,custom-skill"
+cofounder capabilities advertise
+cofounder capabilities advertise --tags "finetune,custom-skill"
 ```
 
 | Flag | Description |
@@ -58,20 +58,20 @@ hh capabilities advertise --tags "finetune,custom-skill"
 What it does:
 
 1. Runs `scan`
-2. Writes `~/.his-and-hers/capabilities.json`
+2. Writes `~/.cofounder/capabilities.json`
 3. POSTs the profile to H1's gateway (if H1 is reachable)
 
 Run this on H2 startup. The startup script / systemd unit includes it by default.
 
 ---
 
-### `hh capabilities fetch`
+### `cofounder capabilities fetch`
 
 Pull a peer's capability profile to H1. Run on H1.
 
 ```bash
-hh capabilities fetch
-hh capabilities fetch --peer h2-beast
+cofounder capabilities fetch
+cofounder capabilities fetch --peer h2-beast
 ```
 
 | Flag | Description |
@@ -79,21 +79,21 @@ hh capabilities fetch --peer h2-beast
 | `--peer <name>` | Fetch from a specific peer (default: all peers) |
 | `--json` | Output fetched profile as JSON |
 
-Saves to `~/.his-and-hers/peer-capabilities-<peer>.json`.
+Saves to `~/.cofounder/peer-capabilities-<peer>.json`.
 
 ---
 
-### `hh capabilities show`
+### `cofounder capabilities show`
 
 Display the cached capability profile.
 
 ```bash
 # On H2: show this node's profile
-hh capabilities show
+cofounder capabilities show
 
 # On H1: show a peer's cached profile
-hh capabilities show --peer h2-home
-hh capabilities show --peer h2-home --json
+cofounder capabilities show --peer h2-home
+cofounder capabilities show --peer h2-home --json
 ```
 
 Output:
@@ -132,14 +132,14 @@ JSON output:
 
 ---
 
-### `hh capabilities route`
+### `cofounder capabilities route`
 
 Preview where a task would be routed without actually sending it.
 
 ```bash
-hh capabilities route "generate a product image"
-hh capabilities route "summarize this document"
-hh capabilities route "run 70B inference on this paper"
+cofounder capabilities route "generate a product image"
+cofounder capabilities route "summarize this document"
+cofounder capabilities route "run 70B inference on this paper"
 ```
 
 Output:
@@ -165,7 +165,7 @@ Reason: only peer with image-gen skill
 
 ## Capability file format
 
-`~/.his-and-hers/capabilities.json` (H2 side):
+`~/.cofounder/capabilities.json` (H2 side):
 
 ```json
 {

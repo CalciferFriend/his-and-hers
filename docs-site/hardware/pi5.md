@@ -72,11 +72,11 @@ ollama pull llama3.2:3b
 ollama pull nomic-embed-text
 ```
 
-### 5 — Install OpenClaw + his-and-hers
+### 5 — Install OpenClaw + cofounder
 
 ```bash
-sudo npm install -g openclaw his-and-hers
-hh --version
+sudo npm install -g openclaw cofounder
+cofounder --version
 ```
 
 ### 6 — Install Tailscale
@@ -87,14 +87,14 @@ sudo tailscale up --authkey tskey-auth-YOUR_KEY
 tailscale ip -4  # note this IP for H1's config
 ```
 
-### 7 — Run hh onboard (H2 role)
+### 7 — Run cofounder onboard (H2 role)
 
 ```bash
-hh onboard
+cofounder onboard
 # Role: H2
 # Name: h2-pi (or whatever)
 # Model: Ollama → llama3.2:3b
-# H1's Tailscale IP: <from H1's hh status>
+# H1's Tailscale IP: <from H1's cofounder status>
 ```
 
 ---
@@ -104,9 +104,9 @@ hh onboard
 Keep the gateway running across reboots:
 
 ```ini
-# /etc/systemd/system/hh-gateway.service
+# /etc/systemd/system/cofounder-gateway.service
 [Unit]
-Description=his-and-hers gateway
+Description=cofounder gateway
 After=network-online.target tailscaled.service
 Wants=network-online.target
 
@@ -122,8 +122,8 @@ WantedBy=multi-user.target
 ```
 
 ```bash
-sudo systemctl enable --now hh-gateway
-sudo systemctl status hh-gateway
+sudo systemctl enable --now cofounder-gateway
+sudo systemctl status cofounder-gateway
 ```
 
 ---
@@ -161,7 +161,7 @@ docker run -d \
 
 ## Capability tags
 
-After `hh capabilities advertise`:
+After `cofounder capabilities advertise`:
 
 ```json
 {
@@ -179,5 +179,5 @@ H1 automatically routes embedding and lightweight summarization tasks here.
 ## See also
 
 - [Hardware overview](/hardware/overview) — compare with other profiles
-- [`hh capabilities`](/reference/capabilities) — scan and advertise
+- [`cofounder capabilities`](/reference/capabilities) — scan and advertise
 - [Docker guide](/guide/docker) — containerized H2

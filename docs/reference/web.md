@@ -1,12 +1,12 @@
-# `hh web`
+# `cofounder web`
 
 Launch a local web dashboard for your H1 node. Provides a browser UI with a
 live task feed, peer status cards, budget summary, and a send-task form.
 
 ```
-hh web                 # start on default port 3847
-hh web --port 8080     # custom port
-hh web --no-open       # don't auto-open browser
+cofounder web                 # start on default port 3847
+cofounder web --port 8080     # custom port
+cofounder web --no-open       # don't auto-open browser
 ```
 
 ---
@@ -24,14 +24,14 @@ hh web --no-open       # don't auto-open browser
 
 ## Server details
 
-`hh web` runs a lightweight HTTP server using only Node built-ins (`http`, `fs`, `path`, `os`) —
+`cofounder web` runs a lightweight HTTP server using only Node built-ins (`http`, `fs`, `path`, `os`) —
 no extra npm dependencies are installed.
 
 The dashboard uses **Server-Sent Events (SSE)** for live updates. When a task
-state file changes in `~/.his-and-hers/state/tasks/`, the new state is pushed to
+state file changes in `~/.cofounder/state/tasks/`, the new state is pushed to
 all open browser tabs immediately.
 
-Default port: **3847** (`hh` on a phone keypad).
+Default port: **3847** (`cofounder` on a phone keypad).
 
 ---
 
@@ -49,7 +49,7 @@ Default port: **3847** (`hh` on a phone keypad).
 **Start the dashboard:**
 
 ```sh
-hh web
+cofounder web
 # ✔ Dashboard running at http://localhost:3847
 ```
 
@@ -57,7 +57,7 @@ hh web
 
 ```sh
 # On H1:
-hh web --no-open --port 3847
+cofounder web --no-open --port 3847
 
 # On your laptop:
 ssh -L 3847:localhost:3847 h1-node
@@ -67,8 +67,8 @@ ssh -L 3847:localhost:3847 h1-node
 **Background the server while doing other work:**
 
 ```sh
-hh web --no-open &
-hh send "analyse this codebase" --wait
+cofounder web --no-open &
+cofounder send "analyse this codebase" --wait
 ```
 
 ---
@@ -90,6 +90,6 @@ The dashboard also exposes a JSON REST API for scripting:
 
 ## See also
 
-- [`hh logs`](./logs.md) — CLI task history viewer
-- [`hh budget`](./budget.md) — CLI cost summary
-- [`hh status`](./cli.md) — check peer reachability from the terminal
+- [`cofounder logs`](./logs.md) — CLI task history viewer
+- [`cofounder budget`](./budget.md) — CLI cost summary
+- [`cofounder status`](./cli.md) — check peer reachability from the terminal

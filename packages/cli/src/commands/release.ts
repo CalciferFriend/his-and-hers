@@ -1,15 +1,15 @@
 /**
- * commands/release.ts — `hh release`
+ * commands/release.ts — `cofounder release`
  *
  * Automate the release workflow: bump version, update CHANGELOG, git commit + tag.
  *
  * Usage:
- *   hh release                       → patch bump (0.3.0 → 0.3.1)
- *   hh release --minor               → minor bump (0.3.0 → 0.4.0)
- *   hh release --major               → major bump (0.3.0 → 1.0.0)
- *   hh release --dry-run             → preview changes without writing
- *   hh release --push                → push commits + tags to origin
- *   hh release --yes                 → skip confirmation prompts
+ *   cofounder release                       → patch bump (0.3.0 → 0.3.1)
+ *   cofounder release --minor               → minor bump (0.3.0 → 0.4.0)
+ *   cofounder release --major               → major bump (0.3.0 → 1.0.0)
+ *   cofounder release --dry-run             → preview changes without writing
+ *   cofounder release --push                → push commits + tags to origin
+ *   cofounder release --yes                 → skip confirmation prompts
  */
 
 import * as p from "@clack/prompts";
@@ -37,14 +37,14 @@ export async function release(opts: ReleaseOptions = {}) {
   const bumpType = opts.major ? "major" : opts.minor ? "minor" : "patch";
 
   if (!isDryRun) {
-    p.intro(pc.bgMagenta(pc.white(` hh release — ${bumpType} bump `)));
+    p.intro(pc.bgMagenta(pc.white(` cofounder release — ${bumpType} bump `)));
   }
 
   // ── Step 1: Read current version ────────────────────────────────────────────
 
   const rootPkgPath = findRootPackageJson();
   if (!rootPkgPath) {
-    p.log.error("Could not find packages/his-and-hers/package.json");
+    p.log.error("Could not find packages/cofounder/package.json");
     process.exit(1);
   }
 
@@ -183,7 +183,7 @@ export function bumpVersion(version: string, type: "patch" | "minor" | "major"):
 
 function findRootPackageJson(): string | null {
   const cwd = process.cwd();
-  const path = join(cwd, "packages", "his-and-hers", "package.json");
+  const path = join(cwd, "packages", "cofounder", "package.json");
   return existsSync(path) ? path : null;
 }
 

@@ -293,19 +293,19 @@ describe("profile", () => {
     });
   });
 
-  describe("HH_PROFILE env var", () => {
+  describe("COFOUNDER_PROFILE env var", () => {
     it("should override active profile from env var", () => {
-      const originalEnv = process.env.HH_PROFILE;
-      process.env.HH_PROFILE = "test-profile";
+      const originalEnv = process.env.COFOUNDER_PROFILE;
+      process.env.COFOUNDER_PROFILE = "test-profile";
 
       // Verify env var is set (actual getActiveProfileName is tested in store.test.ts)
-      expect(process.env.HH_PROFILE).toBe("test-profile");
+      expect(process.env.COFOUNDER_PROFILE).toBe("test-profile");
 
       // Restore
       if (originalEnv === undefined) {
-        delete process.env.HH_PROFILE;
+        delete process.env.COFOUNDER_PROFILE;
       } else {
-        process.env.HH_PROFILE = originalEnv;
+        process.env.COFOUNDER_PROFILE = originalEnv;
       }
     });
   });

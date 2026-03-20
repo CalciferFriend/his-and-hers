@@ -152,12 +152,12 @@ Some routers allow directed broadcasts (e.g. `192.168.1.255`). If yours does:
 
 ## Step 6 — Tell H1 about WOL
 
-During `hh onboard`, you'll be prompted for:
+During `cofounder onboard`, you'll be prompted for:
 - H2's MAC address
 - Broadcast IP or router IP
 - WOL port (default 9)
 
-Or update manually in `~/.his-and-hers/peers/h2-home.json`:
+Or update manually in `~/.cofounder/peers/h2-home.json`:
 
 ```json
 {
@@ -180,10 +180,10 @@ From H1's machine, with H2 off:
 
 ```bash
 # Send Magic Packet and wait for gateway
-hh wake --wait
+cofounder wake --wait
 
 # Watch what happens
-hh wake --wait --verbose
+cofounder wake --wait --verbose
 # → Sending magic packet to D8:5E:D3:04:18:B4 via 192.168.1.1:9
 # → Polling H2 gateway... (attempt 1/60)
 # → Polling H2 gateway... (attempt 8/60)
@@ -192,12 +192,12 @@ hh wake --wait --verbose
 
 ---
 
-## WOL with `hh send`
+## WOL with `cofounder send`
 
 WOL is transparent when sending tasks. If H2 is asleep, H1 wakes it automatically:
 
 ```bash
-hh send "run the test suite"
+cofounder send "run the test suite"
 # → H2 is offline — sending magic packet
 # → Waiting for H2 to wake (up to 120s)...
 # → H2 online — dispatching task
@@ -206,7 +206,7 @@ hh send "run the test suite"
 To skip WOL and fail fast if H2 is offline:
 
 ```bash
-hh send "quick task" --no-wol
+cofounder send "quick task" --no-wol
 # → H2 unreachable and --no-wol set — aborting
 ```
 

@@ -1,7 +1,7 @@
 # 2026-03-14 — Calcifer: notify guide + integration tests (cron sync check)
 
 ## Cron trigger
-Cron `hh-sync-check` fired at 10:54 UTC.
+Cron `cofounder-sync-check` fired at 10:54 UTC.
 
 ## GLaDOS status
 No new commits from GLaDOS. All recent history is CalciferFriend. Sent a wake to
@@ -11,13 +11,13 @@ GLaDOS with status update.
 
 ### 1. `guide/notifications.md` — persistent webhook guide
 Created `docs-site/guide/notifications.md` — a dedicated guide page for the
-`hh notify` persistent webhook registry. Covers:
+`cofounder notify` persistent webhook registry. Covers:
 - Quick start (register once, fires on every send)
-- `hh notify add/list/remove/test` subcommands with examples
+- `cofounder notify add/list/remove/test` subcommands with examples
 - Event filters: `all`, `complete`, `failure`
 - Platform payload formats: Discord embed, Slack Block Kit, generic JSON
-- Storage schema (`~/.his-and-hers/notify-webhooks.json`)
-- Integration with `hh send` and `hh schedule`
+- Storage schema (`~/.cofounder/notify-webhooks.json`)
+- Integration with `cofounder send` and `cofounder schedule`
 - Troubleshooting section (stale Discord URLs, Slack webhook revocation, retries)
 
 Updated sidebar in `config.ts`: split "Live streaming & notifications" into two
@@ -48,10 +48,10 @@ Tests cover:
 
 ## GLaDOS items still outstanding
 - Windows end-to-end boot chain (Phase 2b)
-- `context_summary` in HHResultMessage (Phase 3d H2)
+- `context_summary` in CofounderResultMessage (Phase 3d H2)
 - Gateway /capabilities on real Windows machine (Phase 3b)
 
 ## Next steps
 - v0.2.0 release prep: git tag, npm publish dry-run
-- `hh notify` end-to-end smoke test in CI matrix
+- `cofounder notify` end-to-end smoke test in CI matrix
 - Await GLaDOS Windows validation before tagging v0.2.0

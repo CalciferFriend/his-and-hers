@@ -1,21 +1,21 @@
 /**
- * commands/completion.ts — `hh completion`
+ * commands/completion.ts — `cofounder completion`
  *
  * Print a shell completion script to stdout, then source it to get tab
- * completion for all `hh` commands and their flags.
+ * completion for all `cofounder` commands and their flags.
  *
  * Supported shells:
- *   bash        — eval "$(hh completion bash)"
- *   zsh         — eval "$(hh completion zsh)"
- *   fish        — hh completion fish | source
- *   powershell  — hh completion powershell | Out-String | Invoke-Expression
+ *   bash        — eval "$(cofounder completion bash)"
+ *   zsh         — eval "$(cofounder completion zsh)"
+ *   fish        — cofounder completion fish | source
+ *   powershell  — cofounder completion powershell | Out-String | Invoke-Expression
  *
  * Usage:
- *   hh completion bash
- *   hh completion zsh
- *   hh completion fish
- *   hh completion powershell
- *   hh completion          # auto-detect current shell
+ *   cofounder completion bash
+ *   cofounder completion zsh
+ *   cofounder completion fish
+ *   cofounder completion powershell
+ *   cofounder completion          # auto-detect current shell
  */
 
 import pc from "picocolors";
@@ -181,7 +181,7 @@ export const COMMANDS: CompletionCommand[] = [
   // User-defined CLI shortcuts
   {
     name: "alias",
-    description: "Manage user-defined CLI shortcuts persisted in ~/.his-and-hers/aliases.json",
+    description: "Manage user-defined CLI shortcuts persisted in ~/.cofounder/aliases.json",
     subcommands: ["add", "list", "show", "run", "remove"],
     flags: ["--desc", "--force", "--json"],
   },
@@ -211,11 +211,11 @@ export function generateBash(): string {
     })
     .join("\n");
 
-  return `# his-and-hers (hh) bash completion
+  return `# cofounder (hh) bash completion
 # Add to ~/.bashrc or ~/.bash_profile:
-#   eval "$(hh completion bash)"
+#   eval "$(cofounder completion bash)"
 
-_hh_completion() {
+_cofounder_completion() {
   local cur prev words
   COMPREPLY=()
   cur="\${COMP_WORDS[COMP_CWORD]}"
@@ -240,7 +240,7 @@ ${caseEntries}
   COMPREPLY=( $(compgen -f -- "$cur") )
 }
 
-complete -F _hh_completion hh
+complete -F _cofounder_completion hh
 `;
 }
 
@@ -264,10 +264,10 @@ export function generateZsh(): string {
     })
     .join("\n");
 
-  return `#compdef hh
-# his-and-hers (hh) zsh completion
+  return `#compdef cofounder
+# cofounder (hh) zsh completion
 # Add to ~/.zshrc:
-#   eval "$(hh completion zsh)"
+#   eval "$(cofounder completion zsh)"
 # Or place this file as _hh in a directory on your $fpath.
 
 _hh() {
@@ -283,7 +283,7 @@ _hh() {
       commands=(
 ${cmdList}
       )
-      _describe 'hh commands' commands
+      _describe 'cofounder commands' commands
       ;;
     args)
       local cmd=\${words[2]}
@@ -304,20 +304,20 @@ _hh "$@"
  */
 export function generateFish(): string {
   const lines: string[] = [
-    "# his-and-hers (hh) fish completion",
+    "# cofounder (hh) fish completion",
     "# Add to ~/.config/fish/config.fish:",
-    "#   hh completion fish | source",
+    "#   cofounder completion fish | source",
     "#",
-    "# Or save to ~/.config/fish/completions/hh.fish",
+    "# Or save to ~/.config/fish/completions/cofounder.fish",
     "",
     "# Disable file completion at top level",
-    "complete -c hh -f",
+    "complete -c cofounder -f",
     "",
     "# Top-level subcommands",
   ];
 
   for (const cmd of COMMANDS) {
-    lines.push(`complete -c hh -n '__fish_use_subcommand' -a '${cmd.name}' -d '${cmd.description}'`);
+    lines.push(`complete -c cofounder -n '__fish_use_subcommand' -a '${cmd.name}' -d '${cmd.description}'`);
   }
 
   lines.push("");
@@ -333,14 +333,14 @@ export function generateFish(): string {
 
     if (hasSub) {
       for (const sub of cmd.subcommands!) {
-        lines.push(`complete -c hh -n ${cond} -a '${sub}'`);
+        lines.push(`complete -c cofounder -n ${cond} -a '${sub}'`);
       }
     }
 
     if (hasFlags) {
       for (const flag of cmd.flags!) {
         const flagName = flag.replace(/^--/, "");
-        lines.push(`complete -c hh -n ${cond} -l '${flagName}'`);
+        lines.push(`complete -c cofounder -n ${cond} -l '${flagName}'`);
       }
     }
   }
@@ -364,13 +364,13 @@ export function generatePowerShell(): string {
     })
     .join("\n");
 
-  return `# his-and-hers (hh) PowerShell completion
+  return `# cofounder (hh) PowerShell completion
 # Add to your $PROFILE:
-#   hh completion powershell | Out-String | Invoke-Expression
+#   cofounder completion powershell | Out-String | Invoke-Expression
 # Or:
-#   Invoke-Expression (& hh completion powershell | Out-String)
+#   Invoke-Expression (& cofounder completion powershell | Out-String)
 
-Register-ArgumentCompleter -Native -CommandName hh -ScriptBlock {
+Register-ArgumentCompleter -Native -CommandName cofounder -ScriptBlock {
   param($wordToComplete, $commandAst, $cursorPosition)
 
   $tokens = $commandAst.CommandElements
@@ -417,25 +417,25 @@ function installHint(shell: string): string {
       return [
         "",
         pc.dim("# To enable permanently, add to ~/.bashrc or ~/.bash_profile:"),
-        pc.dim('#   eval "$(hh completion bash)"'),
+        pc.dim('#   eval "$(cofounder completion bash)"'),
       ].join("\n");
     case "zsh":
       return [
         "",
         pc.dim("# To enable permanently, add to ~/.zshrc:"),
-        pc.dim('#   eval "$(hh completion zsh)"'),
+        pc.dim('#   eval "$(cofounder completion zsh)"'),
       ].join("\n");
     case "fish":
       return [
         "",
         pc.dim("# To enable permanently:"),
-        pc.dim("#   hh completion fish > ~/.config/fish/completions/hh.fish"),
+        pc.dim("#   cofounder completion fish > ~/.config/fish/completions/cofounder.fish"),
       ].join("\n");
     case "powershell":
       return [
         "",
         pc.dim("# To enable permanently, add to your $PROFILE:"),
-        pc.dim("#   hh completion powershell | Out-String | Invoke-Expression"),
+        pc.dim("#   cofounder completion powershell | Out-String | Invoke-Expression"),
       ].join("\n");
     default:
       return "";
@@ -459,7 +459,7 @@ export async function completion(opts: CompletionOptions = {}): Promise<void> {
       console.error(
         pc.red("✗") +
           " Could not detect your shell. Specify it explicitly:\n" +
-          pc.dim("  hh completion bash | zsh | fish | powershell"),
+          pc.dim("  cofounder completion bash | zsh | fish | powershell"),
       );
       process.exitCode = 1;
       return;

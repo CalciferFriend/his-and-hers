@@ -1,27 +1,27 @@
-# `hh serve` — REST API Server
+# `cofounder serve` — REST API Server
 
-Start a lightweight HTTP API server exposing his-and-hers over a standard REST interface.
+Start a lightweight HTTP API server exposing cofounder over a standard REST interface.
 
 ```bash
-hh serve                     # default port 3848
-hh serve --port 9000         # custom port
-hh serve --token mytoken     # fixed token
-hh serve --no-auth           # disable auth (local dev only)
-hh serve --readonly          # disable mutating endpoints
+cofounder serve                     # default port 3848
+cofounder serve --port 9000         # custom port
+cofounder serve --token mytoken     # fixed token
+cofounder serve --no-auth           # disable auth (local dev only)
+cofounder serve --readonly          # disable mutating endpoints
 ```
 
 ---
 
 ## Overview
 
-`hh serve` complements the other his-and-hers interfaces:
+`cofounder serve` complements the other cofounder interfaces:
 
 | Interface | Best for |
 |-----------|----------|
-| `hh send` / CLI | Interactive use from the terminal |
-| `hh mcp` | LLM clients (Claude Desktop, Cursor, Zed) |
-| `hh web` | Browser-based monitoring dashboard |
-| **`hh serve`** | **Automation, CI, custom apps, language-agnostic integrations** |
+| `cofounder send` / CLI | Interactive use from the terminal |
+| `cofounder mcp` | LLM clients (Claude Desktop, Cursor, Zed) |
+| `cofounder web` | Browser-based monitoring dashboard |
+| **`cofounder serve`** | **Automation, CI, custom apps, language-agnostic integrations** |
 
 ---
 
@@ -40,7 +40,7 @@ GET http://localhost:3848/peers?token=<token>
 ```
 
 **Token management:**
-- Auto-generated on first `hh serve` run and stored at `~/.his-and-hers/serve-token` (mode 0600).
+- Auto-generated on first `cofounder serve` run and stored at `~/.cofounder/serve-token` (mode 0600).
 - Override with `--token <value>` or `HH_SERVE_TOKEN` environment variable.
 - Disable entirely with `--no-auth` (local development only — never expose an auth-disabled server publicly).
 
@@ -52,7 +52,7 @@ GET http://localhost:3848/peers?token=<token>
 Liveness check. No auth required.
 
 ```json
-{ "ok": true, "service": "his-and-hers", "version": "1.0" }
+{ "ok": true, "service": "cofounder", "version": "1.0" }
 ```
 
 ### `GET /openapi.json`
@@ -216,7 +216,7 @@ Send a task to multiple peers simultaneously.
 Weekly cost summary — total spend, cloud vs local, by peer.
 
 ### `GET /capabilities`
-Cached peer capability report (last populated by `hh capabilities fetch`).
+Cached peer capability report (last populated by `cofounder capabilities fetch`).
 
 ---
 
@@ -241,7 +241,7 @@ curl -H "X-HH-Token: $TOKEN" http://localhost:3848/events
 ### Send a task and get the ID back
 
 ```bash
-TOKEN=$(cat ~/.his-and-hers/serve-token)
+TOKEN=$(cat ~/.cofounder/serve-token)
 
 curl -s -X POST http://localhost:3848/tasks \
   -H "X-HH-Token: $TOKEN" \
@@ -276,7 +276,7 @@ curl -s -H "X-HH-Token: $TOKEN" http://localhost:3848/status | jq .
 ```python
 import sseclient, requests
 
-token = open("~/.his-and-hers/serve-token").read().strip()
+token = open("~/.cofounder/serve-token").read().strip()
 url = "http://localhost:3848/events"
 resp = requests.get(url, headers={"X-HH-Token": token}, stream=True)
 client = sseclient.SSEClient(resp)
@@ -291,7 +291,7 @@ for event in client.events():
 Pass `--readonly` to disable all `POST` and `DELETE` endpoints. Useful when exposing the server for monitoring without allowing task dispatch.
 
 ```bash
-hh serve --readonly
+cofounder serve --readonly
 ```
 
 ---

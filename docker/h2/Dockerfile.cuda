@@ -1,5 +1,5 @@
 # Jerry node — Docker image (NVIDIA CUDA)
-# Ollama with CUDA GPU acceleration + Node 22 + Tailscale + OpenClaw + his-and-hers
+# Ollama with CUDA GPU acceleration + Node 22 + Tailscale + OpenClaw + cofounder
 #
 # Requires: nvidia-container-toolkit on the host
 # https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
@@ -51,11 +51,11 @@ RUN curl -fsSL https://ollama.com/install.sh | sh
 # ── OpenClaw ──────────────────────────────────────────────────────────────────
 RUN npm install -g openclaw
 
-# ── his-and-hers CLI ─────────────────────────────────────────────────────────
-RUN npm install -g his-and-hers
+# ── cofounder CLI ─────────────────────────────────────────────────────────
+RUN npm install -g cofounder
 
 # ── Runtime config dirs ───────────────────────────────────────────────────────
-RUN mkdir -p /root/.openclaw /root/.his-and-hers /root/.ollama
+RUN mkdir -p /root/.openclaw /root/.cofounder /root/.ollama
 
 # ── SSH server (for tj send over SSH from Tom) ────────────────────────────────
 RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh

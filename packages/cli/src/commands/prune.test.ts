@@ -1,5 +1,5 @@
 /**
- * prune.test.ts — unit tests for `hh prune`
+ * prune.test.ts — unit tests for `cofounder prune`
  *
  * Tests cover the two pure utility functions that are safe to test
  * without filesystem involvement, plus an integration-style test
@@ -124,7 +124,7 @@ describe("prune (integration)", () => {
   let retryDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(join(tmpdir(), "hh-prune-test-"));
+    tmpDir = await mkdtemp(join(tmpdir(), "cofounder-prune-test-"));
     tasksDir = join(tmpDir, "state", "tasks");
     retryDir = join(tmpDir, "retry");
     await mkdir(tasksDir, { recursive: true });

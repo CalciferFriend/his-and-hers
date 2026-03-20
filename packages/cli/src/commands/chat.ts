@@ -1,24 +1,24 @@
 /**
- * commands/chat.ts — `hh chat`
+ * commands/chat.ts — `cofounder chat`
  *
  * Interactive multi-turn session with a peer node (H2).
  *
- * Instead of running `hh send` over and over, `hh chat` opens a persistent
+ * Instead of running `cofounder send` over and over, `cofounder chat` opens a persistent
  * conversation loop. Each turn:
  *   1. Reads a prompt from stdin (readline interface)
  *   2. Carries forward context_summary from prior turns
  *   3. Sends via wakeAgent, waits for the result (webhook → polling fallback)
  *   4. Streams partial output as it arrives (if H2 supports streaming)
  *   5. Updates context_summary for the next turn
- *   6. Persists each turn to task history (same as `hh send --wait`)
+ *   6. Persists each turn to task history (same as `cofounder send --wait`)
  *
  * Session summary is written at exit (Ctrl-C or `exit`/`quit`/`.q`).
  *
  * Usage:
- *   hh chat                       # interactive chat with primary peer
- *   hh chat --peer GLaDOS          # target a specific peer by name
- *   hh chat --no-context           # fresh context each turn (no history carry-over)
- *   hh chat --timeout 120          # seconds to wait per turn (default: 300)
+ *   cofounder chat                       # interactive chat with primary peer
+ *   cofounder chat --peer GLaDOS          # target a specific peer by name
+ *   cofounder chat --no-context           # fresh context each turn (no history carry-over)
+ *   cofounder chat --timeout 120          # seconds to wait per turn (default: 300)
  */
 
 import * as readline from "node:readline/promises";
@@ -35,13 +35,13 @@ import {
   startStreamServer,
   type StreamServerHandle,
   type ResultWebhookPayload,
-} from "@his-and-hers/core";
+} from "@cofounder/core";
 import {
   loadContextSummary,
   appendContextEntry,
   buildContextSummary,
   type ContextEntry,
-} from "@his-and-hers/core/context/store";
+} from "@cofounder/core/context/store";
 import { createTaskState, updateTaskState } from "../state/tasks.ts";
 import { getPeer } from "../peers/select.ts";
 
@@ -68,7 +68,7 @@ function banner(thisName: string, peerName: string, peerEmoji: string): void {
   );
   console.log(
     pc.bold(pc.cyan("║")) +
-      pc.bold("  hh chat — interactive multi-turn session        ") +
+      pc.bold("  cofounder chat — interactive multi-turn session        ") +
       pc.bold(pc.cyan("║")),
   );
   console.log(
@@ -100,7 +100,7 @@ function sessionSummary(
   console.log(`  Tokens:   ${pc.bold(totalTokens.toLocaleString())}`);
   console.log(`  Cost:     ${pc.bold("$" + totalCostUsd.toFixed(4))}`);
   console.log(`  Duration: ${pc.bold(durationSec.toFixed(1) + "s")}`);
-  console.log(pc.dim("  Context saved — next `hh send` or `hh chat` will carry forward."));
+  console.log(pc.dim("  Context saved — next `cofounder send` or `cofounder chat` will carry forward."));
   console.log("");
 }
 
@@ -164,11 +164,11 @@ async function sendTurn(
 
   // Build wake text
   const resultCmd = webhookUrl
-    ? `hh result ${msg.id} "<output>" --webhook-url ${webhookUrl}`
-    : `hh result ${msg.id} "<output>"`;
+    ? `cofounder result ${msg.id} "<output>" --webhook-url ${webhookUrl}`
+    : `cofounder result ${msg.id} "<output>"`;
 
   const wakeLines = [
-    `[HHMessage:task from ${config.this_node.name} id=${msg.id} turn=${turnIdx}] ${task}`,
+    `[CofounderMessage:task from ${config.this_node.name} id=${msg.id} turn=${turnIdx}] ${task}`,
     ``,
     `When done, run: ${resultCmd}`,
   ];
@@ -302,7 +302,7 @@ async function sendTurn(
 
   if (streamHandle) streamHandle.close();
   console.log(pc.yellow(`\n  ⚠ Timed out after ${timeoutSec}s. Task ${msg.id.slice(0, 8)} is still running.`));
-  console.log(pc.dim(`  Check with: hh task-status ${msg.id.slice(0, 8)}`));
+  console.log(pc.dim(`  Check with: cofounder task-status ${msg.id.slice(0, 8)}`));
   await updateTaskState(msg.id, { status: "timeout" });
   return null;
 }

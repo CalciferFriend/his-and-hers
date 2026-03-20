@@ -4,7 +4,7 @@
  * Zod schema for HHCapabilityReport — what a H2 node advertises about
  * itself so H1 can make informed routing decisions.
  *
- * H2 writes this to ~/.his-and-hers/capabilities.json via `hh capabilities --advertise`.
+ * H2 writes this to ~/.cofounder/capabilities.json via `cofounder capabilities --advertise`.
  * H1 fetches it from the peer gateway at /capabilities or via SSH.
  */
 

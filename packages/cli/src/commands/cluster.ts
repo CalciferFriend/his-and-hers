@@ -1,21 +1,21 @@
 /**
- * commands/cluster.ts — `hh cluster` / `hh clusters`
+ * commands/cluster.ts — `cofounder cluster` / `cofounder clusters`
  *
  * Named peer groups for cluster-targeted dispatch.
  *
  * Clusters let you alias a set of peers under a short name and then target
- * the whole group with `hh broadcast --cluster <name>` or inspect the group
- * with `hh peers --cluster <name>`.
+ * the whole group with `cofounder broadcast --cluster <name>` or inspect the group
+ * with `cofounder peers --cluster <name>`.
  *
  * Usage:
- *   hh clusters                                  # list all clusters
- *   hh cluster add gpu --peers glados,piper      # define a new cluster
- *   hh cluster show gpu                          # show peers in a cluster
- *   hh cluster remove gpu                        # delete a cluster
- *   hh cluster peers add gpu forge               # add a peer to a cluster
- *   hh cluster peers remove gpu glados           # remove a peer from a cluster
+ *   cofounder clusters                                  # list all clusters
+ *   cofounder cluster add gpu --peers glados,piper      # define a new cluster
+ *   cofounder cluster show gpu                          # show peers in a cluster
+ *   cofounder cluster remove gpu                        # delete a cluster
+ *   cofounder cluster peers add gpu forge               # add a peer to a cluster
+ *   cofounder cluster peers remove gpu glados           # remove a peer from a cluster
  *
- * Config storage: clusters are persisted as `clusters` in hh.json.
+ * Config storage: clusters are persisted as `clusters` in cofounder.json.
  * Peer names are validated against the full peer roster at write time.
  *
  * Phase 7c — Calcifer ✅ (2026-03-15)
@@ -44,7 +44,7 @@ export interface ClustersJsonOutput {
 /** Load clusters map from config, defaulting to empty. */
 async function loadClusters(): Promise<{ clusters: Record<string, string[]>; allPeerNames: string[] }> {
   const config = await loadConfig();
-  if (!config) throw new Error("No config found. Run `hh onboard` first.");
+  if (!config) throw new Error("No config found. Run `cofounder onboard` first.");
   const clusters: Record<string, string[]> = config.clusters ?? {};
   const allPeerNames = getAllPeers(config).map((p) => p.name);
   return { clusters, allPeerNames };
@@ -66,12 +66,12 @@ export async function resolveClusterPeers(clusterName: string): Promise<string[]
   return config.clusters?.[clusterName] ?? null;
 }
 
-// ─── hh clusters ──────────────────────────────────────────────────────────────
+// ─── cofounder clusters ──────────────────────────────────────────────────────────────
 
 export async function clusterList(opts: { json?: boolean } = {}) {
   const config = await loadConfig();
   if (!config) {
-    p.log.error("No configuration found. Run `hh onboard` first.");
+    p.log.error("No configuration found. Run `cofounder onboard` first.");
     process.exitCode = 1;
     return;
   }
@@ -89,14 +89,14 @@ export async function clusterList(opts: { json?: boolean } = {}) {
   }
 
   if (entries.length === 0) {
-    p.intro(pc.bold("hh clusters"));
+    p.intro(pc.bold("cofounder clusters"));
     p.log.info(pc.dim("No clusters defined yet."));
-    p.log.info(pc.dim(`Run ${pc.italic("hh cluster add <name> --peers <peer1,peer2>")} to create one.`));
+    p.log.info(pc.dim(`Run ${pc.italic("cofounder cluster add <name> --peers <peer1,peer2>")} to create one.`));
     p.outro("Done");
     return;
   }
 
-  p.intro(`${pc.bold("hh clusters")} (${entries.length} defined)`);
+  p.intro(`${pc.bold("cofounder clusters")} (${entries.length} defined)`);
 
   for (const [name, peers] of entries) {
     const info = buildClusterInfo(name, peers, allPeerNames);
@@ -107,12 +107,12 @@ export async function clusterList(opts: { json?: boolean } = {}) {
   }
 
   p.log.info("");
-  p.log.info(pc.dim(`Use ${pc.italic("hh broadcast \"task\" --cluster <name>")} to target a group.`));
+  p.log.info(pc.dim(`Use ${pc.italic("cofounder broadcast \"task\" --cluster <name>")} to target a group.`));
 
   p.outro("Done");
 }
 
-// ─── hh cluster add ───────────────────────────────────────────────────────────
+// ─── cofounder cluster add ───────────────────────────────────────────────────────────
 
 export interface ClusterAddOptions {
   /** Comma-separated peer names to include in the group. */
@@ -126,7 +126,7 @@ export interface ClusterAddOptions {
 export async function clusterAdd(name: string, opts: ClusterAddOptions) {
   const config = await loadConfig();
   if (!config) {
-    p.log.error("No configuration found. Run `hh onboard` first.");
+    p.log.error("No configuration found. Run `cofounder onboard` first.");
     process.exitCode = 1;
     return;
   }
@@ -181,12 +181,12 @@ export async function clusterAdd(name: string, opts: ClusterAddOptions) {
   );
 }
 
-// ─── hh cluster show ──────────────────────────────────────────────────────────
+// ─── cofounder cluster show ──────────────────────────────────────────────────────────
 
 export async function clusterShow(name: string, opts: { json?: boolean } = {}) {
   const config = await loadConfig();
   if (!config) {
-    p.log.error("No configuration found. Run `hh onboard` first.");
+    p.log.error("No configuration found. Run `cofounder onboard` first.");
     process.exitCode = 1;
     return;
   }
@@ -221,18 +221,18 @@ export async function clusterShow(name: string, opts: { json?: boolean } = {}) {
   }
 
   if (info.stale.length > 0) {
-    p.log.warn(`${info.stale.length} stale peer(s) — run ${pc.italic(`hh cluster peers remove ${name} <peer>`)} to clean up.`);
+    p.log.warn(`${info.stale.length} stale peer(s) — run ${pc.italic(`cofounder cluster peers remove ${name} <peer>`)} to clean up.`);
   }
 
   p.outro("Done");
 }
 
-// ─── hh cluster remove ────────────────────────────────────────────────────────
+// ─── cofounder cluster remove ────────────────────────────────────────────────────────
 
 export async function clusterRemove(name: string, opts: { force?: boolean; json?: boolean } = {}) {
   const config = await loadConfig();
   if (!config) {
-    p.log.error("No configuration found. Run `hh onboard` first.");
+    p.log.error("No configuration found. Run `cofounder onboard` first.");
     process.exitCode = 1;
     return;
   }
@@ -271,7 +271,7 @@ export async function clusterRemove(name: string, opts: { force?: boolean; json?
   p.log.success(`Removed cluster ${pc.bold(pc.cyan(name))}.`);
 }
 
-// ─── hh cluster peers add ─────────────────────────────────────────────────────
+// ─── cofounder cluster peers add ─────────────────────────────────────────────────────
 
 export async function clusterPeersAdd(
   clusterName: string,
@@ -280,7 +280,7 @@ export async function clusterPeersAdd(
 ) {
   const config = await loadConfig();
   if (!config) {
-    p.log.error("No configuration found. Run `hh onboard` first.");
+    p.log.error("No configuration found. Run `cofounder onboard` first.");
     process.exitCode = 1;
     return;
   }
@@ -289,7 +289,7 @@ export async function clusterPeersAdd(
   if (!(clusterName in clusters)) {
     p.log.error(
       `Cluster ${pc.yellow(JSON.stringify(clusterName))} not found. ` +
-      `Create it first with ${pc.italic(`hh cluster add ${clusterName} --peers ${peerName}`)}`,
+      `Create it first with ${pc.italic(`cofounder cluster add ${clusterName} --peers ${peerName}`)}`,
     );
     process.exitCode = 1;
     return;
@@ -323,7 +323,7 @@ export async function clusterPeersAdd(
   p.log.success(`Added ${pc.bold(peerName)} to cluster ${pc.cyan(clusterName)}.`);
 }
 
-// ─── hh cluster peers remove ──────────────────────────────────────────────────
+// ─── cofounder cluster peers remove ──────────────────────────────────────────────────
 
 export async function clusterPeersRemove(
   clusterName: string,
@@ -332,7 +332,7 @@ export async function clusterPeersRemove(
 ) {
   const config = await loadConfig();
   if (!config) {
-    p.log.error("No configuration found. Run `hh onboard` first.");
+    p.log.error("No configuration found. Run `cofounder onboard` first.");
     process.exitCode = 1;
     return;
   }

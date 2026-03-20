@@ -1,6 +1,6 @@
 # LLM Providers
 
-his-and-hers works with any LLM provider that OpenClaw supports. H1 typically uses a cloud provider for lightweight orchestration; H2 typically uses a local provider for heavy inference.
+cofounder works with any LLM provider that OpenClaw supports. H1 typically uses a cloud provider for lightweight orchestration; H2 typically uses a local provider for heavy inference.
 
 ---
 
@@ -22,18 +22,18 @@ Used by H1 for orchestration and delegation. Claude Sonnet is the default — fa
 
 ### Setup
 
-During `hh onboard`, select **Anthropic** as your provider. The wizard prompts for your API key and stores it in the OS keychain (not plaintext).
+During `cofounder onboard`, select **Anthropic** as your provider. The wizard prompts for your API key and stores it in the OS keychain (not plaintext).
 
 Manual config update:
 
 ```bash
-hh onboard --reconfigure-provider
-# Or edit ~/.his-and-hers/hh.json directly
+cofounder onboard --reconfigure-provider
+# Or edit ~/.cofounder/cofounder.json directly
 ```
 
 ### Cost routing
 
-By default, his-and-hers routes lightweight tasks (summarization, task planning, short text) to Claude Haiku (cheapest) and complex reasoning to Claude Sonnet. 70B+ inference goes to H2.
+By default, cofounder routes lightweight tasks (summarization, task planning, short text) to Claude Haiku (cheapest) and complex reasoning to Claude Sonnet. 70B+ inference goes to H2.
 
 ```json
 {
@@ -60,7 +60,7 @@ By default, his-and-hers routes lightweight tasks (summarization, task planning,
 
 ### Setup
 
-Select **OpenAI** during `hh onboard`. Your API key goes to the OS keychain.
+Select **OpenAI** during `cofounder onboard`. Your API key goes to the OS keychain.
 
 ### Models
 
@@ -101,15 +101,15 @@ winget install Ollama.Ollama
 
 ### Auto-detection
 
-his-and-hers checks `http://localhost:11434/api/tags` on startup. If Ollama is running, it's auto-detected and you'll see your installed models listed during `hh onboard`.
+cofounder checks `http://localhost:11434/api/tags` on startup. If Ollama is running, it's auto-detected and you'll see your installed models listed during `cofounder onboard`.
 
 ```bash
 # Verify Ollama is running
 ollama list
 # → shows installed models
 
-# Check that hh can see it
-hh capabilities scan
+# Check that cofounder can see it
+cofounder capabilities scan
 # → "Ollama: running · 3 models"
 ```
 
@@ -124,7 +124,7 @@ hh capabilities scan
 | Embeddings | Nomic Embed | `ollama pull nomic-embed-text` |
 | Vision tasks | LLaVA 7B | `ollama pull llava:7b` |
 
-### Ollama config in hh.json
+### Ollama config in cofounder.json
 
 ```json
 {
@@ -161,7 +161,7 @@ LM Studio provides an OpenAI-compatible API on `localhost:1234` when the server 
 
 1. Install [LM Studio](https://lmstudio.ai)
 2. Load a model and start the local server (gear icon → enable API)
-3. In `hh onboard`, select **LM Studio** (or **Custom**)
+3. In `cofounder onboard`, select **LM Studio** (or **Custom**)
 
 ```json
 {
@@ -200,7 +200,7 @@ python -m vllm.entrypoints.openai.api_server \
 ./server -m models/llama-3.2-3b.gguf -c 4096 --port 8080
 ```
 
-During `hh onboard`, select **Custom OpenAI-compatible** and enter your base URL.
+During `cofounder onboard`, select **Custom OpenAI-compatible** and enter your base URL.
 
 ---
 
@@ -229,10 +229,10 @@ See [Budget tracking](/guide/budget) for cost analysis and routing recommendatio
 
 ```bash
 # Reconfigure just the provider, keep everything else
-hh onboard --reconfigure-provider
+cofounder onboard --reconfigure-provider
 
 # Or set the API key directly
 openclaw config set anthropic_api_key sk-ant-...
 ```
 
-Your current API key usage is visible in `hh budget`.
+Your current API key usage is visible in `cofounder budget`.

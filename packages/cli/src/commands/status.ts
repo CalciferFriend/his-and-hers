@@ -1,18 +1,18 @@
 import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { loadConfig } from "../config/store.ts";
-import { pingPeer, getTailscaleStatus } from "@his-and-hers/core";
-import { checkGatewayHealth } from "@his-and-hers/core";
+import { pingPeer, getTailscaleStatus } from "@cofounder/core";
+import { checkGatewayHealth } from "@cofounder/core";
 
 export async function status() {
   const config = await loadConfig();
 
   if (!config) {
-    p.log.error("No configuration found. Run `hh onboard` first.");
+    p.log.error("No configuration found. Run `cofounder onboard` first.");
     return;
   }
 
-  p.intro(pc.bgCyan(pc.black(" hh status ")));
+  p.intro(pc.bgCyan(pc.black(" cofounder status ")));
 
   const thisNode = config.this_node;
   const peer = config.peer_node;
@@ -51,7 +51,7 @@ export async function status() {
   if (peer.wol_enabled) {
     p.log.info(`  Wake-on-LAN: ${pc.green("enabled")} (MAC: ${peer.wol_mac ?? "?"})`);
     if (!reachable) {
-      p.log.info(`  → Run ${pc.cyan("hh wake")} to wake this node`);
+      p.log.info(`  → Run ${pc.cyan("cofounder wake")} to wake this node`);
     }
   }
 

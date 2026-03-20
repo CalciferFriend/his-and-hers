@@ -1,6 +1,6 @@
 # Prerequisites
 
-What you need before running `hh onboard`.
+What you need before running `cofounder onboard`.
 
 ---
 
@@ -95,7 +95,7 @@ All traffic between H1 and H2 flows over Tailscale (WireGuard-encrypted). You do
 
 ## Verify your setup
 
-Run this checklist before starting `hh onboard`:
+Run this checklist before starting `cofounder onboard`:
 
 ```bash
 # On both machines:
@@ -110,7 +110,7 @@ ssh h2-user@100.x.y.z  # must connect without password prompt
 ollama list           # should show at least one model
 ```
 
-If anything fails, fix it before running `hh onboard`. The wizard checks prerequisites but it's faster to fix them manually first.
+If anything fails, fix it before running `cofounder onboard`. The wizard checks prerequisites but it's faster to fix them manually first.
 
 ---
 

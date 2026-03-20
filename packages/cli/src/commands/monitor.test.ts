@@ -1,7 +1,7 @@
 /**
  * commands/monitor.test.ts
  *
- * Unit tests for `hh monitor` — snapshot builder types and render output.
+ * Unit tests for `cofounder monitor` — snapshot builder types and render output.
  *
  * We test:
  *   1. renderSnapshot() output — headers, sections, edge cases

@@ -1,14 +1,14 @@
 /**
- * commands/serve.ts — `hh serve`
+ * commands/serve.ts — `cofounder serve`
  *
- * A lightweight REST API server exposing his-and-hers as an HTTP interface.
+ * A lightweight REST API server exposing cofounder as an HTTP interface.
  *
- * Complements `hh mcp` (LLM clients) and `hh web` (browser dashboard).
+ * Complements `cofounder mcp` (LLM clients) and `cofounder web` (browser dashboard).
  * This server targets automation, CI scripts, custom apps, and language-agnostic integrations.
  *
  * Auth: X-HH-Token header or ?token= query param.
- * Token is auto-generated on first `hh serve` run and stored in
- * ~/.his-and-hers/serve-token (or override with --token / HH_SERVE_TOKEN env).
+ * Token is auto-generated on first `cofounder serve` run and stored in
+ * ~/.cofounder/serve-token (or override with --token / COFOUNDER_SERVE_TOKEN env).
  *
  * Endpoints:
  *   GET  /              — API root (version, links)
@@ -29,11 +29,11 @@
  *   GET  /events        — SSE stream (task updates, peer status)
  *
  * Usage:
- *   hh serve                     # default port 3848
- *   hh serve --port 9000         # custom port
- *   hh serve --token mytoken     # use fixed token
- *   hh serve --no-auth           # disable auth (local dev only)
- *   hh serve --readonly          # disable mutating endpoints
+ *   cofounder serve                     # default port 3848
+ *   cofounder serve --port 9000         # custom port
+ *   cofounder serve --token mytoken     # use fixed token
+ *   cofounder serve --no-auth           # disable auth (local dev only)
+ *   cofounder serve --readonly          # disable mutating endpoints
  */
 
 import {
@@ -66,7 +66,7 @@ import {
   loadContextSummary,
   withRetry,
   loadPeerCapabilities,
-} from "@his-and-hers/core";
+} from "@cofounder/core";
 import { getAllPeers, findPeerByName } from "../peers/select.ts";
 import { createTaskState, pollTaskCompletion } from "../state/tasks.ts";
 
@@ -74,14 +74,14 @@ import { createTaskState, pollTaskCompletion } from "../state/tasks.ts";
 
 function buildServeWakeText(from: string, taskId: string, task: string): string {
   return [
-    `[HHMessage:task from ${from} id=${taskId}] ${task}`,
+    `[CofounderMessage:task from ${from} id=${taskId}] ${task}`,
     ``,
-    `When done, run: hh result ${taskId} "<your output here>"`,
+    `When done, run: cofounder result ${taskId} "<your output here>"`,
   ].join("\n");
 }
 
-const HH_DIR = join(homedir(), ".his-and-hers");
-const TOKEN_FILE = join(HH_DIR, "serve-token");
+const CF_DIR = join(homedir(), ".cofounder");
+const TOKEN_FILE = join(CF_DIR, "serve-token");
 const DEFAULT_PORT = 3848;
 const API_VERSION = "1.0";
 
@@ -99,7 +99,7 @@ async function getOrCreateToken(): Promise<string> {
     const t = await readFile(TOKEN_FILE, "utf8");
     return t.trim();
   }
-  await mkdir(HH_DIR, { recursive: true });
+  await mkdir(CF_DIR, { recursive: true });
   const token = randomBytes(24).toString("hex");
   await writeFile(TOKEN_FILE, token, { mode: 0o600 });
   return token;
@@ -114,7 +114,7 @@ function checkAuth(
   noAuth: boolean,
 ): boolean {
   if (noAuth) return true;
-  const header = req.headers["x-hh-token"];
+  const header = req.headers["x-cofounder-token"];
   if (typeof header === "string" && header === token) return true;
   const queryToken = url.searchParams.get("token");
   if (queryToken === token) return true;
@@ -179,12 +179,12 @@ function buildOpenApiSpec(baseUrl: string): object {
   return {
     openapi: "3.1.0",
     info: {
-      title: "his-and-hers REST API",
+      title: "cofounder REST API",
       version: API_VERSION,
       description:
-        "HTTP interface for the his-and-hers two-agent communication framework. " +
-        "Complements `hh mcp` (LLM clients) and `hh web` (browser dashboard).",
-      contact: { url: "https://github.com/CalciferFriend/his-and-hers" },
+        "HTTP interface for the cofounder two-agent communication framework. " +
+        "Complements `cofounder mcp` (LLM clients) and `cofounder web` (browser dashboard).",
+      contact: { url: "https://github.com/CalciferFriend/cofounder" },
       license: { name: "MIT" },
     },
     servers: [{ url: baseUrl }],
@@ -195,7 +195,7 @@ function buildOpenApiSpec(baseUrl: string): object {
           type: "apiKey",
           in: "header",
           name: "X-HH-Token",
-          description: "API token from ~/.his-and-hers/serve-token (or HH_SERVE_TOKEN env)",
+          description: "API token from ~/.cofounder/serve-token (or COFOUNDER_SERVE_TOKEN env)",
         },
       },
       schemas: {
@@ -583,7 +583,7 @@ async function handleSendTask(
 
   const config = await loadConfig();
   if (!config) {
-    json(res, 500, { error: "No hh config found. Run hh onboard first." });
+    json(res, 500, { error: "No cofounder config found. Run cofounder onboard first." });
     return;
   }
 
@@ -622,7 +622,7 @@ async function handleSendTask(
 
     if (!peer.gateway_token) {
       await updateTaskState(msg.id, { status: "failed" });
-      json(res, 500, { ok: false, task_id: msg.id, peer: peer.name, error: "Peer gateway token not configured. Run hh pair first." });
+      json(res, 500, { ok: false, task_id: msg.id, peer: peer.name, error: "Peer gateway token not configured. Run cofounder pair first." });
       return;
     }
 
@@ -706,7 +706,7 @@ async function handleBroadcast(
 
   const config = await loadConfig();
   if (!config) {
-    json(res, 500, { error: "No hh config found" });
+    json(res, 500, { error: "No cofounder config found" });
     return;
   }
 
@@ -815,7 +815,7 @@ async function handleBroadcast(
 async function handleGetStatus(res: ServerResponse): Promise<void> {
   const config = await loadConfig();
   if (!config) {
-    json(res, 500, { error: "No hh config found" });
+    json(res, 500, { error: "No cofounder config found" });
     return;
   }
 
@@ -904,14 +904,14 @@ async function handleWakePeer(
   if (!peer) { notFound(res, `Peer '${name}' not found`); return; }
 
   if (!peer.gateway_token) {
-    json(res, 500, { ok: false, error: "Peer gateway token not configured. Run hh pair first." });
+    json(res, 500, { ok: false, error: "Peer gateway token not configured. Run cofounder pair first." });
     return;
   }
 
   const peerIp = peer.tailscale_ip ?? peer.tailscale_hostname;
   const peerPort = peer.gateway_port ?? 18789;
   // Send a minimal ping wake text to the peer gateway
-  const wakeText = `[HHMessage:heartbeat from ${config.this_node.name}] ping`;
+  const wakeText = `[CofounderMessage:heartbeat from ${config.this_node.name}] ping`;
   const result = await wakeAgent({
     url: `ws://${peerIp}:${peerPort}`,
     token: peer.gateway_token,
@@ -930,10 +930,10 @@ async function handleGetBudget(res: ServerResponse): Promise<void> {
 }
 
 async function handleGetCapabilities(res: ServerResponse): Promise<void> {
-  // loadPeerCapabilities() reads ~/.his-and-hers/peer-capabilities.json
-  // (populated by `hh capabilities fetch` — no per-peer arg in current API)
+  // loadPeerCapabilities() reads ~/.cofounder/peer-capabilities.json
+  // (populated by `cofounder capabilities fetch` — no per-peer arg in current API)
   const caps = await loadPeerCapabilities().catch(() => null);
-  json(res, 200, caps ?? { error: "No cached capabilities. Run: hh capabilities fetch" });
+  json(res, 200, caps ?? { error: "No cached capabilities. Run: cofounder capabilities fetch" });
 }
 
 function handleSSE(req: IncomingMessage, res: ServerResponse): void {
@@ -1007,7 +1007,7 @@ async function router(
 
   // No-auth endpoints
   if (pathname === "/health") {
-    json(res, 200, { ok: true, service: "his-and-hers", version: API_VERSION });
+    json(res, 200, { ok: true, service: "cofounder", version: API_VERSION });
     return;
   }
   if (pathname === "/openapi.json") {
@@ -1016,7 +1016,7 @@ async function router(
   }
   if (pathname === "/") {
     json(res, 200, {
-      service: "his-and-hers",
+      service: "cofounder",
       version: API_VERSION,
       docs: `${baseUrl}/openapi.json`,
       endpoints: [
@@ -1094,8 +1094,8 @@ async function router(
 // ─── Main entry ──────────────────────────────────────────────────────────────
 
 export async function serve(opts: ServeOptions = {}): Promise<void> {
-  const port = parseInt(opts.port ?? process.env["HH_SERVE_PORT"] ?? String(DEFAULT_PORT), 10);
-  const token = opts.token ?? process.env["HH_SERVE_TOKEN"] ?? (await getOrCreateToken());
+  const port = parseInt(opts.port ?? process.env["COFOUNDER_SERVE_PORT"] ?? String(DEFAULT_PORT), 10);
+  const token = opts.token ?? process.env["COFOUNDER_SERVE_TOKEN"] ?? (await getOrCreateToken());
   const baseUrl = `http://localhost:${port}`;
 
   const server = createServer(async (req, res) => {
@@ -1115,7 +1115,7 @@ export async function serve(opts: ServeOptions = {}): Promise<void> {
     server.on("error", reject);
   });
 
-  p.intro(`${pc.cyan("hh serve")} — REST API server`);
+  p.intro(`${pc.cyan("cofounder serve")} — REST API server`);
   p.log.success(`Listening on ${pc.bold(baseUrl)}`);
   p.log.info(`OpenAPI spec: ${pc.dim(`${baseUrl}/openapi.json`)}`);
 

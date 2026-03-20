@@ -1,5 +1,5 @@
 /**
- * commands/alias.test.ts — unit tests for `hh alias` subcommands
+ * commands/alias.test.ts — unit tests for `cofounder alias` subcommands
  *
  * Phase 8c — Calcifer ✅ (2026-03-15)
  */
@@ -11,7 +11,7 @@ import pc from "picocolors";
 
 let _aliases: any[] = [];
 
-vi.mock("@his-and-hers/core", () => ({
+vi.mock("@cofounder/core", () => ({
   loadAliases: () => _aliases,
   addAlias: (input: any) => {
     const now = new Date().toISOString();

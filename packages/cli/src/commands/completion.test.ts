@@ -1,5 +1,5 @@
 /**
- * completion.test.ts — tests for `hh completion`
+ * completion.test.ts — tests for `cofounder completion`
  *
  * Tests cover:
  *   - All four shell generators produce non-empty, syntactically plausible output
@@ -35,12 +35,12 @@ describe("generateBash", () => {
     expect(generateBash().length).toBeGreaterThan(100);
   });
 
-  it("defines a _hh_completion function", () => {
-    expect(generateBash()).toContain("_hh_completion()");
+  it("defines a _cofounder_completion function", () => {
+    expect(generateBash()).toContain("_cofounder_completion()");
   });
 
   it("registers completion via `complete -F`", () => {
-    expect(generateBash()).toContain("complete -F _hh_completion hh");
+    expect(generateBash()).toContain("complete -F _cofounder_completion hh");
   });
 
   it("includes core command names", () => {
@@ -66,8 +66,8 @@ describe("generateZsh", () => {
     expect(generateZsh().length).toBeGreaterThan(100);
   });
 
-  it("starts with #compdef hh", () => {
-    expect(generateZsh()).toMatch(/^#compdef hh/);
+  it("starts with #compdef cofounder", () => {
+    expect(generateZsh()).toMatch(/^#compdef cofounder/);
   });
 
   it("uses _describe for top-level commands", () => {
@@ -99,12 +99,12 @@ describe("generateFish", () => {
     expect(generateFish().length).toBeGreaterThan(100);
   });
 
-  it("uses `complete -c hh` form", () => {
-    expect(generateFish()).toMatch(/complete -c hh/);
+  it("uses `complete -c cofounder` form", () => {
+    expect(generateFish()).toMatch(/complete -c cofounder/);
   });
 
   it("disables file completion at top level", () => {
-    expect(generateFish()).toContain("complete -c hh -f");
+    expect(generateFish()).toContain("complete -c cofounder -f");
   });
 
   it("includes core command names", () => {
@@ -279,17 +279,17 @@ describe("completion()", () => {
 
   it("prints bash script to stdout for shell=bash", async () => {
     await completion({ shell: "bash", noHint: true });
-    expect(stdoutData).toContain("_hh_completion");
+    expect(stdoutData).toContain("_cofounder_completion");
   });
 
   it("prints zsh script to stdout for shell=zsh", async () => {
     await completion({ shell: "zsh", noHint: true });
-    expect(stdoutData).toContain("#compdef hh");
+    expect(stdoutData).toContain("#compdef cofounder");
   });
 
   it("prints fish script to stdout for shell=fish", async () => {
     await completion({ shell: "fish", noHint: true });
-    expect(stdoutData).toContain("complete -c hh");
+    expect(stdoutData).toContain("complete -c cofounder");
   });
 
   it("prints powershell script to stdout for shell=powershell", async () => {
@@ -322,7 +322,7 @@ describe("completion()", () => {
 
   it("handles uppercase shell name case-insensitively", async () => {
     await completion({ shell: "BASH", noHint: true });
-    expect(stdoutData).toContain("_hh_completion");
+    expect(stdoutData).toContain("_cofounder_completion");
     expect(process.exitCode).toBe(0);
   });
 });

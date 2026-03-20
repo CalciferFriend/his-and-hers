@@ -1,10 +1,10 @@
 import * as p from "@clack/prompts";
 import pc from "picocolors";
-import { verifyPairingCode, pingPeer, testSSH, checkGatewayHealth } from "@his-and-hers/core";
+import { verifyPairingCode, pingPeer, testSSH, checkGatewayHealth } from "@cofounder/core";
 import { loadConfig, saveConfig } from "../config/store.ts";
 
 export async function pair(options: { code: string }) {
-  p.intro(pc.bgCyan(pc.black(" his-and-hers pair ")));
+  p.intro(pc.bgCyan(pc.black(" cofounder pair ")));
 
   const code = options.code.trim();
   if (!/^\d{6}$/.test(code)) {
@@ -14,13 +14,13 @@ export async function pair(options: { code: string }) {
 
   const config = await loadConfig();
   if (!config) {
-    p.log.error("No configuration found on this machine. Run `hh onboard` first.");
+    p.log.error("No configuration found on this machine. Run `cofounder onboard` first.");
     process.exit(1);
   }
 
   // Verify pairing code against stored hash
   if (!config.pair?.pairing_code_hash) {
-    p.log.error("No pairing code hash found in config. Run `hh onboard` on the H1 node first.");
+    p.log.error("No pairing code hash found in config. Run `cofounder onboard` on the H1 node first.");
     process.exit(1);
   }
 
@@ -31,7 +31,7 @@ export async function pair(options: { code: string }) {
 
   if (!valid) {
     spinner.stop(`${pc.red("✗")} Invalid pairing code.`);
-    p.log.error("The code does not match. Get a fresh code from the H1 node by running `hh onboard`.");
+    p.log.error("The code does not match. Get a fresh code from the H1 node by running `cofounder onboard`.");
     process.exit(1);
   }
 
@@ -82,7 +82,7 @@ export async function pair(options: { code: string }) {
   if (allPassed) {
     p.log.success("Pairing verified — both nodes are connected and healthy.");
   } else {
-    p.log.warn("Pairing saved but some connectivity checks failed. Run `hh doctor` for diagnostics.");
+    p.log.warn("Pairing saved but some connectivity checks failed. Run `cofounder doctor` for diagnostics.");
   }
 
   p.note(

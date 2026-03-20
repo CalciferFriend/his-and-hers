@@ -40,7 +40,7 @@ export async function stepSoul(ctx: Partial<WizardContext>): Promise<Partial<Wiz
 
   try {
     const templatesDir = findTemplatesDir();
-    const targetDir = join(process.env.HOME ?? process.env.USERPROFILE ?? "~", ".his-and-hers");
+    const targetDir = join(process.env.HOME ?? process.env.USERPROFILE ?? "~", ".cofounder");
 
     const files = ["SOUL.md", "IDENTITY.md", "AGENTS.md"];
 

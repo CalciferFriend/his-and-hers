@@ -1,16 +1,16 @@
 // Protocol schemas
 export {
-  HHMessage,
-  HHTaskMessage,
-  HHResultMessage,
-  HHHeartbeatMessage,
-  HHHandoffMessage,
-  HHWakeMessage,
-  HHErrorMessage,
-  HHTaskPayload,
-  HHResultPayload,
-  HHHeartbeatPayload,
-  HHHandoffPayload,
+  CofounderMessage,
+  CofounderTaskMessage,
+  CofounderResultMessage,
+  CofounderHeartbeatMessage,
+  CofounderHandoffMessage,
+  CofounderWakeMessage,
+  CofounderErrorMessage,
+  CofounderTaskPayload,
+  CofounderResultPayload,
+  CofounderHeartbeatPayload,
+  CofounderHandoffPayload,
   HHWakePayload,
   HHErrorPayload,
   AttachmentPayload,
@@ -24,9 +24,9 @@ export {
   createResultMessage,
   createHeartbeatMessage,
   createWakeMessage,
-  HHHandoff,
-  HHHeartbeat,
-  HHPair,
+  CofounderHandoff,
+  CofounderHeartbeat,
+  CofounderPair,
 } from "./protocol/index.ts";
 
 // Attachment utilities (Phase 7d)
@@ -47,12 +47,15 @@ export {
   getTailscaleStatus,
   pingPeer,
   waitForPeer,
+  getTailscalePeers,
+  getTailscaleVersion,
+  isTailscaleInstalled,
   sshExec,
   testSSH,
   sendMagicPacket,
   wakeAndWait,
 } from "./transport/index.ts";
-export type { SSHConfig, WOLConfig } from "./transport/index.ts";
+export type { SSHConfig, WOLConfig, TailscalePeer } from "./transport/index.ts";
 
 // Trust model
 export {

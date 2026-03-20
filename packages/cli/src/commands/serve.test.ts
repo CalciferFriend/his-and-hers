@@ -1,5 +1,5 @@
 /**
- * serve.test.ts — Tests for `hh serve` REST API server
+ * serve.test.ts — Tests for `cofounder serve` REST API server
  *
  * Uses a real HTTP server bound to a random port for all tests.
  * No mocked network — we want to verify routing, auth, and JSON shapes.
@@ -28,7 +28,7 @@ vi.mock("../state/budget.ts", () => ({
   buildBudgetSummary: vi.fn(),
 }));
 
-vi.mock("@his-and-hers/core", () => ({
+vi.mock("@cofounder/core", () => ({
   checkGatewayHealth: vi.fn(),
   pingPeer: vi.fn(),
   wakeAgent: vi.fn(),
@@ -80,7 +80,7 @@ import {
   createTaskMessage,
   loadContextSummary,
   loadPeerCapabilities,
-} from "@his-and-hers/core";
+} from "@cofounder/core";
 import { getAllPeers, findPeerByName } from "../peers/select.ts";
 import { readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
@@ -230,13 +230,13 @@ afterAll(() => {
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
-describe("hh serve — no-auth endpoints", () => {
+describe("cofounder serve — no-auth endpoints", () => {
   it("GET /health returns ok without token", async () => {
     const res = await fetch(`${BASE_URL}/health`);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.ok).toBe(true);
-    expect(body.service).toBe("his-and-hers");
+    expect(body.service).toBe("cofounder");
     expect(body.version).toBe("1.0");
   });
 
@@ -244,7 +244,7 @@ describe("hh serve — no-auth endpoints", () => {
     const res = await fetch(`${BASE_URL}/`);
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect(body.service).toBe("his-and-hers");
+    expect(body.service).toBe("cofounder");
     expect(Array.isArray(body.endpoints)).toBe(true);
     expect(body.endpoints).toContain("GET /health");
     expect(body.endpoints).toContain("POST /tasks");
@@ -255,7 +255,7 @@ describe("hh serve — no-auth endpoints", () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.openapi).toBe("3.1.0");
-    expect(body.info.title).toBe("his-and-hers REST API");
+    expect(body.info.title).toBe("cofounder REST API");
     expect(body.paths["/tasks"]).toBeDefined();
     expect(body.paths["/peers"]).toBeDefined();
     expect(body.paths["/events"]).toBeDefined();
@@ -281,7 +281,7 @@ describe("hh serve — no-auth endpoints", () => {
   });
 });
 
-describe("hh serve — authentication", () => {
+describe("cofounder serve — authentication", () => {
   it("returns 401 without token on protected endpoint", async () => {
     const res = await get("/peers", null);
     expect(res.status).toBe(401);
@@ -306,7 +306,7 @@ describe("hh serve — authentication", () => {
   });
 });
 
-describe("hh serve — GET /peers", () => {
+describe("cofounder serve — GET /peers", () => {
   it("returns list of configured peers", async () => {
     const res = await get("/peers");
     expect(res.status).toBe(200);
@@ -330,7 +330,7 @@ describe("hh serve — GET /peers", () => {
   });
 });
 
-describe("hh serve — GET /status", () => {
+describe("cofounder serve — GET /status", () => {
   it("returns gateway health and ping per peer", async () => {
     const res = await get("/status");
     expect(res.status).toBe(200);
@@ -351,7 +351,7 @@ describe("hh serve — GET /status", () => {
   });
 });
 
-describe("hh serve — GET /tasks", () => {
+describe("cofounder serve — GET /tasks", () => {
   it("returns task list", async () => {
     const res = await get("/tasks");
     expect(res.status).toBe(200);
@@ -391,7 +391,7 @@ describe("hh serve — GET /tasks", () => {
   });
 });
 
-describe("hh serve — GET /tasks/:id", () => {
+describe("cofounder serve — GET /tasks/:id", () => {
   it("returns a specific task by full ID", async () => {
     const res = await get("/tasks/task-abc-123");
     expect(res.status).toBe(200);
@@ -407,7 +407,7 @@ describe("hh serve — GET /tasks/:id", () => {
   });
 });
 
-describe("hh serve — POST /tasks", () => {
+describe("cofounder serve — POST /tasks", () => {
   it("sends a task and returns task_id", async () => {
     const res = await post("/tasks", { task: "generate an image" });
     expect(res.status).toBe(200);
@@ -458,7 +458,7 @@ describe("hh serve — POST /tasks", () => {
   });
 });
 
-describe("hh serve — DELETE /tasks/:id", () => {
+describe("cofounder serve — DELETE /tasks/:id", () => {
   it("cancels a pending task", async () => {
     vi.mocked(listTaskStates).mockResolvedValueOnce([
       { ...MOCK_TASK, status: "pending" },
@@ -485,7 +485,7 @@ describe("hh serve — DELETE /tasks/:id", () => {
   });
 });
 
-describe("hh serve — POST /broadcast", () => {
+describe("cofounder serve — POST /broadcast", () => {
   it("broadcasts to all peers", async () => {
     const res = await post("/broadcast", { task: "run diagnostics", strategy: "all" });
     expect(res.status).toBe(200);
@@ -510,7 +510,7 @@ describe("hh serve — POST /broadcast", () => {
   });
 });
 
-describe("hh serve — GET /budget", () => {
+describe("cofounder serve — GET /budget", () => {
   it("returns budget summary", async () => {
     const res = await get("/budget");
     expect(res.status).toBe(200);
@@ -527,7 +527,7 @@ describe("hh serve — GET /budget", () => {
   });
 });
 
-describe("hh serve — GET /capabilities", () => {
+describe("cofounder serve — GET /capabilities", () => {
   it("returns cached peer capabilities", async () => {
     vi.mocked(loadPeerCapabilities).mockResolvedValueOnce({ gpu: "RTX 3070 Ti" } as never);
     const res = await get("/capabilities");
@@ -545,7 +545,7 @@ describe("hh serve — GET /capabilities", () => {
   });
 });
 
-describe("hh serve — POST /peers/:name/ping", () => {
+describe("cofounder serve — POST /peers/:name/ping", () => {
   it("pings a peer and returns reachability", async () => {
     const res = await post("/peers/glados/ping", {});
     expect(res.status).toBe(200);
@@ -561,7 +561,7 @@ describe("hh serve — POST /peers/:name/ping", () => {
   });
 });
 
-describe("hh serve — CORS", () => {
+describe("cofounder serve — CORS", () => {
   it("handles OPTIONS preflight with 204", async () => {
     const res = await fetch(`${BASE_URL}/tasks`, { method: "OPTIONS" });
     expect(res.status).toBe(204);
@@ -575,7 +575,7 @@ describe("hh serve — CORS", () => {
   });
 });
 
-describe("hh serve — read-only mode", () => {
+describe("cofounder serve — read-only mode", () => {
   // We can't easily restart the server with --readonly in this test setup,
   // but we can test the readonlyError helper indirectly by checking the logic.
   it("readonlyError returns 403", () => {
@@ -585,7 +585,7 @@ describe("hh serve — read-only mode", () => {
   });
 });
 
-describe("hh serve — unknown routes", () => {
+describe("cofounder serve — unknown routes", () => {
   it("returns 404 for unknown paths", async () => {
     const res = await get("/does-not-exist");
     expect(res.status).toBe(404);
@@ -600,7 +600,7 @@ describe("hh serve — unknown routes", () => {
   });
 });
 
-describe("hh serve — broadcastSSEServe export", () => {
+describe("cofounder serve — broadcastSSEServe export", () => {
   it("is exported and callable", () => {
     expect(typeof broadcastSSEServe).toBe("function");
     // Call it with no connected clients — should not throw

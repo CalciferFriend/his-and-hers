@@ -114,8 +114,8 @@ const _require = createRequire(import.meta.url);
 const { version: _hhVersion } = _require("../package.json") as { version: string };
 
 const program = new Command()
-  .name("hh")
-  .description("H1 & H2 — two agents, separate machines, one command to wire them.")
+  .name("cofounder")
+  .description("Cofounder — two agents, separate machines, one command to wire them.")
   .version(_hhVersion)
   // Default action when no subcommand given: onboard if unconfigured, status if already set up
   .action(async () => {
@@ -205,7 +205,7 @@ program
 program
   .command("replay")
   .description("Re-send a previous task with the same objective (useful after failures or timeouts)")
-  .argument("<id>", "Task ID or prefix to replay (see `hh logs` for IDs)")
+  .argument("<id>", "Task ID or prefix to replay (see `cofounder logs` for IDs)")
   .option("--peer <name>", "Override the target peer")
   .option("--wait", "Wait for the result before exiting")
   .option("--wait-timeout <seconds>", "Max seconds to wait (default: 300)", "300")
@@ -235,7 +235,7 @@ program
 
 program
   .command("cancel")
-  .description("Cancel a pending or running task (marks it as cancelled, unblocks hh logs / replay)")
+  .description("Cancel a pending or running task (marks it as cancelled, unblocks cofounder logs / replay)")
   .argument("[id]", "Task ID or prefix to cancel")
   .option("--force", "Cancel even if the task is already in a terminal state")
   .option("--all-pending", "Cancel every pending task at once")
@@ -300,7 +300,7 @@ program
   .option("--json", "Output results as machine-readable JSON")
   .action((opts: { peer?: string; json?: boolean }) => doctor(opts));
 
-// ── hh budget (summary) ───────────────────────────────────────────────────────
+// ── cofounder budget (summary) ───────────────────────────────────────────────────────
 program
   .command("budget")
   .description("Show token usage and cost spend across recent tasks")
@@ -313,7 +313,7 @@ program
     return budget(opts);
   });
 
-// ── hh budget caps (Phase 11b) ────────────────────────────────────────────────
+// ── cofounder budget caps (Phase 11b) ────────────────────────────────────────────────
 const budgetCapsCmd = program
   .command("budget-cap")
   .alias("cap")
@@ -399,7 +399,7 @@ program
   .command("publish")
   .description("Publish an anonymised node card to the community registry (GitHub Gist)")
   .option("--tags <csv>", "Comma-separated tags, e.g. rtx3070ti,comfyui,rag")
-  .option("--description <text>", "Short description shown in hh discover")
+  .option("--description <text>", "Short description shown in cofounder discover")
   .option("--token <token>", "GitHub personal access token (or set GITHUB_TOKEN env var)")
   .option("--update", "Force update even if no gist_id saved locally")
   .option("--dry", "Print the node card without publishing")
@@ -493,7 +493,7 @@ program
 
 program
   .command("upgrade")
-  .description("Check for newer versions of his-and-hers on npm")
+  .description("Check for newer versions of cofounder on npm")
   .option("--check", "Exit 0 if up to date, 1 if upgrade available (CI-friendly)")
   .option("--json", "Output result as JSON")
   .action((opts: { check?: boolean; json?: boolean }) => upgrade(opts));
@@ -508,7 +508,7 @@ program
 
 program
   .command("discover")
-  .description("Browse the community node registry — nodes published with hh publish")
+  .description("Browse the community node registry — nodes published with cofounder publish")
   .option("--role <role>", "Filter by role: h1 | h2")
   .option("--gpu <backend>", "Filter by GPU backend: cuda | rocm | metal")
   .option("--skill <skill>", "Filter by skill tag, e.g. image-gen | transcription")
@@ -721,7 +721,7 @@ program
     completion({ shell, noHint: opts.hint === false }),
   );
 
-// ─── hh template ─────────────────────────────────────────────────────────────
+// ─── cofounder template ─────────────────────────────────────────────────────────────
 
 const templateCmd = program
   .command("template")
@@ -773,7 +773,7 @@ templateCmd
   .option("--force", "Skip confirmation prompt")
   .action((name: string, opts: { force?: boolean }) => templateRemove(name, opts));
 
-// ── hh web ────────────────────────────────────────────────────────────────────
+// ── cofounder web ────────────────────────────────────────────────────────────────────
 program
   .command("web")
   .description("Launch the local web dashboard (live task feed, peer status, send form)")
@@ -781,7 +781,7 @@ program
   .option("--no-open", "Do not automatically open the browser")
   .action((opts: { port?: string; open?: boolean }) => web(opts));
 
-// ── hh broadcast ──────────────────────────────────────────────────────────────
+// ── cofounder broadcast ──────────────────────────────────────────────────────────────
 program
   .command("broadcast")
   .description("Send the same task to multiple peer nodes concurrently")
@@ -820,7 +820,7 @@ program
       }),
   );
 
-// ── hh sync ───────────────────────────────────────────────────────────────────
+// ── cofounder sync ───────────────────────────────────────────────────────────────────
 program
   .command("sync")
   .description("Push a local path to the H2 peer over Tailscale SSH using rsync")
@@ -853,11 +853,11 @@ program
       }),
   );
 
-// ── hh clusters / hh cluster ──────────────────────────────────────────────────
+// ── cofounder clusters / cofounder cluster ──────────────────────────────────────────────────
 
 program
   .command("clusters")
-  .description("List all defined peer clusters (shorthand for hh cluster list)")
+  .description("List all defined peer clusters (shorthand for cofounder cluster list)")
   .option("--json", "Output as JSON")
   .action((opts: { json?: boolean }) => clusterList(opts));
 
@@ -925,15 +925,15 @@ clusterPeersCmd
     clusterPeersRemove(clusterName, peerName, opts),
   );
 
-// ── hh pipeline ───────────────────────────────────────────────────────────────
+// ── cofounder pipeline ───────────────────────────────────────────────────────────────
 program
   .command("pipeline")
   .description(
     "[Phase 7e] Run a multi-step chained task pipeline across peers.\n\n" +
     "Each step's output is available in the next step via {{previous.output}}\n" +
     "or {{steps.N.output}} (1-based index).\n\n" +
-    "Inline spec:  hh pipeline \"peer1:task one -> peer2:review {{previous.output}}\"\n" +
-    "File:         hh pipeline --file pipeline.json",
+    "Inline spec:  cofounder pipeline \"peer1:task one -> peer2:review {{previous.output}}\"\n" +
+    "File:         cofounder pipeline --file pipeline.json",
   )
   .argument("[spec]", "Inline pipeline spec: \"peer1:task -> peer2:task\"")
   .option("--file <path>", "Load pipeline definition from a JSON file")
@@ -943,16 +943,16 @@ program
     pipeline(spec, opts),
   );
 
-// ── hh workflow ───────────────────────────────────────────────────────────────
+// ── cofounder workflow ───────────────────────────────────────────────────────────────
 
 const workflowCmd = program
   .command("workflow")
   .description(
     "[Phase 8a] Manage saved named pipeline workflows.\n\n" +
     "Save any pipeline spec once, run it by name any time.\n\n" +
-    "Add:    hh workflow add review \"glados:write tests -> piper:review {{previous.output}}\"\n" +
-    "Run:    hh workflow run review\n" +
-    "List:   hh workflow list",
+    "Add:    cofounder workflow add review \"glados:write tests -> piper:review {{previous.output}}\"\n" +
+    "Run:    cofounder workflow run review\n" +
+    "List:   cofounder workflow list",
   );
 
 workflowCmd
@@ -1001,16 +1001,16 @@ workflowCmd
     workflowRemove(name, opts),
   );
 
-// ── hh run ────────────────────────────────────────────────────────────────────
+// ── cofounder run ────────────────────────────────────────────────────────────────────
 
 const runCmd = program
   .command("run")
   .description(
     "[Phase 8b] Ergonomic shorthands for the most common one-shot task patterns.\n\n" +
-    "  hh run summarise <file>           — executive summary + bullet points\n" +
-    "  hh run review <file>              — structured code review\n" +
-    "  hh run diff [<base> [<head>]]     — review git diff (defaults to HEAD)\n" +
-    "  hh run alias <name> [args...]     — expand and execute a user-defined alias",
+    "  cofounder run summarise <file>           — executive summary + bullet points\n" +
+    "  cofounder run review <file>              — structured code review\n" +
+    "  cofounder run diff [<base> [<head>]]     — review git diff (defaults to HEAD)\n" +
+    "  cofounder run alias <name> [args...]     — expand and execute a user-defined alias",
   );
 
 runCmd
@@ -1077,21 +1077,21 @@ runCmd
   .allowUnknownOption()
   .action((name: string, args: string[]) => aliasRun(name, args));
 
-// ── hh alias ──────────────────────────────────────────────────────────────────
+// ── cofounder alias ──────────────────────────────────────────────────────────────────
 
 const aliasCmd = program
   .command("alias")
   .description(
-    "[Phase 8c] Manage user-defined CLI shortcuts persisted in ~/.his-and-hers/aliases.json.\n\n" +
-    "  hh alias add pr-review \"workflow run code-review --peer glados\"\n" +
-    "  hh alias list\n" +
-    "  hh alias run pr-review\n" +
-    "  hh alias remove pr-review",
+    "[Phase 8c] Manage user-defined CLI shortcuts persisted in ~/.cofounder/aliases.json.\n\n" +
+    "  cofounder alias add pr-review \"workflow run code-review --peer glados\"\n" +
+    "  cofounder alias list\n" +
+    "  cofounder alias run pr-review\n" +
+    "  cofounder alias remove pr-review",
   );
 
 aliasCmd
   .command("add <name> <command>")
-  .description("Create or update a named alias for any hh subcommand string")
+  .description("Create or update a named alias for any cofounder subcommand string")
   .option("--desc <text>", "Human-readable description of this alias")
   .action((name: string, command: string, opts: { desc?: string }) =>
     aliasAdd(name, command, opts),
@@ -1126,7 +1126,7 @@ aliasCmd
   .allowUnknownOption()
   .action((name: string, args: string[]) => aliasRun(name, args));
 
-// ── hh stats ──────────────────────────────────────────────────────────────────
+// ── cofounder stats ──────────────────────────────────────────────────────────────────
 program
   .command("stats")
   .description("Deep task analytics with charts, heatmaps, and peer breakdowns")
@@ -1141,7 +1141,7 @@ program
     }),
   );
 
-// ── hh release ────────────────────────────────────────────────────────────────
+// ── cofounder release ────────────────────────────────────────────────────────────────
 program
   .command("release")
   .description("Automate the release workflow: bump version, update CHANGELOG, git commit + tag")
@@ -1162,7 +1162,7 @@ program
     }) => release(opts),
   );
 
-// ── hh profile ────────────────────────────────────────────────────────────────
+// ── cofounder profile ────────────────────────────────────────────────────────────────
 const profileCmd = program
   .command("profile")
   .description("[Phase 10a] Manage named config profiles for switching between setups");
@@ -1198,7 +1198,7 @@ profileCmd
   .option("--force", "Force delete even if active")
   .action((name: string, opts: { force?: boolean }) => profileDelete(name, opts));
 
-// ── hh audit ──────────────────────────────────────────────────────────────────
+// ── cofounder audit ──────────────────────────────────────────────────────────────────
 const auditCmd = program
   .command("audit")
   .description("[Phase 10b] View and verify the append-only audit log");
@@ -1227,7 +1227,7 @@ auditCmd
   .option("--output <path>", "Write to file instead of stdout")
   .action((opts: { json?: boolean; csv?: boolean; output?: string }) => auditExport(opts));
 
-// ── hh ci ─────────────────────────────────────────────────────────────────────
+// ── cofounder ci ─────────────────────────────────────────────────────────────────────
 program
   .command("ci <task>")
   .description("[Phase 10c] CI-friendly task delegation (no TTY, machine-readable, blocking wait)")
@@ -1235,7 +1235,7 @@ program
   .option("--output-file <path>", "Write result text to a file")
   .action((task: string, opts: { json?: boolean; outputFile?: string }) => ci(task, opts));
 
-// ── hh mcp ────────────────────────────────────────────────────────────────────
+// ── cofounder mcp ────────────────────────────────────────────────────────────────────
 program
   .command("mcp")
   .description(
@@ -1245,16 +1245,16 @@ program
   .option("--list-tools", "Print tool schemas as JSON and exit (no server started)")
   .action((opts: { listTools?: boolean }) => mcp(opts));
 
-// ── hh ask ────────────────────────────────────────────────────────────────────
+// ── cofounder ask ────────────────────────────────────────────────────────────────────
 program
   .command("ask")
   .description(
     "Ask your peer a quick question and stream the answer directly to the terminal.\n" +
-      "Unlike `hh send`, ask is lightweight: no task state file, no polling loop, just a fast round-trip.\n\n" +
+      "Unlike `cofounder send`, ask is lightweight: no task state file, no polling loop, just a fast round-trip.\n\n" +
       "Examples:\n" +
-      "  hh ask \"what is the weather like on your side?\"\n" +
-      "  hh ask --peer glados \"list your loaded ollama models\"\n" +
-      "  hh ask --timeout 30 \"run a quick disk usage check\"",
+      "  cofounder ask \"what is the weather like on your side?\"\n" +
+      "  cofounder ask --peer glados \"list your loaded ollama models\"\n" +
+      "  cofounder ask --timeout 30 \"run a quick disk usage check\"",
   )
   .argument("<question>", "The question or one-liner to send to the peer")
   .option("--peer <name>", "Target peer by name (default: first configured peer)")
@@ -1274,28 +1274,28 @@ program
       }),
   );
 
-// ── hh serve ─────────────────────────────────────────────────────────────────
+// ── cofounder serve ─────────────────────────────────────────────────────────────────
 program
   .command("serve")
   .description(
-    "Start a REST API server exposing his-and-hers over HTTP.\n" +
-      "Complements `hh mcp` (LLM clients) and `hh web` (browser dashboard).\n" +
+    "Start a REST API server exposing cofounder over HTTP.\n" +
+      "Complements `cofounder mcp` (LLM clients) and `cofounder web` (browser dashboard).\n" +
       "Generates an OpenAPI 3.1 spec at /openapi.json.\n\n" +
       "Auth: X-HH-Token header or ?token= query param.\n" +
-      "Token is auto-generated on first run → ~/.his-and-hers/serve-token\n\n" +
+      "Token is auto-generated on first run → ~/.cofounder/serve-token\n\n" +
       "Endpoints: GET /health, /openapi.json, /peers, /status, /tasks, /budget,\n" +
       "           /capabilities, /events (SSE)\n" +
       "           POST /tasks, /broadcast, /peers/:name/ping, /peers/:name/wake\n" +
       "           DELETE /tasks/:id\n\n" +
       "Examples:\n" +
-      "  hh serve\n" +
-      "  hh serve --port 9000\n" +
-      "  hh serve --token mytoken\n" +
-      "  hh serve --no-auth     # local dev only\n" +
-      "  hh serve --readonly    # disable mutating endpoints",
+      "  cofounder serve\n" +
+      "  cofounder serve --port 9000\n" +
+      "  cofounder serve --token mytoken\n" +
+      "  cofounder serve --no-auth     # local dev only\n" +
+      "  cofounder serve --readonly    # disable mutating endpoints",
   )
   .option("--port <n>", "Port to listen on (default: 3848)")
-  .option("--token <token>", "Override API token (default: from ~/.his-and-hers/serve-token)")
+  .option("--token <token>", "Override API token (default: from ~/.cofounder/serve-token)")
   .option("--no-auth", "Disable authentication (local dev only)")
   .option("--readonly", "Disable mutating endpoints (POST/DELETE)")
   .action(
@@ -1303,7 +1303,7 @@ program
       serve(opts),
   );
 
-// ── hh trace ─────────────────────────────────────────────────────────────────
+// ── cofounder trace ─────────────────────────────────────────────────────────────────
 const traceCmd = program
   .command("trace")
   .description(
@@ -1313,14 +1313,14 @@ const traceCmd = program
       "  WS connect/auth/wake inject → streaming → result received\n\n" +
       "Useful for diagnosing Windows boot-chain issues and latency bottlenecks.\n\n" +
       "Examples:\n" +
-      "  hh trace abc123             Show timeline for a specific task\n" +
-      "  hh trace list               List all stored traces\n" +
-      "  hh trace clear abc123       Remove a single trace\n" +
-      "  hh trace clear --force      Wipe all traces without prompting\n" +
-      "  hh trace list --json        Machine-readable list",
+      "  cofounder trace abc123             Show timeline for a specific task\n" +
+      "  cofounder trace list               List all stored traces\n" +
+      "  cofounder trace clear abc123       Remove a single trace\n" +
+      "  cofounder trace clear --force      Wipe all traces without prompting\n" +
+      "  cofounder trace list --json        Machine-readable list",
   );
 
-// hh trace list
+// cofounder trace list
 traceCmd
   .command("list")
   .alias("ls")
@@ -1328,14 +1328,14 @@ traceCmd
   .option("--json", "Output as JSON array")
   .action((opts: { json?: boolean }) => trace("list", opts));
 
-// hh trace show <task_id>
+// cofounder trace show <task_id>
 traceCmd
   .command("show <task_id>")
   .description("Show timeline for a specific task")
   .option("--json", "Output as JSON")
   .action((taskId: string, opts: { json?: boolean }) => trace("show", opts, taskId));
 
-// hh trace clear [task_id]
+// cofounder trace clear [task_id]
 traceCmd
   .command("clear [task_id]")
   .description("Clear a specific trace (or all traces if no ID given)")
@@ -1344,7 +1344,7 @@ traceCmd
     trace("clear", opts, taskId),
   );
 
-// Default action: hh trace <task_id>
+// Default action: cofounder trace <task_id>
 traceCmd
   .argument("[task_id]", "Task ID to display trace for")
   .option("--json", "Output as JSON")
@@ -1356,10 +1356,10 @@ traceCmd
     return trace(taskId, opts);
   });
 
-// ── hh health-report ──────────────────────────────────────────────────────────
+// ── cofounder health-report ──────────────────────────────────────────────────────────
 program
   .command("health-report")
-  .description("Generate a comprehensive weekly health digest for a node pair.\n\nCombines stats, budget, audit chain verification, peer uptime, and anomaly detection into a shareable Markdown report.\n\nExamples:\n  hh health-report               Last 7 days, Markdown to stdout\n  hh health-report --days 30     Last 30 days\n  hh health-report --peer glados Filter to one peer\n  hh health-report --out r.md    Write to file\n  hh health-report --json        Raw JSON output\n  hh health-report --webhook <url>  POST report to webhook")
+  .description("Generate a comprehensive weekly health digest for a node pair.\n\nCombines stats, budget, audit chain verification, peer uptime, and anomaly detection into a shareable Markdown report.\n\nExamples:\n  cofounder health-report               Last 7 days, Markdown to stdout\n  cofounder health-report --days 30     Last 30 days\n  cofounder health-report --peer glados Filter to one peer\n  cofounder health-report --out r.md    Write to file\n  cofounder health-report --json        Raw JSON output\n  cofounder health-report --webhook <url>  POST report to webhook")
   .option("--days <n>", "Number of days to cover (default: 7)")
   .option("--peer <name>", "Filter to a specific peer")
   .option("--out <path>", "Write report to file instead of stdout")
@@ -1377,16 +1377,16 @@ program
     })
   );
 
-// ── hh tag ────────────────────────────────────────────────────────────────────
+// ── cofounder tag ────────────────────────────────────────────────────────────────────
 const tagCmd = program
   .command("tag")
   .description(
     "Tag tasks for filtering and search.\n\n" +
-      "  hh tag add <id> <tags...>    Add tags to a task\n" +
-      "  hh tag remove <id> <tags...> Remove tags from a task\n" +
-      "  hh tag list [id]             List tags (all tasks or specific task)\n" +
-      "  hh tag search <tag>          Find tasks with a given tag\n" +
-      "  hh tag clear <id>            Remove all tags from a task",
+      "  cofounder tag add <id> <tags...>    Add tags to a task\n" +
+      "  cofounder tag remove <id> <tags...> Remove tags from a task\n" +
+      "  cofounder tag list [id]             List tags (all tasks or specific task)\n" +
+      "  cofounder tag search <tag>          Find tasks with a given tag\n" +
+      "  cofounder tag clear <id>            Remove all tags from a task",
   );
 
 tagCmd

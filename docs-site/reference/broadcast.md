@@ -1,4 +1,4 @@
-# `hh broadcast` — Reference
+# `cofounder broadcast` — Reference
 
 Send the same task to multiple peer nodes concurrently — all at once, or race to the
 first response.
@@ -8,7 +8,7 @@ first response.
 ## Synopsis
 
 ```bash
-hh broadcast "<task>" [flags]
+cofounder broadcast "<task>" [flags]
 ```
 
 ---
@@ -33,7 +33,7 @@ hh broadcast "<task>" [flags]
 Wait for every peer to respond. Full aggregated results table on exit.
 
 ```bash
-hh broadcast "code-review this diff" --wait --strategy all
+cofounder broadcast "code-review this diff" --wait --strategy all
 ```
 
 ### `--strategy first`
@@ -42,7 +42,7 @@ Stop as soon as the fastest peer responds. Useful for "race" patterns where you
 want the quickest available answer.
 
 ```bash
-hh broadcast "is the build broken?" --wait --strategy first
+cofounder broadcast "is the build broken?" --wait --strategy first
 ```
 
 ---
@@ -52,19 +52,19 @@ hh broadcast "is the build broken?" --wait --strategy first
 ### Default (no `--wait`)
 
 ```bash
-$ hh broadcast "run lint checks"
+$ cofounder broadcast "run lint checks"
   Broadcast sent to 3 peers:  glados, piper, forge
   task_01abc → glados  (queued)
   task_01def → piper   (queued)
   task_01ghi → forge   (queued)
 
-  Track: hh logs --task <id>
+  Track: cofounder logs --task <id>
 ```
 
 ### With `--wait`
 
 ```bash
-$ hh broadcast "summarize recent changes" --wait
+$ cofounder broadcast "summarize recent changes" --wait
   Broadcasting to 2 peers…
 
   glados    ✓ completed   2.1s   $0.0041
@@ -75,7 +75,7 @@ $ hh broadcast "summarize recent changes" --wait
   18 new broadcast tests, and Phase 7 roadmap additions.
 
   ─── piper ────────────────────────────────────────────────
-  Key changes: hh broadcast command (Phase 7a), 658 tests
+  Key changes: cofounder broadcast command (Phase 7a), 658 tests
   total, ROADMAP updated with Phase 7 section.
 ```
 
@@ -126,22 +126,22 @@ $ hh broadcast "summarize recent changes" --wait
 
 ```bash
 # Send to all peers, fire-and-forget
-hh broadcast "run unit tests"
+cofounder broadcast "run unit tests"
 
 # Wait for all results
-hh broadcast "generate docs" --wait
+cofounder broadcast "generate docs" --wait
 
 # Target specific peers only
-hh broadcast "quick health check" --peers glados,piper
+cofounder broadcast "quick health check" --peers glados,piper
 
 # Race: return as soon as the first peer responds
-hh broadcast "is service X up?" --wait --strategy first
+cofounder broadcast "is service X up?" --wait --strategy first
 
 # Skip health checks for a faster dispatch
-hh broadcast "low-latency ping" --no-check
+cofounder broadcast "low-latency ping" --no-check
 
 # Machine-readable output for scripting
-hh broadcast "analyze data" --json
+cofounder broadcast "analyze data" --json
 ```
 
 ---
@@ -166,7 +166,7 @@ manually routing each one.
 
 ## Peer Resolution
 
-Without `--peers`, all peers in `~/.his-and-hers/hh.json` (`peer_nodes[]`) are targeted.
+Without `--peers`, all peers in `~/.cofounder/cofounder.json` (`peer_nodes[]`) are targeted.
 With `--peers`, only the named peers are used; unknown names produce a warning and are skipped.
 
 ---
@@ -184,7 +184,7 @@ With `--peers`, only the named peers are used; unknown names produce a warning a
 
 ## See Also
 
-- [`hh send`](./send.md) — single-peer task dispatch
-- [`hh peers`](./peers.md) — list configured peers
-- [`hh logs`](./logs.md) — view task history
-- [`hh status`](./status.md) — check peer health
+- [`cofounder send`](./send.md) — single-peer task dispatch
+- [`cofounder peers`](./peers.md) — list configured peers
+- [`cofounder logs`](./logs.md) — view task history
+- [`cofounder status`](./status.md) — check peer health

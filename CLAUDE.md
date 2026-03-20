@@ -1,21 +1,21 @@
-# his-and-hers — Claude Code Context
+# cofounder — Claude Code Context
 
 ## What is this?
-An open protocol and CLI (`hh`) for connecting two OpenClaw agents on physically separate machines. H1 (orchestrator) stays always-on. H2 (executor) sleeps until needed, wakes via WOL, does heavy compute, goes back to sleep.
+An open protocol and CLI (`cofounder`) for connecting two OpenClaw agents on physically separate machines. H1 (orchestrator) stays always-on. H2 (executor) sleeps until needed, wakes via WOL, does heavy compute, goes back to sleep.
 
 **Core tenet: agents must run on separate machines. No same-host agents.**
 
 ## Quick reference
-- **Binary:** `hh`
-- **Config:** `~/.his-and-hers/hh.json`
-- **Skills:** `~/.openclaw/workspace/skills/hh-*/`
+- **Binary:** `cofounder`
+- **Config:** `~/.cofounder/cofounder.json`
+- **Skills:** `~/.openclaw/workspace/skills/cofounder-*/`
 - **Stack:** Node >= 22, TypeScript, pnpm workspaces, tsdown, vitest
 - **UI library:** @clack/prompts (wizard), commander (CLI)
 
 ## Monorepo layout
 ```
 packages/core/src/
-  protocol/       — Zod schemas: HHMessage, HHHandoff, HHHeartbeat, HHPair
+  protocol/       — Zod schemas: CofounderMessage, CofounderHandoff, CofounderHeartbeat, CofounderPair
   transport/      — tailscale.ts, ssh.ts, wol.ts
   trust/          — pairing.ts (6-digit code), allowlist.ts
   gateway/        — health.ts, bind.ts
@@ -27,7 +27,7 @@ packages/cli/src/
     steps/        — 12 wizard steps (welcome → finalize)
   config/         — schema.ts (Zod), store.ts (read/write), defaults.ts
 
-packages/skills/  — hh-h1, hh-h2, hh-handoff SKILL.md files
+packages/skills/  — cofounder-h1, cofounder-h2, cofounder-handoff SKILL.md files
 templates/        — SOUL.md, IDENTITY.md, AGENTS.md per role (h1/h2)
 docs/             — protocol spec, reference implementation
 ```
@@ -40,12 +40,12 @@ pnpm test             # run vitest
 pnpm typecheck        # tsc --noEmit
 pnpm lint             # oxlint
 pnpm fmt              # oxfmt
-hh onboard            # 12-step setup wizard
-hh pair --code <code> # pair with 6-digit code
-hh status             # show node status + connectivity
-hh wake               # WOL magic packet to H2
-hh send <task>        # delegate task to peer
-hh doctor             # diagnose issues (5-check suite)
+cofounder onboard            # 12-step setup wizard
+cofounder pair --code <code> # pair with 6-digit code
+cofounder status             # show node status + connectivity
+cofounder wake               # WOL magic packet to H2
+cofounder send <task>        # delegate task to peer
+cofounder doctor             # diagnose issues (5-check suite)
 ```
 
 ## Wizard steps (packages/cli/src/wizard/steps/)
@@ -60,10 +60,10 @@ hh doctor             # diagnose issues (5-check suite)
 9. `startup.ts` — install start-gateway.bat/.sh on H2
 10. `soul.ts` — copy personalized SOUL/IDENTITY/AGENTS templates
 11. `validate.ts` — WOL → Tailscale ping → SSH → gateway health
-12. `finalize.ts` — write hh.json, generate pairing code, print summary
+12. `finalize.ts` — write cofounder.json, generate pairing code, print summary
 
 ## Architecture
-- **HHMessage** — Zod-validated protocol envelope for all cross-machine communication
+- **CofounderMessage** — Zod-validated protocol envelope for all cross-machine communication
 - **Transport** — Tailscale (discovery/reachability), SSH (execution), WOL (wake)
 - **Trust** — one-time pairing code (SHA-256 hashed), peer allowlist, keychain storage
 - **Gateway** — OpenClaw gateway per node: loopback (H1) or Tailscale (H2)
@@ -75,6 +75,6 @@ Calcifer (H1, EC2) / GLaDOS (H2, Windows home PC with RTX 3070 Ti). See `docs/re
 The Windows H2 boot chain: WOL → BIOS wake → AutoAdminLogon → Tailscale wait loop → gateway bind to Tailscale. The wizard handles this end to end in steps 6-9.
 
 ## Publishing
-- `@his-and-hers/core` and `@his-and-hers/cli` publish to npm as scoped packages
-- `his-and-hers` publishes as the unscoped global install wrapper
+- `@cofounder/core` and `@cofounder/cli` publish to npm as scoped packages
+- `cofounder` publishes as the unscoped global install wrapper
 - Release via `pnpm release` or GitHub Actions release workflow on tag push

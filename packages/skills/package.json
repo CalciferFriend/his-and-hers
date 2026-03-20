@@ -1,5 +1,5 @@
 {
-  "name": "@his-and-hers/skills",
+  "name": "@cofounder/skills",
   "version": "0.2.1",
   "description": "OpenClaw skills for cross-node agent communication",
   "type": "module",

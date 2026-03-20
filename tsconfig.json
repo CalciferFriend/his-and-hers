@@ -16,8 +16,8 @@
     "strict": true,
     "target": "es2023",
     "paths": {
-      "@his-and-hers/core": ["./packages/core/src/index.ts"],
-      "@his-and-hers/core/*": ["./packages/core/src/*.ts"]
+      "@cofounder/core": ["./packages/core/src/index.ts"],
+      "@cofounder/core/*": ["./packages/core/src/*.ts"]
     }
   },
   "include": ["packages/*/src/**/*"],

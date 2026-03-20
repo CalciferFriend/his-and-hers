@@ -1,18 +1,18 @@
 /**
- * commands/watch.ts — `hh watch`
+ * commands/watch.ts — `cofounder watch`
  *
  * H2-side task listener daemon. Polls the local task state directory for
  * pending tasks and dispatches them to an executor, then writes the result
- * back via `hh result` (and optionally POSTs to H1's webhook endpoint).
+ * back via `cofounder result` (and optionally POSTs to H1's webhook endpoint).
  *
  * ## Typical H2 workflow
  *
  *   H1 (Calcifer 🔥)                          H2 (GLaDOS 🤖)
  *   ─────────────────                          ─────────────────
- *   hh send "do X" →                          ← wakeAgent injects task
- *                                              hh watch (daemon) sees it
+ *   cofounder send "do X" →                          ← wakeAgent injects task
+ *                                              cofounder watch (daemon) sees it
  *                                              → runs executor
- *                                              hh result <id> "done"
+ *                                              cofounder result <id> "done"
  *                                              → webhook / SSH back to H1
  *
  * ## Executor contract
@@ -23,41 +23,41 @@
  *     - Exits 0 on success, non-zero on failure
  *
  *   Example:
- *     hh watch --exec "node /path/to/run-task.js"
+ *     cofounder watch --exec "node /path/to/run-task.js"
  *
  *   Environment variables injected for the executor process:
- *     HH_TASK_ID          task UUID
- *     HH_TASK_OBJECTIVE   task description string
- *     HH_TASK_FROM        sender node name
+ *     COFOUNDER_TASK_ID          task UUID
+ *     COFOUNDER_TASK_OBJECTIVE   task description string
+ *     COFOUNDER_TASK_FROM        sender node name
  *
  * ## Default (no --exec)
  *
- *   If no executor is configured, `hh watch` marks tasks as "running" and
+ *   If no executor is configured, `cofounder watch` marks tasks as "running" and
  *   emits them to stdout so a parent process / shell pipeline can handle them.
  *   This is useful during initial setup or for building custom integrations.
  *
  * ## Capabilities server (--serve-capabilities)
  *
- *   When H2 runs `hh watch --serve-capabilities`, it also starts a lightweight
- *   HTTP server that H1 can query with `hh capabilities fetch`:
+ *   When H2 runs `cofounder watch --serve-capabilities`, it also starts a lightweight
+ *   HTTP server that H1 can query with `cofounder capabilities fetch`:
  *
- *     GET /capabilities  →  returns ~/.his-and-hers/capabilities.json
+ *     GET /capabilities  →  returns ~/.cofounder/capabilities.json
  *     (auth: X-HH-Token header, same token as the gateway)
  *
  *   This is the implementation of ROADMAP item 3b. Add it to startup.bat:
  *
- *     hh watch --exec "node run-task.js" --serve-capabilities
- *     hh watch --exec "node run-task.js" --serve-capabilities 18790
+ *     cofounder watch --exec "node run-task.js" --serve-capabilities
+ *     cofounder watch --exec "node run-task.js" --serve-capabilities 18790
  *
  * Usage:
- *   hh watch                                   # poll every 5s, print pending
- *   hh watch --interval 10                     # poll every 10s
- *   hh watch --exec "node run-task.js"         # auto-dispatch to executor
- *   hh watch --once                            # single-pass (no loop)
- *   hh watch --dry-run                         # detect without executing
- *   hh watch --json                            # machine-readable output
- *   hh watch --serve-capabilities              # also serve /capabilities on gateway port
- *   hh watch --serve-capabilities 18790        # serve on explicit port
+ *   cofounder watch                                   # poll every 5s, print pending
+ *   cofounder watch --interval 10                     # poll every 10s
+ *   cofounder watch --exec "node run-task.js"         # auto-dispatch to executor
+ *   cofounder watch --once                            # single-pass (no loop)
+ *   cofounder watch --dry-run                         # detect without executing
+ *   cofounder watch --json                            # machine-readable output
+ *   cofounder watch --serve-capabilities              # also serve /capabilities on gateway port
+ *   cofounder watch --serve-capabilities 18790        # serve on explicit port
  */
 
 import * as p from "@clack/prompts";
@@ -69,7 +69,7 @@ import {
   type CapabilitiesServerHandle,
   createChunkStreamer,
   appendAuditEntry,
-} from "@his-and-hers/core";
+} from "@cofounder/core";
 import { loadConfig } from "../config/store.ts";
 
 export interface WatchOptions {
@@ -85,7 +85,7 @@ export interface WatchOptions {
   json?: boolean;
   /**
    * Also start the capabilities HTTP server (ROADMAP 3b).
-   * H1 can then call `hh capabilities fetch` to get this node's report.
+   * H1 can then call `cofounder capabilities fetch` to get this node's report.
    * If a string, it's treated as the port number. If true/present, uses
    * the gateway port from config (or falls back to 18790).
    */
@@ -99,9 +99,9 @@ export interface WatchOptions {
  * Returns { output, success, tokens_used?, duration_ms? }
  *
  * Streaming (Phase 2d/3):
- *   If HH_STREAM_URL and HH_STREAM_TOKEN environment variables are set (injected
+ *   If COFOUNDER_STREAM_URL and COFOUNDER_STREAM_TOKEN environment variables are set (injected
  *   by H1's wake message), stdout chunks are forwarded in real-time so the
- *   operator can follow progress with `hh send --wait`.
+ *   operator can follow progress with `cofounder send --wait`.
  */
 async function runExecutor(
   execCmd: string,
@@ -110,8 +110,8 @@ async function runExecutor(
   const start = Date.now();
 
   // Read streaming config from env (set by H1's wake message env injection)
-  const streamUrl = process.env.HH_STREAM_URL ?? null;
-  const streamToken = process.env.HH_STREAM_TOKEN ?? null;
+  const streamUrl = process.env.COFOUNDER_STREAM_URL ?? null;
+  const streamToken = process.env.COFOUNDER_STREAM_TOKEN ?? null;
   const streamer =
     streamUrl && streamToken
       ? createChunkStreamer(streamUrl, streamToken, task.id)
@@ -122,9 +122,9 @@ async function runExecutor(
     const child = spawn(cmd, args, {
       env: {
         ...process.env,
-        HH_TASK_ID: task.id,
-        HH_TASK_OBJECTIVE: task.objective,
-        HH_TASK_FROM: task.from,
+        COFOUNDER_TASK_ID: task.id,
+        COFOUNDER_TASK_OBJECTIVE: task.objective,
+        COFOUNDER_TASK_FROM: task.from,
       },
       stdio: ["pipe", "pipe", "pipe"],
     });
@@ -215,7 +215,7 @@ async function poll(opts: WatchOptions): Promise<number> {
       // No executor: just surface the task and move on
       if (!opts.json) {
         p.log.warn(
-          `  No --exec configured. Use ${pc.bold("hh result")} ${pc.dim(shortId)} to mark complete.`,
+          `  No --exec configured. Use ${pc.bold("cofounder result")} ${pc.dim(shortId)} to mark complete.`,
         );
       }
       continue;
@@ -315,7 +315,7 @@ export async function watch(opts: WatchOptions): Promise<void> {
         if (!opts.json) {
           p.log.warn(
             "Cannot start capabilities server — no gateway token in config. " +
-            "Run `hh onboard` or set this_node.gateway.gateway_token.",
+            "Run `cofounder onboard` or set this_node.gateway.gateway_token.",
           );
         }
       } else {
@@ -347,7 +347,7 @@ export async function watch(opts: WatchOptions): Promise<void> {
 
   // ── Pretty header ──
   if (!opts.json) {
-    p.intro(pc.bgYellow(pc.black(" hh watch ")));
+    p.intro(pc.bgYellow(pc.black(" cofounder watch ")));
     const modeLabel = opts.exec
       ? `executor: ${pc.cyan(opts.exec)}`
       : pc.dim("no executor (surface-only)");

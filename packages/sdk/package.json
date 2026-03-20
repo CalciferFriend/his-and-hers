@@ -1,12 +1,12 @@
 {
-  "name": "@his-and-hers/sdk",
+  "name": "@cofounder/sdk",
   "version": "0.3.0",
-  "description": "Programmatic API for his-and-hers — dispatch tasks, stream results, and query peer status from Node.js",
+  "description": "Programmatic API for cofounder — dispatch tasks, stream results, and query peer status from Node.js",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CalciferFriend/his-and-hers",
+    "url": "https://github.com/CalciferFriend/cofounder",
     "directory": "packages/sdk"
   },
   "main": "dist/index.js",
@@ -27,7 +27,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@his-and-hers/core": "workspace:*",
+    "@cofounder/core": "workspace:*",
     "zod": "^3.24.0"
   },
   "devDependencies": {

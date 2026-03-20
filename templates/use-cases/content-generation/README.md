@@ -64,7 +64,7 @@ pip install animatediff
 
 ```bash
 cd ~/.openclaw
-hh templates init content-generation
+cofounder templates init content-generation
 ```
 
 ### 4. Configure Workflow
@@ -93,7 +93,7 @@ When content gap detected:
 
 ```typescript
 // content-scheduler.ts on H1
-import { sendTask } from '@his-and-hers/sdk';
+import { sendTask } from '@cofounder/sdk';
 import { TwitterApi } from 'twitter-api-v2';
 
 interface ContentRequest {
@@ -138,7 +138,7 @@ setInterval(monitorTrends, 60 * 60 * 1000);
 
 ```typescript
 // content-generator.ts on H2
-import { onTask } from '@his-and-hers/sdk';
+import { onTask } from '@cofounder/sdk';
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 
@@ -231,7 +231,7 @@ await sendTask({
 
 ## Monitoring
 
-Track with `hh web`:
+Track with `cofounder web`:
 - **Generation count:** Images/videos per day
 - **H2 uptime:** Optimize wake cycles
 - **Cost savings:** vs Midjourney/RunwayML equivalent pricing

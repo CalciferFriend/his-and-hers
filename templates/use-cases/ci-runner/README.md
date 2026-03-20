@@ -54,7 +54,7 @@ In your repo settings:
 
 ```bash
 cd ~/.openclaw
-hh templates init ci-runner
+cofounder templates init ci-runner
 ```
 
 ## Example Code
@@ -65,7 +65,7 @@ hh templates init ci-runner
 // webhook-server.ts on H1
 import express from 'express';
 import crypto from 'node:crypto';
-import { sendTask } from '@his-and-hers/sdk';
+import { sendTask } from '@cofounder/sdk';
 
 const app = express();
 app.use(express.json());
@@ -126,7 +126,7 @@ app.listen(3000, () => {
 
 ```typescript
 // build-runner.ts on H2
-import { onTask } from '@his-and-hers/sdk';
+import { onTask } from '@cofounder/sdk';
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 import fs from 'node:fs/promises';
@@ -248,7 +248,7 @@ return {
 
 ## Monitoring
 
-Track with `hh web`:
+Track with `cofounder web`:
 - **Build success rate:** % of builds passing
 - **Average build time:** Optimize slow tests
 - **H2 wake frequency:** How often builds trigger
@@ -261,7 +261,7 @@ Track with `hh web`:
 - Check webhook delivery logs in GitHub
 
 **Builds timing out:**
-- Increase task timeout in H&H config
+- Increase task timeout in Cofounder config
 - Optimize test suite (run unit tests only, not integration)
 - Use `npm ci --prefer-offline` for faster installs
 

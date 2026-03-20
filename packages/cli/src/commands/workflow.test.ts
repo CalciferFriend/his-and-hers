@@ -1,7 +1,7 @@
 /**
  * commands/workflow.test.ts
  *
- * Tests for the `hh workflow` command handlers.
+ * Tests for the `cofounder workflow` command handlers.
  * Core store is fully mocked; tests exercise the CLI presentation layer.
  *
  * Phase 8a — Calcifer
@@ -10,10 +10,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { workflowAdd, workflowList, workflowShow, workflowRemove, workflowRun } from "./workflow.ts";
 
-// ─── Mock @his-and-hers/core ──────────────────────────────────────────────────
+// ─── Mock @cofounder/core ──────────────────────────────────────────────────
 
-vi.mock("@his-and-hers/core", async () => {
-  const actual = await vi.importActual<typeof import("@his-and-hers/core")>("@his-and-hers/core");
+vi.mock("@cofounder/core", async () => {
+  const actual = await vi.importActual<typeof import("@cofounder/core")>("@cofounder/core");
   return {
     ...actual,
     // Store operations — overridden per test
@@ -42,7 +42,7 @@ vi.mock("@clack/prompts", () => ({
   isCancel: vi.fn().mockReturnValue(false),
 }));
 
-import * as core from "@his-and-hers/core";
+import * as core from "@cofounder/core";
 import * as p from "@clack/prompts";
 import { pipeline as mockPipeline } from "./pipeline.ts";
 

@@ -6,7 +6,7 @@
 
 1. [Overview](#overview)
 2. [Why Latent Communication](#why-latent-communication)
-3. [How HHLatentMessage Works](#how-hhlatentmessage-works)
+3. [How CofounderLatentMessage Works](#how-hhlatentmessage-works)
 4. [Two Communication Modes](#two-communication-modes)
 5. [Protocol Specification](#protocol-specification)
 6. [Implementation Paths](#implementation-paths)
@@ -17,9 +17,9 @@
 
 ## Overview
 
-**Latent communication** is an experimental extension to the his-and-hers protocol that allows agents to exchange compressed hidden states instead of decoded text tokens. This approach dramatically reduces information loss during agent-to-agent handoffs and improves bandwidth efficiency.
+**Latent communication** is an experimental extension to the cofounder protocol that allows agents to exchange compressed hidden states instead of decoded text tokens. This approach dramatically reduces information loss during agent-to-agent handoffs and improves bandwidth efficiency.
 
-As of 2026-03-12, the protocol design is complete (`HHLatentMessage` type added to the discriminated union), but implementation depends on upstream research codebases maturing to production readiness.
+As of 2026-03-12, the protocol design is complete (`CofounderLatentMessage` type added to the discriminated union), but implementation depends on upstream research codebases maturing to production readiness.
 
 **Status:** Research preview. Protocol ready, codec implementations in progress.
 
@@ -56,13 +56,13 @@ For tasks requiring:
 | **LatentMAS** (arXiv:2511.20639) | 80% fewer tokens, higher accuracy on reasoning tasks via KV cache sharing | Same-family agent optimization |
 | **Vision Wormhole** (arXiv:2602.15382) | Training-free latent compression via visual encoder pathway | Cross-architecture compatibility |
 
-None of these papers ship a production transport layer. **That's the gap his-and-hers fills.**
+None of these papers ship a production transport layer. **That's the gap cofounder fills.**
 
 ---
 
-## How HHLatentMessage Works
+## How CofounderLatentMessage Works
 
-`HHLatentMessage` is a new variant in the `HHMessage` discriminated union. Instead of carrying a text prompt, it carries:
+`CofounderLatentMessage` is a new variant in the `CofounderMessage` discriminated union. Instead of carrying a text prompt, it carries:
 
 1. **Compressed hidden states** (via Vision Wormhole codec)
 2. **KV cache snapshots** (via LatentMAS, for same-family models)
@@ -83,11 +83,11 @@ None of these papers ship a production transport layer. **That's the gap his-and
        │    [tokens × 2048] → [tokens × 512]              │
        │    Serialize to base64                           │
        │                                                  │
-       │ 3. Build HHLatentMessage                         │
+       │ 3. Build CofounderLatentMessage                         │
        │    - compressed_latent: base64 string            │
        │    - fallback_text: "Generate report on X"       │
        │                                                  │
-       │────────────── HHLatentMessage ──────────────────▶│
+       │────────────── CofounderLatentMessage ──────────────────▶│
        │                                                  │
        │                                                  │ 4. Check codec compatibility
        │                                                  │    If supported: inject latent
@@ -96,7 +96,7 @@ None of these papers ship a production transport layer. **That's the gap his-and
        │                                                  │ 5. Continue inference from
        │                                                  │    injected hidden state
        │                                                  │
-       │◀────────────── HHResultMessage ──────────────────│
+       │◀────────────── CofounderResultMessage ──────────────────│
        │                                                  │
 ```
 
@@ -141,7 +141,7 @@ None of these papers ship a production transport layer. **That's the gap his-and
 
 ## Protocol Specification
 
-### HHLatentPayload Schema
+### CofounderLatentPayload Schema
 
 ```typescript
 {
@@ -172,7 +172,7 @@ None of these papers ship a production transport layer. **That's the gap his-and
 ### Example: Vision Wormhole Message
 
 ```typescript
-import { createLatentMessage } from "@his-and-hers/core";
+import { createLatentMessage } from "@cofounder/core";
 
 const msg = createLatentMessage("Calcifer", "GLaDOS", {
   task_id: "f47ac10b-58cc-4372-a567-0e02b2c3d479",
@@ -255,7 +255,7 @@ await sendMessage(msg);
 #### 2. H2 Side: Inject and Continue
 
 ```typescript
-async function handleLatentMessage(msg: HHLatentMessage) {
+async function handleLatentMessage(msg: CofounderLatentMessage) {
   // Check if we support the codec
   const capabilities = await loadCapabilities();
   if (!capabilities.latent_codecs.includes(msg.payload.codec_version)) {
@@ -315,7 +315,7 @@ await sendMessage(msg);
 #### 2. H2 Side: Inject KV Cache
 
 ```typescript
-async function handleKVCacheMessage(msg: HHLatentMessage) {
+async function handleKVCacheMessage(msg: CofounderLatentMessage) {
   // Verify model match
   const myModel = await openclawGateway.getModelName();
   if (myModel !== msg.payload.kv_model) {
@@ -336,7 +336,7 @@ async function handleKVCacheMessage(msg: HHLatentMessage) {
 
 ## Fallback Mechanism
 
-Every `HHLatentMessage` **must** include a `fallback_text` field. This ensures:
+Every `CofounderLatentMessage` **must** include a `fallback_text` field. This ensures:
 
 1. **Backwards compatibility:** Older H2 nodes that don't support latent can still process the task
 2. **Graceful degradation:** If codec loading fails, KV injection fails, or model mismatch occurs, the receiver falls back to text
@@ -345,7 +345,7 @@ Every `HHLatentMessage` **must** include a `fallback_text` field. This ensures:
 ### Automatic Fallback Flow
 
 ```typescript
-function handleMessage(msg: HHMessage) {
+function handleMessage(msg: CofounderMessage) {
   if (isLatentMessage(msg)) {
     try {
       // Attempt latent path
@@ -394,10 +394,10 @@ function handleMessage(msg: HHMessage) {
 - **Mooncake KV Transfer:** [github.com/kvcache-ai/Mooncake](https://github.com/kvcache-ai/Mooncake)
 - **Ring-Attention (Distributed Sequence Attention):** arXiv:2310.01889
 
-### his-and-hers Docs
+### cofounder Docs
 
 - **Future Vision:** [docs/future.md](/docs/future.md) — Why latent communication matters for cross-machine agents
-- **Protocol Spec:** [docs/protocol.md](/docs/protocol.md) — HHMessage discriminated union reference
+- **Protocol Spec:** [docs/protocol.md](/docs/protocol.md) — CofounderMessage discriminated union reference
 - **ROADMAP Phase 6:** [ROADMAP.md](/ROADMAP.md#phase-6--latent-communication-experimental) — Implementation roadmap
 
 ---
@@ -412,7 +412,7 @@ Latent communication is in **research preview**. If you're:
 
 We want to hear from you.
 
-Open an issue on [GitHub](https://github.com/CalciferFriend/his-and-hers) or join the [Community Discord](https://discord.gg/his-and-hers).
+Open an issue on [GitHub](https://github.com/CalciferFriend/cofounder) or join the [Community Discord](https://discord.gg/cofounder).
 
 ---
 

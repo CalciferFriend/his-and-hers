@@ -16,7 +16,7 @@
 
 ## Credential storage
 - API keys and auth tokens stored in OS keychain via `keytar`
-- Config file (`~/.his-and-hers/hh.json`) references keychain keys by name only
+- Config file (`~/.cofounder/cofounder.json`) references keychain keys by name only
 - Config file permissions are set to `0o600` (owner read/write only)
 
 ## Network security
@@ -33,7 +33,7 @@
 
 ## Reporting vulnerabilities
 Please report security issues to the maintainers privately. Do not open public issues for security vulnerabilities.
-/hh.json`) references keychain keys by name only
+/cofounder.json`) references keychain keys by name only
 - Config file permissions are set to `0o600` (owner read/write only)
 
 ## Network security

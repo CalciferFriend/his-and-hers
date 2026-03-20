@@ -1,11 +1,11 @@
-# `hh export`
+# `cofounder export`
 
 Export task history to a Markdown, CSV, or JSON report. Useful for sharing what your H2 node has been doing, archiving completed records, or feeding data into external tools.
 
 ## Synopsis
 
 ```
-hh export [options]
+cofounder export [options]
 ```
 
 ## Options
@@ -26,8 +26,8 @@ hh export [options]
 Generates a human-readable Markdown report with a summary table and one section per task. Ideal for GitHub comments, docs, and sharing with teammates.
 
 ```
-hh export                          # print to stdout
-hh export --out report.md          # write to file
+cofounder export                          # print to stdout
+cofounder export --out report.md          # write to file
 ```
 
 Report structure:
@@ -40,38 +40,38 @@ Report structure:
 A comma-separated table suitable for spreadsheets, `awk`, or `pandas`.
 
 ```
-hh export --format csv
-hh export --format csv --out tasks.csv
+cofounder export --format csv
+cofounder export --format csv --out tasks.csv
 ```
 
 Columns: `id`, `status`, `peer`, `objective`, `created_at`, `updated_at`, `duration_ms`, `tokens_used`, `cost_usd`, `success`, `artifacts`, *(optional)* `output`
 
 ### `json`
 
-A JSON object with a `summary` block and a `tasks` array. Same shape as `hh logs --json` but richer — includes the full `summary` stats block.
+A JSON object with a `summary` block and a `tasks` array. Same shape as `cofounder logs --json` but richer — includes the full `summary` stats block.
 
 ```
-hh export --format json
-hh export --format json | jq '.summary.totalCostUsd'
+cofounder export --format json
+cofounder export --format json | jq '.summary.totalCostUsd'
 ```
 
 ## Usage examples
 
 ```bash
 # Full markdown report for the last 7 days
-hh export --since 7d
+cofounder export --since 7d
 
 # Only completed tasks, no result text
-hh export --status completed --no-output
+cofounder export --status completed --no-output
 
 # CSV of everything GLaDOS has processed
-hh export --format csv --peer GLaDOS --out gladys-tasks.csv
+cofounder export --format csv --peer GLaDOS --out gladys-tasks.csv
 
 # JSON pipe into another tool
-hh export --format json | jq '[.tasks[] | select(.status=="failed")]'
+cofounder export --format json | jq '[.tasks[] | select(.status=="failed")]'
 
 # Write a weekly report file
-hh export --since 7d --out "report-$(date +%Y-%m-%d).md"
+cofounder export --since 7d --out "report-$(date +%Y-%m-%d).md"
 ```
 
 ## Duration format
@@ -110,6 +110,6 @@ The Markdown report uses icons to make statuses easy to scan:
 
 ## See also
 
-- [`hh logs`](/reference/logs) — interactive task history viewer with `--follow` and `--output`
-- [`hh budget`](/reference/budget) — cost tracking and cloud/local spend breakdown
-- [`hh prune`](/reference/prune) — remove stale task state files
+- [`cofounder logs`](/reference/logs) — interactive task history viewer with `--follow` and `--output`
+- [`cofounder budget`](/reference/budget) — cost tracking and cloud/local spend breakdown
+- [`cofounder prune`](/reference/prune) — remove stale task state files

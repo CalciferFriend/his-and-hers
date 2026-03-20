@@ -1,14 +1,14 @@
-# Paperclip-Inspired Improvements for H&H
+# Paperclip-Inspired Improvements for Cofounder
 
 Based on analysis of Paperclip's UX, we're implementing 4 key improvements:
 
-## 1. Fast Onboarding (`hh onboard --yes`)
+## 1. Fast Onboarding (`cofounder onboard --yes`)
 
 **Problem:** Current 13-step wizard is thorough but intimidating for users who just want to try it.
 
 **Solution:** Add `--yes` flag with sane defaults:
 ```bash
-hh onboard --yes --role=h1 --name=Alice --model=sonnet
+cofounder onboard --yes --role=h1 --name=Alice --model=sonnet
 ```
 
 **Defaults:**
@@ -32,7 +32,7 @@ hh onboard --yes --role=h1 --name=Alice --model=sonnet
 
 ## 2. Template Gallery (5 Starter Templates)
 
-**Problem:** Users don't know what use cases H&H is good for. Need inspiration.
+**Problem:** Users don't know what use cases Cofounder is good for. Need inspiration.
 
 **Solution:** Ship 5 pre-built templates in `templates/use-cases/`:
 
@@ -88,9 +88,9 @@ hh onboard --yes --role=h1 --name=Alice --model=sonnet
 
 **CLI Integration:**
 ```bash
-hh templates list
-hh templates show gpu-inference
-hh templates init gpu-inference
+cofounder templates list
+cofounder templates show gpu-inference
+cofounder templates init gpu-inference
 ```
 
 **Files to create:**
@@ -118,7 +118,7 @@ Workspace (e.g., "My SaaS Company")
 ```
 
 ### Config Schema
-Add to `~/.his-and-hers/hh.json`:
+Add to `~/.cofounder/cofounder.json`:
 ```json
 {
   "version": "0.2.0",
@@ -152,22 +152,22 @@ Add to `~/.his-and-hers/hh.json`:
 
 ### CLI Commands
 ```bash
-hh workspace create "My SaaS Company"
-hh workspace list
-hh workspace use my-saas-company
+cofounder workspace create "My SaaS Company"
+cofounder workspace list
+cofounder workspace use my-saas-company
 
-hh project create "Customer Support Bot" --peer=GLaDOS
-hh project list
-hh project use customer-support
+cofounder project create "Customer Support Bot" --peer=GLaDOS
+cofounder project list
+cofounder project use customer-support
 
-hh goal create "Answer tickets within 5min" --constraints="Use KB"
-hh goal list
+cofounder goal create "Answer tickets within 5min" --constraints="Use KB"
+cofounder goal list
 
-hh send "Process today's tickets"  # auto-routes to current project/peer
+cofounder send "Process today's tickets"  # auto-routes to current project/peer
 ```
 
 ### Dashboard Integration
-Web dashboard (`hh web`) shows:
+Web dashboard (`cofounder web`) shows:
 - **Workspace dropdown** in header
 - **Project sidebar** (filterable)
 - **Goal → Task** hierarchy view (not flat task list)
@@ -249,7 +249,7 @@ packages/dashboard/
 - Keep SSE API (`/events`, `/api/*`) unchanged - React consumes it
 
 **Build flow:**
-1. User runs `hh web`
+1. User runs `cofounder web`
 2. CLI checks if `packages/dashboard/dist/` exists
 3. If not, runs `pnpm --filter dashboard build` (or shows warning to build first)
 4. Serves static files from `dist/` + existing API endpoints
@@ -286,7 +286,7 @@ packages/dashboard/
 - Cost tracking per-project drives value perception
 
 **React dashboard:**
-- 30% higher engagement (measured by session duration on `hh web`)
+- 30% higher engagement (measured by session duration on `cofounder web`)
 - Task timeline view most-used feature (measured by clicks)
 
 ---
@@ -299,10 +299,10 @@ packages/dashboard/
 - Template gallery ("ClipMart")
 - React dashboard (peer status, cost tracking)
 
-**H&H advantages we keep:**
+**Cofounder advantages we keep:**
 - Physical machine separation (not just process separation)
 - Wake-on-LAN (real power savings, not just idle)
 - Latent communication roadmap (future-proof for hidden state transfer)
 - Open protocol (not SaaS lock-in)
 
-**Result:** H&H becomes as easy to onboard as Paperclip, with unique value prop intact.
+**Result:** Cofounder becomes as easy to onboard as Paperclip, with unique value prop intact.

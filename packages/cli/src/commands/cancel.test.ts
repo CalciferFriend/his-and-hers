@@ -1,5 +1,5 @@
 /**
- * cancel.test.ts — unit tests for `hh cancel`
+ * cancel.test.ts — unit tests for `cofounder cancel`
  *
  * Covers: single cancel, prefix resolution, terminal-state guard, --force,
  * --all-pending, missing ID error, --json output, and task-not-found paths.
@@ -77,7 +77,7 @@ beforeEach(() => {
 // Tests
 // ---------------------------------------------------------------------------
 
-describe("hh cancel — single task (pending)", () => {
+describe("cofounder cancel — single task (pending)", () => {
   it("cancels a pending task by exact ID", async () => {
     mockLoadTaskState.mockResolvedValue(PENDING_TASK);
     await cancel(PENDING_TASK.id);
@@ -116,7 +116,7 @@ describe("hh cancel — single task (pending)", () => {
   });
 });
 
-describe("hh cancel — terminal state guard", () => {
+describe("cofounder cancel — terminal state guard", () => {
   it.each([
     ["completed", COMPLETED_TASK],
     ["failed", FAILED_TASK],
@@ -139,7 +139,7 @@ describe("hh cancel — terminal state guard", () => {
   });
 });
 
-describe("hh cancel — missing ID", () => {
+describe("cofounder cancel — missing ID", () => {
   it("sets exitCode 1 when no ID and --all-pending not set", async () => {
     await cancel(undefined);
     expect(mockUpdateTaskState).not.toHaveBeenCalled();
@@ -147,7 +147,7 @@ describe("hh cancel — missing ID", () => {
   });
 });
 
-describe("hh cancel — --all-pending", () => {
+describe("cofounder cancel — --all-pending", () => {
   it("cancels all pending tasks", async () => {
     const t1 = { ...PENDING_TASK, id: "id000001" };
     const t2 = { ...PENDING_TASK, id: "id000002" };
@@ -167,7 +167,7 @@ describe("hh cancel — --all-pending", () => {
   });
 });
 
-describe("hh cancel — --json output", () => {
+describe("cofounder cancel — --json output", () => {
   it("prints JSON on successful cancel", async () => {
     mockLoadTaskState.mockResolvedValue(PENDING_TASK);
     const spy = vi.spyOn(process.stdout, "write").mockImplementation(() => true);

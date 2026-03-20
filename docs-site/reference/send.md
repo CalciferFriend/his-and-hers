@@ -1,4 +1,4 @@
-# `hh send` — Reference
+# `cofounder send` — Reference
 
 Send a task to a H2 node. The core command you'll use most.
 
@@ -7,7 +7,7 @@ Send a task to a H2 node. The core command you'll use most.
 ## Synopsis
 
 ```bash
-hh send "<task>" [flags]
+cofounder send "<task>" [flags]
 ```
 
 ---
@@ -35,17 +35,17 @@ hh send "<task>" [flags]
 ### Default (no `--wait`)
 
 ```bash
-$ hh send "write a haiku about TCP/IP"
+$ cofounder send "write a haiku about TCP/IP"
 → Task dispatched: task_01j8fzq7r4
   H2: h2-home (100.x.y.z)
   Status: queued
-  Track: hh logs --task task_01j8fzq7r4
+  Track: cofounder logs --task task_01j8fzq7r4
 ```
 
 ### With `--wait`
 
 ```bash
-$ hh send "write a haiku about TCP/IP" --wait
+$ cofounder send "write a haiku about TCP/IP" --wait
 Bits flow through the dark,
 Each packet seeks its lost home—
 Checksum finds the truth.
@@ -67,7 +67,7 @@ Checksum finds the truth.
 
 ## Message format
 
-`hh send` builds a `HHMessage` with type `task`:
+`cofounder send` builds a `CofounderMessage` with type `task`:
 
 ```json
 {
@@ -96,8 +96,8 @@ Checksum finds the truth.
 2. Load peer config (--peer, or auto-select)
 3. Check H2 gateway health (GET /health)
 4. If unhealthy + WOL configured: send magic packet, poll gateway
-5. Build HHMessage, POST to H2 gateway
-6. Write task state to ~/.his-and-hers/tasks/<task_id>.json
+5. Build CofounderMessage, POST to H2 gateway
+6. Write task state to ~/.cofounder/tasks/<task_id>.json
 7. If --wait: poll task state every 2s until done:true
 8. Print result (--wait) or task ID (default)
 ```
@@ -120,38 +120,38 @@ Checksum finds the truth.
 
 ```bash
 # Basic send
-hh send "summarize the attached PDF" --attach report.pdf
+cofounder send "summarize the attached PDF" --attach report.pdf
 
 # Wait for result
-hh send "translate this to French" --attach doc.txt --wait
+cofounder send "translate this to French" --attach doc.txt --wait
 
 # Target specific peer, wait, verbose
-hh send "run the test suite" --peer h2-beast --wait --verbose
+cofounder send "run the test suite" --peer h2-beast --wait --verbose
 
 # Use capability routing
-hh send "generate a product image" --auto --wait
+cofounder send "generate a product image" --auto --wait
 
 # Fail fast if H2 is offline
-hh send "quick code review" --no-wol --wait
+cofounder send "quick code review" --no-wol --wait
 
 # Schedule H2 to shut down after task
-hh send "render overnight batch job" --peer h2-beast --shutdown-after --wait --timeout 7200
+cofounder send "render overnight batch job" --peer h2-beast --shutdown-after --wait --timeout 7200
 
 # JSON output for scripting
-RESULT=$(hh send "what is 2+2" --wait --json)
+RESULT=$(cofounder send "what is 2+2" --wait --json)
 echo $RESULT | jq .output
 ```
 
 ---
 
-## Scripting with `hh send`
+## Scripting with `cofounder send`
 
 ```bash
 #!/bin/bash
 # Process all PDFs in a directory
 for pdf in ~/docs/*.pdf; do
   echo "Processing: $pdf"
-  hh send "extract key facts and bullet-point summary" \
+  cofounder send "extract key facts and bullet-point summary" \
     --attach "$pdf" \
     --wait \
     --timeout 120 \
@@ -163,8 +163,8 @@ done
 
 ## Live streaming
 
-When `--wait` is set, `hh send` automatically starts a streaming chunk-receiver
-on H1 before dispatching the task. H2's `hh watch` streams stdout chunks back
+When `--wait` is set, `cofounder send` automatically starts a streaming chunk-receiver
+on H1 before dispatching the task. H2's `cofounder watch` streams stdout chunks back
 in real-time so you see partial output as H2 works — no spinner, no silence.
 
 Streaming degrades silently if the server fails to bind. See the
@@ -177,8 +177,8 @@ Streaming degrades silently if the server fails to bind. See the
 Deliver a completion ping to Discord, Slack, or any HTTP endpoint:
 
 ```bash
-hh send "overnight training run" --notify https://discord.com/api/webhooks/...
-hh send "long task" --wait --notify https://hooks.slack.com/services/...
+cofounder send "overnight training run" --notify https://discord.com/api/webhooks/...
+cofounder send "long task" --wait --notify https://hooks.slack.com/services/...
 ```
 
 - **Discord** — rich embed with colour-coded status, peer, duration, cost
@@ -193,6 +193,6 @@ Notification failures are soft-logged and never break the task.
 
 - [Sending tasks guide](/guide/sending-tasks) — full walkthrough
 - [Live streaming & notifications](/guide/streaming) — streaming + webhook details
-- [hh logs](/reference/logs) — monitor task status
-- [hh wake](/reference/wake) — manually wake H2
-- [hh capabilities](/reference/capabilities) — understand routing decisions
+- [cofounder logs](/reference/logs) — monitor task status
+- [cofounder wake](/reference/wake) — manually wake H2
+- [cofounder capabilities](/reference/capabilities) — understand routing decisions

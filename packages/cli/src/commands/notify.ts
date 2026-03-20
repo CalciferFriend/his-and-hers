@@ -1,17 +1,17 @@
 /**
- * commands/notify.ts — `hh notify`
+ * commands/notify.ts — `cofounder notify`
  *
  * Manage persistent notification webhooks for task completion events.
  *
- * Webhooks registered here fire automatically on every `hh send` result
+ * Webhooks registered here fire automatically on every `cofounder send` result
  * without needing to pass --notify each time. Supports Discord, Slack,
  * and any generic HTTP endpoint.
  *
  * Subcommands:
- *   hh notify add <url> [--name <label>] [--on all|complete|failure]
- *   hh notify list
- *   hh notify remove <id>
- *   hh notify test [id]      — fire a test notification (all webhooks or one by ID prefix)
+ *   cofounder notify add <url> [--name <label>] [--on all|complete|failure]
+ *   cofounder notify list
+ *   cofounder notify remove <id>
+ *   cofounder notify test [id]      — fire a test notification (all webhooks or one by ID prefix)
  *
  * Event filters (--on):
  *   all      — fires on every task completion (default)
@@ -19,11 +19,11 @@
  *   failure  — fires only on failed tasks
  *
  * Examples:
- *   hh notify add https://discord.com/api/webhooks/123/abc --name "Discord #alerts"
- *   hh notify add https://hooks.slack.com/... --on failure
- *   hh notify list
- *   hh notify remove a1b2
- *   hh notify test
+ *   cofounder notify add https://discord.com/api/webhooks/123/abc --name "Discord #alerts"
+ *   cofounder notify add https://hooks.slack.com/... --on failure
+ *   cofounder notify list
+ *   cofounder notify remove a1b2
+ *   cofounder notify test
  */
 
 import * as p from "@clack/prompts";
@@ -34,8 +34,8 @@ import {
   removeNotifyWebhook,
   type HHNotifyEvent,
   type HHNotifyWebhook,
-} from "@his-and-hers/core/notify/config";
-import { deliverNotification } from "@his-and-hers/core/notify/notify";
+} from "@cofounder/core/notify/config";
+import { deliverNotification } from "@cofounder/core/notify/notify";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -72,7 +72,7 @@ async function cmdAdd(args: string[]): Promise<void> {
   const [url, ...rest] = args;
 
   if (!url) {
-    console.error(pc.red("Usage: hh notify add <url> [--name <label>] [--on all|complete|failure]"));
+    console.error(pc.red("Usage: cofounder notify add <url> [--name <label>] [--on all|complete|failure]"));
     process.exitCode = 1;
     return;
   }
@@ -104,7 +104,7 @@ async function cmdAdd(args: string[]): Promise<void> {
     }
   }
 
-  p.intro(pc.bold("hh notify add"));
+  p.intro(pc.bold("cofounder notify add"));
 
   const s = p.spinner();
   s.start("Registering webhook…");
@@ -116,7 +116,7 @@ async function cmdAdd(args: string[]): Promise<void> {
     printWebhookRow(webhook);
     console.log();
     p.outro(
-      `Fires on: ${eventBadge(events)} tasks. Remove with: ${pc.dim(`hh notify remove ${webhook.id.slice(0, 8)}`)}`
+      `Fires on: ${eventBadge(events)} tasks. Remove with: ${pc.dim(`cofounder notify remove ${webhook.id.slice(0, 8)}`)}`
     );
   } catch (err) {
     s.stop(pc.red("Failed to register webhook."));
@@ -130,7 +130,7 @@ async function cmdList(): Promise<void> {
 
   if (webhooks.length === 0) {
     console.log(pc.dim("No notification webhooks registered."));
-    console.log(pc.dim("Add one with: hh notify add <url>"));
+    console.log(pc.dim("Add one with: cofounder notify add <url>"));
     return;
   }
 
@@ -145,8 +145,8 @@ async function cmdRemove(args: string[]): Promise<void> {
   const [idPrefix] = args;
 
   if (!idPrefix) {
-    console.error(pc.red("Usage: hh notify remove <id>"));
-    console.error(pc.dim("Run `hh notify list` to see registered webhooks."));
+    console.error(pc.red("Usage: cofounder notify remove <id>"));
+    console.error(pc.dim("Run `cofounder notify list` to see registered webhooks."));
     process.exitCode = 1;
     return;
   }
@@ -157,7 +157,7 @@ async function cmdRemove(args: string[]): Promise<void> {
     console.log(pc.green(`✓ Webhook ${pc.bold(idPrefix)} removed.`));
   } else {
     console.error(pc.red(`No webhook found matching: ${idPrefix}`));
-    console.error(pc.dim("Run `hh notify list` to see registered webhooks."));
+    console.error(pc.dim("Run `cofounder notify list` to see registered webhooks."));
     process.exitCode = 1;
   }
 }
@@ -167,7 +167,7 @@ async function cmdTest(args: string[]): Promise<void> {
   const all = await loadNotifyWebhooks();
 
   if (all.length === 0) {
-    console.log(pc.dim("No webhooks registered. Add one with: hh notify add <url>"));
+    console.log(pc.dim("No webhooks registered. Add one with: cofounder notify add <url>"));
     return;
   }
 
@@ -181,13 +181,13 @@ async function cmdTest(args: string[]): Promise<void> {
     return;
   }
 
-  p.intro(pc.bold(`hh notify test — firing ${targets.length} webhook(s)…`));
+  p.intro(pc.bold(`cofounder notify test — firing ${targets.length} webhook(s)…`));
 
   const ctx = {
-    task: "Test notification from hh notify test",
+    task: "Test notification from cofounder notify test",
     taskId: "00000000-test-0000-0000-000000000000",
     success: true,
-    output: "This is a test message from his-and-hers. If you see this, your webhook is working! 🎉",
+    output: "This is a test message from cofounder. If you see this, your webhook is working! 🎉",
     peer: "h2",
     durationMs: 1337,
     costUsd: 0,
@@ -215,7 +215,7 @@ async function cmdTest(args: string[]): Promise<void> {
     p.outro(pc.green(`All ${passCount} webhook(s) delivered successfully.`));
   } else {
     p.outro(
-      pc.yellow(`${passCount} delivered, ${failCount} failed. Run \`hh notify list\` to review URLs.`)
+      pc.yellow(`${passCount} delivered, ${failCount} failed. Run \`cofounder notify list\` to review URLs.`)
     );
     process.exitCode = 1;
   }
@@ -243,11 +243,11 @@ export async function notify(opts: NotifyOptions): Promise<void> {
     case "test":
       return cmdTest(rest);
     default: {
-      console.log(pc.bold("\nhh notify — persistent notification webhook manager\n"));
-      console.log("  hh notify add <url> [--name <label>] [--on all|complete|failure]");
-      console.log("  hh notify list");
-      console.log("  hh notify remove <id>");
-      console.log("  hh notify test [id]");
+      console.log(pc.bold("\ncofounder notify — persistent notification webhook manager\n"));
+      console.log("  cofounder notify add <url> [--name <label>] [--on all|complete|failure]");
+      console.log("  cofounder notify list");
+      console.log("  cofounder notify remove <id>");
+      console.log("  cofounder notify test [id]");
       console.log();
       console.log(pc.dim("  Webhooks fire automatically on task completion (no --notify needed)."));
       console.log(pc.dim("  Supports Discord, Slack, and any generic HTTPS endpoint."));

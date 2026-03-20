@@ -1,19 +1,19 @@
 /**
- * commands/prune.ts — `hh prune`
+ * commands/prune.ts — `cofounder prune`
  *
  * Clean up stale task state files, retry records, and schedule logs.
- * Keeps your ~/.his-and-hers directory tidy over time.
+ * Keeps your ~/.cofounder directory tidy over time.
  *
  * Usage:
- *   hh prune                          # remove completed/failed tasks older than 30d (dry-run first)
- *   hh prune --older-than 7d          # prune tasks older than 7 days
- *   hh prune --status all             # prune all terminal statuses (completed, failed, timeout, cancelled)
- *   hh prune --status completed       # prune only completed tasks
- *   hh prune --include-retry          # also remove retry state files for pruned tasks
- *   hh prune --include-logs           # also truncate matching schedule log files
- *   hh prune --dry-run                # show what would be removed without deleting
- *   hh prune --json                   # output machine-readable JSON summary
- *   hh prune --force                  # skip confirmation prompt
+ *   cofounder prune                          # remove completed/failed tasks older than 30d (dry-run first)
+ *   cofounder prune --older-than 7d          # prune tasks older than 7 days
+ *   cofounder prune --status all             # prune all terminal statuses (completed, failed, timeout, cancelled)
+ *   cofounder prune --status completed       # prune only completed tasks
+ *   cofounder prune --include-retry          # also remove retry state files for pruned tasks
+ *   cofounder prune --include-logs           # also truncate matching schedule log files
+ *   cofounder prune --dry-run                # show what would be removed without deleting
+ *   cofounder prune --json                   # output machine-readable JSON summary
+ *   cofounder prune --force                  # skip confirmation prompt
  */
 
 import * as p from "@clack/prompts";
@@ -36,10 +36,10 @@ export interface PruneOptions {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const HH_DIR = join(homedir(), ".his-and-hers");
-const TASKS_DIR = join(HH_DIR, "state", "tasks");
-const RETRY_DIR = join(HH_DIR, "retry");
-const LOGS_DIR = join(HH_DIR, "schedule-logs");
+const CF_DIR = join(homedir(), ".cofounder");
+const TASKS_DIR = join(CF_DIR, "state", "tasks");
+const RETRY_DIR = join(CF_DIR, "retry");
+const LOGS_DIR = join(CF_DIR, "schedule-logs");
 
 const TERMINAL_STATUSES: Set<TaskStatus> = new Set([
   "completed",
@@ -131,7 +131,7 @@ export async function prune(opts: PruneOptions = {}): Promise<void> {
   const cutoff = Date.now() - maxAgeMs;
 
   if (!isJson) {
-    p.intro(pc.bold("🔥 hh prune"));
+    p.intro(pc.bold("🔥 cofounder prune"));
     if (isDryRun) {
       p.note("Dry-run mode — no files will be deleted.", "dry-run");
     }

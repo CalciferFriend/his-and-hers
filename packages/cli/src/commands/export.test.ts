@@ -1,5 +1,5 @@
 /**
- * commands/export.test.ts — Tests for `hh export`
+ * commands/export.test.ts — Tests for `cofounder export`
  *
  * Covers: parseDuration, applyFilters, buildSummary, renderMarkdown, renderCsv, renderJson.
  */
@@ -163,7 +163,7 @@ describe("buildSummary", () => {
 describe("renderMarkdown", () => {
   it("includes a header", () => {
     const md = renderMarkdown([], buildSummary([]), true);
-    expect(md).toContain("# his-and-hers Task Report");
+    expect(md).toContain("# cofounder Task Report");
   });
 
   it("shows task count in summary table", () => {

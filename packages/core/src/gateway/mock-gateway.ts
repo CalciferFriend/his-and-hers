@@ -4,7 +4,7 @@
  * A mock OpenClaw WebSocket gateway for E2E and integration testing.
  *
  * Implements the minimal subset of the OpenClaw gateway protocol needed to
- * test wakeAgent(), hh send, hh pipeline, and hh workflow without a real
+ * test wakeAgent(), cofounder send, cofounder pipeline, and cofounder workflow without a real
  * network or real OpenClaw installation.
  *
  * Protocol summary (reverse-engineered from wake.ts + production observation):
@@ -82,7 +82,7 @@ export interface ReceivedWake {
 /**
  * Lightweight in-process mock of the OpenClaw WebSocket gateway.
  *
- * Start it, point wakeAgent (or `hh send`) at `gw.url`, and inspect
+ * Start it, point wakeAgent (or `cofounder send`) at `gw.url`, and inspect
  * `gw.receivedWakes` to assert what was delivered.
  *
  * Emits:

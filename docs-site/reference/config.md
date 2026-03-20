@@ -1,8 +1,8 @@
-# `hh config` — Reference
+# `cofounder config` — Reference
 
-Read and write your his-and-hers configuration from the command line.
+Read and write your cofounder configuration from the command line.
 
-The config file lives at `~/.his-and-hers/config.json` and holds all node
+The config file lives at `~/.cofounder/config.json` and holds all node
 settings (names, IPs, ports, roles, etc.). **Sensitive secrets** — API keys and
 gateway tokens — are **never stored here**; they live in the OS keychain
 (Keychain Access on macOS, `secret-tool` / `libsecret` on Linux, Credential
@@ -13,10 +13,10 @@ Manager on Windows).
 ## Synopsis
 
 ```bash
-hh config <subcommand> [key] [value]
+cofounder config <subcommand> [key] [value]
 ```
 
-Running `hh config` with no subcommand is the same as `hh config show`.
+Running `cofounder config` with no subcommand is the same as `cofounder config show`.
 
 ---
 
@@ -31,17 +31,17 @@ Running `hh config` with no subcommand is the same as `hh config show`.
 
 ---
 
-## `hh config show`
+## `cofounder config show`
 
 Prints the full configuration with sensitive fields (tokens, keys, passwords)
 replaced by `[redacted]`.
 
 ```bash
-hh config show
+cofounder config show
 ```
 
 ```
-Config — ~/.his-and-hers/config.json
+Config — ~/.cofounder/config.json
 ─────────────────────────────────────────────────────
 role:              h1
 name:              Calcifer
@@ -68,18 +68,18 @@ Secrets are redacted above. Keys live in the OS keychain.
 
 ---
 
-## `hh config get <key>`
+## `cofounder config get <key>`
 
 Read a single value using dot-notation for nested fields.
 
 ```bash
-hh config get role
+cofounder config get role
 # h1
 
-hh config get peer_nodes.0.tailscale_ip
+cofounder config get peer_nodes.0.tailscale_ip
 # 100.64.0.2
 
-hh config get provider
+cofounder config get provider
 # anthropic
 ```
 
@@ -88,7 +88,7 @@ Exits with code 1 if the key is not found.
 
 ---
 
-## `hh config set <key> <value>`
+## `cofounder config set <key> <value>`
 
 Write a single value. The value is automatically coerced:
 
@@ -100,30 +100,30 @@ Write a single value. The value is automatically coerced:
 | anything else | string |
 
 ```bash
-hh config set gateway_port 19000
-hh config set provider openai
-hh config set peer_nodes.0.tailscale_ip 100.64.0.5
-hh config set peer_nodes.0.wol_mac "AA:BB:CC:DD:EE:FF"
+cofounder config set gateway_port 19000
+cofounder config set provider openai
+cofounder config set peer_nodes.0.tailscale_ip 100.64.0.5
+cofounder config set peer_nodes.0.wol_mac "AA:BB:CC:DD:EE:FF"
 ```
 
 ::: warning
-`hh config set` writes directly to the config file without full schema
-validation. For guided initial setup, use `hh onboard` instead.
+`cofounder config set` writes directly to the config file without full schema
+validation. For guided initial setup, use `cofounder onboard` instead.
 :::
 
 ---
 
-## `hh config path`
+## `cofounder config path`
 
 Print the absolute path to the config file (no trailing newline). Useful for
 scripting.
 
 ```bash
-hh config path
-# /home/nic/.his-and-hers/config.json
+cofounder config path
+# /home/nic/.cofounder/config.json
 
 # Open in your editor
-$EDITOR "$(hh config path)"
+$EDITOR "$(cofounder config path)"
 ```
 
 ---
@@ -137,19 +137,19 @@ API keys (Anthropic, OpenAI, etc.) and gateway tokens are **never stored in
 - **Linux** — `libsecret` / `secret-tool`
 - **Windows** — Windows Credential Manager (`cmdkey`)
 
-To update a secret, run `hh onboard` (full wizard) or update the relevant
+To update a secret, run `cofounder onboard` (full wizard) or update the relevant
 keychain entry directly.
 
 ---
 
 ## Config file location
 
-- Linux/macOS: `~/.his-and-hers/config.json`
-- Windows: `%USERPROFILE%\.his-and-hers\config.json`
+- Linux/macOS: `~/.cofounder/config.json`
+- Windows: `%USERPROFILE%\.cofounder\config.json`
 
 ---
 
 ## See also
 
-- [hh onboard](/reference/onboard) — guided setup wizard
-- [hh status](/reference/status) — live peer and gateway status
+- [cofounder onboard](/reference/onboard) — guided setup wizard
+- [cofounder status](/reference/status) — live peer and gateway status

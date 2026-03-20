@@ -64,7 +64,7 @@ ollama pull codellama          # coding
 ollama pull llava              # vision tasks
 ```
 
-### 3. Install Node.js + OpenClaw + his-and-hers
+### 3. Install Node.js + OpenClaw + cofounder
 
 ```bash
 # Install Node.js 22+ via nvm (recommended)
@@ -74,11 +74,11 @@ nvm install 22 && nvm use 22
 # Install OpenClaw
 npm install -g openclaw
 
-# Install his-and-hers
-npm install -g his-and-hers
+# Install cofounder
+npm install -g cofounder
 
 # Run wizard
-hh onboard
+cofounder onboard
 # → Role: H2
 # → Provider: Ollama (auto-detected)
 ```
@@ -95,8 +95,8 @@ tailscale up --authkey tskey-auth-...
 ### 5. Advertise capabilities
 
 ```bash
-hh capabilities advertise
-hh capabilities show
+cofounder capabilities advertise
+cofounder capabilities show
 ```
 
 Expected output:
@@ -112,14 +112,14 @@ Skills: ollama, gpu-inference
 **Option A — launchd plist (recommended):**
 
 ```bash
-cat > ~/Library/LaunchAgents/com.his-and-hers.gateway.plist << 'EOF'
+cat > ~/Library/LaunchAgents/com.cofounder.gateway.plist << 'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
   "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
   <key>Label</key>
-  <string>com.his-and-hers.gateway</string>
+  <string>com.cofounder.gateway</string>
   <key>ProgramArguments</key>
   <array>
     <string>/usr/local/bin/openclaw</string>
@@ -131,14 +131,14 @@ cat > ~/Library/LaunchAgents/com.his-and-hers.gateway.plist << 'EOF'
   <key>KeepAlive</key>
   <true/>
   <key>StandardOutPath</key>
-  <string>/tmp/his-and-hers-gateway.log</string>
+  <string>/tmp/cofounder-gateway.log</string>
   <key>StandardErrorPath</key>
-  <string>/tmp/his-and-hers-gateway.err</string>
+  <string>/tmp/cofounder-gateway.err</string>
 </dict>
 </plist>
 EOF
 
-launchctl load ~/Library/LaunchAgents/com.his-and-hers.gateway.plist
+launchctl load ~/Library/LaunchAgents/com.cofounder.gateway.plist
 ```
 
 **Option B — Login Items (macOS 13+):**
@@ -161,7 +161,7 @@ python main.py --force-fp16
 
 Advertise the image-gen skill once ComfyUI is running:
 ```bash
-hh capabilities advertise --notes "SDXL via ComfyUI, Metal backend"
+cofounder capabilities advertise --notes "SDXL via ComfyUI, Metal backend"
 ```
 
 ---
@@ -207,5 +207,5 @@ openclaw gateway status
 ## See also
 
 - [Hardware overview](/hardware/overview) — compare with other profiles
-- [`hh capabilities`](/reference/capabilities) — scan, advertise, fetch
-- [Sending tasks](/guide/sending-tasks) — `hh send` flags and options
+- [`cofounder capabilities`](/reference/capabilities) — scan, advertise, fetch
+- [Sending tasks](/guide/sending-tasks) — `cofounder send` flags and options

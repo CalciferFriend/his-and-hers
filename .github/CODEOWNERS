@@ -1,0 +1,9 @@
+# Default owner for everything in the repo
+* @nremming
+
+# Package-level ownership
+/packages/core/ @nremming
+/packages/cli/ @nremming
+
+# Documentation
+/docs/ @nremming

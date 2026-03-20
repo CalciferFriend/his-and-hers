@@ -1,5 +1,5 @@
 /**
- * doctor.test.ts — unit tests for `hh doctor`
+ * doctor.test.ts — unit tests for `cofounder doctor`
  *
  * Covers: local gateway check, Tailscale check, capabilities check,
  * per-peer checks (reachable / unreachable / WOL), SSH checks,
@@ -41,7 +41,7 @@ vi.mock("../config/store.ts", () => ({
   loadConfig: mockLoadConfig,
 }));
 
-vi.mock("@his-and-hers/core", () => ({
+vi.mock("@cofounder/core", () => ({
   getTailscaleStatus: mockGetTailscaleStatus,
   pingPeer: mockPingPeer,
   testSSH: mockTestSSH,
@@ -117,7 +117,7 @@ beforeEach(() => {
 // No-config guard
 // ---------------------------------------------------------------------------
 
-describe("hh doctor — no config", () => {
+describe("cofounder doctor — no config", () => {
   it("exits 1 and logs error when config missing", async () => {
     mockLoadConfig.mockResolvedValue(null);
     await doctor();
@@ -140,7 +140,7 @@ describe("hh doctor — no config", () => {
 // Healthy path
 // ---------------------------------------------------------------------------
 
-describe("hh doctor — healthy node", () => {
+describe("cofounder doctor — healthy node", () => {
   it("exits 0 when all checks pass", async () => {
     await doctor();
     expect(process.exitCode).toBeUndefined();
@@ -187,7 +187,7 @@ describe("hh doctor — healthy node", () => {
 // --json output
 // ---------------------------------------------------------------------------
 
-describe("hh doctor --json", () => {
+describe("cofounder doctor --json", () => {
   it("outputs valid JSON with checks array", async () => {
     const logs: string[] = [];
     vi.spyOn(console, "log").mockImplementation((s) => logs.push(s));
@@ -247,7 +247,7 @@ describe("hh doctor --json", () => {
 // Tailscale failures
 // ---------------------------------------------------------------------------
 
-describe("hh doctor — Tailscale issues", () => {
+describe("cofounder doctor — Tailscale issues", () => {
   it("marks daemon check as fail when Tailscale offline", async () => {
     mockGetTailscaleStatus.mockResolvedValue({ online: false });
     const logs: string[] = [];
@@ -282,7 +282,7 @@ describe("hh doctor — Tailscale issues", () => {
 // Peer unreachable
 // ---------------------------------------------------------------------------
 
-describe("hh doctor — peer unreachable", () => {
+describe("cofounder doctor — peer unreachable", () => {
   it("marks reachability as fail when peer ping fails (no WOL)", async () => {
     mockPingPeer.mockResolvedValue(false);
     const peer = { ...PEER_NODE, wol_enabled: false };
@@ -336,7 +336,7 @@ describe("hh doctor — peer unreachable", () => {
 // SSH checks
 // ---------------------------------------------------------------------------
 
-describe("hh doctor — SSH checks", () => {
+describe("cofounder doctor — SSH checks", () => {
   it("marks SSH as fail when SSH test returns false", async () => {
     mockTestSSH.mockResolvedValue(false);
     const logs: string[] = [];
@@ -370,7 +370,7 @@ describe("hh doctor — SSH checks", () => {
 // Capabilities checks
 // ---------------------------------------------------------------------------
 
-describe("hh doctor — capabilities", () => {
+describe("cofounder doctor — capabilities", () => {
   it("warns when no local capabilities scan found", async () => {
     mockLoadCapabilities.mockResolvedValue(null);
     const logs: string[] = [];
@@ -439,7 +439,7 @@ describe("hh doctor — capabilities", () => {
 // --peer filter
 // ---------------------------------------------------------------------------
 
-describe("hh doctor --peer", () => {
+describe("cofounder doctor --peer", () => {
   it("calls findPeerByName with supplied peer name", async () => {
     mockFindPeerByName.mockReturnValue(PEER_NODE);
     await doctor({ peer: "glados", json: true });
@@ -465,7 +465,7 @@ describe("hh doctor --peer", () => {
 // Multiple peers
 // ---------------------------------------------------------------------------
 
-describe("hh doctor — multiple peers", () => {
+describe("cofounder doctor — multiple peers", () => {
   const PEER2 = {
     name: "pi5",
     emoji: "🍓",
@@ -512,7 +512,7 @@ describe("hh doctor — multiple peers", () => {
 // Gateway port override
 // ---------------------------------------------------------------------------
 
-describe("hh doctor — gateway port", () => {
+describe("cofounder doctor — gateway port", () => {
   it("uses custom gateway_port from config", async () => {
     mockLoadConfig.mockResolvedValue({ ...CONFIG, gateway_port: 19999 });
     await doctor({ json: true });

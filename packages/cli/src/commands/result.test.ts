@@ -1,5 +1,5 @@
 /**
- * result.test.ts — unit tests for `hh result`
+ * result.test.ts — unit tests for `cofounder result`
  *
  * Mocks filesystem state helpers and core utilities to keep tests isolated.
  */
@@ -34,7 +34,7 @@ vi.mock("../config/store.ts", () => ({
   loadConfig: mockLoadConfig,
 }));
 
-vi.mock("@his-and-hers/core", () => ({
+vi.mock("@cofounder/core", () => ({
   estimateCost: mockEstimateCost,
   summarizeTask: mockSummarizeTask,
   appendContextEntry: mockAppendContextEntry,
@@ -86,7 +86,7 @@ function resetExitCode() {
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
-describe("hh result — task not found", () => {
+describe("cofounder result — task not found", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     resetExitCode();
@@ -101,7 +101,7 @@ describe("hh result — task not found", () => {
   });
 });
 
-describe("hh result — basic completion", () => {
+describe("cofounder result — basic completion", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     resetExitCode();
@@ -170,7 +170,7 @@ describe("hh result — basic completion", () => {
   });
 });
 
-describe("hh result — token / cost handling", () => {
+describe("cofounder result — token / cost handling", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     resetExitCode();
@@ -223,7 +223,7 @@ describe("hh result — token / cost handling", () => {
   });
 });
 
-describe("hh result — JSON payload", () => {
+describe("cofounder result — JSON payload", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     resetExitCode();
@@ -263,7 +263,7 @@ describe("hh result — JSON payload", () => {
   });
 });
 
-describe("hh result — already completed/failed tasks", () => {
+describe("cofounder result — already completed/failed tasks", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     resetExitCode();
@@ -284,7 +284,7 @@ describe("hh result — already completed/failed tasks", () => {
   });
 });
 
-describe("hh result — webhook delivery", () => {
+describe("cofounder result — webhook delivery", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     resetExitCode();
@@ -331,7 +331,7 @@ describe("hh result — webhook delivery", () => {
   });
 });
 
-describe("hh result — context summary", () => {
+describe("cofounder result — context summary", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     resetExitCode();

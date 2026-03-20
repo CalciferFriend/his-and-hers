@@ -2,12 +2,12 @@
 layout: home
 
 hero:
-  name: "his-and-hers"
+  name: "cofounder"
   text: "Two agents. Separate machines."
   tagline: One command to wire them. H1 orchestrates. H2 executes. They never meet but they build things together.
   image:
     src: /hero.svg
-    alt: his-and-hers
+    alt: cofounder
   actions:
     - theme: brand
       text: Get Started →
@@ -17,12 +17,12 @@ hero:
       link: /guide/how-it-works
     - theme: alt
       text: View on GitHub
-      link: https://github.com/CalciferFriend/his-and-hers
+      link: https://github.com/CalciferFriend/cofounder
 
 features:
   - icon: ⚡
     title: Under 10 minutes
-    details: Run `npx his-and-hers` on each machine. The wizard handles Tailscale pairing, gateway config, Wake-on-LAN, Windows AutoLogin, and startup scripts. No YAML, no manual config files.
+    details: Run `npx cofounder` on each machine. The wizard handles Tailscale pairing, gateway config, Wake-on-LAN, Windows AutoLogin, and startup scripts. No YAML, no manual config files.
 
   - icon: 🛌
     title: Wake on demand
@@ -38,18 +38,18 @@ features:
 
   - icon: 💰
     title: Budget tracking
-    details: Every task is costed. `hh budget --week` shows your spend per node, per model, per day. Lightweight tasks auto-route to local models. API calls only when needed.
+    details: Every task is costed. `cofounder budget --week` shows your spend per node, per model, per day. Lightweight tasks auto-route to local models. API calls only when needed.
 
   - icon: 🌐
     title: Community registry
-    details: Publish your node card to the community registry with `hh publish`. Discover other setups with `hh discover`. See what people are building and how they're running their Jerrys.
+    details: Publish your node card to the community registry with `cofounder publish`. Discover other setups with `cofounder discover`. See what people are building and how they're running their Jerrys.
 ---
 
 ## How it looks
 
 ```bash
 # On your always-on machine (H1)
-$ npx his-and-hers
+$ npx cofounder
 ✔ Role: H1 (orchestrator)
 ✔ Name: Calcifer 🔥
 ✔ Provider: Anthropic → claude-sonnet-4-6
@@ -60,17 +60,17 @@ $ npx his-and-hers
 ✔ H2 config pushed via SSH
 ✔ Round-trip test: 218ms ✓
 
-Everything's wired. Run `hh send` to give H2 something to do.
+Everything's wired. Run `cofounder send` to give H2 something to do.
 
 # Send H2 a task
-$ hh send "generate a landing page hero image for his-and-hers, dark theme, two robots"
+$ cofounder send "generate a landing page hero image for cofounder, dark theme, two robots"
 🌙 H2 is asleep — sending Magic Packet...
 ⏳ Waiting for H2 to boot (up to 90s)...
 ✓ H2 online (62s) — forwarding task...
-✓ Task queued: task_01j8fzq... — use `hh logs --follow` to watch
+✓ Task queued: task_01j8fzq... — use `cofounder logs --follow` to watch
 
 # Check status
-$ hh status
+$ cofounder status
 ┌─────────────────────────────────────────────────┐
 │  H1: Calcifer 🔥        H2: GLaDOS 🤖        │
 │  aws:us-east-1           home-pc                 │

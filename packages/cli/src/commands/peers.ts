@@ -1,12 +1,12 @@
 /**
- * commands/peers.ts — `hh peers`
+ * commands/peers.ts — `cofounder peers`
  *
  * List all configured peer nodes and their current reachability status.
  *
  * Usage:
- *   hh peers              — list peers with cached capability info
- *   hh peers --ping       — live reachability check for each peer
- *   hh peers --json       — machine-readable output
+ *   cofounder peers              — list peers with cached capability info
+ *   cofounder peers --ping       — live reachability check for each peer
+ *   cofounder peers --json       — machine-readable output
  *
  * The primary peer is marked with ★. Additional peers from peer_nodes[]
  * are listed in declaration order.
@@ -15,7 +15,7 @@
 import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { loadConfig } from "../config/store.ts";
-import { pingPeer, loadPeerCapabilities } from "@his-and-hers/core";
+import { pingPeer, loadPeerCapabilities } from "@cofounder/core";
 import { getAllPeers } from "../peers/select.ts";
 
 export interface PeersOptions {
@@ -41,7 +41,7 @@ export async function peers(opts: PeersOptions = {}) {
   const config = await loadConfig();
 
   if (!config) {
-    p.log.error("No configuration found. Run `hh onboard` first.");
+    p.log.error("No configuration found. Run `cofounder onboard` first.");
     process.exitCode = 1;
     return;
   }
@@ -120,8 +120,8 @@ export async function peers(opts: PeersOptions = {}) {
   }
 
   p.log.info("");
-  p.log.info(pc.dim(`Use ${pc.italic("hh send --peer <name> <task>")} to target a specific peer.`));
-  p.log.info(pc.dim(`Use ${pc.italic("hh send --auto <task>")} to auto-select by capability.`));
+  p.log.info(pc.dim(`Use ${pc.italic("cofounder send --peer <name> <task>")} to target a specific peer.`));
+  p.log.info(pc.dim(`Use ${pc.italic("cofounder send --auto <task>")} to auto-select by capability.`));
 
   p.outro("Done");
 }

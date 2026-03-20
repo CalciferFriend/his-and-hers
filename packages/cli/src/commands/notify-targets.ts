@@ -4,11 +4,11 @@
  * Manage webhook and Slack notification targets with event filtering and HMAC signing.
  *
  * Usage:
- *   hh notify add <name> --url <url> [--type webhook|slack] [--events csv] [--secret <s>]
- *   hh notify list [--json]
- *   hh notify show <name> [--json]
- *   hh notify remove <name> [--force]
- *   hh notify test <name>
+ *   cofounder notify add <name> --url <url> [--type webhook|slack] [--events csv] [--secret <s>]
+ *   cofounder notify list [--json]
+ *   cofounder notify show <name> [--json]
+ *   cofounder notify remove <name> [--force]
+ *   cofounder notify test <name>
  */
 
 import * as p from "@clack/prompts";
@@ -18,7 +18,7 @@ import {
   saveNotifyTargets,
   deliverNotificationToTarget,
   type NotifyTarget,
-} from "@his-and-hers/core";
+} from "@cofounder/core";
 
 export interface NotifyAddOptions {
   url: string;
@@ -82,7 +82,7 @@ export async function notifyAdd(name: string, opts: NotifyAddOptions) {
 
   await saveNotifyTargets(targets);
 
-  p.intro(pc.bgMagenta(pc.white(" hh notify add ")));
+  p.intro(pc.bgMagenta(pc.white(" cofounder notify add ")));
   p.log.success(`Notification target ${pc.cyan(name)} saved`);
   p.log.message("");
   p.log.info(`  Type:   ${type}`);
@@ -101,15 +101,15 @@ export async function notifyList(opts: NotifyListOptions = {}) {
   }
 
   if (targets.length === 0) {
-    p.intro(pc.bgMagenta(pc.white(" hh notify list ")));
+    p.intro(pc.bgMagenta(pc.white(" cofounder notify list ")));
     p.log.info("No notification targets configured.");
     p.log.message("");
-    p.log.info(pc.dim("Add a target with: hh notify add <name> --url <url>"));
+    p.log.info(pc.dim("Add a target with: cofounder notify add <name> --url <url>"));
     p.outro("Done.");
     return;
   }
 
-  p.intro(pc.bgMagenta(pc.white(" hh notify list ")));
+  p.intro(pc.bgMagenta(pc.white(" cofounder notify list ")));
   p.log.message("");
 
   for (const t of targets) {
@@ -138,7 +138,7 @@ export async function notifyShow(name: string, opts: NotifyShowOptions = {}) {
     return;
   }
 
-  p.intro(pc.bgMagenta(pc.white(` hh notify show — ${name} `)));
+  p.intro(pc.bgMagenta(pc.white(` cofounder notify show — ${name} `)));
   p.log.message("");
   p.log.info(`Type:   ${target.type}`);
   p.log.info(`URL:    ${target.url}`);
@@ -183,13 +183,13 @@ export async function notifyTest(name: string) {
     process.exit(1);
   }
 
-  p.intro(pc.bgMagenta(pc.white(` hh notify test — ${name} `)));
+  p.intro(pc.bgMagenta(pc.white(` cofounder notify test — ${name} `)));
 
   const spinner = p.spinner();
   spinner.start("Sending test notification...");
 
   const payload = {
-    task: "Test notification from hh notify test",
+    task: "Test notification from cofounder notify test",
     task_id: "test-" + Date.now(),
     peer: "test-peer",
     objective: "This is a test notification",

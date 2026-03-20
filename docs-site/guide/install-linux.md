@@ -70,11 +70,11 @@ openclaw gateway status
 
 ---
 
-## 4 — Install his-and-hers
+## 4 — Install cofounder
 
 ```bash
-npm install -g his-and-hers
-hh --version
+npm install -g cofounder
+cofounder --version
 ```
 
 ---
@@ -82,7 +82,7 @@ hh --version
 ## 5 — Run the setup wizard
 
 ```bash
-hh onboard
+cofounder onboard
 ```
 
 The wizard will ask:
@@ -97,8 +97,8 @@ The wizard will ask:
 ### What the wizard creates
 
 ```
-~/.his-and-hers/
-  hh.json                 ← main config (0o600 permissions)
+~/.cofounder/
+  cofounder.json                 ← main config (0o600 permissions)
   peers/
     h2-home.json       ← one file per peer
   tasks/                  ← task state (created on first send)
@@ -114,9 +114,9 @@ The wizard will ask:
 Create a systemd service so the gateway restarts on boot:
 
 ```bash
-sudo tee /etc/systemd/system/hh-gateway.service << 'EOF'
+sudo tee /etc/systemd/system/cofounder-gateway.service << 'EOF'
 [Unit]
-Description=his-and-hers gateway (OpenClaw)
+Description=cofounder gateway (OpenClaw)
 After=network-online.target tailscaled.service
 Wants=network-online.target
 
@@ -133,8 +133,8 @@ WantedBy=multi-user.target
 EOF
 
 sudo systemctl daemon-reload
-sudo systemctl enable --now hh-gateway
-sudo systemctl status hh-gateway
+sudo systemctl enable --now cofounder-gateway
+sudo systemctl status cofounder-gateway
 ```
 
 Replace `YOUR_USERNAME` and the Node path (`which openclaw` to find the right path).
@@ -142,14 +142,14 @@ Replace `YOUR_USERNAME` and the Node path (`which openclaw` to find the right pa
 ### Autostart — macOS (launchd)
 
 ```bash
-cat > ~/Library/LaunchAgents/com.his-and-hers.gateway.plist << 'EOF'
+cat > ~/Library/LaunchAgents/com.cofounder.gateway.plist << 'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
   "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
   <key>Label</key>
-  <string>com.his-and-hers.gateway</string>
+  <string>com.cofounder.gateway</string>
   <key>ProgramArguments</key>
   <array>
     <string>/usr/local/bin/openclaw</string>
@@ -161,15 +161,15 @@ cat > ~/Library/LaunchAgents/com.his-and-hers.gateway.plist << 'EOF'
   <key>KeepAlive</key>
   <true/>
   <key>StandardOutPath</key>
-  <string>/tmp/hh-gateway.log</string>
+  <string>/tmp/cofounder-gateway.log</string>
   <key>StandardErrorPath</key>
-  <string>/tmp/hh-gateway.err</string>
+  <string>/tmp/cofounder-gateway.err</string>
 </dict>
 </plist>
 EOF
 
-launchctl load ~/Library/LaunchAgents/com.his-and-hers.gateway.plist
-launchctl list | grep his-and-hers
+launchctl load ~/Library/LaunchAgents/com.cofounder.gateway.plist
+launchctl list | grep cofounder
 ```
 
 ---
@@ -177,13 +177,13 @@ launchctl list | grep his-and-hers
 ## 7 — Verify the connection
 
 ```bash
-hh status
+cofounder status
 ```
 
 Expected output:
 
 ```
-his-and-hers v0.5.2
+cofounder v0.5.2
 
 H1  ✓ gateway healthy   127.0.0.1:3737
      ✓ Tailscale up      100.x.y.z
@@ -197,20 +197,20 @@ H2 (h2-home)
 Budget (today): $0.00 cloud / $0.00 local
 ```
 
-If anything shows ✗, run `hh doctor` for a detailed diagnosis.
+If anything shows ✗, run `cofounder doctor` for a detailed diagnosis.
 
 ---
 
 ## 8 — Send your first task
 
 ```bash
-hh send "what is the Tailscale IP of this node?"
+cofounder send "what is the Tailscale IP of this node?"
 ```
 
 Watch the task live:
 
 ```bash
-hh logs --follow
+cofounder logs --follow
 ```
 
 ---
@@ -236,7 +236,7 @@ ollama pull mistral            # 7B, best quality/speed
 ollama pull nomic-embed-text   # embeddings
 ```
 
-Then run `hh capabilities advertise` to register your GPU and models with H1.
+Then run `cofounder capabilities advertise` to register your GPU and models with H1.
 
 ---
 
@@ -252,4 +252,4 @@ Run `sudo tailscale up` and re-authenticate if the key expired.
 Verify your public key is in H2's `~/.ssh/authorized_keys`. Check permissions: `chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys`.
 
 **Gateway not starting**
-Check logs: `journalctl -u hh-gateway -f` (Linux) or `cat /tmp/hh-gateway.err` (macOS).
+Check logs: `journalctl -u cofounder-gateway -f` (Linux) or `cat /tmp/cofounder-gateway.err` (macOS).

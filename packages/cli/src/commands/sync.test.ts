@@ -1,5 +1,5 @@
 /**
- * sync.test.ts — unit tests for `hh sync` (Phase 7b)
+ * sync.test.ts — unit tests for `cofounder sync` (Phase 7b)
  *
  * Tests cover:
  *   - buildRsyncArgs: SSH key, --dry-run, --delete, trailing slash on dirs
@@ -92,7 +92,7 @@ describe("buildRsyncArgs", () => {
 
   it("appends trailing slash to directory source", () => {
     // Create a temp dir so statSync sees a directory
-    const tmpDir = fs.mkdtempSync("/tmp/hh-sync-test-");
+    const tmpDir = fs.mkdtempSync("/tmp/cofounder-sync-test-");
     try {
       const args = buildRsyncArgs(tmpDir, "~/dest", mockPeer, {});
       const srcArg = args[args.length - 2];
@@ -220,7 +220,7 @@ describe("runRsync", () => {
 
 describe("watchAndSync", () => {
   it("returns a handle with stop()", () => {
-    const tmpDir = fs.mkdtempSync("/tmp/hh-watch-test-");
+    const tmpDir = fs.mkdtempSync("/tmp/cofounder-watch-test-");
     try {
       const handle = watchAndSync(tmpDir, "~/dest", mockPeer, {}, 5000);
       expect(handle).toHaveProperty("stop");
@@ -232,7 +232,7 @@ describe("watchAndSync", () => {
   });
 
   it("calls onSync callback after debounce when file changes", async () => {
-    const tmpDir = fs.mkdtempSync("/tmp/hh-watch-test-");
+    const tmpDir = fs.mkdtempSync("/tmp/cofounder-watch-test-");
     const onSync = vi.fn();
 
     // We're testing the wiring — not actual rsync execution.

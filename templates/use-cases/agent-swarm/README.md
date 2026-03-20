@@ -57,7 +57,7 @@ ollama serve
 
 ```bash
 cd ~/.openclaw
-hh templates init agent-swarm
+cofounder templates init agent-swarm
 ```
 
 ## Example Code
@@ -67,7 +67,7 @@ hh templates init agent-swarm
 ```typescript
 // orchestrator.ts on H1
 import Anthropic from '@anthropic-ai/sdk';
-import { sendTask } from '@his-and-hers/sdk';
+import { sendTask } from '@cofounder/sdk';
 
 const anthropic = new Anthropic();
 
@@ -155,7 +155,7 @@ await executeGoal({
 
 ```typescript
 // executor.ts on H2
-import { onTask } from '@his-and-hers/sdk';
+import { onTask } from '@cofounder/sdk';
 import OpenAI from 'openai';
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -301,7 +301,7 @@ return result;
 
 ## Monitoring
 
-Track with `hh web`:
+Track with `cofounder web`:
 - **Goal completion rate:** % of goals fully executed
 - **Subtask distribution:** How H1 decomposes work
 - **H2 autonomy:** How often H2 makes independent decisions

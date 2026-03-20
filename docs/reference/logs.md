@@ -1,21 +1,21 @@
-# `hh logs`
+# `cofounder logs`
 
 View the full task history for your H1 node — all tasks sent to H2, their
 status, timing, token usage, and result output.
 
 ```
-hh logs                        # all tasks, newest-first
-hh logs --limit 20             # last 20 tasks
-hh logs --status completed     # filter by status
-hh logs --status failed        # show failures only
-hh logs --peer glados          # filter by peer
-hh logs --since 24h            # last 24 hours
-hh logs --output               # include result text
-hh logs --json                 # raw JSON array
-hh logs --follow               # live tail (polls every 2s)
+cofounder logs                        # all tasks, newest-first
+cofounder logs --limit 20             # last 20 tasks
+cofounder logs --status completed     # filter by status
+cofounder logs --status failed        # show failures only
+cofounder logs --peer glados          # filter by peer
+cofounder logs --since 24h            # last 24 hours
+cofounder logs --output               # include result text
+cofounder logs --json                 # raw JSON array
+cofounder logs --follow               # live tail (polls every 2s)
 ```
 
-`hh logs` is the H1-side audit trail. It reads from `~/.his-and-hers/state/tasks/`
+`cofounder logs` is the H1-side audit trail. It reads from `~/.cofounder/state/tasks/`
 with no network calls.
 
 ---
@@ -39,13 +39,13 @@ with no network calls.
 **See what GLaDOS has been up to today:**
 
 ```sh
-hh logs --peer glados --since 24h
+cofounder logs --peer glados --since 24h
 ```
 
 **Find failing tasks:**
 
 ```sh
-hh logs --status failed --output
+cofounder logs --status failed --output
 ```
 
 Shows each failed task with the error message and up to 6 lines of output.
@@ -53,7 +53,7 @@ Shows each failed task with the error message and up to 6 lines of output.
 **Live tail while waiting for a task:**
 
 ```sh
-hh logs --follow
+cofounder logs --follow
 ```
 
 Polls every 2s and prints new tasks and status transitions as they happen
@@ -62,7 +62,7 @@ Polls every 2s and prints new tasks and status transitions as they happen
 **JSON export for scripting:**
 
 ```sh
-hh logs --since 7d --json | jq '[.[] | {id, status, cost: .result.cost_usd}]'
+cofounder logs --since 7d --json | jq '[.[] | {id, status, cost: .result.cost_usd}]'
 ```
 
 ---
@@ -100,7 +100,7 @@ The final line shows aggregate counts across the displayed window:
 
 ## See also
 
-- [`hh task-status`](./cli.md) — inspect a single task by ID
-- [`hh replay`](./replay.md) — re-send a failed task
-- [`hh budget`](./budget.md) — cost and token summary
-- [`hh export`](./cli.md) — export task history to CSV/JSON file
+- [`cofounder task-status`](./cli.md) — inspect a single task by ID
+- [`cofounder replay`](./replay.md) — re-send a failed task
+- [`cofounder budget`](./budget.md) — cost and token summary
+- [`cofounder export`](./cli.md) — export task history to CSV/JSON file

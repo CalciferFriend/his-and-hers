@@ -1,5 +1,5 @@
 /**
- * commands/tag.test.ts — unit tests for `hh tag` subcommands
+ * commands/tag.test.ts — unit tests for `cofounder tag` subcommands
  *
  * Phase 17b — Calcifer (2026-03-16)
  */
@@ -11,7 +11,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 let _records: Record<string, any> = {};
 let _tasks: any[] = [];
 
-vi.mock("@his-and-hers/core", () => ({
+vi.mock("@cofounder/core", () => ({
   validateTag: (name: string) => {
     const trimmed = name.trim().toLowerCase();
     if (!trimmed) return "Tag name cannot be empty";

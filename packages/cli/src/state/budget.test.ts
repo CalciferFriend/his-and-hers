@@ -3,7 +3,7 @@
  *
  * Tests for buildBudgetSummary() and budgetRoutingAdvice().
  *
- * We mock listTaskStates to avoid touching ~/.his-and-hers at test time.
+ * We mock listTaskStates to avoid touching ~/.cofounder at test time.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";

@@ -15,7 +15,7 @@
  */
 
 import type { HHConfig, PeerNodeConfig } from "../config/schema.ts";
-import { loadPeerCapabilities } from "@his-and-hers/core";
+import { loadPeerCapabilities } from "@cofounder/core";
 
 export type { PeerNodeConfig };
 

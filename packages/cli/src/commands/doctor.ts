@@ -1,7 +1,7 @@
 /**
- * commands/doctor.ts — `hh doctor`
+ * commands/doctor.ts — `cofounder doctor`
  *
- * Comprehensive health diagnostics for a his-and-hers node.
+ * Comprehensive health diagnostics for a cofounder node.
  * Checks local + all configured peers and gives actionable remediation hints.
  *
  * Features:
@@ -14,9 +14,9 @@
  *   - Summary with pass/warn/fail counts
  *
  * Usage:
- *   hh doctor
- *   hh doctor --peer glados   # focus on one peer
- *   hh doctor --json          # machine-readable output
+ *   cofounder doctor
+ *   cofounder doctor --peer glados   # focus on one peer
+ *   cofounder doctor --json          # machine-readable output
  */
 
 import * as p from "@clack/prompts";
@@ -30,7 +30,7 @@ import {
   loadCapabilities,
   loadPeerCapabilities,
   isPeerCapabilityStale,
-} from "@his-and-hers/core";
+} from "@cofounder/core";
 import { getAllPeers, findPeerByName } from "../peers/select.ts";
 
 // ---------------------------------------------------------------------------
@@ -141,7 +141,7 @@ async function checkCapabilities(checks: DoctorCheck[]) {
         "Local capabilities",
         "warn",
         "no scan found",
-        "Run: hh capabilities scan",
+        "Run: cofounder capabilities scan",
       ),
     );
     return;
@@ -186,7 +186,7 @@ async function checkPeer(
       reachable ? "pass" : (wolEnabled ? "warn" : "fail"),
       reachable ? tailscaleIp : `${tailscaleIp} unreachable`,
       reachable ? undefined : wolEnabled
-        ? "Machine may be sleeping — run: hh wake"
+        ? "Machine may be sleeping — run: cofounder wake"
         : "Check Tailscale status on the peer machine",
     ),
   );
@@ -230,7 +230,7 @@ async function checkPeer(
         `${prefix}: Cached capabilities`,
         "warn",
         "no cached capability report",
-        "Run: hh capabilities fetch",
+        "Run: cofounder capabilities fetch",
       ),
     );
   } else {
@@ -245,7 +245,7 @@ async function checkPeer(
         stale
           ? `stale (${gpuLabel})`
           : `fresh (${gpuLabel}, ${peerCaps.ollama?.models?.length ?? 0} model(s))`,
-        stale ? "Run: hh capabilities fetch" : undefined,
+        stale ? "Run: cofounder capabilities fetch" : undefined,
       ),
     );
   }
@@ -257,7 +257,7 @@ async function checkPeer(
 
 export async function doctor(opts: DoctorOptions = {}) {
   if (!opts.json) {
-    p.intro(pc.bgCyan(pc.black(" hh doctor ")));
+    p.intro(pc.bgCyan(pc.black(" cofounder doctor ")));
   }
 
   const config = await loadConfig();
@@ -265,7 +265,7 @@ export async function doctor(opts: DoctorOptions = {}) {
     if (opts.json) {
       console.log(JSON.stringify({ error: "no config" }));
     } else {
-      p.log.error("No configuration found. Run `hh onboard` first.");
+      p.log.error("No configuration found. Run `cofounder onboard` first.");
     }
     process.exitCode = 1;
     return;

@@ -1,5 +1,5 @@
 /**
- * commands/export.ts — `hh export`
+ * commands/export.ts — `cofounder export`
  *
  * Export task history to a markdown, CSV, or JSON report.
  *
@@ -10,14 +10,14 @@
  *   - Review sessions: what did we delegate this week?
  *
  * Usage:
- *   hh export                          # markdown report to stdout
- *   hh export --format csv             # CSV table
- *   hh export --format json            # JSON array (same as hh logs --json but richer)
- *   hh export --since 7d               # last 7 days only
- *   hh export --status completed       # completed tasks only
- *   hh export --peer GLaDOS            # filter by peer name
- *   hh export --out report.md          # write to file
- *   hh export --no-output              # omit result text (shorter)
+ *   cofounder export                          # markdown report to stdout
+ *   cofounder export --format csv             # CSV table
+ *   cofounder export --format json            # JSON array (same as cofounder logs --json but richer)
+ *   cofounder export --since 7d               # last 7 days only
+ *   cofounder export --status completed       # completed tasks only
+ *   cofounder export --peer GLaDOS            # filter by peer name
+ *   cofounder export --out report.md          # write to file
+ *   cofounder export --no-output              # omit result text (shorter)
  */
 
 import { writeFile } from "node:fs/promises";
@@ -158,7 +158,7 @@ function truncate(s: string, maxLen = 500): string {
 export function renderMarkdown(tasks: TaskState[], summary: ExportSummary, includeOutput: boolean): string {
   const lines: string[] = [];
 
-  lines.push("# his-and-hers Task Report");
+  lines.push("# cofounder Task Report");
   lines.push("");
   lines.push(`Generated: ${fmtDate(summary.generatedAt)}`);
   if (summary.peers.length) lines.push(`Peers: ${summary.peers.join(", ")}`);
@@ -288,7 +288,7 @@ export async function exportTasks(opts: ExportOptions): Promise<void> {
   const includeOutput = opts.output !== false;
 
   if (!["markdown", "csv", "json"].includes(fmt)) {
-    process.stderr.write(`hh export: unknown format "${opts.format}". Use: markdown | csv | json\n`);
+    process.stderr.write(`cofounder export: unknown format "${opts.format}". Use: markdown | csv | json\n`);
     process.exit(1);
   }
 
@@ -307,7 +307,7 @@ export async function exportTasks(opts: ExportOptions): Promise<void> {
 
   if (opts.out) {
     await writeFile(opts.out, content, "utf-8");
-    process.stderr.write(`hh export: wrote ${tasks.length} task(s) to ${opts.out}\n`);
+    process.stderr.write(`cofounder export: wrote ${tasks.length} task(s) to ${opts.out}\n`);
   } else {
     process.stdout.write(content + "\n");
   }

@@ -1,5 +1,5 @@
 /**
- * commands/test.ts — `hh test`
+ * commands/test.ts — `cofounder test`
  *
  * End-to-end connectivity validator.
  *
@@ -8,7 +8,7 @@
  *   2. Resolve peer (--peer <name>)
  *   Step 1 — Tailscale reachability: ping peer tailscale IP
  *   Step 2 — Gateway health: check /health endpoint
- *   Step 3 — Round-trip message: send a HHWakeMessage, measure RTT
+ *   Step 3 — Round-trip message: send a CofounderWakeMessage, measure RTT
  *   3. Print summary table (green ✓ pass / red ✗ fail)
  *   4. Exit code 0 if all pass, 1 if any fail
  *   5. --json: output results as JSON
@@ -18,7 +18,7 @@ import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { loadConfig } from "../config/store.ts";
 import { getPeer, formatPeerList } from "../peers/select.ts";
-import { pingPeer, checkGatewayHealth, createWakeMessage, wakeAgent } from "@his-and-hers/core";
+import { pingPeer, checkGatewayHealth, createWakeMessage, wakeAgent } from "@cofounder/core";
 
 export interface TestOptions {
   peer?: string;
@@ -36,7 +36,7 @@ export async function hhTest(opts: TestOptions = {}) {
   const config = await loadConfig();
 
   if (!config) {
-    p.log.error("No configuration found. Run `hh onboard` first.");
+    p.log.error("No configuration found. Run `cofounder onboard` first.");
     process.exit(1);
   }
 
@@ -112,7 +112,7 @@ export async function hhTest(opts: TestOptions = {}) {
   // ── Step 3: Round-trip wake message ───────────────────────────────────────
   const step3: StepResult = { step: "Round-trip wake message", passed: false };
   if (!peer.gateway_token) {
-    step3.error = "No gateway token — run `hh pair` first";
+    step3.error = "No gateway token — run `cofounder pair` first";
     step3.passed = false;
     if (!opts.json) {
       p.log.warn(`Step 3 — ${pc.yellow("skipped")} (no gateway token)`);
@@ -121,9 +121,9 @@ export async function hhTest(opts: TestOptions = {}) {
     const wakeMsg = createWakeMessage(
       config.this_node.name,
       peer.name,
-      "hh test connectivity check",
+      "cofounder test connectivity check",
     );
-    const wakeText = `[HHMessage:wake from ${wakeMsg.from} id=${wakeMsg.id}] connectivity test`;
+    const wakeText = `[CofounderMessage:wake from ${wakeMsg.from} id=${wakeMsg.id}] connectivity test`;
 
     if (!opts.json) {
       const s = p.spinner();

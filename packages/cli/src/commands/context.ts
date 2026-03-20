@@ -1,13 +1,13 @@
 /**
- * commands/context.ts — `hh context` subcommand
+ * commands/context.ts — `cofounder context` subcommand
  *
- * Manage per-peer context history stored in `~/.his-and-hers/context/`.
+ * Manage per-peer context history stored in `~/.cofounder/context/`.
  *
  * Subcommands:
- *   hh context list                — list all peers with stored context
- *   hh context show <peer>         — print all context entries for a peer
- *   hh context clear <peer>        — clear context for a peer
- *   hh context prune [--days <n>]  — delete entries older than N days
+ *   cofounder context list                — list all peers with stored context
+ *   cofounder context show <peer>         — print all context entries for a peer
+ *   cofounder context clear <peer>        — clear context for a peer
+ *   cofounder context prune [--days <n>]  — delete entries older than N days
  */
 
 import * as p from "@clack/prompts";
@@ -19,15 +19,15 @@ import {
   loadContextEntries,
   clearContextEntries,
   type ContextEntry,
-} from "@his-and-hers/core/context/store";
+} from "@cofounder/core/context/store";
 import { writeFile } from "node:fs/promises";
 
-const CONTEXT_DIR = join(homedir(), ".his-and-hers", "context");
+const CONTEXT_DIR = join(homedir(), ".cofounder", "context");
 
 // ─── List peers with stored context ──────────────────────────────────────────
 
 export async function contextList(): Promise<void> {
-  p.intro(pc.bold(pc.cyan("hh context list")));
+  p.intro(pc.bold(pc.cyan("cofounder context list")));
 
   try {
     const files = await readdir(CONTEXT_DIR).catch(() => [] as string[]);
@@ -35,7 +35,7 @@ export async function contextList(): Promise<void> {
 
     if (contextFiles.length === 0) {
       p.log.info("No peers with stored context.");
-      p.outro(pc.dim("Context is saved when you use `hh send --wait` or `hh chat`."));
+      p.outro(pc.dim("Context is saved when you use `cofounder send --wait` or `cofounder chat`."));
       return;
     }
 
@@ -71,7 +71,7 @@ export async function contextList(): Promise<void> {
     }
     console.log("");
 
-    p.outro(pc.dim("Use `hh context show <peer>` to view entries."));
+    p.outro(pc.dim("Use `cofounder context show <peer>` to view entries."));
   } catch (error) {
     p.log.error("Failed to list context files.");
     console.error(error);
@@ -82,14 +82,14 @@ export async function contextList(): Promise<void> {
 // ─── Show context entries for a peer ─────────────────────────────────────────
 
 export async function contextShow(peerName: string): Promise<void> {
-  p.intro(pc.bold(pc.cyan(`hh context show ${peerName}`)));
+  p.intro(pc.bold(pc.cyan(`cofounder context show ${peerName}`)));
 
   try {
     const entries = await loadContextEntries(peerName);
 
     if (entries.length === 0) {
       p.log.info(`No context stored for peer "${peerName}".`);
-      p.outro(pc.dim("Context is saved when you use `hh send --wait` or `hh chat`."));
+      p.outro(pc.dim("Context is saved when you use `cofounder send --wait` or `cofounder chat`."));
       return;
     }
 
@@ -107,7 +107,7 @@ export async function contextShow(peerName: string): Promise<void> {
       console.log("");
     }
 
-    p.outro(pc.dim("Use `hh context clear <peer>` to delete all entries."));
+    p.outro(pc.dim("Use `cofounder context clear <peer>` to delete all entries."));
   } catch (error) {
     p.log.error(`Failed to load context for "${peerName}".`);
     console.error(error);
@@ -118,12 +118,12 @@ export async function contextShow(peerName: string): Promise<void> {
 // ─── Clear context for a peer ────────────────────────────────────────────────
 
 export async function contextClear(peerName: string): Promise<void> {
-  p.intro(pc.bold(pc.cyan(`hh context clear ${peerName}`)));
+  p.intro(pc.bold(pc.cyan(`cofounder context clear ${peerName}`)));
 
   try {
     await clearContextEntries(peerName);
     p.log.success(`Context cleared for peer "${peerName}".`);
-    p.outro(pc.dim("New context will be saved on the next `hh send --wait` or `hh chat`."));
+    p.outro(pc.dim("New context will be saved on the next `cofounder send --wait` or `cofounder chat`."));
   } catch (error) {
     p.log.error(`Failed to clear context for "${peerName}".`);
     console.error(error);
@@ -134,7 +134,7 @@ export async function contextClear(peerName: string): Promise<void> {
 // ─── Prune old context entries ───────────────────────────────────────────────
 
 export async function contextPrune(days: number): Promise<void> {
-  p.intro(pc.bold(pc.cyan(`hh context prune --days ${days}`)));
+  p.intro(pc.bold(pc.cyan(`cofounder context prune --days ${days}`)));
 
   try {
     const files = await readdir(CONTEXT_DIR).catch(() => [] as string[]);

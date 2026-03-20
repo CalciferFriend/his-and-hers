@@ -1,18 +1,18 @@
 /**
- * commands/ci.ts — `hh ci`
+ * commands/ci.ts — `cofounder ci`
  *
  * CI-friendly run mode for GitHub Actions and other automation environments.
  *
  * Usage:
- *   hh ci "Run the test suite and report failures"
- *   hh ci "Deploy to staging" --json
- *   hh ci "Benchmark perf" --output-file result.txt
+ *   cofounder ci "Run the test suite and report failures"
+ *   cofounder ci "Deploy to staging" --json
+ *   cofounder ci "Benchmark perf" --output-file result.txt
  *
  * Environment variables:
- *   HH_PEER     — Override target peer name
- *   HH_TIMEOUT  — Override timeout in seconds (default: 300)
- *   HH_MODEL    — Override model (if config supports it)
- *   HH_PROFILE  — Use a specific named profile
+ *   COFOUNDER_PEER     — Override target peer name
+ *   COFOUNDER_TIMEOUT  — Override timeout in seconds (default: 300)
+ *   COFOUNDER_MODEL    — Override model (if config supports it)
+ *   COFOUNDER_PROFILE  — Use a specific named profile
  *
  * Behavior:
  *   - No spinners, no colors, no interactive prompts
@@ -40,8 +40,8 @@ export interface CiOptions {
 export async function ci(task: string, opts: CiOptions = {}) {
   try {
     // Read env var overrides
-    const peerName = process.env.HH_PEER;
-    const timeoutSeconds = process.env.HH_TIMEOUT ?? "300";
+    const peerName = process.env.COFOUNDER_PEER;
+    const timeoutSeconds = process.env.COFOUNDER_TIMEOUT ?? "300";
 
     // Load config
     const config = await loadConfig();
@@ -49,7 +49,7 @@ export async function ci(task: string, opts: CiOptions = {}) {
       if (opts.json) {
         console.log(JSON.stringify({ ok: false, error: "No config found" }, null, 2));
       } else {
-        console.error("Error: No config found. Run hh onboard first.");
+        console.error("Error: No config found. Run cofounder onboard first.");
       }
       process.exit(1);
     }
@@ -105,7 +105,7 @@ export async function ci(task: string, opts: CiOptions = {}) {
     // For now, let's implement a minimal version that calls the core functions directly
 
     // Import what we need
-    const { pingPeer, checkGatewayHealth, wakeAndWait, wakeAgent, createTaskMessage } = await import("@his-and-hers/core");
+    const { pingPeer, checkGatewayHealth, wakeAndWait, wakeAgent, createTaskMessage } = await import("@cofounder/core");
     const { createTaskState } = await import("../state/tasks.ts");
 
     // Check peer connectivity (silent)

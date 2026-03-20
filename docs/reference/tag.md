@@ -1,19 +1,19 @@
-# `hh tag` — Task Tagging & Search
+# `cofounder tag` — Task Tagging & Search
 
-`hh tag` lets you label tasks with tags, then filter and search by tag.
+`cofounder tag` lets you label tasks with tags, then filter and search by tag.
 Tags help organise task history for reporting, debugging, and retrieval.
 
 ## Subcommands
 
-### `hh tag add <id> <tags...>`
+### `cofounder tag add <id> <tags...>`
 
 Add one or more tags to a task. The task ID can be a prefix — the first
 matching task state file is used.
 
 ```bash
-hh tag add abc123 deploy prod
-hh tag add abc123 deploy --note "Shipped v2.1"
-hh tag add abc123 urgent --json
+cofounder tag add abc123 deploy prod
+cofounder tag add abc123 deploy --note "Shipped v2.1"
+cofounder tag add abc123 urgent --json
 ```
 
 **Flags:**
@@ -23,24 +23,24 @@ hh tag add abc123 urgent --json
 | `--note <text>` | Attach a note to the tag record |
 | `--json` | Output the updated tag record as JSON |
 
-### `hh tag remove <id> <tags...>`
+### `cofounder tag remove <id> <tags...>`
 
 Remove specific tags from a task. Other tags are preserved.
 
 ```bash
-hh tag remove abc123 urgent
-hh tag remove abc123 deploy prod
+cofounder tag remove abc123 urgent
+cofounder tag remove abc123 deploy prod
 ```
 
-### `hh tag list [id]`
+### `cofounder tag list [id]`
 
 List tags for a specific task (by ID prefix) or all tagged tasks.
 
 ```bash
-hh tag list                # All tagged tasks
-hh tag list abc123         # Tags for one task
-hh tag list --json         # Machine-readable output
-hh tag list abc123 --json  # JSON for one task
+cofounder tag list                # All tagged tasks
+cofounder tag list abc123         # Tags for one task
+cofounder tag list --json         # Machine-readable output
+cofounder tag list abc123 --json  # JSON for one task
 ```
 
 **Flags:**
@@ -49,13 +49,13 @@ hh tag list abc123 --json  # JSON for one task
 |------|-------------|
 | `--json` | Output as JSON |
 
-### `hh tag search <tag>`
+### `cofounder tag search <tag>`
 
 Find all tasks that have a specific tag.
 
 ```bash
-hh tag search deploy
-hh tag search deploy --json
+cofounder tag search deploy
+cofounder tag search deploy --json
 ```
 
 **Flags:**
@@ -64,13 +64,13 @@ hh tag search deploy --json
 |------|-------------|
 | `--json` | Output as JSON |
 
-### `hh tag clear <id>`
+### `cofounder tag clear <id>`
 
 Remove all tags from a task. Prompts for confirmation unless `--force`.
 
 ```bash
-hh tag clear abc123
-hh tag clear abc123 --force
+cofounder tag clear abc123
+cofounder tag clear abc123 --force
 ```
 
 **Flags:**
@@ -105,18 +105,18 @@ The `--json` flag on `list` and `search` returns `TagListEntry[]`:
 
 ## Storage
 
-Tag records are stored at `~/.his-and-hers/tags/<task_id>.json`.
+Tag records are stored at `~/.cofounder/tags/<task_id>.json`.
 
 ## Use Cases
 
 - **Weekly reviews**: Tag completed tasks by project or sprint
-- **Debugging**: Tag tasks that failed for a specific reason (`hh tag search flaky`)
-- **Filtering**: Combine with `hh logs` for task history workflows
+- **Debugging**: Tag tasks that failed for a specific reason (`cofounder tag search flaky`)
+- **Filtering**: Combine with `cofounder logs` for task history workflows
 - **Reporting**: Export tagged tasks for stakeholder reports
 
 ## Related
 
-- [`hh logs`](./logs) — task history viewer
-- [`hh stats`](./stats) — analytics and heatmaps
-- [`hh health-report`](./health-report) — weekly health digest
-- [`hh export`](./export) — export task history
+- [`cofounder logs`](./logs) — task history viewer
+- [`cofounder stats`](./stats) — analytics and heatmaps
+- [`cofounder health-report`](./health-report) — weekly health digest
+- [`cofounder export`](./export) — export task history

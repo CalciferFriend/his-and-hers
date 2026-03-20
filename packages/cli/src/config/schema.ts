@@ -24,12 +24,12 @@ export const GatewayConfig = z.object({
 
 /** Model provider config — persisted to HHConfig, API keys stored in keychain */
 export const ProviderConfig = z.object({
-  kind: z.enum(["anthropic", "openai", "ollama", "lmstudio", "custom"]),
+  kind: z.enum(["anthropic", "anthropic-max", "openai", "ollama", "lmstudio", "custom"]),
   /** Model id, e.g. "claude-sonnet-4-6" or "llama3.2" */
   model: z.string(),
   /** Base URL — required for ollama/lmstudio/custom */
   base_url: z.string().optional(),
-  /** Keychain key where the API key is stored (e.g. "hh-anthropic-key") */
+  /** Keychain key where the API key is stored (e.g. "cofounder-anthropic-key") */
   api_key_keychain_key: z.string().optional(),
   /** Display alias shown in status output */
   alias: z.string().optional(),
@@ -90,7 +90,7 @@ export const HHConfig = z.object({
   /**
    * Additional peer nodes for multi-H2 setups.
    * Combine with peer_node to form the full peer roster.
-   * Use `hh send --peer <name>` to target a specific peer.
+   * Use `cofounder send --peer <name>` to target a specific peer.
    */
   peer_nodes: z.array(PeerNodeConfig).optional(),
   pair: PairState.optional(),
@@ -108,7 +108,7 @@ export const HHConfig = z.object({
   /**
    * Named peer groups for cluster-targeted dispatch.
    * Keys are group names (e.g. "gpu", "fast"); values are arrays of peer names.
-   * Managed via `hh cluster add/remove`; used by `hh broadcast --cluster`.
+   * Managed via `cofounder cluster add/remove`; used by `cofounder broadcast --cluster`.
    *
    * Example: { gpu: ["glados", "piper"], fast: ["forge"] }
    */
@@ -123,8 +123,9 @@ export function buildProviderConfig(
   opts?: { baseUrl?: string; apiKeyKeychainKey?: string; alias?: string },
 ): ProviderConfig {
   const defaults: Record<ProviderConfig["kind"], { model: string; alias: string; base_url?: string }> = {
-    anthropic: { model: "claude-sonnet-4-6", alias: "Claude Sonnet" },
-    openai:    { model: "gpt-4o-mini", alias: "GPT-4o Mini" },
+    anthropic:     { model: "claude-sonnet-4-6", alias: "Claude Sonnet" },
+    "anthropic-max": { model: "claude-sonnet-4-6", alias: "Claude Max" },
+    openai:        { model: "gpt-4o-mini", alias: "GPT-4o Mini" },
     ollama:    { model: "llama3.2", alias: "Llama 3.2 (local)", base_url: "http://localhost:11434" },
     lmstudio:  { model: "local-model", alias: "LM Studio (local)", base_url: "http://localhost:1234/v1" },
     custom:    { model: "custom", alias: "Custom", base_url: "http://localhost:8080/v1" },

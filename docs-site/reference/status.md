@@ -1,4 +1,4 @@
-# `hh status` — Reference
+# `cofounder status` — Reference
 
 Show the health and state of all configured nodes.
 
@@ -7,7 +7,7 @@ Show the health and state of all configured nodes.
 ## Synopsis
 
 ```bash
-hh status [flags]
+cofounder status [flags]
 ```
 
 ---
@@ -27,9 +27,9 @@ hh status [flags]
 ### Default
 
 ```bash
-$ hh status
+$ cofounder status
 
-his-and-hers v0.5.2
+cofounder v0.5.2
 
 H1  (Calcifer 🔥)
   ✓  gateway healthy      127.0.0.1:3737
@@ -61,7 +61,7 @@ Budget (today): $0.18 cloud / $0.00 local (5 tasks)
 ### With `--peer`
 
 ```bash
-$ hh status --peer h2-beast
+$ cofounder status --peer h2-beast
 
 H2 (h2-beast 🦾)  —  RTX 4090
   Tailscale IP:    100.a.b.c
@@ -86,7 +86,7 @@ H2 (h2-beast 🦾)  —  RTX 4090
 ## JSON output
 
 ```bash
-$ hh status --json
+$ cofounder status --json
 ```
 
 ```json
@@ -146,26 +146,26 @@ $ hh status --json
 
 ---
 
-## What `hh status` checks
+## What `cofounder status` checks
 
 1. **H1 gateway** — HTTP GET `http://127.0.0.1:3737/health`
 2. **Tailscale** — `tailscale status` for this node
 3. **For each peer:**
    - Tailscale reachability — `tailscale ping <peer-ip>` (fast, cached)
    - Gateway health — HTTP GET `http://<peer-ip>:<port>/health`
-   - Last heartbeat — age of last `HHHeartbeat` received from H2
+   - Last heartbeat — age of last `CofounderHeartbeat` received from H2
    - WOL config — whether MAC address is configured
 
-Heartbeat is passive — it uses the last-received time. `hh status` does not actively contact H2's heartbeat endpoint.
+Heartbeat is passive — it uses the last-received time. `cofounder status` does not actively contact H2's heartbeat endpoint.
 
 ---
 
-## `hh doctor`
+## `cofounder doctor`
 
 For deeper diagnostics (SSH, WOL, config validation):
 
 ```bash
-hh doctor
+cofounder doctor
 ```
 
 Output:
@@ -184,13 +184,13 @@ Diagnosing...
 ⚠  h2-beast: capabilities cache is 4h old (stale)
 
 1 error, 1 warning
-Run `hh wake --peer h2-beast` to check WOL setup.
+Run `cofounder wake --peer h2-beast` to check WOL setup.
 ```
 
 ---
 
 ## See also
 
-- [hh logs](/reference/logs) — task history
-- [hh wake](/reference/wake) — wake offline H2
-- [hh doctor](/reference/cli#hh-doctor) — deep diagnostics
+- [cofounder logs](/reference/logs) — task history
+- [cofounder wake](/reference/wake) — wake offline H2
+- [cofounder doctor](/reference/cli#hh-doctor) — deep diagnostics

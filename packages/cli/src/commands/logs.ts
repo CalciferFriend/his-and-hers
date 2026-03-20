@@ -1,20 +1,20 @@
 /**
- * commands/logs.ts — `hh logs`
+ * commands/logs.ts — `cofounder logs`
  *
  * Pretty-print the full task history with filtering and formatting options.
- * Complements `hh task-status` (single-task inspect) with a log-style view
+ * Complements `cofounder task-status` (single-task inspect) with a log-style view
  * of all tasks across time.
  *
  * Usage:
- *   hh logs                          # all tasks, newest-first
- *   hh logs --limit 20               # last 20 tasks
- *   hh logs --status completed       # filter by status
- *   hh logs --status failed          # show failures only
- *   hh logs --peer glados            # filter by peer
- *   hh logs --since 24h              # last 24 hours (also: 7d, 1h, 30m)
- *   hh logs --output                 # include result output text
- *   hh logs --json                   # raw JSON array
- *   hh logs --follow                 # live tail (poll every 2s)
+ *   cofounder logs                          # all tasks, newest-first
+ *   cofounder logs --limit 20               # last 20 tasks
+ *   cofounder logs --status completed       # filter by status
+ *   cofounder logs --status failed          # show failures only
+ *   cofounder logs --peer glados            # filter by peer
+ *   cofounder logs --since 24h              # last 24 hours (also: 7d, 1h, 30m)
+ *   cofounder logs --output                 # include result output text
+ *   cofounder logs --json                   # raw JSON array
+ *   cofounder logs --follow                 # live tail (poll every 2s)
  */
 
 import * as p from "@clack/prompts";
@@ -210,7 +210,7 @@ async function renderOnce(opts: LogsOptions): Promise<TaskState[]> {
   if (filtered.length === 0) {
     p.log.info("No tasks found matching the given filters.");
     if (all.length === 0) {
-      p.log.info('Run `hh send "<task>"` to delegate work to your H2 node.');
+      p.log.info('Run `cofounder send "<task>"` to delegate work to your H2 node.');
     }
     return filtered;
   }
@@ -222,7 +222,7 @@ async function renderOnce(opts: LogsOptions): Promise<TaskState[]> {
     if (opts.status) parts.push(`status=${opts.status}`);
     if (opts.peer) parts.push(`peer=${opts.peer}`);
     const label = parts.length > 0 ? ` (${parts.join(", ")})` : "";
-    p.intro(pc.bgBlue(pc.white(` hh logs${label} `)));
+    p.intro(pc.bgBlue(pc.white(` cofounder logs${label} `)));
     console.log("");
   }
 
@@ -246,7 +246,7 @@ async function renderOnce(opts: LogsOptions): Promise<TaskState[]> {
 
 export async function logs(opts: LogsOptions = {}): Promise<void> {
   if (opts.follow) {
-    p.intro(pc.bgBlue(pc.white(" hh logs --follow ")));
+    p.intro(pc.bgBlue(pc.white(" cofounder logs --follow ")));
     console.log(pc.dim("  Polling for new tasks every 2s — Ctrl-C to exit\n"));
 
     let knownIds = new Set<string>();

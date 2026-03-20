@@ -1,19 +1,19 @@
-# `hh watch`
+# `cofounder watch`
 
 H2-side task listener daemon. Polls the local task state directory for pending tasks, dispatches them to a configured executor, and writes results back to H1 (via webhook or SSH).
 
-Typically started at H2 boot time via `start-hh.bat` or a Scheduled Task.
+Typically started at H2 boot time via `start-cofounder.bat` or a Scheduled Task.
 
 ## Usage
 
 ```bash
-hh watch
-hh watch --exec "node run-task.js"
-hh watch --exec "node run-task.js" --serve-capabilities
-hh watch --interval 10
-hh watch --once
-hh watch --dry-run
-hh watch --json
+cofounder watch
+cofounder watch --exec "node run-task.js"
+cofounder watch --exec "node run-task.js" --serve-capabilities
+cofounder watch --interval 10
+cofounder watch --once
+cofounder watch --dry-run
+cofounder watch --json
 ```
 
 ## Flags
@@ -33,13 +33,13 @@ hh watch --json
 ```
 H1 (Calcifer 🔥)                          H2 (GLaDOS 🤖)
 ─────────────────                          ─────────────────
-hh send "summarise this file" →           ← wakeAgent injects task into state dir
-                                           hh watch sees pending task
+cofounder send "summarise this file" →           ← wakeAgent injects task into state dir
+                                           cofounder watch sees pending task
                                            → spawns executor with task JSON
                                            → executor writes output to stdout
-                                           hh result <id> "<output>"
+                                           cofounder result <id> "<output>"
                                            → webhook POST / SSH back to H1
-H1: hh send --wait resolves ✓
+H1: cofounder send --wait resolves ✓
 ```
 
 ## Executor contract
@@ -75,11 +75,11 @@ process.stdin.on('end', async () => {
 
 ## No executor (default)
 
-If `--exec` is not set, `hh watch` marks tasks as `running` and prints them to stdout. Useful for manual testing or custom shell pipelines:
+If `--exec` is not set, `cofounder watch` marks tasks as `running` and prints them to stdout. Useful for manual testing or custom shell pipelines:
 
 ```bash
 # Pipe tasks to a custom handler
-hh watch --json | jq -r '.task.objective' | xargs -I{} process-task {}
+cofounder watch --json | jq -r '.task.objective' | xargs -I{} process-task {}
 ```
 
 ## Capabilities server
@@ -89,31 +89,31 @@ hh watch --json | jq -r '.task.objective' | xargs -I{} process-task {}
 ```
 GET /capabilities
 X-HH-Token: <gateway_token>
-→ returns ~/.his-and-hers/capabilities.json
+→ returns ~/.cofounder/capabilities.json
 ```
 
-H1 fetches this automatically via `hh capabilities fetch`. Add to `start-hh.bat`:
+H1 fetches this automatically via `cofounder capabilities fetch`. Add to `start-cofounder.bat`:
 
 ```bat
-hh watch --exec "node run-task.js" --serve-capabilities
+cofounder watch --exec "node run-task.js" --serve-capabilities
 ```
 
 ## Windows startup
 
-On H2 (Windows), `hh watch` is typically started via a Scheduled Task or `start-hh.bat`:
+On H2 (Windows), `cofounder watch` is typically started via a Scheduled Task or `start-cofounder.bat`:
 
 ```bat
 @echo off
 start "" /B openclaw gateway start
 timeout /t 3
-hh watch --exec "node %USERPROFILE%\.his-and-hers\run-task.js" --serve-capabilities
+cofounder watch --exec "node %USERPROFILE%\.cofounder\run-task.js" --serve-capabilities
 ```
 
-The `hh onboard` wizard writes `start-hh.bat` and registers the Scheduled Task automatically.
+The `cofounder onboard` wizard writes `start-cofounder.bat` and registers the Scheduled Task automatically.
 
 ## Streaming support
 
-When H1 sends a task with `--notify`, the wake message includes `HH_STREAM_URL` and `HH_STREAM_TOKEN`. The executor can stream partial output using `hh watch`'s built-in chunk poster, or by calling `createChunkStreamer()` from `@his-and-hers/core` directly. H1 displays chunks live in the terminal as they arrive.
+When H1 sends a task with `--notify`, the wake message includes `HH_STREAM_URL` and `HH_STREAM_TOKEN`. The executor can stream partial output using `cofounder watch`'s built-in chunk poster, or by calling `createChunkStreamer()` from `@cofounder/core` directly. H1 displays chunks live in the terminal as they arrive.
 
 ## Exit codes
 
@@ -124,7 +124,7 @@ When H1 sends a task with `--notify`, the wake message includes `HH_STREAM_URL` 
 
 ## See also
 
-- [`hh result`](/reference/result) — manually write a task result
-- [`hh send`](/reference/send) — send a task from H1 to H2
-- [`hh status`](/reference/status) — check peer health and last heartbeat
+- [`cofounder result`](/reference/result) — manually write a task result
+- [`cofounder send`](/reference/send) — send a task from H1 to H2
+- [`cofounder status`](/reference/status) — check peer health and last heartbeat
 - [Live streaming guide](/guide/streaming)

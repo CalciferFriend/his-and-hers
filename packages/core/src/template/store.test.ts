@@ -20,8 +20,8 @@ import {
 
 // ─── File-system isolation ────────────────────────────────────────────────────
 
-const testDir = join(tmpdir(), `hh-template-test-${process.pid}`);
-const templatesPath = join(testDir, ".his-and-hers", "templates.json");
+const testDir = join(tmpdir(), `cofounder-template-test-${process.pid}`);
+const templatesPath = join(testDir, ".cofounder", "templates.json");
 
 vi.mock("node:os", async (importOriginal) => {
   const actual = await importOriginal<typeof import("node:os")>();
@@ -45,7 +45,7 @@ describe("loadTemplates", () => {
   });
 
   it("returns [] on malformed JSON", async () => {
-    await mkdir(join(testDir, ".his-and-hers"), { recursive: true });
+    await mkdir(join(testDir, ".cofounder"), { recursive: true });
     await writeFile(templatesPath, "not json", "utf8");
     const result = await loadTemplates();
     expect(result).toEqual([]);
@@ -58,7 +58,7 @@ describe("loadTemplates", () => {
       task: "Say hello to {name}",
       created_at: new Date().toISOString(),
     };
-    await mkdir(join(testDir, ".his-and-hers"), { recursive: true });
+    await mkdir(join(testDir, ".cofounder"), { recursive: true });
     await writeFile(templatesPath, JSON.stringify([template]), "utf8");
     const result = await loadTemplates();
     expect(result).toHaveLength(1);

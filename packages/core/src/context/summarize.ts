@@ -14,7 +14,7 @@
  *   (pass the output through `provider.complete(prompt)` in a future iteration).
  *
  * The result is stored in context/store.ts and forwarded as
- * `HHTaskMessage.context_summary` on the next outbound message.
+ * `CofounderTaskMessage.context_summary` on the next outbound message.
  */
 
 const MAX_OBJECTIVE_CHARS = 120;

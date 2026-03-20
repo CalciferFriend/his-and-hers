@@ -1,8 +1,8 @@
 /**
- * commands/mcp.ts — `hh mcp`
+ * commands/mcp.ts — `cofounder mcp`
  *
  * A minimal MCP (Model Context Protocol) stdio server that exposes
- * his-and-hers as tools to any MCP-compatible client.
+ * cofounder as tools to any MCP-compatible client.
  *
  * Compatible with: Claude Desktop, Cursor, Zed, Cline, Continue, and any
  * client implementing MCP protocol version 2024-11-05.
@@ -19,20 +19,20 @@
  *   hh_wake       — wake a peer via WOL/SSH
  *
  * Usage:
- *   hh mcp                  # start stdio server (used by Claude Desktop)
- *   hh mcp --list-tools     # print tool schemas as JSON and exit
+ *   cofounder mcp                  # start stdio server (used by Claude Desktop)
+ *   cofounder mcp --list-tools     # print tool schemas as JSON and exit
  *
  * Claude Desktop config (~/.claude/claude_desktop_config.json):
  *   {
  *     "mcpServers": {
- *       "his-and-hers": { "command": "hh", "args": ["mcp"] }
+ *       "cofounder": { "command": "cofounder", "args": ["mcp"] }
  *     }
  *   }
  *
  * Cursor / .cursor/mcp.json:
  *   {
  *     "mcpServers": {
- *       "his-and-hers": { "command": "hh", "args": ["mcp"], "type": "stdio" }
+ *       "cofounder": { "command": "cofounder", "args": ["mcp"], "type": "stdio" }
  *     }
  *   }
  */
@@ -44,14 +44,14 @@ import {
   pingPeer,
   checkGatewayHealth,
   wakeAndWait,
-} from "@his-and-hers/core";
+} from "@cofounder/core";
 import {
   createTaskState,
   listTaskStates,
   pollTaskCompletion,
 } from "../state/tasks.ts";
 import { getAllPeers, getPeer } from "../peers/select.ts";
-import { loadPeerCapabilities } from "@his-and-hers/core";
+import { loadPeerCapabilities } from "@cofounder/core";
 
 // ─── JSON-RPC 2.0 Types ───────────────────────────────────────────────────────
 
@@ -95,7 +95,7 @@ export interface McpToolResult {
 // ─── Tool schemas ─────────────────────────────────────────────────────────────
 
 export const MCP_PROTOCOL_VERSION = "2024-11-05";
-export const SERVER_NAME = "his-and-hers";
+export const SERVER_NAME = "cofounder";
 export const SERVER_VERSION = "0.3.0";
 
 export function buildToolList(): McpTool[] {
@@ -117,7 +117,7 @@ export function buildToolList(): McpTool[] {
           peer: {
             type: "string",
             description:
-              "Name of the peer to target (from `hh peers`). Omit to use the default peer or auto-route by capability.",
+              "Name of the peer to target (from `cofounder peers`). Omit to use the default peer or auto-route by capability.",
           },
           wait: {
             type: "boolean",
@@ -301,7 +301,7 @@ async function toolSend(args: Record<string, unknown>): Promise<McpToolResult> {
   const timeout = typeof args.timeout === "number" ? args.timeout : 120;
 
   const config = await loadConfig();
-  if (!config) return errorResult("No hh config found. Run `hh onboard` first.");
+  if (!config) return errorResult("No cofounder config found. Run `cofounder onboard` first.");
 
   // Find the target peer
   const allPeers = getAllPeers(config);
@@ -314,7 +314,7 @@ async function toolSend(args: Record<string, unknown>): Promise<McpToolResult> {
     return errorResult(
       peerName
         ? `Peer '${peerName}' not found. Available: ${names}`
-        : "No peers configured. Run `hh onboard` first.",
+        : "No peers configured. Run `cofounder onboard` first.",
     );
   }
 
@@ -382,7 +382,7 @@ async function toolStatus(
   const peerFilter = args.peer ? String(args.peer) : undefined;
 
   const config = await loadConfig();
-  if (!config) return errorResult("No hh config found. Run `hh onboard` first.");
+  if (!config) return errorResult("No cofounder config found. Run `cofounder onboard` first.");
 
   const allPeers = getAllPeers(config);
   const targets = peerFilter
@@ -439,11 +439,11 @@ async function toolPeers(
   const doPing = Boolean(args.ping);
 
   const config = await loadConfig();
-  if (!config) return errorResult("No hh config found. Run `hh onboard` first.");
+  if (!config) return errorResult("No cofounder config found. Run `cofounder onboard` first.");
 
   const allPeers = getAllPeers(config);
   if (allPeers.length === 0) {
-    return textResult("No peers configured. Run `hh onboard` to add a peer.");
+    return textResult("No peers configured. Run `cofounder onboard` to add a peer.");
   }
 
   const lines: string[] = [`${allPeers.length} peer(s) configured:\n`];
@@ -472,7 +472,7 @@ async function toolPeers(
         lines.push(`  Skills: ${caps.skill_tags.join(", ")}`);
       }
     } else {
-      lines.push("  Capabilities: not cached (run: hh capabilities fetch)");
+      lines.push("  Capabilities: not cached (run: cofounder capabilities fetch)");
     }
 
     lines.push("");
@@ -570,7 +570,7 @@ async function toolBroadcast(
   const timeout = typeof args.timeout === "number" ? args.timeout : 120;
 
   const config = await loadConfig();
-  if (!config) return errorResult("No hh config found. Run `hh onboard` first.");
+  if (!config) return errorResult("No cofounder config found. Run `cofounder onboard` first.");
 
   const allPeers = getAllPeers(config);
   const targets = targetNames
@@ -655,7 +655,7 @@ async function toolWake(args: Record<string, unknown>): Promise<McpToolResult> {
   const timeout = typeof args.timeout === "number" ? args.timeout : 90;
 
   const config = await loadConfig();
-  if (!config) return errorResult("No hh config found. Run `hh onboard` first.");
+  if (!config) return errorResult("No cofounder config found. Run `cofounder onboard` first.");
 
   const allPeers = getAllPeers(config);
   const peer = peerName ? allPeers.find((p) => p.name === peerName) : allPeers[0];
@@ -679,7 +679,7 @@ async function toolWake(args: Record<string, unknown>): Promise<McpToolResult> {
     }
     return errorResult(
       `${peer.name} does not have Wake-on-LAN configured. ` +
-        "Enable it via `hh onboard` or set wol_enabled + wol_mac in your config.",
+        "Enable it via `cofounder onboard` or set wol_enabled + wol_mac in your config.",
     );
   }
 

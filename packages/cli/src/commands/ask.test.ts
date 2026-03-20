@@ -1,5 +1,5 @@
 /**
- * commands/ask.test.ts — unit tests for `hh ask`
+ * commands/ask.test.ts — unit tests for `cofounder ask`
  *
  * Strategy: mock loadConfig, getAllPeers, wakeAgent, pingPeer,
  * checkGatewayHealth, startResultServer, startStreamServer, createTaskState,
@@ -41,7 +41,7 @@ const {
 
 vi.mock("../config/store.ts", () => ({ loadConfig: mockLoadConfig }));
 vi.mock("../peers/select.ts", () => ({ getAllPeers: mockGetAllPeers }));
-vi.mock("@his-and-hers/core", () => ({
+vi.mock("@cofounder/core", () => ({
   wakeAgent: mockWakeAgent,
   pingPeer: mockPingPeer,
   checkGatewayHealth: mockCheckGatewayHealth,
@@ -166,9 +166,9 @@ import { ask, buildAskText } from "./ask.ts";
 // ── buildAskText ─────────────────────────────────────────────────────────────
 
 describe("buildAskText", () => {
-  it("includes the HHMessage:ask prefix", () => {
+  it("includes the CofounderMessage:ask prefix", () => {
     const text = buildAskText("calcifer", "ask-1234", "what time is it?", null);
-    expect(text).toContain("[HHMessage:ask from calcifer id=ask-1234]");
+    expect(text).toContain("[CofounderMessage:ask from calcifer id=ask-1234]");
     expect(text).toContain("what time is it?");
   });
 
@@ -179,7 +179,7 @@ describe("buildAskText", () => {
       "ping?",
       "http://localhost:9000/result/ask-1234",
     );
-    expect(text).toContain("hh result ask-1234");
+    expect(text).toContain("cofounder result ask-1234");
     expect(text).toContain("HH-Result-Webhook:");
   });
 

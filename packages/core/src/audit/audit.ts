@@ -10,7 +10,7 @@ import { readFile, writeFile, appendFile, mkdir } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-const AUDIT_DIR = join(homedir(), ".his-and-hers");
+const AUDIT_DIR = join(homedir(), ".cofounder");
 const AUDIT_LOG_PATH = join(AUDIT_DIR, "audit.log");
 const AUDIT_KEY_PATH = join(AUDIT_DIR, "audit-key");
 

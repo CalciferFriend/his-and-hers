@@ -4,10 +4,10 @@
  * System crontab integration: install/remove/list cron entries for HH schedules.
  *
  * Each schedule gets a crontab entry like:
- *   <cron> hh send "<task>" [--peer name] --no-wait >> ~/.his-and-hers/schedule-logs/<id>.log 2>&1
+ *   <cron> cofounder send "<task>" [--peer name] --no-wait >> ~/.cofounder/schedule-logs/<id>.log 2>&1
  *
  * We use a marker comment to identify HH-managed entries:
- *   # HH_SCHEDULE_ID=<uuid>
+ *   # COFOUNDER_SCHEDULE_ID=<uuid>
  */
 
 import { exec } from "node:child_process";
@@ -18,8 +18,8 @@ import { join } from "node:path";
 
 const execAsync = promisify(exec);
 
-const HH_MARKER_PREFIX = "# HH_SCHEDULE_ID=";
-const LOG_DIR = join(homedir(), ".his-and-hers", "schedule-logs");
+const CF_MARKER_PREFIX = "# COFOUNDER_SCHEDULE_ID=";
+const LOG_DIR = join(homedir(), ".cofounder", "schedule-logs");
 
 async function ensureLogDir(): Promise<void> {
   await mkdir(LOG_DIR, { recursive: true });
@@ -65,7 +65,7 @@ export async function installCronEntry(entry: CrontabEntry): Promise<void> {
   const lines = current.split("\n").filter(Boolean);
 
   // Remove any existing entry for this ID
-  const filtered = lines.filter((line) => !line.includes(`${HH_MARKER_PREFIX}${entry.id}`));
+  const filtered = lines.filter((line) => !line.includes(`${CF_MARKER_PREFIX}${entry.id}`));
 
   if (!entry.enabled) {
     // If disabled, just remove the entry (if present) and return
@@ -73,15 +73,15 @@ export async function installCronEntry(entry: CrontabEntry): Promise<void> {
     return;
   }
 
-  // Build the hh send command
+  // Build the cofounder send command
   const logPath = join(LOG_DIR, `${entry.id}.log`);
   const peerFlag = entry.peer ? ` --peer ${entry.peer}` : "";
   const latentFlag = entry.latent ? " --latent" : "";
   const notifyFlag = entry.notify_webhook ? ` --notify "${entry.notify_webhook}"` : "";
-  const cmd = `hh send "${entry.task}"${peerFlag}${latentFlag}${notifyFlag} --no-wait >> ${logPath} 2>&1`;
+  const cmd = `cofounder send "${entry.task}"${peerFlag}${latentFlag}${notifyFlag} --no-wait >> ${logPath} 2>&1`;
 
   // Add marker comment + cron line
-  const marker = `${HH_MARKER_PREFIX}${entry.id}`;
+  const marker = `${CF_MARKER_PREFIX}${entry.id}`;
   const cronLine = `${entry.cron} ${cmd}`;
 
   filtered.push(marker);
@@ -99,7 +99,7 @@ export async function removeCronEntry(id: string): Promise<void> {
   const filtered: string[] = [];
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    if (line.includes(`${HH_MARKER_PREFIX}${id}`)) {
+    if (line.includes(`${CF_MARKER_PREFIX}${id}`)) {
       // Skip this line and the next (cron command)
       i++;
       continue;
@@ -117,8 +117,8 @@ export async function listHHCronEntries(): Promise<string[]> {
   const ids: string[] = [];
 
   for (const line of lines) {
-    if (line.startsWith(HH_MARKER_PREFIX)) {
-      const id = line.substring(HH_MARKER_PREFIX.length).trim();
+    if (line.startsWith(CF_MARKER_PREFIX)) {
+      const id = line.substring(CF_MARKER_PREFIX.length).trim();
       ids.push(id);
     }
   }

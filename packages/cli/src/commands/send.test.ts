@@ -1,5 +1,5 @@
 /**
- * send.test.ts — Phase 12 integration tests for `hh send`
+ * send.test.ts — Phase 12 integration tests for `cofounder send`
  *
  * Focuses on Phase 12 additions:
  *   12a. Budget gate: block/warn before dispatch
@@ -61,7 +61,7 @@ const {
   mockAppendAuditEntry: vi.fn(async () => undefined),
 }));
 
-vi.mock("@his-and-hers/core", () => ({
+vi.mock("@cofounder/core", () => ({
   pingPeer: mockPingPeer,
   checkGatewayHealth: mockCheckGatewayHealth,
   wakeAgent: mockWakeAgent,
@@ -112,7 +112,7 @@ vi.mock("../peers/select.ts", () => ({
   formatPeerList: vi.fn(() => ""),
 }));
 
-vi.mock("@his-and-hers/core/notify/config", () => ({
+vi.mock("@cofounder/core/notify/config", () => ({
   getActiveWebhooks: vi.fn(async () => []),
 }));
 

@@ -89,7 +89,7 @@ function buildDiscordPayload(ctx: NotificationContext): object {
   return {
     embeds: [
       {
-        title: `${status} — his-and-hers task`,
+        title: `${status} — cofounder task`,
         description: taskPreview,
         color: colour,
         fields,

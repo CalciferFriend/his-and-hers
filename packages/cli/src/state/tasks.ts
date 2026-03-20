@@ -1,13 +1,13 @@
 /**
  * state/tasks.ts
  *
- * Persistent task state for the hh send pipeline.
+ * Persistent task state for the cofounder send pipeline.
  *
- * When H1 sends a task via `hh send`, a pending task record is written to
- * ~/.his-and-hers/state/tasks/<id>.json. H2 (GLaDOS 🤖) processes the task
- * and signals completion via `hh result <id> <output>` (or by writing the
+ * When H1 sends a task via `cofounder send`, a pending task record is written to
+ * ~/.cofounder/state/tasks/<id>.json. H2 (GLaDOS 🤖) processes the task
+ * and signals completion via `cofounder result <id> <output>` (or by writing the
  * result directly over SSH/socat). H1 can poll for the result with
- * `hh send --wait` or check any time with `hh status`.
+ * `cofounder send --wait` or check any time with `cofounder status`.
  *
  * Why files instead of a running daemon?
  *   - No extra process required on either side
@@ -20,7 +20,7 @@ import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-const STATE_DIR = join(homedir(), ".his-and-hers", "state", "tasks");
+const STATE_DIR = join(homedir(), ".cofounder", "state", "tasks");
 
 export type TaskStatus = "pending" | "running" | "completed" | "failed" | "timeout" | "cancelled";
 

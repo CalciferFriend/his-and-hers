@@ -1,5 +1,5 @@
 # Jerry node — Raspberry Pi 5 / ARM64 image
-# Ollama + Node 22 + Tailscale + OpenClaw + his-and-hers
+# Ollama + Node 22 + Tailscale + OpenClaw + cofounder
 #
 # Build:
 #   docker buildx build --platform linux/arm64 \
@@ -55,8 +55,8 @@ RUN mkdir -p /run/sshd && \
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
     sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
 
-# ── OpenClaw + his-and-hers ──────────────────────────────────────────────────
-RUN npm install -g openclaw his-and-hers
+# ── OpenClaw + cofounder ──────────────────────────────────────────────────
+RUN npm install -g openclaw cofounder
 
 # ── TUN device for Tailscale ──────────────────────────────────────────────────
 RUN mkdir -p /dev/net && \
@@ -95,6 +95,6 @@ ENV JERRY_NAME="jerry-pi" \
 EXPOSE ${GATEWAY_PORT} 11434 22
 
 # Persistent data — mount these as volumes for model + config persistence
-VOLUME ["/root/.ollama", "/root/.openclaw", "/root/.his-and-hers"]
+VOLUME ["/root/.ollama", "/root/.openclaw", "/root/.cofounder"]
 
 ENTRYPOINT ["/entrypoint.sh"]

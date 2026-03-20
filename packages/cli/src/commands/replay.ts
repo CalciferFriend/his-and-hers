@@ -1,21 +1,21 @@
 /**
- * commands/replay.ts — `hh replay <task-id>`
+ * commands/replay.ts — `cofounder replay <task-id>`
  *
  * Re-send a previously dispatched task with the same objective and constraints.
  * Useful when a task fails, times out, or you want to try a different peer
  * without re-typing the full task description.
  *
  * The original task state is left untouched — a brand new task ID is created
- * so the replay shows up as its own entry in `hh logs`.
+ * so the replay shows up as its own entry in `cofounder logs`.
  *
  * Usage:
- *   hh replay abc123             # replay by ID prefix
- *   hh replay abc123 --peer gpu  # override the target peer
- *   hh replay abc123 --wait      # block until result arrives
- *   hh replay abc123 --dry-run   # show what would be sent without sending
+ *   cofounder replay abc123             # replay by ID prefix
+ *   cofounder replay abc123 --peer gpu  # override the target peer
+ *   cofounder replay abc123 --wait      # block until result arrives
+ *   cofounder replay abc123 --dry-run   # show what would be sent without sending
  *
  * The command accepts the same --wait / --no-webhook / --notify flags as
- * `hh send`, so you can pipe the result through the same webhook integrations.
+ * `cofounder send`, so you can pipe the result through the same webhook integrations.
  */
 
 import * as p from "@clack/prompts";
@@ -31,7 +31,7 @@ import { send, type SendOptions } from "./send.ts";
 export interface ReplayOptions {
   /** Override the target peer by name */
   peer?: string;
-  /** Block until the result arrives (same as hh send --wait) */
+  /** Block until the result arrives (same as cofounder send --wait) */
   wait?: boolean;
   /** Max seconds to wait for result when --wait is set */
   waitTimeoutSeconds?: string;
@@ -86,7 +86,7 @@ export async function replay(idOrPrefix: string, opts: ReplayOptions = {}) {
   const config = await loadConfig();
 
   if (!config) {
-    p.log.error("No configuration found. Run `hh onboard` first.");
+    p.log.error("No configuration found. Run `cofounder onboard` first.");
     process.exitCode = 1;
     return;
   }
@@ -96,7 +96,7 @@ export async function replay(idOrPrefix: string, opts: ReplayOptions = {}) {
   if (!task) {
     p.log.error(
       `No task found matching ${pc.bold(idOrPrefix)}.\n` +
-        "  Use `hh logs` to list recent tasks.",
+        "  Use `cofounder logs` to list recent tasks.",
     );
     process.exitCode = 1;
     return;
@@ -145,7 +145,7 @@ export async function replay(idOrPrefix: string, opts: ReplayOptions = {}) {
 
   // Build the task string from objective + constraints
   // Constraints are re-attached as a parenthetical so they travel in the
-  // message text, just as they would have in the original hh send.
+  // message text, just as they would have in the original cofounder send.
   let taskText = task.objective;
   if (task.constraints && task.constraints.length > 0) {
     taskText += `\n\nConstraints:\n${task.constraints.map((c) => `- ${c}`).join("\n")}`;

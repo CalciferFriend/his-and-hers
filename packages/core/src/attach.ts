@@ -1,5 +1,5 @@
 /**
- * attach.ts — File attachment utilities for `hh send --attach`
+ * attach.ts — File attachment utilities for `cofounder send --attach`
  *
  * Reads local files, detects MIME type, base64-encodes them,
  * and enforces the 10 MB soft size cap with a truncation warning.
@@ -204,7 +204,7 @@ export function formatAttachmentSummary(attachments: AttachmentPayload[]): strin
     lines.push(`  [${i + 1}] ${a.filename} (${a.mime_type}, ${mb} MB)${hint}`);
   }
   lines.push(
-    `  H2: decode attachments from HHTaskMessage.payload.attachments[]; ` +
+    `  H2: decode attachments from CofounderTaskMessage.payload.attachments[]; ` +
     `inject multimodal types via message API, text types as fenced code blocks.`,
   );
   return lines.join("\n");

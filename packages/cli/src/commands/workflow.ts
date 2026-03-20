@@ -1,23 +1,23 @@
 /**
- * commands/workflow.ts — `hh workflow` subcommands
+ * commands/workflow.ts — `cofounder workflow` subcommands
  *
  * Save, list, and run named pipeline workflows.
  *
- * A workflow is a saved pipeline spec — like `hh template` for single-step tasks,
+ * A workflow is a saved pipeline spec — like `cofounder template` for single-step tasks,
  * but for multi-step pipelines. Add a workflow once, run it by name any time.
  *
  * Usage:
- *   hh workflow add <name> "<spec>" [--desc "..."] [--timeout <s>]
- *   hh workflow add <name> --file pipeline.json [--desc "..."]
- *   hh workflow list [--json]
- *   hh workflow show <name> [--json]
- *   hh workflow run <name> [--timeout <s>] [--json]
- *   hh workflow remove <name> [--force]
+ *   cofounder workflow add <name> "<spec>" [--desc "..."] [--timeout <s>]
+ *   cofounder workflow add <name> --file pipeline.json [--desc "..."]
+ *   cofounder workflow list [--json]
+ *   cofounder workflow show <name> [--json]
+ *   cofounder workflow run <name> [--timeout <s>] [--json]
+ *   cofounder workflow remove <name> [--force]
  *
  * Example:
- *   hh workflow add code-review \
+ *   cofounder workflow add code-review \
  *       "glados:write tests -> piper:review {{previous.output}}"
- *   hh workflow run code-review
+ *   cofounder workflow run code-review
  *
  * Phase 8a — Calcifer ✅ (2026-03-15)
  */
@@ -33,8 +33,8 @@ import {
   recordWorkflowRun,
   workflowToPipelineDefinition,
   type HHWorkflow,
-} from "@his-and-hers/core";
-import { parsePipelineSpec, parsePipelineFile } from "@his-and-hers/core";
+} from "@cofounder/core";
+import { parsePipelineSpec, parsePipelineFile } from "@cofounder/core";
 import { pipeline } from "./pipeline.ts";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -126,7 +126,7 @@ export async function workflowAdd(opts: {
     p.log.success(
       `Workflow ${pc.bold(wf.name)} saved — ${wf.steps.length} step${wf.steps.length === 1 ? "" : "s"}.`,
     );
-    p.log.info(`Run it with: ${pc.dim(`hh workflow run ${wf.name}`)}`);
+    p.log.info(`Run it with: ${pc.dim(`cofounder workflow run ${wf.name}`)}`);
     p.outro("Done.");
   } catch (err: any) {
     p.log.error(err.message);
@@ -145,7 +145,7 @@ export async function workflowList(opts: { json?: boolean }) {
   }
 
   if (workflows.length === 0) {
-    p.log.info("No workflows saved yet. Add one with: hh workflow add <name> \"<spec>\"");
+    p.log.info("No workflows saved yet. Add one with: cofounder workflow add <name> \"<spec>\"");
     return;
   }
 
@@ -170,7 +170,7 @@ export async function workflowShow(name: string, opts: { json?: boolean }) {
   const wf = await findWorkflow(name);
 
   if (!wf) {
-    console.error(`Workflow "${name}" not found. List with: hh workflow list`);
+    console.error(`Workflow "${name}" not found. List with: cofounder workflow list`);
     process.exitCode = 1;
     return;
   }
@@ -248,7 +248,7 @@ export async function workflowRun(name: string, opts: { timeout?: string; json?:
   const wf = await findWorkflow(name);
 
   if (!wf) {
-    console.error(`Workflow "${name}" not found. List with: hh workflow list`);
+    console.error(`Workflow "${name}" not found. List with: cofounder workflow list`);
     process.exitCode = 1;
     return;
   }
@@ -297,7 +297,7 @@ async function runWorkflowDefinition(
   const { tmpdir } = await import("node:os");
   const { randomUUID } = await import("node:crypto");
 
-  const tmpPath = join(tmpdir(), `hh-workflow-${randomUUID()}.json`);
+  const tmpPath = join(tmpdir(), `cofounder-workflow-${randomUUID()}.json`);
   writeFileSync(tmpPath, JSON.stringify(def, null, 2), "utf8");
 
   try {

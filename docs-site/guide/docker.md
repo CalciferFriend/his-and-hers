@@ -19,11 +19,11 @@ docker run -d \
   -e TS_AUTHKEY=tskey-auth-... \
   -e JERRY_TAILSCALE_IP=100.x.y.z \
   -e JERRY_SSH_USER=ubuntu \
-  -v hh-h1-data:/root/.his-and-hers \
+  -v cofounder-h1-data:/root/.cofounder \
   calcifierai/h1:latest
 ```
 
-First boot: the container runs `hh onboard --non-interactive` and registers with Tailscale automatically.
+First boot: the container runs `cofounder onboard --non-interactive` and registers with Tailscale automatically.
 
 ### docker-compose (recommended)
 
@@ -45,7 +45,7 @@ services:
       - JERRY_SSH_USER=${JERRY_SSH_USER:-ubuntu}
       - GATEWAY_PORT=${GATEWAY_PORT:-3737}
     volumes:
-      - h1-data:/root/.his-and-hers
+      - h1-data:/root/.cofounder
       - ~/.ssh:/root/.ssh:ro   # SSH keys for connecting to H2
     cap_add:
       - NET_ADMIN   # needed for Tailscale
@@ -92,7 +92,7 @@ services:
       - OLLAMA_MODELS=${OLLAMA_MODELS:-llama3.2:3b,nomic-embed-text}
       - GATEWAY_PORT=${GATEWAY_PORT:-3737}
     volumes:
-      - h2-cpu-data:/root/.his-and-hers
+      - h2-cpu-data:/root/.cofounder
       - ollama-models:/root/.ollama
     cap_add:
       - NET_ADMIN
@@ -109,9 +109,9 @@ docker compose --profile h2-cpu up -d
 The entrypoint:
 1. Starts Tailscale with the provided auth key
 2. Starts Ollama and pulls models listed in `OLLAMA_MODELS`
-3. Runs `hh onboard --non-interactive` with H1's Tailscale IP
+3. Runs `cofounder onboard --non-interactive` with H1's Tailscale IP
 4. Starts the OpenClaw gateway bound to the Tailscale IP
-5. Runs `hh capabilities advertise`
+5. Runs `cofounder capabilities advertise`
 
 ---
 
@@ -156,7 +156,7 @@ docker run -d \
   -e TS_AUTHKEY=tskey-auth-... \
   -e TOM_TAILSCALE_IP=100.x.y.z \
   -e OLLAMA_MODELS="llama3.2,mistral,nomic-embed-text" \
-  -v h2-data:/root/.his-and-hers \
+  -v h2-data:/root/.cofounder \
   -v ollama-models:/root/.ollama \
   h2-cuda:latest
 ```
@@ -187,7 +187,7 @@ services:
       - TOM_TAILSCALE_IP=${TOM_TAILSCALE_IP}
       - OLLAMA_MODELS=${OLLAMA_MODELS:-llama3.2,mistral,qwen2.5-coder:7b}
     volumes:
-      - h2-data:/root/.his-and-hers
+      - h2-data:/root/.cofounder
       - ollama-models:/root/.ollama
     cap_add:
       - NET_ADMIN
@@ -214,7 +214,7 @@ docker run -d \
   -e TJ_EMOJI="🍓" \
   -e TOM_TAILSCALE_IP=100.x.y.z \
   -e OLLAMA_MODELS="llama3.2:3b,nomic-embed-text" \
-  -v h2-pi-data:/root/.his-and-hers \
+  -v h2-pi-data:/root/.cofounder \
   -v ollama-models:/root/.ollama \
   h2-arm64:latest
 ```
@@ -244,14 +244,14 @@ Use quantized models (`llama3.2:3b-q4_0`) to fit in the Pi's RAM.
 
 ```bash
 # Check status from inside H1 container
-docker exec h1 hh status
+docker exec h1 cofounder status
 
 # Tail logs
 docker logs -f h1
 docker logs -f h2-cuda
 
 # Follow task log
-docker exec h1 hh logs --follow
+docker exec h1 cofounder logs --follow
 ```
 
 ---

@@ -6,7 +6,7 @@ import {
   checkGatewayHealth,
   sendMagicPacket,
   waitForPeer,
-} from "@his-and-hers/core";
+} from "@cofounder/core";
 import { isCancelled, type WizardContext } from "../context.ts";
 
 interface CheckResult {
@@ -28,7 +28,7 @@ export async function stepValidate(ctx: Partial<WizardContext>): Promise<Partial
   }
 
   if (!runValidation) {
-    p.log.warn("Skipping validation — you can run `hh doctor` later to check.");
+    p.log.warn("Skipping validation — you can run `cofounder doctor` later to check.");
     return { ...ctx, validationPassed: false };
   }
 
@@ -137,7 +137,7 @@ export async function stepValidate(ctx: Partial<WizardContext>): Promise<Partial
   if (allPassed) {
     p.log.success("All checks passed.");
   } else {
-    p.log.warn(`${failed.length} check(s) failed. Run \`hh doctor\` for detailed diagnostics.`);
+    p.log.warn(`${failed.length} check(s) failed. Run \`cofounder doctor\` for detailed diagnostics.`);
   }
 
   return { ...ctx, validationPassed: allPassed };

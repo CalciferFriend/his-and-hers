@@ -1,8 +1,8 @@
 {
-  "name": "his-and-hers-docs",
+  "name": "cofounder-docs",
   "private": true,
   "version": "0.1.0",
-  "description": "Documentation site for his-and-hers",
+  "description": "Documentation site for cofounder",
   "scripts": {
     "dev": "vitepress dev",
     "build": "vitepress build",

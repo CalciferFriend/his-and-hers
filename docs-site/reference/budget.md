@@ -1,4 +1,4 @@
-# `hh budget` — Reference
+# `cofounder budget` — Reference
 
 View cost tracking by time period, provider, model, or peer.
 
@@ -7,7 +7,7 @@ View cost tracking by time period, provider, model, or peer.
 ## Synopsis
 
 ```bash
-hh budget [flags]
+cofounder budget [flags]
 ```
 
 ---
@@ -31,7 +31,7 @@ hh budget [flags]
 ## Default output (today)
 
 ```bash
-$ hh budget
+$ cofounder budget
 ```
 
 ```
@@ -47,7 +47,7 @@ Tasks run:      23  (18 cloud · 5 local)
 Avg cost/task:  $0.008 (cloud)
 ───────────────────────────────────────────────────────────
 Routing tip: 5 tasks routed to cloud could have run on H2.
-             Try: hh send "..." --auto (uses local when capable)
+             Try: cofounder send "..." --auto (uses local when capable)
 ```
 
 ---
@@ -55,7 +55,7 @@ Routing tip: 5 tasks routed to cloud could have run on H2.
 ## `--tasks` output
 
 ```bash
-$ hh budget --tasks
+$ cofounder budget --tasks
 ```
 
 ```
@@ -75,7 +75,7 @@ Total: $0.13
 ## Weekly output
 
 ```bash
-$ hh budget --week
+$ cofounder budget --week
 ```
 
 ```
@@ -102,7 +102,7 @@ Total:          $1.24  (164 tasks)
 ## JSON output
 
 ```bash
-$ hh budget --json
+$ cofounder budget --json
 ```
 
 ```json
@@ -142,7 +142,7 @@ $ hh budget --json
 ## Per-peer budget
 
 ```bash
-$ hh budget --peer h2-home --week
+$ cofounder budget --peer h2-home --week
 ```
 
 ```
@@ -179,4 +179,4 @@ Prices are baked into the binary and updated with releases. For the latest price
 ## See also
 
 - [Budget guide](/guide/budget) — cost routing, budget alerts, local-first config
-- [hh logs](/reference/logs) — per-task detail including cost
+- [cofounder logs](/reference/logs) — per-task detail including cost

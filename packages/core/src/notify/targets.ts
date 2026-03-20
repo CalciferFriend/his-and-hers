@@ -13,7 +13,7 @@ import { createHmac } from "node:crypto";
 import { deliverNotification, type NotificationContext } from "./notify.ts";
 
 function getNotifyPath() {
-  return join(homedir(), ".his-and-hers", "notify.json");
+  return join(homedir(), ".cofounder", "notify.json");
 }
 
 export const NotifyTarget = z.object({
@@ -48,7 +48,7 @@ export async function loadNotifyTargets(): Promise<NotifyRegistry> {
  * Save notification targets to disk.
  */
 export async function saveNotifyTargets(targets: NotifyRegistry): Promise<void> {
-  await mkdir(join(homedir(), ".his-and-hers"), { recursive: true });
+  await mkdir(join(homedir(), ".cofounder"), { recursive: true });
   await writeFile(getNotifyPath(), JSON.stringify(targets, null, 2), "utf-8");
 }
 

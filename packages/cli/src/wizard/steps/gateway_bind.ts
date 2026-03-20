@@ -5,10 +5,10 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { sshExec } from "@his-and-hers/core";
-import { addWindowsLoopbackProxy, isWindowsLoopbackProxyInstalled } from "@his-and-hers/core";
+import { sshExec } from "@cofounder/core";
+import { addWindowsLoopbackProxy, isWindowsLoopbackProxyInstalled } from "@cofounder/core";
 import { ROLE_DEFAULTS } from "../../config/defaults.ts";
-import { isCancelled, type WizardContext } from "../context.ts";
+import { type WizardContext } from "../context.ts";
 
 const execFileAsync = promisify(execFile);
 
@@ -59,25 +59,10 @@ export async function stepGatewayBind(ctx: Partial<WizardContext>): Promise<Part
   const peerRole = role === "h1" ? "h2" : "h1";
   const peerDefaults = ROLE_DEFAULTS[peerRole];
 
-  // ── Step 1: choose bind mode for THIS node ────────────────────────────────
-  const thisBindMode = await p.select({
-    message: `Gateway bind mode for this node (${ctx.name})`,
-    initialValue: defaults.bindMode,
-    options: [
-      { value: "loopback" as const, label: "Loopback (127.0.0.1)", hint: "local only — recommended for H1" },
-      { value: "tailscale" as const, label: "Tailscale IP", hint: "peer-reachable — recommended for H2" },
-      { value: "lan" as const, label: "LAN (0.0.0.0)", hint: "all interfaces — use with caution" },
-    ],
-  });
-  if (isCancelled(thisBindMode)) { p.cancel("Setup cancelled."); process.exit(0); }
-
-  const peerGatewayPortStr = await p.text({
-    message: "Gateway port on the peer node",
-    initialValue: "18789",
-    validate: (v) => { const n = parseInt(v, 10); if (isNaN(n) || n < 1 || n > 65535) return "Enter a valid port"; },
-  });
-  if (isCancelled(peerGatewayPortStr)) { p.cancel("Setup cancelled."); process.exit(0); }
-  const peerGatewayPort = parseInt(peerGatewayPortStr as string, 10);
+  // ── Step 1: auto-select bind mode for THIS node based on role ────────────
+  const thisBindMode = defaults.bindMode;
+  const peerGatewayPort = 18789;
+  p.log.info(`Gateway bind mode: ${pc.cyan(thisBindMode)} (${thisBindMode === "loopback" ? "local only" : "peer-reachable"}), port ${peerGatewayPort}`);
 
   // ── Step 2: patch THIS node's openclaw.json ───────────────────────────────
   {
@@ -137,27 +122,17 @@ export async function stepGatewayBind(ctx: Partial<WizardContext>): Promise<Part
 
   // ── Step 4: restart local gateway to pick up the new bind ─────────────────
   {
-    const restart = await p.confirm({
-      message: "Restart the local gateway to apply the new bind setting?",
-      initialValue: true,
-    });
-    if (!isCancelled(restart) && restart) {
-      const s = p.spinner();
-      s.start("Restarting gateway...");
-      const ok = await restartLocalGateway();
-      s.stop(ok ? pc.green("✓ Gateway restarted") : pc.yellow("⚠ Could not restart — restart manually with: openclaw gateway restart"));
-    }
+    const s = p.spinner();
+    s.start("Restarting gateway...");
+    const ok = await restartLocalGateway();
+    s.stop(ok ? pc.green("✓ Gateway restarted") : pc.yellow("⚠ Could not restart — restart manually with: openclaw gateway restart"));
   }
 
   // ── Step 5: update PEER's gateway config via SSH (H1 setting up H2) ───
   const peerBindMode = peerDefaults.bindMode;
 
   if (role === "h1" && ctx.peerTailscaleIP && ctx.peerSSHUser) {
-    const updatePeer = await p.confirm({
-      message: `Update the peer's (H2) gateway to bind=tailscale and add your Tailscale IP to trustedProxies?`,
-      initialValue: true,
-    });
-    if (!isCancelled(updatePeer) && updatePeer) {
+    {
       const s = p.spinner();
       s.start("Updating peer gateway config via SSH...");
       try {

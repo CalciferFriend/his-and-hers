@@ -1,11 +1,11 @@
 ---
-title: HHHeartbeat Schema
-description: The HHHeartbeat payload schema for liveness pings between H1 and H2.
+title: CofounderHeartbeat Schema
+description: The CofounderHeartbeat payload schema for liveness pings between H1 and H2.
 ---
 
-# HHHeartbeat Schema
+# CofounderHeartbeat Schema
 
-`HHHeartbeat` is the payload carried by `HHMessage` messages with `type: "heartbeat"`.
+`CofounderHeartbeat` is the payload carried by `CofounderMessage` messages with `type: "heartbeat"`.
 H2 sends a heartbeat on a regular interval so H1 knows the node is alive
 and its gateway is healthy.
 
@@ -14,7 +14,7 @@ and its gateway is healthy.
 ## TypeScript interface
 
 ```typescript
-interface HHHeartbeat {
+interface CofounderHeartbeat {
   from: string;              // Sender node name
   role: "h1" | "h2";    // Role of the sender
   tailscale_ip: string;     // Current Tailscale IP (useful if it changed)
@@ -31,7 +31,7 @@ interface HHHeartbeat {
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `from` | `string` | ✓ | Node name matching `hh.json` |
+| `from` | `string` | ✓ | Node name matching `cofounder.json` |
 | `role` | `"h1" | "h2"`\|`"h1" | "h2"` | ✓ | Role of the sender |
 | `tailscale_ip` | `string` | ✓ | Current Tailscale IPv4 address |
 | `gateway_port` | `number` | ✓ | Port H1 should use to reach this node's gateway |
@@ -57,9 +57,9 @@ interface HHHeartbeat {
 
 ---
 
-## As a HHMessage
+## As a CofounderMessage
 
-Heartbeats are carried as the `payload` of a `HHMessage` with `type: "heartbeat"`:
+Heartbeats are carried as the `payload` of a `CofounderMessage` with `type: "heartbeat"`:
 
 ```json
 {
@@ -89,10 +89,10 @@ not part of a multi-turn conversation.
 H2's gateway sends a heartbeat to H1 every **30 seconds** by default.
 H1 updates its last-seen timestamp for the peer on receipt.
 
-`hh status` displays the age of the last heartbeat:
+`cofounder status` displays the age of the last heartbeat:
 
 ```bash
-$ hh status
+$ cofounder status
 
 H2  (h2-home 🤖)
   ✓  last heartbeat   8s ago
@@ -108,10 +108,10 @@ flags the peer as offline.
 
 ```bash
 # Check if H2's gateway is running
-$ hh status --peer h2-home
+$ cofounder status --peer h2-home
 
 # If gateway is stopped, restart it on H2:
-$ sudo systemctl restart hh-gateway     # Linux
+$ sudo systemctl restart cofounder-gateway     # Linux
 $ openclaw gateway start                # Manual start
 ```
 
@@ -119,6 +119,6 @@ $ openclaw gateway start                # Manual start
 
 ## See also
 
-- [HHMessage](/protocol/hhmessage) — the outer message envelope
+- [CofounderMessage](/protocol/cofoundermessage) — the outer message envelope
 - [Protocol overview](/protocol/overview) — full message flow
-- [`hh status`](/reference/status) — viewing heartbeat age in the live status output
+- [`cofounder status`](/reference/status) — viewing heartbeat age in the live status output

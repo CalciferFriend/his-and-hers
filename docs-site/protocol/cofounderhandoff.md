@@ -1,20 +1,20 @@
 ---
-title: HHHandoff Schema
-description: The HHHandoff payload schema for structured task delegation.
+title: CofounderHandoff Schema
+description: The CofounderHandoff payload schema for structured task delegation.
 ---
 
-# HHHandoff Schema
+# CofounderHandoff Schema
 
-`HHHandoff` is a structured task delegation payload used when H1 or H2 wants
+`CofounderHandoff` is a structured task delegation payload used when H1 or H2 wants
 to hand off work with explicit constraints, expected output, and execution bounds.
-It is carried in a `HHMessage` with `type: "handoff"`.
+It is carried in a `CofounderMessage` with `type: "handoff"`.
 
 ---
 
 ## TypeScript interface
 
 ```typescript
-interface HHHandoff {
+interface CofounderHandoff {
   task_id: string;               // UUID v4 — stable identifier for this handoff
   from_role: "h1" | "h2";    // Who is delegating
   to_role": "h2";      // Who should execute
@@ -79,7 +79,7 @@ interface HHHandoff {
   "from_role": "h1",
   "to_role": "h2",
   "objective": "Review the pull request diff and identify bugs or regressions.",
-  "context": "This PR adds the HHHandoff discriminated union to the Zod schema. Prior schema used a plain string payload field.",
+  "context": "This PR adds the CofounderHandoff discriminated union to the Zod schema. Prior schema used a plain string payload field.",
   "constraints": [
     "Focus on correctness, not style",
     "Flag any cases where backward compatibility is broken",
@@ -117,15 +117,15 @@ interface HHHandoff {
 
 ---
 
-## Carrying a HHHandoff in a HHMessage
+## Carrying a CofounderHandoff in a CofounderMessage
 
-The `HHHandoff` is JSON-serialized and placed in the `payload` field of a
-[`HHMessage`](/protocol/hhmessage) with `type: "handoff"`:
+The `CofounderHandoff` is JSON-serialized and placed in the `payload` field of a
+[`CofounderMessage`](/protocol/cofoundermessage) with `type: "handoff"`:
 
 ```typescript
-const handoff: HHHandoff = { /* ... */ };
+const handoff: CofounderHandoff = { /* ... */ };
 
-const message: HHMessage = {
+const message: CofounderMessage = {
   version: "0.1.0",
   id: crypto.randomUUID(),
   from: "Calcifer",
@@ -146,7 +146,7 @@ const message: HHMessage = {
 
 ## Responding to a handoff
 
-H2 responds with a standard `HHMessage` of `type: "result"`, using the same
+H2 responds with a standard `CofounderMessage` of `type: "result"`, using the same
 `task_id` to correlate. The result `payload` should match the `expected_output`
 described in the handoff.
 
@@ -154,6 +154,6 @@ described in the handoff.
 
 ## See also
 
-- [HHMessage](/protocol/hhmessage) — the outer envelope
+- [CofounderMessage](/protocol/cofoundermessage) — the outer envelope
 - [Protocol overview](/protocol/overview) — message flow and wake/shutdown sequences
-- [`hh send`](/reference/send) — how `--handoff` tasks are constructed
+- [`cofounder send`](/reference/send) — how `--handoff` tasks are constructed

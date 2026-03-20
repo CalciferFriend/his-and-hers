@@ -1,9 +1,9 @@
 ---
-title: "hh discover"
+title: "cofounder discover"
 description: Browse and filter community H2 nodes from the public registry.
 ---
 
-# `hh discover` — Reference
+# `cofounder discover` — Reference
 
 Browse community H2 nodes published to the public registry.
 
@@ -12,7 +12,7 @@ Browse community H2 nodes published to the public registry.
 ## Synopsis
 
 ```bash
-hh discover [flags]
+cofounder discover [flags]
 ```
 
 ---
@@ -36,9 +36,9 @@ hh discover [flags]
 ### Default
 
 ```bash
-$ hh discover
+$ cofounder discover
 
-his-and-hers community nodes  (registry: github gist)
+cofounder community nodes  (registry: github gist)
 Updated: 2m ago · 47 nodes total
 
 #  Name           OS        GPU                   Skills                    WOL
@@ -50,15 +50,15 @@ Updated: 2m ago · 47 nodes total
 5  studio-beast   linux     RTX 4090 · 24 GB      inference:70b, image-gen  ✓
 ...
 
-Run `hh discover --json` for full details.
+Run `cofounder discover --json` for full details.
 ```
 
 ### With filters
 
 ```bash
-$ hh discover --skill image-gen --wol
+$ cofounder discover --skill image-gen --wol
 
-his-and-hers community nodes  (registry: github gist)
+cofounder community nodes  (registry: github gist)
 Filtered: skill=image-gen, wol=true · 12 matches
 
 #  Name          OS       GPU                   Skills                    WOL
@@ -74,7 +74,7 @@ Filtered: skill=image-gen, wol=true · 12 matches
 ## JSON output
 
 ```bash
-$ hh discover --skill image-gen --limit 2 --json
+$ cofounder discover --skill image-gen --limit 2 --json
 ```
 
 ```json
@@ -116,8 +116,8 @@ $ hh discover --skill image-gen --limit 2 --json
 
 ## How it works
 
-`hh discover` queries the public community registry stored as GitHub Gists.
-Nodes are published anonymously via [`hh publish`](/reference/publish) — no
+`cofounder discover` queries the public community registry stored as GitHub Gists.
+Nodes are published anonymously via [`cofounder publish`](/reference/publish) — no
 personal information is included unless you add it in `--description`.
 
 Results are cached locally for 5 minutes to avoid hammering the GitHub API.
@@ -130,7 +130,7 @@ Each node in the registry is a `HHNodeCard`:
 
 | Field | Description |
 |-------|-------------|
-| `name` | Node name (set during `hh onboard`) |
+| `name` | Node name (set during `cofounder onboard`) |
 | `os` | Operating system (`linux`, `windows`, `macos`) |
 | `gpu` | GPU name, VRAM, backend |
 | `skill_tags` | Capability tags (e.g. `image-gen`, `inference:70b`) |
@@ -143,6 +143,6 @@ Each node in the registry is a `HHNodeCard`:
 
 ## See also
 
-- [`hh publish`](/reference/publish) — publish your node to the registry
-- [`hh capabilities`](/reference/capabilities) — manage local capability profile
-- [`hh pair`](/reference/pair) — pair with another node you find here
+- [`cofounder publish`](/reference/publish) — publish your node to the registry
+- [`cofounder capabilities`](/reference/capabilities) — manage local capability profile
+- [`cofounder pair`](/reference/pair) — pair with another node you find here

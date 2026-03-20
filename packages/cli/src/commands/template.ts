@@ -1,14 +1,14 @@
 /**
- * commands/template.ts — `hh template` subcommands
+ * commands/template.ts — `cofounder template` subcommands
  *
  * Save, list, and run named task templates with {variable} substitution.
  *
  * Usage:
- *   hh template add <name> --task "<task>" [--peer h2] [--timeout 120] [--desc "..."]
- *   hh template list [--json]
- *   hh template show <name>
- *   hh template run <name> [--var key=val ...] [args...] [--wait] [--notify <url>]
- *   hh template remove <name>
+ *   cofounder template add <name> --task "<task>" [--peer h2] [--timeout 120] [--desc "..."]
+ *   cofounder template list [--json]
+ *   cofounder template show <name>
+ *   cofounder template run <name> [--var key=val ...] [args...] [--wait] [--notify <url>]
+ *   cofounder template remove <name>
  *
  * Variables:
  *   {varname}  — named variable, provided with --var key=value
@@ -16,8 +16,8 @@
  *   {*}        — all positional args joined by spaces
  *
  * Example:
- *   hh template add summarize --task "Summarise this document in {lang}: {*}"
- *   hh template run summarize --var lang=English my-report.txt contents here
+ *   cofounder template add summarize --task "Summarise this document in {lang}: {*}"
+ *   cofounder template run summarize --var lang=English my-report.txt contents here
  */
 
 import * as p from "@clack/prompts";
@@ -30,7 +30,7 @@ import {
   substituteVars,
   extractPlaceholders,
   type AddTemplateInput,
-} from "@his-and-hers/core";
+} from "@cofounder/core";
 import { send } from "./send.ts";
 
 // ─── template add ─────────────────────────────────────────────────────────────
@@ -89,10 +89,10 @@ export async function templateAdd(opts: {
   if (placeholders.length > 0) {
     p.log.info(`${pc.bold("Variables:")} ${pc.yellow(placeholders.join("  "))}`);
     p.log.info(
-      pc.dim(`Run with: hh template run ${template.name} ${placeholders.join(" ")}`),
+      pc.dim(`Run with: cofounder template run ${template.name} ${placeholders.join(" ")}`),
     );
   } else {
-    p.log.info(pc.dim(`Run with: hh template run ${template.name}`));
+    p.log.info(pc.dim(`Run with: cofounder template run ${template.name}`));
   }
 
   p.outro("Template saved.");
@@ -108,7 +108,7 @@ export async function templateList(opts: { json?: boolean }) {
       console.log("[]");
     } else {
       p.log.info("No templates saved.");
-      p.log.info(pc.dim("Create one with: hh template add <name> --task \"<task>\""));
+      p.log.info(pc.dim("Create one with: cofounder template add <name> --task \"<task>\""));
     }
     return;
   }
@@ -148,7 +148,7 @@ export async function templateShow(nameOrId: string, opts: { json?: boolean }) {
       console.log(JSON.stringify({ error: `Template "${nameOrId}" not found` }));
     } else {
       p.log.error(`Template "${nameOrId}" not found.`);
-      p.log.info(pc.dim("List templates with: hh template list"));
+      p.log.info(pc.dim("List templates with: cofounder template list"));
     }
     return;
   }
@@ -176,7 +176,7 @@ export async function templateShow(nameOrId: string, opts: { json?: boolean }) {
 
   const exampleVars = named.map((n) => `--var ${n}="value"`).join(" ");
   const exampleArgs = positional.length > 0 ? " <arg1> <arg2>" : hasSplat ? " <args...>" : "";
-  p.log.info(pc.dim(`\nRun: hh template run ${template.name} ${exampleVars}${exampleArgs}`));
+  p.log.info(pc.dim(`\nRun: cofounder template run ${template.name} ${exampleVars}${exampleArgs}`));
 
   p.outro("");
 }
@@ -201,7 +201,7 @@ export async function templateRun(
 
   if (!template) {
     p.log.error(`Template "${nameOrId}" not found.`);
-    p.log.info(pc.dim("List templates with: hh template list"));
+    p.log.info(pc.dim("List templates with: cofounder template list"));
     return;
   }
 
@@ -236,7 +236,7 @@ export async function templateRun(
   p.log.info(`${pc.bold("Task:")} ${expandedTask}`);
   if (effectivePeer) p.log.info(`${pc.bold("Peer:")} ${effectivePeer}`);
 
-  // Delegate to `hh send` pipeline
+  // Delegate to `cofounder send` pipeline
   await send(expandedTask, {
     peer: effectivePeer,
     wait: opts.wait,
@@ -254,7 +254,7 @@ export async function templateRemove(nameOrId: string, opts: { force?: boolean }
 
   if (!template) {
     p.log.error(`Template "${nameOrId}" not found.`);
-    p.log.info(pc.dim("List templates with: hh template list"));
+    p.log.info(pc.dim("List templates with: cofounder template list"));
     return;
   }
 

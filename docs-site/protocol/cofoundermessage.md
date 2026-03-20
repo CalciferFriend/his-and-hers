@@ -1,11 +1,11 @@
 ---
-title: HHMessage Schema
-description: The HHMessage envelope — all fields, types, and discriminated union variants.
+title: CofounderMessage Schema
+description: The CofounderMessage envelope — all fields, types, and discriminated union variants.
 ---
 
-# HHMessage Schema
+# CofounderMessage Schema
 
-Every message between H1 and H2 is wrapped in a `HHMessage` envelope.
+Every message between H1 and H2 is wrapped in a `CofounderMessage` envelope.
 The `type` field determines the message variant and the expected shape of `payload`.
 
 ---
@@ -13,13 +13,13 @@ The `type` field determines the message variant and the expected shape of `paylo
 ## TypeScript interface
 
 ```typescript
-interface HHMessage {
+interface CofounderMessage {
   version: string;                  // Protocol version (semver)
   id: string;                       // UUID v4
   from: string;                     // Sender node name
   to: string;                       // Recipient node name
   turn: number;                     // Conversation turn counter (0-indexed)
-  type: HHMessageType;              // Message type
+  type: CofounderMessageType;              // Message type
   payload: string;                  // Task description or result content
   context_summary: string | null;   // Background context for the recipient
   budget_remaining: number | null;  // Token/cost budget remaining (USD)
@@ -29,7 +29,7 @@ interface HHMessage {
   timestamp: string;                // ISO 8601 datetime
 }
 
-type HHMessageType = "task" | "result" | "heartbeat" | "handoff" | "wake" | "error";
+type CofounderMessageType = "task" | "result" | "heartbeat" | "handoff" | "wake" | "error";
 ```
 
 ---
@@ -40,10 +40,10 @@ type HHMessageType = "task" | "result" | "heartbeat" | "handoff" | "wake" | "err
 |-------|------|----------|-------------|
 | `version` | `string` | ✓ | Protocol version, e.g. `"0.1.0"` |
 | `id` | `string` | ✓ | UUID v4 — unique message identifier |
-| `from` | `string` | ✓ | Sender node name (matches `hh.json` name) |
+| `from` | `string` | ✓ | Sender node name (matches `cofounder.json` name) |
 | `to` | `string` | ✓ | Recipient node name |
 | `turn` | `number` | ✓ | Turn counter, 0-indexed. Increments per message in a conversation |
-| `type` | `HHMessageType` | ✓ | Message variant — see union types below |
+| `type` | `CofounderMessageType` | ✓ | Message variant — see union types below |
 | `payload` | `string` | ✓ | The task text, result content, or error message |
 | `context_summary` | `string \| null` | – | Optional background context from previous tasks |
 | `budget_remaining` | `number \| null` | – | Remaining budget in USD; `null` = no limit |
@@ -128,7 +128,7 @@ Task output. Can be partial (`done: false`) or final (`done: true`).
 
 ### `heartbeat` — Either direction
 
-Periodic liveness ping. The `payload` field contains a serialized `HHHeartbeat`
+Periodic liveness ping. The `payload` field contains a serialized `CofounderHeartbeat`
 JSON object.
 
 ```json
@@ -149,14 +149,14 @@ JSON object.
 }
 ```
 
-See [HHHeartbeat](/protocol/hhheartbeat) for the payload schema.
+See [CofounderHeartbeat](/protocol/cofounderheartbeat) for the payload schema.
 
 ---
 
 ### `handoff` — Either direction
 
 Structured task delegation with explicit constraints and expected output.
-The `payload` field contains a serialized `HHHandoff` JSON object.
+The `payload` field contains a serialized `CofounderHandoff` JSON object.
 
 ```json
 {
@@ -176,7 +176,7 @@ The `payload` field contains a serialized `HHHandoff` JSON object.
 }
 ```
 
-See [HHHandoff](/protocol/hhhandoff) for the payload schema.
+See [CofounderHandoff](/protocol/cofounderhandoff) for the payload schema.
 
 ---
 
@@ -245,7 +245,7 @@ Error report. `done: true` signals the task will not be retried.
 
 ## The `latent` message type
 
-`HHLatentMessage` (type: `"latent"`) carries compressed hidden states instead of decoded text.
+`CofounderLatentMessage` (type: `"latent"`) carries compressed hidden states instead of decoded text.
 It extends the base fields with a payload containing the serialized tensor and fallback text.
 
 Two codec paths are supported:
@@ -260,6 +260,6 @@ serialization helpers, and stub adapter code.
 ## See also
 
 - [Protocol overview](/protocol/overview) — full message flow and transport
-- [HHHandoff](/protocol/hhhandoff) — structured handoff payload schema
-- [HHHeartbeat](/protocol/hhheartbeat) — heartbeat payload schema
+- [CofounderHandoff](/protocol/cofounderhandoff) — structured handoff payload schema
+- [CofounderHeartbeat](/protocol/cofounderheartbeat) — heartbeat payload schema
 - [Latent Communication Guide](/docs/latent-communication) — Phase 6 implementation guide

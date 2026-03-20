@@ -1,35 +1,35 @@
 /**
- * @his-and-hers/sdk — Programmatic API for his-and-hers
+ * @cofounder/sdk — Programmatic API for cofounder
  *
  * Dispatch tasks, stream results, and query peer status from Node.js.
  *
  * @example Basic usage
  * ```ts
- * import { HH } from "@his-and-hers/sdk";
+ * import { HH } from "@cofounder/sdk";
  *
- * const hh = new HH();
+ * const cf = new Cofounder();
  *
  * // Fire-and-forget
- * const { id } = await hh.send("Summarise the weekly diff and post it to Discord.");
+ * const { id } = await cofounder.send("Summarise the weekly diff and post it to Discord.");
  *
  * // Wait for the result
- * const result = await hh.send("Run inference on prompt.txt", { wait: true });
+ * const result = await cofounder.send("Run inference on prompt.txt", { wait: true });
  * console.log(result.output);
  *
  * // Stream partial output
- * const result = await hh.send("Write a 2,000-word short story", {
+ * const result = await cofounder.send("Write a 2,000-word short story", {
  *   wait: true,
  *   onChunk: (chunk) => process.stdout.write(chunk),
  * });
  *
  * // Check peer status
- * const status = await hh.status();
+ * const status = await cofounder.status();
  * console.log(status.online, status.gatewayHealthy);
  * ```
  */
 
 import { randomUUID } from "node:crypto";
-import { getTailscaleStatus, pingPeer as tsPingPeer, waitForPeer } from "@his-and-hers/core";
+import { getTailscaleStatus, pingPeer as tsPingPeer, waitForPeer } from "@cofounder/core";
 import {
   wakeAgent,
   checkGatewayHealth,
@@ -37,8 +37,8 @@ import {
   startStreamServer,
   type StreamServerHandle,
   type ResultWebhookPayload,
-} from "@his-and-hers/core";
-import { createTaskMessage } from "@his-and-hers/core";
+} from "@cofounder/core";
+import { createTaskMessage } from "@cofounder/core";
 import { loadConfig } from "./config.ts";
 import {
   createTaskState,
@@ -87,15 +87,15 @@ function resolvePeer(config: SDKConfig, name?: string): SDKPeerConfig {
 // ── HH class ─────────────────────────────────────────────────────────────────
 
 /**
- * Programmatic interface to his-and-hers.
+ * Programmatic interface to cofounder.
  *
- * Reads `~/.his-and-hers/hh.json` by default. Inject `options.config`
+ * Reads `~/.cofounder/cofounder.json` by default. Inject `options.config`
  * to skip disk reads entirely (useful in tests or embedded use-cases).
  *
  * All methods are async and return plain objects — no CLI formatting,
  * no stdout writes. Errors are thrown (not process.exit'd).
  */
-export class HH {
+export class Cofounder {
   private readonly _opts: HHOptions;
   private _config: SDKConfig | null = null;
 
@@ -110,7 +110,7 @@ export class HH {
   // ── Config ─────────────────────────────────────────────────────────────────
 
   /**
-   * Load (and cache) the hh config.
+   * Load (and cache) the cofounder config.
    * @throws if the config file is missing or unparseable.
    */
   async config(): Promise<SDKConfig> {
@@ -118,8 +118,8 @@ export class HH {
     const cfg = await loadConfig(this._opts.configPath);
     if (!cfg) {
       throw new Error(
-        `his-and-hers config not found at ${this._opts.configPath ?? "~/.his-and-hers/hh.json"}. ` +
-          "Run `hh onboard` to create it.",
+        `cofounder config not found at ${this._opts.configPath ?? "~/.cofounder/cofounder.json"}. ` +
+          "Run `cofounder onboard` to create it.",
       );
     }
     this._config = cfg;
@@ -137,10 +137,10 @@ export class HH {
    *
    * @example
    * // Fire-and-forget (returns immediately with task id)
-   * const { id } = await hh.send("Run nightly benchmark suite");
+   * const { id } = await cofounder.send("Run nightly benchmark suite");
    *
    * // Wait for result
-   * const result = await hh.send("Render 4K upscale of scene.blend", {
+   * const result = await cofounder.send("Render 4K upscale of scene.blend", {
    *   peer: "glados",
    *   wait: true,
    *   timeoutMs: 10 * 60 * 1000, // 10 minutes
@@ -164,7 +164,7 @@ export class HH {
       ...(routingHint ? { context: `routing_hint: ${routingHint}` } : {}),
     });
 
-    // Write pending task state locally so `hh.tasks()` can surface it.
+    // Write pending task state locally so `cf.tasks()` can surface it.
     await createTaskState({
       id: taskId,
       from: cfg.this_node.name,
@@ -209,7 +209,7 @@ export class HH {
 
     // Build wake text including webhook URL, routing hint, and task payload.
     const wakeText = [
-      `[hh-sdk task_id=${taskId}]`,
+      `[cofounder-sdk task_id=${taskId}]`,
       webhookUrl ? `webhook=${webhookUrl}` : "",
       streamHandle ? `stream_url=${streamHandle.url}` : "",
       routingHint ? `routing_hint=${routingHint}` : "",
@@ -304,7 +304,7 @@ export class HH {
    * Check the health of a peer node.
    *
    * @example
-   * const { online, gatewayHealthy } = await hh.status();
+   * const { online, gatewayHealthy } = await cofounder.status();
    * if (!online) console.warn("Peer is offline — WOL may be needed");
    */
   async status(opts: StatusOptions = {}): Promise<StatusResult> {
@@ -338,7 +338,7 @@ export class HH {
    * List all configured peer nodes.
    *
    * @example
-   * const peers = await hh.peers();
+   * const peers = await cf.peers();
    * const gpuPeers = peers.filter(p => p.os === "windows");
    */
   async peers(): Promise<PeerInfo[]> {
@@ -356,7 +356,7 @@ export class HH {
    * Ping a peer via Tailscale to check reachability.
    *
    * @example
-   * const { reachable, latencyMs } = await hh.ping({ peer: "glados" });
+   * const { reachable, latencyMs } = await cf.ping({ peer: "glados" });
    */
   async ping(opts: PingOptions = {}): Promise<PingResult> {
     const cfg = await this.config();
@@ -377,10 +377,10 @@ export class HH {
    *
    * @example
    * // All recent tasks
-   * const tasks = await hh.tasks();
+   * const tasks = await cf.tasks();
    *
    * // Only failed tasks for a specific peer
-   * const failed = await hh.tasks({ status: "failed", peer: "glados", limit: 10 });
+   * const failed = await cf.tasks({ status: "failed", peer: "glados", limit: 10 });
    */
   async tasks(opts: TasksOptions = {}): Promise<TaskSummary[]> {
     const { status, peer, limit = 50 } = opts;
@@ -419,7 +419,7 @@ export class HH {
    * Returns `null` if not found.
    *
    * @example
-   * const task = await hh.getTask("a3f9");
+   * const task = await cf.getTask("a3f9");
    * console.log(task?.status, task?.output);
    */
   async getTask(id: string): Promise<TaskSummary | null> {
@@ -470,9 +470,9 @@ export class HH {
    * check the result later.
    *
    * @example
-   * const { id } = await hh.send("Heavy GPU job");
+   * const { id } = await cofounder.send("Heavy GPU job");
    * // ... do other work ...
-   * const result = await hh.waitFor(id, { timeoutMs: 15 * 60 * 1000 });
+   * const result = await cf.waitFor(id, { timeoutMs: 15 * 60 * 1000 });
    */
   async waitFor(
     id: string,
@@ -506,11 +506,11 @@ export class HH {
  * Create an HH instance with optional overrides.
  *
  * @example
- * import { createHH } from "@his-and-hers/sdk";
- * const hh = createHH({ configPath: "/custom/path/hh.json" });
+ * import { createHH } from "@cofounder/sdk";
+ * const cf = createCofounder({ configPath: "/custom/path/cofounder.json" });
  */
-export function createHH(opts?: HHOptions): HH {
-  return new HH(opts);
+export function createCofounder(opts?: HHOptions): Cofounder {
+  return new Cofounder(opts);
 }
 
 // ── Re-exports ────────────────────────────────────────────────────────────────

@@ -1,6 +1,6 @@
-# What is his-and-hers?
+# What is cofounder?
 
-his-and-hers is an open protocol and setup wizard for connecting two [OpenClaw](https://github.com/openclaw/openclaw) agents on physically separate machines.
+cofounder is an open protocol and setup wizard for connecting two [OpenClaw](https://github.com/openclaw/openclaw) agents on physically separate machines.
 
 **H1** is the orchestrator — always-on, always watching, delegates work outward.  
 **H2** is the executor — sleeps until needed, wakes on demand, does the heavy lifting.
@@ -20,26 +20,26 @@ But a lot of people have powerful hardware sitting idle:
 - A Raspberry Pi 5 running 24/7 as a home server
 - A workstation with a 4090 that could be running 70B models when you're not gaming
 
-his-and-hers is the plumbing that makes those machines useful to your agent workflows.
+cofounder is the plumbing that makes those machines useful to your agent workflows.
 
 ---
 
 ## What it does
 
-1. **`hh onboard`** — walks you through the full setup in ~10 minutes. Role selection, model provider (local or cloud), Tailscale pairing, SSH, Wake-on-LAN, gateway config, Windows AutoLogin if needed, startup scripts.
+1. **`cofounder onboard`** — walks you through the full setup in ~10 minutes. Role selection, model provider (local or cloud), Tailscale pairing, SSH, Wake-on-LAN, gateway config, Windows AutoLogin if needed, startup scripts.
 
-2. **`hh send "do X"`** — H1 gets a task, wakes H2 if asleep, sends the task, waits for a result. Works from your terminal or from within an agent workflow.
+2. **`cofounder send "do X"`** — H1 gets a task, wakes H2 if asleep, sends the task, waits for a result. Works from your terminal or from within an agent workflow.
 
 3. **Capability routing** — H2 advertises what it can do (GPU, models, skills). H1 routes tasks automatically. You don't manage which tasks go where — the system figures it out.
 
-4. **Budget tracking** — Every task is costed. `hh budget` shows you what you've spent, by day, by peer, by model.
+4. **Budget tracking** — Every task is costed. `cofounder budget` shows you what you've spent, by day, by peer, by model.
 
 ---
 
 ## What it is not
 
 - **Not a cloud service.** Everything runs on your machines over Tailscale. No data leaves your network except to your chosen LLM provider.
-- **Not locked to OpenClaw.** The protocol is open. Any agent runtime that can speak the HHMessage format can be a H1 or H2.
+- **Not locked to OpenClaw.** The protocol is open. Any agent runtime that can speak the CofounderMessage format can be a H1 or H2.
 - **Not magic.** You need two machines, Tailscale on both, and Node ≥ 22. That's it.
 
 ---
@@ -48,15 +48,15 @@ his-and-hers is the plumbing that makes those machines useful to your agent work
 
 ```bash
 # H1 delegates an image generation task
-hh send "generate a product mockup for a coffee brand, dark roast, earthy tones"
+cofounder send "generate a product mockup for a coffee brand, dark roast, earthy tones"
 
 # H2 (RTX 3070 Ti, running SDXL) wakes up, runs the task, returns the image path
-# → /Users/nick/hh-results/task_01j8fzq.../output.png
+# → /Users/nick/cofounder-results/task_01j8fzq.../output.png
 ```
 
 ```bash
 # H1 asks H2 to summarize a document using a 70B model
-hh send "summarize this PDF and extract action items" --attach report.pdf
+cofounder send "summarize this PDF and extract action items" --attach report.pdf
 
 # H2 (M2 Mac, 32 GB, running llama3:70b) handles it
 # → H1 receives a structured summary

@@ -15,7 +15,7 @@
  *   - Health endpoint: GET /health → { ok: true, webhooks: N }
  *   - Spec endpoint: GET /webhooks → list of registered paths (no secrets)
  *
- * Designed to run as a background daemon (`hh webhook start`).
+ * Designed to run as a background daemon (`cofounder webhook start`).
  */
 
 import {
@@ -213,7 +213,7 @@ export async function handleRequest(
 
   if (!opts.silent) {
     const label = webhook.name ?? webhook.path;
-    console.log(`[hh webhook] ${label} → ${task.slice(0, 80)}${task.length > 80 ? "…" : ""}`);
+    console.log(`[cofounder webhook] ${label} → ${task.slice(0, 80)}${task.length > 80 ? "…" : ""}`);
   }
 
   // Dispatch
@@ -256,7 +256,7 @@ export function startWebhookServer(
     const server = createServer((req, res) => {
       handleRequest(req, res, opts).catch((err) => {
         if (!opts.silent) {
-          console.error("[hh webhook] Unhandled error:", err);
+          console.error("[cofounder webhook] Unhandled error:", err);
         }
         if (!res.headersSent) {
           json(res, 500, { ok: false, error: "Internal server error" });
@@ -268,7 +268,7 @@ export function startWebhookServer(
 
     server.listen(port, "127.0.0.1", () => {
       if (!opts.silent) {
-        console.log(`[hh webhook] listening on http://127.0.0.1:${port}`);
+        console.log(`[cofounder webhook] listening on http://127.0.0.1:${port}`);
       }
       resolve({
         server,

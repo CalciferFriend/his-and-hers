@@ -1,5 +1,5 @@
 /**
- * commands/cancel.ts — `hh cancel <task-id>`
+ * commands/cancel.ts — `cofounder cancel <task-id>`
  *
  * Mark a pending or running task as cancelled.  Useful when you sent the
  * wrong task, a task is stuck pending because H2 never woke, or you want
@@ -9,10 +9,10 @@
  * tasks are already terminal and cannot be mutated.
  *
  * Usage:
- *   hh cancel abc123             # cancel by ID prefix
- *   hh cancel abc123 --force     # cancel even if already in a terminal state
- *   hh cancel abc123 --json      # machine-readable output
- *   hh cancel --all-pending      # cancel every pending task at once
+ *   cofounder cancel abc123             # cancel by ID prefix
+ *   cofounder cancel abc123 --force     # cancel even if already in a terminal state
+ *   cofounder cancel abc123 --json      # machine-readable output
+ *   cofounder cancel --all-pending      # cancel every pending task at once
  *
  * Exit codes:
  *   0  — cancelled successfully (or --all-pending with ≥1 task cancelled)
@@ -94,7 +94,7 @@ export async function cancel(idOrPrefix: string | undefined, opts: CancelOptions
     if (opts.json) {
       process.stdout.write(JSON.stringify({ cancelled: results }) + "\n");
     } else {
-      p.intro(pc.bgRed(pc.white(" hh cancel ")));
+      p.intro(pc.bgRed(pc.white(" cofounder cancel ")));
       p.note(
         results.map((r) => `${pc.dim(r.id.slice(0, 8))}  ${pc.italic(r.objective.slice(0, 60))}`).join("\n"),
         `Cancelled ${results.length} pending task${results.length === 1 ? "" : "s"}`,
@@ -109,7 +109,7 @@ export async function cancel(idOrPrefix: string | undefined, opts: CancelOptions
     if (opts.json) {
       process.stdout.write(JSON.stringify({ error: "No task ID provided and --all-pending not set." }) + "\n");
     } else {
-      p.log.error("Provide a task ID or use --all-pending.\n  Usage: hh cancel <id>  |  hh cancel --all-pending");
+      p.log.error("Provide a task ID or use --all-pending.\n  Usage: cofounder cancel <id>  |  cofounder cancel --all-pending");
     }
     process.exitCode = 1;
     return;
@@ -123,7 +123,7 @@ export async function cancel(idOrPrefix: string | undefined, opts: CancelOptions
     } else {
       p.log.error(
         `No task found matching ${pc.bold(idOrPrefix)}.\n` +
-          "  Use `hh logs` to list recent tasks.",
+          "  Use `cofounder logs` to list recent tasks.",
       );
     }
     process.exitCode = 1;
@@ -143,7 +143,7 @@ export async function cancel(idOrPrefix: string | undefined, opts: CancelOptions
     } else {
       p.log.warn(
         `Task ${pc.bold(task.id.slice(0, 8))} is already ${pc.bold(task.status)} — cannot cancel a terminal task.\n` +
-          `  Use ${pc.cyan("--force")} to override, or ${pc.cyan("hh replay")} to re-send.`,
+          `  Use ${pc.cyan("--force")} to override, or ${pc.cyan("cofounder replay")} to re-send.`,
       );
     }
     process.exitCode = 1;
@@ -151,7 +151,7 @@ export async function cancel(idOrPrefix: string | undefined, opts: CancelOptions
   }
 
   if (!opts.json) {
-    p.intro(pc.bgRed(pc.white(" hh cancel ")));
+    p.intro(pc.bgRed(pc.white(" cofounder cancel ")));
     p.log.info(`Task:      ${taskLine(task)}`);
     p.log.info(`Objective: ${pc.italic(task.objective)}`);
   }

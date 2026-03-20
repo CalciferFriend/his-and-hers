@@ -1,23 +1,23 @@
 /**
- * hh discover — browse and search the community node registry.
+ * cofounder discover — browse and search the community node registry.
  *
- * Searches GitHub Gists tagged "his-and-hers-node" (i.e. those published
- * with `hh publish`). Filters by role, GPU, provider, skills, and OS.
+ * Searches GitHub Gists tagged "cofounder-node" (i.e. those published
+ * with `cofounder publish`). Filters by role, GPU, provider, skills, and OS.
  *
  * Examples:
- *   hh discover                        # list recent nodes
- *   hh discover --role h2           # H2 nodes only
- *   hh discover --gpu cuda             # CUDA GPU nodes
- *   hh discover --skill image-gen      # nodes with image generation
- *   hh discover --provider ollama      # Ollama-powered nodes
- *   hh discover --os windows           # Windows nodes
- *   hh discover --json                 # machine-readable output
+ *   cofounder discover                        # list recent nodes
+ *   cofounder discover --role h2           # H2 nodes only
+ *   cofounder discover --gpu cuda             # CUDA GPU nodes
+ *   cofounder discover --skill image-gen      # nodes with image generation
+ *   cofounder discover --provider ollama      # Ollama-powered nodes
+ *   cofounder discover --os windows           # Windows nodes
+ *   cofounder discover --json                 # machine-readable output
  */
 
 import type { HHNodeCard } from "./publish.ts";
 
 const GIST_SEARCH_URL =
-  "https://api.github.com/gists/public?per_page=100&description=his-and-hers";
+  "https://api.github.com/gists/public?per_page=100&description=cofounder";
 
 interface GistSummary {
   id: string;
@@ -32,7 +32,7 @@ interface GistSummary {
 
 async function fetchGistList(token?: string): Promise<GistSummary[]> {
   const headers: Record<string, string> = {
-    "User-Agent": "his-and-hers-cli",
+    "User-Agent": "cofounder-cli",
     "X-GitHub-Api-Version": "2022-11-28",
   };
   if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -45,10 +45,10 @@ async function fetchGistList(token?: string): Promise<GistSummary[]> {
 }
 
 async function fetchCardFromGist(gist: GistSummary, token?: string): Promise<HHNodeCard | null> {
-  const cardFile = gist.files["hh-node-card.json"];
+  const cardFile = gist.files["cofounder-node-card.json"];
   if (!cardFile) return null;
   try {
-    const headers: Record<string, string> = { "User-Agent": "his-and-hers-cli" };
+    const headers: Record<string, string> = { "User-Agent": "cofounder-cli" };
     if (token) headers["Authorization"] = `Bearer ${token}`;
     const res = await fetch(cardFile.raw_url, { headers });
     if (!res.ok) return null;
@@ -134,16 +134,16 @@ export async function discover(opts: {
     process.exit(1);
   }
 
-  // Filter to his-and-hers gists (description contains our tag)
+  // Filter to cofounder gists (description contains our tag)
   const tjGists = gists.filter(
     (g) =>
-      g.description?.includes("[his-and-hers]") &&
-      g.files["hh-node-card.json"],
+      g.description?.includes("[cofounder]") &&
+      g.files["cofounder-node-card.json"],
   );
 
   if (tjGists.length === 0) {
     if (!opts.json) {
-      console.log("No nodes published yet. Be the first! Run `hh publish`.");
+      console.log("No nodes published yet. Be the first! Run `cofounder publish`.");
     } else {
       console.log("[]");
     }
@@ -223,5 +223,5 @@ export async function discover(opts: {
   }
 
   console.log(`─────────────────────────────────────────────────`);
-  console.log(`Want to be in this list? Run \`hh publish\`.`);
+  console.log(`Want to be in this list? Run \`cofounder publish\`.`);
 }

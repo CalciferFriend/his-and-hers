@@ -1,11 +1,11 @@
 ---
 title: Protocol Overview
-description: How H1 and H2 communicate — message flow, transport layers, and the HHMessage envelope.
+description: How H1 and H2 communicate — message flow, transport layers, and the CofounderMessage envelope.
 ---
 
 # Protocol Overview
 
-his-and-hers uses an open, versioned message protocol called **HHMessage** for all
+cofounder uses an open, versioned message protocol called **CofounderMessage** for all
 agent-to-agent communication. Every task delegation, result, heartbeat, and handoff
 is wrapped in this envelope.
 
@@ -53,13 +53,13 @@ never over the public internet unencrypted.
 ```
 H1                                         H2
 ────────────────────────────────────────────────────────────
-hh send "write a haiku"
+cofounder send "write a haiku"
 
-Turn 0:  HHMessage (type: task) ──────────►
+Turn 0:  CofounderMessage (type: task) ──────────►
                                             processes task
-Turn 1:  ◄──────── HHMessage (type: result, done: false)
+Turn 1:  ◄──────── CofounderMessage (type: result, done: false)
                                             continues...
-Turn N:  ◄──────── HHMessage (type: result, done: true)
+Turn N:  ◄──────── CofounderMessage (type: result, done: true)
 
 Task complete.
 ────────────────────────────────────────────────────────────
@@ -70,7 +70,7 @@ Task complete.
 ```
 H1                                         H2
 ────────────────────────────────────────────────────────────
-hh send "heavy inference task"
+cofounder send "heavy inference task"
 
   1. H1 detects H2 offline (Tailscale ping fails)
   2. H1 sends WOL magic packet (UDP → H2's MAC)
@@ -79,8 +79,8 @@ hh send "heavy inference task"
   5. H1 polls H2's /health endpoint
   6. /health returns 200 → gateway is running
 
-Turn 0:  HHMessage (wake_required: true) ──►
-Turn 1:  ◄──────── HHMessage (type: result, done: true)
+Turn 0:  CofounderMessage (wake_required: true) ──►
+Turn 1:  ◄──────── CofounderMessage (type: result, done: true)
 ────────────────────────────────────────────────────────────
 ```
 
@@ -89,11 +89,11 @@ Turn 1:  ◄──────── HHMessage (type: result, done: true)
 ```
 H1                                         H2
 ────────────────────────────────────────────────────────────
-hh send --shutdown "run this and shut down"
+cofounder send --shutdown "run this and shut down"
 
-Turn 0:  HHMessage (shutdown_after: true) ─►
+Turn 0:  CofounderMessage (shutdown_after: true) ─►
                                             processes task
-Turn N:  ◄──────── HHMessage (done: true)
+Turn N:  ◄──────── CofounderMessage (done: true)
                                             initiates OS shutdown
 ────────────────────────────────────────────────────────────
 ```
@@ -141,10 +141,10 @@ Each conversation starts at turn 0 and increments with every message:
 Nodes establish trust via a one-time 6-digit pairing code:
 
 1. H1 generates the code and stores its SHA-256 hash
-2. H2 receives the code out-of-band (user types it in via `hh pair --code`)
+2. H2 receives the code out-of-band (user types it in via `cofounder pair --code`)
 3. H2's request is verified against H1's stored hash
 4. Both nodes exchange Tailscale IPs and SSH key fingerprints
-5. Pair state is written to both nodes' `hh.json`
+5. Pair state is written to both nodes' `cofounder.json`
 
 The code is never transmitted over the network.
 
@@ -165,7 +165,7 @@ The code is never transmitted over the network.
 
 ## Schema reference
 
-- [HHMessage](/protocol/hhmessage) — the message envelope
-- [HHHandoff](/protocol/hhhandoff) — structured task handoff
-- [HHHeartbeat](/protocol/hhheartbeat) — liveness heartbeat
+- [CofounderMessage](/protocol/cofoundermessage) — the message envelope
+- [CofounderHandoff](/protocol/cofounderhandoff) — structured task handoff
+- [CofounderHeartbeat](/protocol/cofounderheartbeat) — liveness heartbeat
 - [HHCapabilityReport](/protocol/capabilities) — node capability advertisement

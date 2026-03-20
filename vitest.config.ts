@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 export default defineConfig({
   resolve: {
     alias: {
-      "@his-and-hers/core": resolve(__dirname, "packages/core/src/index.ts"),
+      "@cofounder/core": resolve(__dirname, "packages/core/src/index.ts"),
     },
   },
   test: {

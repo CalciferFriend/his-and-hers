@@ -72,12 +72,12 @@ EOF
 echo "[2/5] OpenClaw config written."
 
 # ── 3. Write HH config ────────────────────────────────────────────────────────
-echo "[3/5] Writing his-and-hers config..."
+echo "[3/5] Writing cofounder config..."
 TS_HOSTNAME=$(tailscale status --json 2>/dev/null | node -e "const d=require('fs').readFileSync('/dev/stdin','utf8'); try { console.log(JSON.parse(d).Self?.HostName ?? ''); } catch { console.log(''); }" || echo "")
 
-mkdir -p /root/.his-and-hers
-if [ ! -f /root/.his-and-hers/config.json ]; then
-  cat > /root/.his-and-hers/config.json <<EOF
+mkdir -p /root/.cofounder
+if [ ! -f /root/.cofounder/config.json ]; then
+  cat > /root/.cofounder/config.json <<EOF
 {
   "version": "0.1.0",
   "gateway_port": $TOM_GATEWAY_PORT,
@@ -161,8 +161,8 @@ echo "║  Tailscale: $TAILSCALE_IP                                ║"
 echo "║  Token:    $TOM_GATEWAY_TOKEN            ║"
 echo "╚══════════════════════════════════════════════════════╝"
 echo ""
-echo "Run 'hh status' to check connectivity."
-echo "Run 'hh send \"<task>\"' to dispatch work to H2."
+echo "Run 'cofounder status' to check connectivity."
+echo "Run 'cofounder send \"<task>\"' to dispatch work to H2."
 echo ""
 
 # ── Keep alive — tail gateway logs ───────────────────────────────────────────

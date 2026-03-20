@@ -26,6 +26,64 @@ export async function getTailscaleStatus(): Promise<TailscaleStatus> {
   }
 }
 
+export interface TailscalePeer {
+  hostname: string;
+  os: string;
+  tailscaleIP: string;
+  online: boolean;
+  dnsName: string;
+  lastSeen: string;
+}
+
+/**
+ * Check if Tailscale is installed on this machine.
+ */
+export async function isTailscaleInstalled(): Promise<boolean> {
+  try {
+    await execFileAsync("tailscale", ["version"], { timeout: 5000 });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Get Tailscale version string, or null if not installed.
+ */
+export async function getTailscaleVersion(): Promise<string | null> {
+  try {
+    const { stdout } = await execFileAsync("tailscale", ["version"], { timeout: 5000 });
+    return stdout.trim().split("\n")[0] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * List all peers on the tailnet with their hostname, OS, IP, and online status.
+ */
+export async function getTailscalePeers(): Promise<TailscalePeer[]> {
+  try {
+    const { stdout } = await execFileAsync("tailscale", ["status", "--json"]);
+    const status = JSON.parse(stdout);
+    const peerMap = status.Peer ?? {};
+    const peers: TailscalePeer[] = [];
+    for (const peer of Object.values(peerMap) as Record<string, unknown>[]) {
+      peers.push({
+        hostname: (peer.HostName as string) ?? "",
+        os: (peer.OS as string) ?? "",
+        tailscaleIP: ((peer.TailscaleIPs as string[]) ?? [])[0] ?? "",
+        online: (peer.Online as boolean) ?? false,
+        dnsName: (peer.DNSName as string) ?? "",
+        lastSeen: (peer.LastSeen as string) ?? "",
+      });
+    }
+    return peers;
+  } catch {
+    return [];
+  }
+}
+
 /**
  * Ping a Tailscale peer to check reachability.
  * Returns true if the peer responds within timeout.

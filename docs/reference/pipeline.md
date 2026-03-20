@@ -1,18 +1,18 @@
-# `hh pipeline`
+# `cofounder pipeline`
 
 Run a sequence of tasks across one or more peers, automatically threading each
 step's output into the next step's prompt.
 
 ```
-hh pipeline "peer1:task one -> peer2:review {{previous.output}}"
-hh pipeline --file pipeline.json
-hh pipeline --file pipeline.json --json
-hh pipeline --file pipeline.json --timeout 180
+cofounder pipeline "peer1:task one -> peer2:review {{previous.output}}"
+cofounder pipeline --file pipeline.json
+cofounder pipeline --file pipeline.json --json
+cofounder pipeline --file pipeline.json --timeout 180
 ```
 
 ## Why pipelines?
 
-Single-shot `hh send` is great for discrete tasks. Pipelines let you chain
+Single-shot `cofounder send` is great for discrete tasks. Pipelines let you chain
 agents into a **workflow** — write code on GLaDOS, review it on Piper, notify
 Slack via a webhook step, all in one command.
 
@@ -24,7 +24,7 @@ The simplest way to define a pipeline is an inline string. Each step is
 `peer:task`, separated by ` -> `:
 
 ```sh
-hh pipeline "glados:write a Python fizzbuzz -> piper:review {{previous.output}}"
+cofounder pipeline "glados:write a Python fizzbuzz -> piper:review {{previous.output}}"
 ```
 
 Placeholder substitution:
@@ -78,7 +78,7 @@ For more complex workflows, write a JSON pipeline definition and pass it with
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `peer` | string | ✓ | Peer name from your `hh.json` config |
+| `peer` | string | ✓ | Peer name from your `cofounder.json` config |
 | `task` | string | ✓ | Task text (supports `{{...}}` placeholders) |
 | `label` | string | | Human-readable step label for output |
 | `timeout` | number | | Per-step timeout in seconds (default: 120) |
@@ -180,7 +180,7 @@ The top-level `status` field reflects the aggregate result:
 ## SDK usage
 
 ```ts
-import { parsePipelineSpec, parsePipelineFile, interpolatePipelineTask } from "@his-and-hers/core";
+import { parsePipelineSpec, parsePipelineFile, interpolatePipelineTask } from "@cofounder/core";
 
 // Parse an inline spec into steps
 const steps = parsePipelineSpec("glados:write code -> piper:review {{previous.output}}");
@@ -201,6 +201,6 @@ const resolved = interpolatePipelineTask(step.task, priorResults);
 - **Long-running steps** — increase `--timeout` or set `timeout` per step in
   the JSON file.
 - **Debugging** — run with `--json` and pipe to `jq` for structured inspection:
-  `hh pipeline --file p.json --json | jq '.steps[] | {label, status, duration_ms}'`
-- **Combine with clusters** — `hh broadcast` fans out; `hh pipeline` chains. Use
+  `cofounder pipeline --file p.json --json | jq '.steps[] | {label, status, duration_ms}'`
+- **Combine with clusters** — `cofounder broadcast` fans out; `cofounder pipeline` chains. Use
   both patterns together for map-reduce workflows.

@@ -90,7 +90,7 @@ beforeEach(() => {
 
 // ─── Mock webhook registry (fs-level) ────────────────────────────────────────
 
-// We mock only the config store so we don't touch the real ~/.his-and-hers dir.
+// We mock only the config store so we don't touch the real ~/.cofounder dir.
 const mockStore: ReturnType<typeof buildStore> = { webhooks: [] };
 
 function buildStore() {

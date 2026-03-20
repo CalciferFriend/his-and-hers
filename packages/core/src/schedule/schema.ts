@@ -1,7 +1,7 @@
 /**
  * schedule/schema.ts
  *
- * Zod schema for HHSchedule entries stored in ~/.his-and-hers/schedules.json
+ * Zod schema for HHSchedule entries stored in ~/.cofounder/schedules.json
  */
 
 import { z } from "zod";
@@ -10,7 +10,7 @@ export const HHSchedule = z.object({
   id: z.string(), // uuid
   cron: z.string(), // cron expression e.g. "0 2 * * *"
   task: z.string(), // task description to delegate
-  peer: z.string().optional(), // optional peer name (--peer flag in hh send)
+  peer: z.string().optional(), // optional peer name (--peer flag in cofounder send)
   latent: z.boolean().optional(), // use latent mode if supported
   name: z.string().optional(), // optional human-friendly label
   created_at: z.string(), // ISO timestamp

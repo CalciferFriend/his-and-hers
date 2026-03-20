@@ -8,7 +8,7 @@ import { rm } from "node:fs/promises";
 import { join } from "node:path";
 import { homedir } from "node:os";
 
-const RETRY_DIR = join(homedir(), ".his-and-hers", "retry");
+const RETRY_DIR = join(homedir(), ".cofounder", "retry");
 
 describe("withRetry", () => {
   it("returns result on first success", async () => {

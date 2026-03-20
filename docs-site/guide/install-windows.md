@@ -50,15 +50,15 @@ ollama pull nomic-embed-text   # embeddings
 
 ---
 
-## 3 — Install OpenClaw + his-and-hers
+## 3 — Install OpenClaw + cofounder
 
 ```powershell
 npm install -g openclaw
-npm install -g his-and-hers
+npm install -g cofounder
 
 # Verify
 openclaw --version
-hh --version
+cofounder --version
 ```
 
 ---
@@ -87,7 +87,7 @@ tailscale ip -4
 Open an **Administrator PowerShell** and run:
 
 ```powershell
-hh onboard
+cofounder onboard
 ```
 
 When prompted:
@@ -123,7 +123,7 @@ Set-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" `
 
 ## 6 — Startup batch script
 
-The wizard creates this at `%APPDATA%\his-and-hers\start-gateway.bat`. To create it manually:
+The wizard creates this at `%APPDATA%\cofounder\start-gateway.bat`. To create it manually:
 
 ```bat
 @echo off
@@ -140,10 +140,10 @@ start /B openclaw gateway start
 
 rem Advertise capabilities to H1
 timeout /t 10 /nobreak >nul
-hh capabilities advertise
+cofounder capabilities advertise
 ```
 
-Save to `%APPDATA%\his-and-hers\start-gateway.bat`.
+Save to `%APPDATA%\cofounder\start-gateway.bat`.
 
 ---
 
@@ -151,7 +151,7 @@ Save to `%APPDATA%\his-and-hers\start-gateway.bat`.
 
 ```powershell
 # Run as Administrator
-$batPath = "$env:APPDATA\his-and-hers\start-gateway.bat"
+$batPath = "$env:APPDATA\cofounder\start-gateway.bat"
 
 $action = New-ScheduledTaskAction `
   -Execute "cmd.exe" `
@@ -197,7 +197,7 @@ New-NetFirewallRule `
 Get-NetFirewallRule -DisplayName "His-and-Hers Gateway"
 ```
 
-If you changed the gateway port during `hh onboard`, use that port number instead.
+If you changed the gateway port during `cofounder onboard`, use that port number instead.
 
 ---
 
@@ -248,7 +248,7 @@ Get-NetAdapter | Where-Object { $_.Status -eq "Up" } | Select Name, MacAddress
 # → Name: Ethernet    MacAddress: D8-5E-D3-04-18-B4
 ```
 
-Give this MAC to H1 during `hh onboard` or add it to config manually. See [Wake-on-LAN guide](/guide/wol) for router configuration.
+Give this MAC to H1 during `cofounder onboard` or add it to config manually. See [Wake-on-LAN guide](/guide/wol) for router configuration.
 
 ---
 
@@ -259,12 +259,12 @@ Reboot the machine. It should:
 2. The Scheduled Task fires → `start-gateway.bat` runs
 3. Tailscale connects
 4. OpenClaw gateway starts
-5. `hh capabilities advertise` runs
+5. `cofounder capabilities advertise` runs
 
 From H1's machine:
 
 ```bash
-hh status
+cofounder status
 # H2 should appear with ✓ gateway healthy
 ```
 

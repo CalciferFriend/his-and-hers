@@ -1,5 +1,5 @@
 /**
- * cluster.test.ts — unit tests for hh cluster / hh clusters
+ * cluster.test.ts — unit tests for cofounder cluster / cofounder clusters
  *
  * Tests cover:
  *   - clusterList: empty, populated, stale peer annotation, JSON output

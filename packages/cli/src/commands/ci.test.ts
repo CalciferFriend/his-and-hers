@@ -59,63 +59,63 @@ describe("ci", () => {
     });
   });
 
-  describe("HH_PEER env var", () => {
+  describe("COFOUNDER_PEER env var", () => {
     it("should read peer from env var", () => {
-      const originalPeer = process.env.HH_PEER;
-      process.env.HH_PEER = "glados";
+      const originalPeer = process.env.COFOUNDER_PEER;
+      process.env.COFOUNDER_PEER = "glados";
 
-      expect(process.env.HH_PEER).toBe("glados");
+      expect(process.env.COFOUNDER_PEER).toBe("glados");
 
       // Restore
       if (originalPeer === undefined) {
-        delete process.env.HH_PEER;
+        delete process.env.COFOUNDER_PEER;
       } else {
-        process.env.HH_PEER = originalPeer;
+        process.env.COFOUNDER_PEER = originalPeer;
       }
     });
   });
 
-  describe("HH_TIMEOUT env var", () => {
+  describe("COFOUNDER_TIMEOUT env var", () => {
     it("should read timeout from env var", () => {
-      const originalTimeout = process.env.HH_TIMEOUT;
-      process.env.HH_TIMEOUT = "120";
+      const originalTimeout = process.env.COFOUNDER_TIMEOUT;
+      process.env.COFOUNDER_TIMEOUT = "120";
 
-      expect(process.env.HH_TIMEOUT).toBe("120");
+      expect(process.env.COFOUNDER_TIMEOUT).toBe("120");
 
       // Restore
       if (originalTimeout === undefined) {
-        delete process.env.HH_TIMEOUT;
+        delete process.env.COFOUNDER_TIMEOUT;
       } else {
-        process.env.HH_TIMEOUT = originalTimeout;
+        process.env.COFOUNDER_TIMEOUT = originalTimeout;
       }
     });
 
     it("should default to 300 seconds", () => {
-      const originalTimeout = process.env.HH_TIMEOUT;
-      delete process.env.HH_TIMEOUT;
+      const originalTimeout = process.env.COFOUNDER_TIMEOUT;
+      delete process.env.COFOUNDER_TIMEOUT;
 
-      const defaultTimeout = process.env.HH_TIMEOUT ?? "300";
+      const defaultTimeout = process.env.COFOUNDER_TIMEOUT ?? "300";
       expect(defaultTimeout).toBe("300");
 
       // Restore
       if (originalTimeout !== undefined) {
-        process.env.HH_TIMEOUT = originalTimeout;
+        process.env.COFOUNDER_TIMEOUT = originalTimeout;
       }
     });
   });
 
-  describe("HH_PROFILE env var", () => {
+  describe("COFOUNDER_PROFILE env var", () => {
     it("should read profile from env var", () => {
-      const originalProfile = process.env.HH_PROFILE;
-      process.env.HH_PROFILE = "ci-profile";
+      const originalProfile = process.env.COFOUNDER_PROFILE;
+      process.env.COFOUNDER_PROFILE = "ci-profile";
 
-      expect(process.env.HH_PROFILE).toBe("ci-profile");
+      expect(process.env.COFOUNDER_PROFILE).toBe("ci-profile");
 
       // Restore
       if (originalProfile === undefined) {
-        delete process.env.HH_PROFILE;
+        delete process.env.COFOUNDER_PROFILE;
       } else {
-        process.env.HH_PROFILE = originalProfile;
+        process.env.COFOUNDER_PROFILE = originalProfile;
       }
     });
   });

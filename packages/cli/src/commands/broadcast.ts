@@ -1,5 +1,5 @@
 /**
- * commands/broadcast.ts — `hh broadcast`
+ * commands/broadcast.ts — `cofounder broadcast`
  *
  * Send the same task to multiple peer nodes concurrently. Useful for:
  *   - Delegating the same work to all available H2s simultaneously
@@ -8,11 +8,11 @@
  *   - Ensuring redundant execution across a cluster
  *
  * Usage:
- *   hh broadcast "code-review this diff"          # all peers, fire-and-forget
- *   hh broadcast "generate docs" --wait           # all peers, wait for results
- *   hh broadcast "run tests" --peers glados,piper # specific subset
- *   hh broadcast "quick check" --strategy first   # return when 1st responds
- *   hh broadcast "analyze data" --json            # machine-readable output
+ *   cofounder broadcast "code-review this diff"          # all peers, fire-and-forget
+ *   cofounder broadcast "generate docs" --wait           # all peers, wait for results
+ *   cofounder broadcast "run tests" --peers glados,piper # specific subset
+ *   cofounder broadcast "quick check" --strategy first   # return when 1st responds
+ *   cofounder broadcast "analyze data" --json            # machine-readable output
  *
  * Phase 7a — Calcifer ✅ (2026-03-15)
  */
@@ -26,7 +26,7 @@ import {
   loadContextSummary,
   withRetry,
   checkGatewayHealth,
-} from "@his-and-hers/core";
+} from "@cofounder/core";
 import { createTaskState, pollTaskCompletion } from "../state/tasks.ts";
 import { getAllPeers, findPeerByName } from "../peers/select.ts";
 import type { PeerNodeConfig } from "../config/schema.ts";
@@ -79,9 +79,9 @@ function buildWakeText(
   task: string,
 ): string {
   return [
-    `[HHMessage:task from ${from} id=${taskId}] ${task}`,
+    `[CofounderMessage:task from ${from} id=${taskId}] ${task}`,
     ``,
-    `When done, run: hh result ${taskId} "<your output here>"`,
+    `When done, run: cofounder result ${taskId} "<your output here>"`,
   ].join("\n");
 }
 
@@ -137,7 +137,7 @@ async function sendToPeer(
       peer: peer.name,
       task_id: msg.id,
       status: "failed",
-      error: "Peer gateway token not set. Run `hh pair` first.",
+      error: "Peer gateway token not set. Run `cofounder pair` first.",
       elapsed_ms: Date.now() - start,
     };
   }
@@ -254,7 +254,7 @@ function renderResult(r: BroadcastResult): void {
 export async function broadcast(task: string, opts: BroadcastOptions = {}) {
   const config = await loadConfig();
   if (!config) {
-    p.outro(pc.red("No config found. Run `hh onboard` first."));
+    p.outro(pc.red("No config found. Run `cofounder onboard` first."));
     process.exitCode = 1;
     return;
   }
@@ -276,7 +276,7 @@ export async function broadcast(task: string, opts: BroadcastOptions = {}) {
       const defined = Object.keys(clusterMap);
       p.outro(
         pc.red(`Cluster "${opts.cluster}" not found.`) +
-        (defined.length > 0 ? ` Defined: ${defined.join(", ")}` : " No clusters defined yet (run hh cluster add)."),
+        (defined.length > 0 ? ` Defined: ${defined.join(", ")}` : " No clusters defined yet (run cofounder cluster add)."),
       );
       process.exitCode = 1;
       return;
@@ -302,7 +302,7 @@ export async function broadcast(task: string, opts: BroadcastOptions = {}) {
   }
 
   if (targets.length === 0) {
-    p.outro(pc.red("No peers configured. Run `hh pair` first."));
+    p.outro(pc.red("No peers configured. Run `cofounder pair` first."));
     process.exitCode = 1;
     return;
   }
@@ -316,7 +316,7 @@ export async function broadcast(task: string, opts: BroadcastOptions = {}) {
 
   // ── Header ─────────────────────────────────────────────────────────────────
   if (!opts.json) {
-    p.intro(`${pc.bold("hh broadcast")} — sending to ${targets.length} peer${targets.length === 1 ? "" : "s"}`);
+    p.intro(`${pc.bold("cofounder broadcast")} — sending to ${targets.length} peer${targets.length === 1 ? "" : "s"}`);
     p.log.info(`Task: ${pc.cyan(task.length > 80 ? task.slice(0, 80) + "…" : task)}`);
     p.log.info(`Strategy: ${pc.yellow(strategy)} · Wait: ${wait ? pc.green("yes") : pc.dim("no")} · Peers: ${targets.map((t) => pc.blue(t.name)).join(", ")}`);
   }

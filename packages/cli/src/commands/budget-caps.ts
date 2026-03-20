@@ -4,10 +4,10 @@
  * Manage per-peer cost caps with warn/block actions.
  *
  * Usage:
- *   hh budget list [--json]
- *   hh budget set <peer> --daily <n> [--monthly <n>] [--action warn|block]
- *   hh budget show <peer> [--json]
- *   hh budget remove <peer> [--force]
+ *   cofounder budget list [--json]
+ *   cofounder budget set <peer> --daily <n> [--monthly <n>] [--action warn|block]
+ *   cofounder budget show <peer> [--json]
+ *   cofounder budget remove <peer> [--force]
  */
 
 import * as p from "@clack/prompts";
@@ -18,7 +18,7 @@ import {
   removeBudget,
   checkBudget,
   type BudgetConfig
-} from "@his-and-hers/core";
+} from "@cofounder/core";
 
 export interface BudgetListOptions {
   json?: boolean;
@@ -47,15 +47,15 @@ export async function budgetList(opts: BudgetListOptions = {}) {
   }
 
   if (budgets.length === 0) {
-    p.intro(pc.bgMagenta(pc.white(" hh budget list ")));
+    p.intro(pc.bgMagenta(pc.white(" cofounder budget list ")));
     p.log.info("No budget caps configured.");
     p.log.message("");
-    p.log.info(pc.dim("Add a cap with: hh budget set <peer> --daily <usd>"));
+    p.log.info(pc.dim("Add a cap with: cofounder budget set <peer> --daily <usd>"));
     p.outro("Done.");
     return;
   }
 
-  p.intro(pc.bgMagenta(pc.white(" hh budget list ")));
+  p.intro(pc.bgMagenta(pc.white(" cofounder budget list ")));
   p.log.message("");
 
   for (const b of budgets) {
@@ -109,7 +109,7 @@ export async function budgetSet(
 
   await addBudget(budget);
 
-  p.intro(pc.bgMagenta(pc.white(" hh budget set ")));
+  p.intro(pc.bgMagenta(pc.white(" cofounder budget set ")));
   p.log.success(`Budget cap set for ${pc.cyan(peer)}`);
   p.log.message("");
 
@@ -136,7 +136,7 @@ export async function budgetShow(peer: string, opts: BudgetShowOptions = {}) {
     return;
   }
 
-  p.intro(pc.bgMagenta(pc.white(` hh budget show — ${peer} `)));
+  p.intro(pc.bgMagenta(pc.white(` cofounder budget show — ${peer} `)));
   p.log.message("");
 
   if (budget.daily_usd) {

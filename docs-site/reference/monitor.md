@@ -1,4 +1,4 @@
-# `hh monitor` — Reference
+# `cofounder monitor` — Reference
 
 Live terminal dashboard for your agent network. Shows peer health, recent tasks, and today's budget — refreshed on a configurable interval.
 
@@ -7,7 +7,7 @@ Live terminal dashboard for your agent network. Shows peer health, recent tasks,
 ## Synopsis
 
 ```bash
-hh monitor [flags]
+cofounder monitor [flags]
 ```
 
 ---
@@ -26,7 +26,7 @@ hh monitor [flags]
 
 ```
 ════════════════════════════════════════════════════════════════════════
- hh monitor  🔥 calcifer (h1)                  Sat, 14 Mar 2026 04:54 UTC
+ cofounder monitor  🔥 calcifer (h1)                  Sat, 14 Mar 2026 04:54 UTC
 ════════════════════════════════════════════════════════════════════════
 
 PEERS
@@ -103,7 +103,7 @@ A one-line summary of today's spend:
 ### Default — live dashboard
 
 ```bash
-hh monitor
+cofounder monitor
 ```
 
 Refreshes every 5 seconds. Press `Ctrl+C` to quit — the terminal cursor is restored on exit.
@@ -111,14 +111,14 @@ Refreshes every 5 seconds. Press `Ctrl+C` to quit — the terminal cursor is res
 ### Custom interval
 
 ```bash
-hh monitor --interval 10    # refresh every 10 seconds
-hh monitor --interval 2     # minimum: 2 seconds
+cofounder monitor --interval 10    # refresh every 10 seconds
+cofounder monitor --interval 2     # minimum: 2 seconds
 ```
 
 ### Single snapshot
 
 ```bash
-hh monitor --once
+cofounder monitor --once
 ```
 
 Prints one frame and exits. Useful in scripts or when you just want a quick look without a live loop.
@@ -126,7 +126,7 @@ Prints one frame and exits. Useful in scripts or when you just want a quick look
 ### JSON snapshot
 
 ```bash
-hh monitor --json
+cofounder monitor --json
 ```
 
 Prints the full `MonitorSnapshot` object as formatted JSON and exits. Useful for piping into `jq` or a monitoring script.
@@ -170,11 +170,11 @@ Prints the full `MonitorSnapshot` object as formatted JSON and exits. Useful for
 
 ## Related commands
 
-- [`hh status`](/reference/status) — single-line health check (no dashboard)
-- [`hh logs`](/reference/logs) — full task history with filters
-- [`hh budget`](/reference/budget) — detailed cost breakdown
-- [`hh peers`](/reference/peers) — peer list with capability info
-- [`hh doctor`](/reference/doctor) — actionable diagnostic suite
+- [`cofounder status`](/reference/status) — single-line health check (no dashboard)
+- [`cofounder logs`](/reference/logs) — full task history with filters
+- [`cofounder budget`](/reference/budget) — detailed cost breakdown
+- [`cofounder peers`](/reference/peers) — peer list with capability info
+- [`cofounder doctor`](/reference/doctor) — actionable diagnostic suite
 
 ---
 
@@ -183,4 +183,4 @@ Prints the full `MonitorSnapshot` object as formatted JSON and exits. Useful for
 | Code | Condition |
 |------|-----------|
 | `0` | Normal exit (Ctrl+C in live mode, or `--once`/`--json` succeeded) |
-| `1` | No config found — run `hh onboard` first |
+| `1` | No config found — run `cofounder onboard` first |

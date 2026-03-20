@@ -1,6 +1,6 @@
 # Live Streaming & Notifications
 
-While `hh send --wait` has always supported blocking until a result arrives,
+While `cofounder send --wait` has always supported blocking until a result arrives,
 you now also get **live partial output** as H2 works and **webhook notifications**
 when a task finishes — no polling, no more staring at a spinner.
 
@@ -8,12 +8,12 @@ when a task finishes — no polling, no more staring at a spinner.
 
 ## Live streaming
 
-When you run `hh send --wait`, his-and-hers automatically starts a streaming
-server on H1 before dispatching the task. H2's `hh watch` executor streams
+When you run `cofounder send --wait`, cofounder automatically starts a streaming
+server on H1 before dispatching the task. H2's `cofounder watch` executor streams
 stdout chunks back in real-time so you can watch progress as it happens.
 
 ```bash
-$ hh send "refactor auth.ts to use JWT" --wait
+$ cofounder send "refactor auth.ts to use JWT" --wait
 [1/4] Waking h2-home...
 [2/4] Sending task...
 [3/4] Waiting for result (streaming enabled)
@@ -27,26 +27,26 @@ Rewriting...
 ```
 
 No extra flags needed. Streaming is **on by default** whenever `--wait` is set
-and H2 is running a recent `hh watch` version.
+and H2 is running a recent `cofounder watch` version.
 
 ### How it works under the hood
 
 1. H1 starts an SSE chunk-receiver on an ephemeral port (bound to Tailscale IP)
 2. H1 includes `HH-Stream-URL` and `HH-Stream-Token` headers in the wake message
-3. H2's `hh watch` executor pipes stdout through `createChunkStreamer`, which
+3. H2's `cofounder watch` executor pipes stdout through `createChunkStreamer`, which
    POSTs each chunk to H1 with a sequence number
 4. H1 displays chunks in real-time; the stream server auto-closes on `done: true`
 5. The full result is still delivered via the `/result` webhook — streaming is
    additive, not a replacement
 
-If the stream server fails to bind (port conflict, network block), `hh send`
+If the stream server fails to bind (port conflict, network block), `cofounder send`
 silently degrades to the polling fallback. You won't see live output, but the
 task still completes normally.
 
 ### Disabling streaming
 
 Streaming is tied to `--wait` — it only runs when you're waiting for a result.
-Fire-and-forget sends (`hh send` without `--wait`) never start a stream server.
+Fire-and-forget sends (`cofounder send` without `--wait`) never start a stream server.
 
 ---
 
@@ -59,13 +59,13 @@ Works with Discord, Slack, and any generic HTTP webhook.
 
 ```bash
 # Notify on task completion
-hh send "train overnight batch" --notify https://discord.com/api/webhooks/...
+cofounder send "train overnight batch" --notify https://discord.com/api/webhooks/...
 
 # Combine with --wait for both live output and a completion ping
-hh send "long GPU task" --wait --notify https://hooks.slack.com/services/...
+cofounder send "long GPU task" --wait --notify https://hooks.slack.com/services/...
 
 # With scheduled tasks
-hh schedule add --cron "0 2 * * *" "nightly embeddings refresh" \
+cofounder schedule add --cron "0 2 * * *" "nightly embeddings refresh" \
   --notify https://discord.com/api/webhooks/...
 ```
 
@@ -114,13 +114,13 @@ webhook will print a warning but won't fail the task or affect the result.
 
 ## Scheduled task notifications
 
-Webhook URLs are stored in `~/.his-and-hers/schedules.json` and fired
+Webhook URLs are stored in `~/.cofounder/schedules.json` and fired
 automatically every time the schedule runs. Update a schedule's webhook:
 
 ```bash
 # Remove and re-add with new webhook URL
-hh schedule remove <id>
-hh schedule add --cron "0 2 * * *" "nightly task" --notify <new-url>
+cofounder schedule remove <id>
+cofounder schedule add --cron "0 2 * * *" "nightly task" --notify <new-url>
 ```
 
 ---
@@ -128,7 +128,7 @@ hh schedule add --cron "0 2 * * *" "nightly task" --notify <new-url>
 ## Sequence diagram
 
 ```
-H1 (hh send --wait --notify <url>)      H2 (hh watch)
+H1 (cofounder send --wait --notify <url>)      H2 (cofounder watch)
 ────────────────────────────────────     ─────────────
 startStreamServer() → :39200/stream
 buildWakeText() includes:
@@ -144,7 +144,7 @@ display "Identified 3 issues..."
                                           ...
                          chunk POST ◄──── done:true
 stream server closes
-                   result webhook POST ◄── hh result <id> "..."
+                   result webhook POST ◄── cofounder result <id> "..."
 task complete
 deliverNotification() ──────────────────► Discord/Slack/generic webhook
 ```
@@ -153,7 +153,7 @@ deliverNotification() ──────────────────► 
 
 ## Requirements
 
-- H1: `his-and-hers` ≥ 0.1.0
-- H2: `his-and-hers` ≥ 0.1.0 running `hh watch` (streaming env vars are auto-injected)
+- H1: `cofounder` ≥ 0.1.0
+- H2: `cofounder` ≥ 0.1.0 running `cofounder watch` (streaming env vars are auto-injected)
 - Network: H2 must be able to reach H1's Tailscale IP on the ephemeral stream port
   (typically in the 30000–65535 range; firewall rules may be needed in strict setups)

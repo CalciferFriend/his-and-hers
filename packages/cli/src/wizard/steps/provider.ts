@@ -3,7 +3,8 @@ import { isCancelled, type WizardContext } from "../context.ts";
 import { buildProviderConfig, type ProviderConfig } from "../../config/schema.ts";
 
 const PROVIDERS = [
-  { value: "anthropic", label: "Anthropic (Claude)", hint: "recommended for H1" },
+  { value: "anthropic-max", label: "Claude Max Plan", hint: "recommended — uses your Max subscription" },
+  { value: "anthropic", label: "Anthropic API", hint: "pay-per-token API key" },
   { value: "openai",    label: "OpenAI" },
   { value: "ollama",    label: "Ollama (local)",    hint: "recommended for H2 / GPU" },
   { value: "lmstudio",  label: "LM Studio (local)" },
@@ -11,10 +12,15 @@ const PROVIDERS = [
 ] as const satisfies { value: ProviderConfig["kind"]; label: string; hint?: string }[];
 
 const MODELS: Record<ProviderConfig["kind"], { label: string; value: string }[]> = {
+  "anthropic-max": [
+    { value: "claude-sonnet-4-6",    label: "claude-sonnet-4-6 (recommended)" },
+    { value: "claude-opus-4-6",      label: "claude-opus-4-6 (most capable)" },
+    { value: "claude-haiku-4-5",     label: "claude-haiku-4-5 (fast)" },
+  ],
   anthropic: [
     { value: "claude-sonnet-4-6",    label: "claude-sonnet-4-6 (recommended)" },
-    { value: "claude-opus-4",         label: "claude-opus-4 (powerful, slower)" },
-    { value: "claude-haiku-4",        label: "claude-haiku-4 (fast, cheap)" },
+    { value: "claude-opus-4-6",      label: "claude-opus-4-6 (most capable)" },
+    { value: "claude-haiku-4-5",     label: "claude-haiku-4-5 (fast)" },
   ],
   openai: [
     { value: "gpt-4o-mini",   label: "gpt-4o-mini (recommended)" },
@@ -55,6 +61,7 @@ export async function stepProvider(
 
   const providerKind = kind as ProviderConfig["kind"];
   const isLocal = providerKind === "ollama" || providerKind === "lmstudio";
+  const isMaxPlan = providerKind === "anthropic-max";
 
   // ── Model selection ────────────────────────────────────────────────────────
   let model: string;
@@ -123,7 +130,7 @@ export async function stepProvider(
           spinner.stop("Ollama responded but returned an error — continuing anyway.");
         }
       } catch {
-        spinner.stop("Ollama not reachable at that URL — make sure it's running before using hh.");
+        spinner.stop("Ollama not reachable at that URL — make sure it's running before using cofounder.");
       }
     }
   }
@@ -131,7 +138,12 @@ export async function stepProvider(
   // ── API key (cloud providers) ──────────────────────────────────────────────
   let apiKeyKeychainKey: string | undefined;
 
-  if (!isLocal) {
+  if (isMaxPlan) {
+    p.log.info(
+      "Max plan detected — Cofounder will use your Claude Code / Max subscription.\n" +
+      "No API key needed. Make sure Claude Code is authenticated on this machine.",
+    );
+  } else if (!isLocal) {
     const apiKey = await p.password({
       message: `API key for ${providerKind}`,
       validate: (v) => {
@@ -144,11 +156,11 @@ export async function stepProvider(
       process.exit(0);
     }
 
-    const keychainKey = `hh-${providerKind}-api-key`;
+    const keychainKey = `cofounder-${providerKind}-api-key`;
     const spinner = p.spinner();
     spinner.start("Storing API key in OS keychain…");
 
-    const stored = await tryStoreInKeychain("his-and-hers", keychainKey, apiKey as string);
+    const stored = await tryStoreInKeychain("cofounder", keychainKey, apiKey as string);
 
     if (stored) {
       spinner.stop("API key stored in OS keychain ✓");
@@ -156,7 +168,7 @@ export async function stepProvider(
     } else {
       spinner.stop("Could not access OS keychain — keytar may need native build.");
       p.log.warn(
-        "Set your API key in environment variable TJ_API_KEY in your shell profile.\n" +
+        "Set your API key in your shell profile as an environment variable.\n" +
         "Install keytar native dependencies for secure storage: pnpm approve-builds",
       );
     }

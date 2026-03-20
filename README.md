@@ -1,9 +1,9 @@
-# his-and-hers
+# cofounder
 
 Two agents. Separate machines. One command to wire them.
 
-[![CI](https://github.com/CalciferFriend/his-and-hers/actions/workflows/ci.yml/badge.svg)](https://github.com/CalciferFriend/his-and-hers/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/npm/v/his-and-hers)](https://www.npmjs.com/package/his-and-hers)
+[![CI](https://github.com/CalciferFriend/cofounder/actions/workflows/ci.yml/badge.svg)](https://github.com/CalciferFriend/cofounder/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/cofounder)](https://www.npmjs.com/package/cofounder)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ---
@@ -22,21 +22,21 @@ H1 can't catch H2 but can't function without him. H2 runs fast, disappears when 
 > *"We do not have organs of communication. Our brains can display our thoughts to the outside world, thereby achieving communication."*
 > — Cixin Liu, The Dark Forest
 
-Today, his-and-hers speaks text. H1 sends a prompt. H2 sends a response. That works — and it's how every multi-agent system in production works right now.
+Today, cofounder speaks text. H1 sends a prompt. H2 sends a response. That works — and it's how every multi-agent system in production works right now.
 
 But text is a lossy compression of thought. Every message forces an agent to collapse its rich internal state into a sequence of tokens, discarding alternative reasoning paths, nuance, and structure that never survives the translation. The other agent then reconstructs meaning from those tokens — a game of telephone running at the speed of inference.
 
 **Our mission is to push the boundaries of what inter-agent communication can be — and to build the transport and memory-sharing layer that makes it possible as those boundaries move.**
 
-The immediate question is practical: how do you connect two machines, wake a sleeping GPU node, route a task, track cost, and get a result back? That's what his-and-hers does today.
+The immediate question is practical: how do you connect two machines, wake a sleeping GPU node, route a task, track cost, and get a result back? That's what cofounder does today.
 
 The deeper question is architectural: **what does the transport layer look like when the payload isn't text at all?**
 
 Recent research ([Interlat](https://arxiv.org/abs/2511.09149), [LatentMAS](https://arxiv.org/abs/2511.20639)) shows that agents can communicate directly via hidden states — raw continuous vectors passed between models before any token is decoded. The results are significant: up to 24× faster inference, 80% fewer tokens, measurably higher accuracy on complex reasoning tasks. Interlat does this across heterogeneous model architectures. LatentMAS does it training-free via KV cache sharing.
 
-Neither paper ships a production transport layer. That's the gap his-and-hers is positioned to fill.
+Neither paper ships a production transport layer. That's the gap cofounder is positioned to fill.
 
-The HHMessage protocol today carries text. A future `HHLatentMessage` carries hidden states — with text fallback for nodes that don't support it, capability negotiation at pairing time, and the same Tailscale/WOL/gateway infrastructure underneath. The physical-separation constraint stays. The payload evolves.
+The CofounderMessage protocol today carries text. A future `CofounderLatentMessage` carries hidden states — with text fallback for nodes that don't support it, capability negotiation at pairing time, and the same Tailscale/WOL/gateway infrastructure underneath. The physical-separation constraint stays. The payload evolves.
 
 We're building the pipes. The signal running through them will get stranger and more powerful over time.
 
@@ -45,7 +45,7 @@ We're building the pipes. The signal running through them will get stranger and 
 ## Quickstart
 
 ```bash
-npx his-and-hers
+npx cofounder
 ```
 
 Run that on each machine. The wizard handles everything — role selection, model provider, Tailscale pairing, Wake-on-LAN, gateway config, Windows AutoLogin, startup scripts. Under 10 minutes from zero to two agents talking.
@@ -55,16 +55,16 @@ Run that on each machine. The wizard handles everything — role selection, mode
 Or install globally:
 
 ```bash
-npm install -g his-and-hers
-hh          # wizard on first run, status thereafter
-hh onboard  # explicit wizard
-hh status   # show both nodes + connectivity
-hh send "generate a hero image for the landing page"
+npm install -g cofounder
+cofounder          # wizard on first run, status thereafter
+cofounder onboard  # explicit wizard
+cofounder status   # show both nodes + connectivity
+cofounder send "generate a hero image for the landing page"
 ```
 
 ## What the wizard does
 
-`hh onboard` walks you through the full setup in 12 steps:
+`cofounder onboard` walks you through the full setup in 12 steps:
 
 1. **Prerequisites** — checks Node >= 22, Tailscale running, OpenClaw installed
 2. **Role** — H1 (orchestrator) or H2 (executor)
@@ -85,7 +85,7 @@ hh send "generate a hero image for the landing page"
 ┌──────────────────────┐         Tailscale          ┌──────────────────────┐
 │   H1 (Orchestrator)  │◄──────────────────────────►│   H2 (Executor)    │
 │                       │                            │                       │
-│  Always-on server     │     HHMessage protocol     │  GPU workstation      │
+│  Always-on server     │     CofounderMessage protocol     │  GPU workstation      │
 │  Lightweight tasks    │◄──────────────────────────►│  Heavy compute        │
 │  Web / API / social   │                            │  Inference / GenAI    │
 │                       │         WOL packet         │                       │
@@ -94,7 +94,7 @@ hh send "generate a hero image for the landing page"
 └──────────────────────┘                             └──────────────────────┘
 ```
 
-### The protocol: HHMessage
+### The protocol: CofounderMessage
 
 Every cross-machine communication uses a typed envelope:
 
@@ -136,16 +136,16 @@ Message types: `task`, `result`, `heartbeat`, `handoff`, `wake`, `error`
 
 | Command | Description |
 |---------|-------------|
-| `hh onboard` | Setup wizard — configure this node, pair with remote |
-| `hh pair --code <code>` | Complete pairing with a 6-digit code |
-| `hh status` | Show both nodes, connectivity, last heartbeat |
-| `hh wake` | Send WOL magic packet to wake H2 |
-| `hh send <task>` | Send a task to the peer node |
-| `hh doctor` | Diagnose connectivity and configuration issues |
+| `cofounder onboard` | Setup wizard — configure this node, pair with remote |
+| `cofounder pair --code <code>` | Complete pairing with a 6-digit code |
+| `cofounder status` | Show both nodes, connectivity, last heartbeat |
+| `cofounder wake` | Send WOL magic packet to wake H2 |
+| `cofounder send <task>` | Send a task to the peer node |
+| `cofounder doctor` | Diagnose connectivity and configuration issues |
 
 ## Config
 
-Written to `~/.his-and-hers/hh.json` with `0o600` permissions. Contains:
+Written to `~/.cofounder/cofounder.json` with `0o600` permissions. Contains:
 
 - This node's role, name, Tailscale identity
 - Peer node's connection details (SSH, Tailscale, WOL)
@@ -157,9 +157,9 @@ Written to `~/.his-and-hers/hh.json` with `0o600` permissions. Contains:
 
 | Package | Description |
 |---------|-------------|
-| `@his-and-hers/core` | Protocol schemas (Zod), transport (Tailscale, SSH, WOL), trust model, gateway helpers |
-| `@his-and-hers/cli` | CLI commands + onboard wizard |
-| `@his-and-hers/skills` | OpenClaw SKILL.md files for cross-node agent communication |
+| `@cofounder/core` | Protocol schemas (Zod), transport (Tailscale, SSH, WOL), trust model, gateway helpers |
+| `@cofounder/cli` | CLI commands + onboard wizard |
+| `@cofounder/skills` | OpenClaw SKILL.md files for cross-node agent communication |
 
 ## Reference implementation
 
@@ -170,8 +170,8 @@ See [`docs/reference/calcifer-glados.md`](docs/reference/calcifer-glados.md) for
 ## Development
 
 ```bash
-git clone https://github.com/CalciferFriend/his-and-hers
-cd his-and-hers
+git clone https://github.com/CalciferFriend/cofounder
+cd cofounder
 pnpm install
 pnpm build
 pnpm test

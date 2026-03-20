@@ -56,7 +56,7 @@ ollama pull codellama:13b   # Code-specific
 
 ```bash
 cd ~/.openclaw
-hh templates init gpu-inference
+cofounder templates init gpu-inference
 ```
 
 This installs:
@@ -92,7 +92,7 @@ When a user request requires LLM inference:
 
 From H1:
 ```bash
-hh send "Summarize these 50 customer reviews: [...]"
+cofounder send "Summarize these 50 customer reviews: [...]"
 ```
 
 Watch the logs:
@@ -110,7 +110,7 @@ Watch the logs:
 ```typescript
 // api-server.ts on H1
 import express from 'express';
-import { sendTask } from '@his-and-hers/sdk';
+import { sendTask } from '@cofounder/sdk';
 
 const app = express();
 app.use(express.json());
@@ -143,7 +143,7 @@ app.listen(3000);
 
 ```typescript
 // inference-worker.ts on H2
-import { onTask } from '@his-and-hers/sdk';
+import { onTask } from '@cofounder/sdk';
 import ollama from 'ollama';
 
 onTask(async (task) => {
@@ -202,7 +202,7 @@ const completion = await client.chat.completions.create({
 
 ## Monitoring
 
-Track savings with `hh web`:
+Track savings with `cofounder web`:
 - **Cloud Cost:** API calls from H1
 - **Local Savings:** Equivalent cost if all tasks ran on cloud
 - **H2 Uptime:** How long GPU was awake (optimize to minimize)
@@ -212,7 +212,7 @@ Track savings with `hh web`:
 **H2 won't wake:**
 - Verify WOL is enabled in BIOS
 - Check router port forward (UDP port 9)
-- Test manually: `hh wake`
+- Test manually: `cofounder wake`
 
 **Ollama not responding:**
 - Check if service is running: `systemctl status ollama` (Linux)

@@ -1,5 +1,5 @@
 /**
- * commands/run.test.ts — unit tests for `hh run` shorthands
+ * commands/run.test.ts — unit tests for `cofounder run` shorthands
  *
  * Phase 8b — Calcifer ✅ (2026-03-15)
  */
@@ -36,7 +36,7 @@ vi.mock("./send.ts", () => ({
   }),
 }));
 
-vi.mock("@his-and-hers/core", () => ({
+vi.mock("@cofounder/core", () => ({
   loadConfig: vi.fn().mockResolvedValue({ peers: [] }),
   routeTask: vi.fn().mockResolvedValue({ peer: "glados" }),
   loadCapabilities: vi.fn().mockResolvedValue([]),
@@ -44,7 +44,7 @@ vi.mock("@his-and-hers/core", () => ({
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const TMP = join(tmpdir(), "hh-run-test-" + process.pid);
+const TMP = join(tmpdir(), "cofounder-run-test-" + process.pid);
 
 function setupTmpDir() {
   if (!existsSync(TMP)) mkdirSync(TMP, { recursive: true });

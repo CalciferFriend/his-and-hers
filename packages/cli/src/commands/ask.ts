@@ -1,10 +1,10 @@
 /**
- * commands/ask.ts — `hh ask`
+ * commands/ask.ts — `cofounder ask`
  *
- * Lightweight single-question command — faster and quieter than `hh send`.
+ * Lightweight single-question command — faster and quieter than `cofounder send`.
  * Sends a question to the peer, waits for the answer, and prints it.
  *
- * Differences from `hh send`:
+ * Differences from `cofounder send`:
  *   - No audit log entry
  *   - No budget gate
  *   - No notification events
@@ -13,11 +13,11 @@
  *   - Default timeout 60s (vs 120s for send)
  *
  * Usage:
- *   hh ask "what is the weather like on your side?"
- *   hh ask --peer glados "list your loaded ollama models"
- *   hh ask --timeout 30 "quick disk usage check"
- *   hh ask --json "disk usage"
- *   hh ask --no-stream "heavy task"   # disable streaming, poll only
+ *   cofounder ask "what is the weather like on your side?"
+ *   cofounder ask --peer glados "list your loaded ollama models"
+ *   cofounder ask --timeout 30 "quick disk usage check"
+ *   cofounder ask --json "disk usage"
+ *   cofounder ask --no-stream "heavy task"   # disable streaming, poll only
  *
  * Phase 14 — Calcifer ✅ (2026-03-16)
  */
@@ -34,7 +34,7 @@ import {
   startResultServer,
   startStreamServer,
   type ResultWebhookPayload,
-} from "@his-and-hers/core";
+} from "@cofounder/core";
 import { createTaskState, pollTaskCompletion } from "../state/tasks.ts";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -59,7 +59,7 @@ export interface AskResult {
 
 /**
  * Build the wake-message text for an ask request.
- * Lighter than `hh send`: no attachments, no context summary, no cron hints.
+ * Lighter than `cofounder send`: no attachments, no context summary, no cron hints.
  */
 export function buildAskText(
   from: string,
@@ -70,11 +70,11 @@ export function buildAskText(
   streamToken?: string | null,
 ): string {
   const resultCmd = webhookUrl
-    ? `hh result ${taskId} "<your answer>" --webhook-url ${webhookUrl}`
-    : `hh result ${taskId} "<your answer>"`;
+    ? `cofounder result ${taskId} "<your answer>" --webhook-url ${webhookUrl}`
+    : `cofounder result ${taskId} "<your answer>"`;
 
   const lines = [
-    `[HHMessage:ask from ${from} id=${taskId}] ${question}`,
+    `[CofounderMessage:ask from ${from} id=${taskId}] ${question}`,
     ``,
     `When done, run: ${resultCmd}`,
   ];
@@ -106,14 +106,14 @@ export async function ask(question: string, opts: AskOptions = {}): Promise<void
   // ── Config ─────────────────────────────────────────────────────────────────
   const config = await loadConfig();
   if (!config) {
-    if (!json) p.log.error("No hh config found. Run `hh onboard` first.");
-    else console.log(JSON.stringify({ ok: false, error: "No hh config found." }));
+    if (!json) p.log.error("No cofounder config found. Run `cofounder onboard` first.");
+    else console.log(JSON.stringify({ ok: false, error: "No cofounder config found." }));
     process.exit(1);
   }
 
   const allPeers = getAllPeers(config);
   if (allPeers.length === 0) {
-    if (!json) p.log.error("No peers configured. Run `hh onboard` to add a peer.");
+    if (!json) p.log.error("No peers configured. Run `cofounder onboard` to add a peer.");
     else console.log(JSON.stringify({ ok: false, error: "No peers configured." }));
     process.exit(1);
   }
@@ -133,7 +133,7 @@ export async function ask(question: string, opts: AskOptions = {}): Promise<void
 
   const started = Date.now();
 
-  if (!json) p.intro(`${pc.bold("hh ask")} → ${pc.cyan(targetPeer.name)}`);
+  if (!json) p.intro(`${pc.bold("cofounder ask")} → ${pc.cyan(targetPeer.name)}`);
 
   // ── Reachability (best effort) ─────────────────────────────────────────────
   const peerPort = targetPeer.gateway_port ?? 18789;
@@ -194,7 +194,7 @@ export async function ask(question: string, opts: AskOptions = {}): Promise<void
   if (!targetPeer.gateway_token) {
     streamHandle?.close();
     if (!json) {
-      p.log.error("Peer gateway token not set. Run `hh pair` first.");
+      p.log.error("Peer gateway token not set. Run `cofounder pair` first.");
       p.outro("Ask failed.");
     } else {
       console.log(JSON.stringify({ ok: false, error: "Gateway token not set." }));
@@ -326,7 +326,7 @@ export async function ask(question: string, opts: AskOptions = {}): Promise<void
     p.outro(`${pc.green("✓")} Answered in ${pc.dim(`${(duration_ms / 1000).toFixed(1)}s`)}`);
   } else {
     p.log.warn(`No response from ${targetPeer.name} within ${timeoutSeconds}s.`);
-    p.log.info(`Tip: check status with: hh status`);
+    p.log.info(`Tip: check status with: cofounder status`);
     p.outro(pc.yellow("Ask timed out."));
     process.exit(1);
   }

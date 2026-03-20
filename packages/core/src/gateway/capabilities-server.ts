@@ -8,7 +8,7 @@
  *
  *   H1                                          H2
  *   ─────                                        ─────
- *   hh capabilities fetch  →  GET /capabilities ─►  capabilities-server
+ *   cofounder capabilities fetch  →  GET /capabilities ─►  capabilities-server
  *                              (X-HH-Token auth)     reads capabilities.json
  *                          ◄─  { report: HHCapabilityReport }
  *   saves peer-capabilities.json
@@ -21,19 +21,19 @@
  *   - Graceful: CORS not enabled (Tailscale-only, no browser clients expected).
  *
  * ## Usage (H2 startup)
- *   Start alongside `hh watch`:
+ *   Start alongside `cofounder watch`:
  *
- *     import { startCapabilitiesServer } from "@his-and-hers/core";
+ *     import { startCapabilitiesServer } from "@cofounder/core";
  *     const srv = await startCapabilitiesServer({ token, port: 18790 });
  *     // srv.close() to shut down
  *
- *   Or via `hh watch --serve-capabilities [port]` CLI flag (see commands/watch.ts).
+ *   Or via `cofounder watch --serve-capabilities [port]` CLI flag (see commands/watch.ts).
  *
  * ## Endpoint
  *
  *   GET /capabilities
  *     → 200 { ok: true, report: HHCapabilityReport }
- *     → 404 { error: "no capabilities report found — run hh capabilities advertise" }
+ *     → 404 { error: "no capabilities report found — run cofounder capabilities advertise" }
  *     → 401 { error: "unauthorized" }
  *
  *   GET /health
@@ -87,13 +87,13 @@ export async function startCapabilitiesServer(
       }
 
       // ── All other routes require auth ─────────────────────────────────────
-      const hhToken = req.headers["x-hh-token"];
+      const cfToken = req.headers["x-cofounder-token"];
       const bearerHeader = req.headers["authorization"];
       const bearerToken =
         typeof bearerHeader === "string" && bearerHeader.startsWith("Bearer ")
           ? bearerHeader.slice(7)
           : null;
-      const incoming = hhToken ?? bearerToken;
+      const incoming = cfToken ?? bearerToken;
       if (!incoming || incoming !== token) {
         res.writeHead(401, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ error: "unauthorized" }));
@@ -108,7 +108,7 @@ export async function startCapabilitiesServer(
             res.writeHead(404, { "Content-Type": "application/json" });
             res.end(
               JSON.stringify({
-                error: "no capabilities report found — run hh capabilities advertise",
+                error: "no capabilities report found — run cofounder capabilities advertise",
               }),
             );
             return;

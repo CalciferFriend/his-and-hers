@@ -22,7 +22,7 @@ import {
 let testDir: string;
 
 beforeAll(async () => {
-  testDir = join(tmpdir(), `hh-attach-test-${Date.now()}`);
+  testDir = join(tmpdir(), `cofounder-attach-test-${Date.now()}`);
   await mkdir(testDir, { recursive: true });
 });
 
@@ -296,16 +296,16 @@ describe("decodeAttachment", () => {
 
 // ─── Schema / zod validation ──────────────────────────────────────────────────
 
-describe("AttachmentPayload schema (via HHTaskPayload)", () => {
+describe("AttachmentPayload schema (via CofounderTaskPayload)", () => {
   it("accepts tasks with empty attachments array (default)", async () => {
-    const { HHTaskPayload } = await import("./protocol/message.schema.ts");
-    const payload = HHTaskPayload.parse({ objective: "do something" });
+    const { CofounderTaskPayload } = await import("./protocol/message.schema.ts");
+    const payload = CofounderTaskPayload.parse({ objective: "do something" });
     expect(payload.attachments).toEqual([]);
   });
 
   it("accepts tasks with valid attachments", async () => {
-    const { HHTaskPayload } = await import("./protocol/message.schema.ts");
-    const payload = HHTaskPayload.parse({
+    const { CofounderTaskPayload } = await import("./protocol/message.schema.ts");
+    const payload = CofounderTaskPayload.parse({
       objective: "review this file",
       attachments: [
         {
@@ -321,9 +321,9 @@ describe("AttachmentPayload schema (via HHTaskPayload)", () => {
   });
 
   it("rejects negative size_bytes", async () => {
-    const { HHTaskPayload } = await import("./protocol/message.schema.ts");
+    const { CofounderTaskPayload } = await import("./protocol/message.schema.ts");
     expect(() =>
-      HHTaskPayload.parse({
+      CofounderTaskPayload.parse({
         objective: "test",
         attachments: [
           {

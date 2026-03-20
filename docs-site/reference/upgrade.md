@@ -1,13 +1,13 @@
-# `hh upgrade`
+# `cofounder upgrade`
 
-Check for newer versions of `his-and-hers` on npm and print upgrade instructions if one is available.
+Check for newer versions of `cofounder` on npm and print upgrade instructions if one is available.
 
 ## Usage
 
 ```bash
-hh upgrade
-hh upgrade --check
-hh upgrade --json
+cofounder upgrade
+cofounder upgrade --check
+cofounder upgrade --json
 ```
 
 ## Flags
@@ -34,13 +34,13 @@ hh upgrade --json
 
 ```bash
 # Interactive check with upgrade instructions
-hh upgrade
+cofounder upgrade
 
 # Scripted check — useful in CI or cron
-hh upgrade --check && echo "up to date" || echo "upgrade available"
+cofounder upgrade --check && echo "up to date" || echo "upgrade available"
 
 # JSON output for automation
-hh upgrade --json
+cofounder upgrade --json
 # → { "current": "0.1.0", "latest": "0.2.0", "upgrade_available": true }
 ```
 
@@ -53,4 +53,4 @@ hh upgrade --json
 ## See also
 
 - [Installation guide](/guide/install-linux) — initial setup
-- [`hh doctor`](/reference/doctor) — full health diagnostics
+- [`cofounder doctor`](/reference/doctor) — full health diagnostics

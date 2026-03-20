@@ -1,13 +1,13 @@
 /**
- * commands/stats.ts — `hh stats`
+ * commands/stats.ts — `cofounder stats`
  *
  * Deep task analytics with charts, heatmaps, and peer breakdowns.
  *
  * Usage:
- *   hh stats                         → last 14 days summary
- *   hh stats --days 30               → last 30 days
- *   hh stats --peer glados           → filter to a specific peer
- *   hh stats --json                  → raw analytics object
+ *   cofounder stats                         → last 14 days summary
+ *   cofounder stats --days 30               → last 30 days
+ *   cofounder stats --peer glados           → filter to a specific peer
+ *   cofounder stats --json                  → raw analytics object
  */
 
 import * as p from "@clack/prompts";
@@ -60,7 +60,7 @@ export async function stats(opts: StatsOptions = {}) {
       console.log(JSON.stringify({ error: "No tasks found in this time window" }, null, 2));
       return;
     }
-    p.intro(pc.bgMagenta(pc.white(` hh stats — last ${days} days `)));
+    p.intro(pc.bgMagenta(pc.white(` cofounder stats — last ${days} days `)));
     p.log.info("No tasks found in this time window.");
     p.outro("Nothing to show.");
     return;
@@ -76,7 +76,7 @@ export async function stats(opts: StatsOptions = {}) {
 
   // ── Pretty output ────────────────────────────────────────────────────────
 
-  p.intro(pc.bgMagenta(pc.white(` hh stats — last ${days} days `)));
+  p.intro(pc.bgMagenta(pc.white(` cofounder stats — last ${days} days `)));
 
   // ── Overview ─────────────────────────────────────────────────────────────
   p.log.info(pc.bold("Overview"));

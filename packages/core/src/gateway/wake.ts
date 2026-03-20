@@ -108,7 +108,7 @@ export async function wakeAgent(opts: WakeOptions): Promise<WakeResult> {
               permissions: {},
               auth: { token },
               locale: "en-US",
-              userAgent: "his-and-hers/0.1.0",
+              userAgent: "cofounder/0.1.0",
             },
           }),
         );

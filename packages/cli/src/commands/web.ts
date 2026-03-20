@@ -1,10 +1,10 @@
 /**
- * commands/web.ts — `hh web`
+ * commands/web.ts — `cofounder web`
  *
  * Launch a local web dashboard for the H1 node.
  *
  * Serves a single-page app with:
- *   - Live task feed (SSE, watching ~/.his-and-hers/state/tasks/)
+ *   - Live task feed (SSE, watching ~/.cofounder/state/tasks/)
  *   - Peer status cards with gateway health
  *   - Budget summary (this week)
  *   - Send-task form
@@ -12,9 +12,9 @@
  * Uses ONLY Node built-ins (http, fs, path, os) — no new dependencies.
  *
  * Usage:
- *   hh web                 # start on default port 3847
- *   hh web --port 8080     # custom port
- *   hh web --no-open       # don't open browser automatically
+ *   cofounder web                 # start on default port 3847
+ *   cofounder web --port 8080     # custom port
+ *   cofounder web --no-open       # don't open browser automatically
  */
 
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
@@ -26,12 +26,12 @@ import pc from "picocolors";
 import { loadConfig } from "../config/store.ts";
 import { listTaskStates, type TaskState, type TaskStatus } from "../state/tasks.ts";
 import { buildBudgetSummary } from "../state/budget.ts";
-import { checkGatewayHealth, pingPeer } from "@his-and-hers/core";
+import { checkGatewayHealth, pingPeer } from "@cofounder/core";
 import { getAllPeers } from "../peers/select.ts";
 import { createTaskState } from "../state/tasks.ts";
-import { wakeAgent, createTaskMessage, loadContextSummary, withRetry } from "@his-and-hers/core";
+import { wakeAgent, createTaskMessage, loadContextSummary, withRetry } from "@cofounder/core";
 
-const STATE_DIR = join(homedir(), ".his-and-hers", "state", "tasks");
+const STATE_DIR = join(homedir(), ".cofounder", "state", "tasks");
 const DEFAULT_PORT = 3847;
 
 export interface WebOptions {
@@ -83,7 +83,7 @@ function buildHTML(port: number): string {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>his-and-hers dashboard</title>
+<title>cofounder dashboard</title>
 <style>
   :root {
     --bg: #0d0d0f;
@@ -255,7 +255,7 @@ function buildHTML(port: number): string {
 <body>
 <div class="layout">
   <header class="header">
-    <h1>his-and-hers <span>🔥</span> dashboard</h1>
+    <h1>cofounder <span>🔥</span> dashboard</h1>
     <span class="badge" id="live-badge">connecting…</span>
     <div class="spacer"></div>
     <span class="version" id="node-name">H1</span>
@@ -299,7 +299,7 @@ function buildHTML(port: number): string {
       <div class="task-list" id="task-list">
         <div class="empty-state">
           <div class="icon">📭</div>
-          <p>No tasks yet.<br>Send one with <code>hh send</code> or the form above.</p>
+          <p>No tasks yet.<br>Send one with <code>cofounder send</code> or the form above.</p>
         </div>
       </div>
     </main>
@@ -628,7 +628,7 @@ async function handleRequest(
       }
       if (!config) {
         res.statusCode = 500;
-        res.end(JSON.stringify({ ok: false, error: "no config found — run hh onboard first" }));
+        res.end(JSON.stringify({ ok: false, error: "no config found — run cofounder onboard first" }));
         return;
       }
 
@@ -700,7 +700,7 @@ export async function web(opts: WebOptions = {}) {
 
   server.listen(port, "127.0.0.1", async () => {
     const url = `http://localhost:${port}`;
-    console.log(`${pc.bgMagenta(pc.white(" hh web "))} dashboard running at ${pc.cyan(url)}`);
+    console.log(`${pc.bgMagenta(pc.white(" cofounder web "))} dashboard running at ${pc.cyan(url)}`);
     console.log(pc.dim("  Ctrl-C to stop\n"));
 
     // Start watching task dir for SSE push

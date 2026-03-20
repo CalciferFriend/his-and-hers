@@ -1,6 +1,6 @@
 # H1 vs H2 — Roles
 
-Every his-and-hers setup has exactly two roles: **H1** and **H2**. Pick the right one for each machine in the first two minutes — changing it later is annoying.
+Every cofounder setup has exactly two roles: **H1** and **H2**. Pick the right one for each machine in the first two minutes — changing it later is annoying.
 
 ---
 
@@ -30,9 +30,9 @@ H1 is always on. It receives user requests, breaks them into tasks, and delegate
 - Any machine that doesn't have a GPU but has reliable uptime
 
 **What H1 does:**
-- Listens for `hh send` commands from the user or from agent workflows
+- Listens for `cofounder send` commands from the user or from agent workflows
 - Checks if H2 is awake; sends a Wake-on-LAN packet if not
-- Builds a `HHMessage` and posts it to H2's gateway
+- Builds a `CofounderMessage` and posts it to H2's gateway
 - Waits for results, tracks cost in the task log
 - Caches H2's capability profile for routing decisions
 
@@ -54,7 +54,7 @@ H2 is the muscle. It runs local models, heavy inference, image generation, and a
 **What H2 does:**
 - Runs an OpenClaw gateway bound to its Tailscale IP
 - Advertises capabilities (GPU, Ollama models, skills) to H1
-- Receives `HHMessage` tasks, runs them through OpenClaw
+- Receives `CofounderMessage` tasks, runs them through OpenClaw
 - Returns results with cost info attached
 - Sends a heartbeat to H1 every 60 seconds while awake
 
@@ -88,16 +88,16 @@ Yes. H1 supports an array of H2 peers. Each gets its own config file and capabil
 
 ```bash
 # H1 can have multiple Jerrys:
-~/.his-and-hers/peers/
+~/.cofounder/peers/
   h2-home.json       ← RTX 3070 Ti, Windows PC
   h2-pi.json         ← Raspberry Pi 5, always-on
   h2-beast.json      ← RTX 4090 workstation
 
 # Target a specific H2:
-hh send "run 70B inference" --peer h2-beast
+cofounder send "run 70B inference" --peer h2-beast
 
 # Let H1 choose:
-hh send "embed this document" --auto
+cofounder send "embed this document" --auto
 ```
 
 See [Multi-H2 setup](/guide/multi-h2) for more.
@@ -109,8 +109,8 @@ See [Multi-H2 setup](/guide/multi-h2) for more.
 If you onboarded as the wrong role, re-run the wizard:
 
 ```bash
-hh onboard --role h1     # switch this machine to H1
-hh onboard --role h2   # switch this machine to H2
+cofounder onboard --role h1     # switch this machine to H1
+cofounder onboard --role h2   # switch this machine to H2
 ```
 
 The wizard overwrites the existing config. Your task history is preserved.

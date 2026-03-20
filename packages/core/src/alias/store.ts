@@ -1,10 +1,10 @@
 /**
  * core/alias/store.ts — persistent registry for user-defined CLI aliases
  *
- * Aliases map a short name to any `hh` subcommand string:
+ * Aliases map a short name to any `cofounder` subcommand string:
  *   pr-review → "workflow run code-review --peer glados"
  *
- * Stored in ~/.his-and-hers/aliases.json
+ * Stored in ~/.cofounder/aliases.json
  *
  * Phase 8c — Calcifer ✅ (2026-03-15)
  */
@@ -40,7 +40,7 @@ export interface AddAliasInput {
 // ─── Storage path ─────────────────────────────────────────────────────────────
 
 function aliasesPath(): string {
-  const dir = join(homedir(), ".his-and-hers");
+  const dir = join(homedir(), ".cofounder");
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
   return join(dir, "aliases.json");
 }

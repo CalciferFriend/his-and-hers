@@ -16,7 +16,7 @@ import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { sshExec } from "@his-and-hers/core";
+import { sshExec } from "@cofounder/core";
 import { isCancelled, type WizardContext } from "../context.ts";
 
 const execFileAsync = promisify(execFile);
@@ -32,7 +32,7 @@ function buildNetshCmd(port: number): string {
     `action=allow ` +
     `protocol=TCP ` +
     `localport=${port} ` +
-    `description="his-and-hers gateway: allows H1 to reach capabilities + webhook endpoints"`
+    `description="cofounder gateway: allows H1 to reach capabilities + webhook endpoints"`
   );
 }
 

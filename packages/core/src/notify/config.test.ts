@@ -71,7 +71,7 @@ describe("loadNotifyWebhooks", () => {
     // Manually prime the mock
     const { join } = await import("node:path");
     const { homedir } = await import("node:os");
-    mockFiles.set(join(homedir(), ".his-and-hers", "notify-webhooks.json"), JSON.stringify(webhooks));
+    mockFiles.set(join(homedir(), ".cofounder", "notify-webhooks.json"), JSON.stringify(webhooks));
 
     const result = await loadNotifyWebhooks();
     expect(result).toHaveLength(1);
@@ -81,7 +81,7 @@ describe("loadNotifyWebhooks", () => {
   it("returns empty array on parse error", async () => {
     const { join } = await import("node:path");
     const { homedir } = await import("node:os");
-    mockFiles.set(join(homedir(), ".his-and-hers", "notify-webhooks.json"), "not-json{{{");
+    mockFiles.set(join(homedir(), ".cofounder", "notify-webhooks.json"), "not-json{{{");
     const result = await loadNotifyWebhooks();
     expect(result).toEqual([]);
   });
@@ -221,7 +221,7 @@ describe("getActiveWebhooks", () => {
     ];
     const { join } = await import("node:path");
     const { homedir } = await import("node:os");
-    mockFiles.set(join(homedir(), ".his-and-hers", "notify-webhooks.json"), JSON.stringify(webhooks));
+    mockFiles.set(join(homedir(), ".cofounder", "notify-webhooks.json"), JSON.stringify(webhooks));
 
     const active = await getActiveWebhooks(true); // success=true
     expect(active).toHaveLength(1);

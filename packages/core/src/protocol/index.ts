@@ -1,19 +1,19 @@
 export {
-  HHMessage,
-  HHTaskMessage,
-  HHResultMessage,
-  HHHeartbeatMessage,
-  HHHandoffMessage,
-  HHWakeMessage,
-  HHErrorMessage,
-  HHLatentMessage,
-  HHTaskPayload,
-  HHResultPayload,
-  HHHeartbeatPayload,
-  HHHandoffPayload,
+  CofounderMessage,
+  CofounderTaskMessage,
+  CofounderResultMessage,
+  CofounderHeartbeatMessage,
+  CofounderHandoffMessage,
+  CofounderWakeMessage,
+  CofounderErrorMessage,
+  CofounderLatentMessage,
+  CofounderTaskPayload,
+  CofounderResultPayload,
+  CofounderHeartbeatPayload,
+  CofounderHandoffPayload,
   HHWakePayload,
   HHErrorPayload,
-  HHLatentPayload,
+  CofounderLatentPayload,
   AttachmentPayload,
   isTaskMessage,
   isResultMessage,
@@ -30,6 +30,6 @@ export {
   serializeLatent,
   deserializeLatent,
 } from "./message.schema.ts";
-export { HHHandoff } from "./handoff.schema.ts";
-export { HHHeartbeat } from "./heartbeat.schema.ts";
-export { HHPair } from "./pair.schema.ts";
+export { CofounderHandoff } from "./handoff.schema.ts";
+export { CofounderHeartbeat } from "./heartbeat.schema.ts";
+export { CofounderPair } from "./pair.schema.ts";

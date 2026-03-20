@@ -1,6 +1,6 @@
-# CLI Reference — `hh`
+# CLI Reference — `cofounder`
 
-`hh` is the command-line interface for his-and-hers. All commands work on both H1 and H2 nodes unless noted.
+`cofounder` is the command-line interface for cofounder. All commands work on both H1 and H2 nodes unless noted.
 
 ---
 
@@ -16,35 +16,35 @@
 
 ## Commands
 
-### `hh` (no args)
+### `cofounder` (no args)
 
-First run → launches `hh onboard`. Subsequent runs → shows `hh status`.
+First run → launches `cofounder onboard`. Subsequent runs → shows `cofounder status`.
 
 ---
 
-### `hh onboard`
+### `cofounder onboard`
 
 Interactive setup wizard. Configures role, identity, LLM provider, Tailscale pairing, SSH, Wake-on-LAN, gateway bind, Windows AutoLogin, and startup scripts.
 
 ```bash
-hh onboard
-hh onboard --role h1     # skip role selection
-hh onboard --role h2
+cofounder onboard
+cofounder onboard --role h1     # skip role selection
+cofounder onboard --role h2
 ```
 
 See [Quickstart](/guide/quickstart) for a full walkthrough.
 
 ---
 
-### `hh send <task>`
+### `cofounder send <task>`
 
 Send a task to H2 (run from H1).
 
 ```bash
-hh send "summarize the attached PDF"
-hh send "generate a hero image, dark theme" --wait
-hh send "run the test suite" --peer h2-beast
-hh send "what is 2+2"      # fast, no WOL needed
+cofounder send "summarize the attached PDF"
+cofounder send "generate a hero image, dark theme" --wait
+cofounder send "run the test suite" --peer h2-beast
+cofounder send "what is 2+2"      # fast, no WOL needed
 ```
 
 **Flags:**
@@ -61,423 +61,423 @@ See [Sending tasks](/guide/sending-tasks) for more.
 
 ---
 
-### `hh status`
+### `cofounder status`
 
 Show the health of both H1 and H2 nodes.
 
 ```bash
-hh status
-hh status --json
+cofounder status
+cofounder status --json
 ```
 
 Displays: Tailscale reachability, gateway health, last heartbeat, current model, WOL capability, budget summary.
 
 ---
 
-### `hh monitor`
+### `cofounder monitor`
 
 Live terminal dashboard — peer health, recent tasks, and today's budget, refreshed every N seconds.
 
 ```bash
-hh monitor               # refresh every 5s (Ctrl+C to quit)
-hh monitor --interval 10 # custom refresh interval
-hh monitor --once        # single snapshot, no loop
-hh monitor --json        # print MonitorSnapshot as JSON and exit
+cofounder monitor               # refresh every 5s (Ctrl+C to quit)
+cofounder monitor --interval 10 # custom refresh interval
+cofounder monitor --once        # single snapshot, no loop
+cofounder monitor --json        # print MonitorSnapshot as JSON and exit
 ```
 
-See [`hh monitor` reference](/reference/monitor) for the full JSON schema and layout docs.
+See [`cofounder monitor` reference](/reference/monitor) for the full JSON schema and layout docs.
 
 ---
 
-### `hh wake`
+### `cofounder wake`
 
 Send a Wake-on-LAN Magic Packet to H2.
 
 ```bash
-hh wake
-hh wake --peer h2-beast
-hh wake --wait    # wait for gateway to come online
+cofounder wake
+cofounder wake --peer h2-beast
+cofounder wake --wait    # wait for gateway to come online
 ```
 
 ---
 
-### `hh logs`
+### `cofounder logs`
 
 View task history.
 
 ```bash
-hh logs                          # last 20 tasks
-hh logs --follow                 # live tail, polls every 2s
-hh logs --status failed          # filter by status
-hh logs --peer h2-pi          # filter by peer
-hh logs --since 24h              # time window (24h, 7d, 30m)
-hh logs --limit 50
-hh logs --output                 # include result text inline
-hh logs --json                   # machine-readable
+cofounder logs                          # last 20 tasks
+cofounder logs --follow                 # live tail, polls every 2s
+cofounder logs --status failed          # filter by status
+cofounder logs --peer h2-pi          # filter by peer
+cofounder logs --since 24h              # time window (24h, 7d, 30m)
+cofounder logs --limit 50
+cofounder logs --output                 # include result text inline
+cofounder logs --json                   # machine-readable
 ```
 
 ---
 
-### `hh budget`
+### `cofounder budget`
 
 Show cost tracking.
 
 ```bash
-hh budget                # today
-hh budget --week
-hh budget --month
-hh budget --all
-hh budget --tasks        # per-task breakdown
-hh budget --json
+cofounder budget                # today
+cofounder budget --week
+cofounder budget --month
+cofounder budget --all
+cofounder budget --tasks        # per-task breakdown
+cofounder budget --json
 ```
 
 See [Budget tracking](/guide/budget) for more.
 
 ---
 
-### `hh capabilities`
+### `cofounder capabilities`
 
 Scan, advertise, fetch, and route via capabilities.
 
 ```bash
-hh capabilities scan       # probe local hardware + models
-hh capabilities advertise  # scan + save + notify H1
-hh capabilities fetch      # pull H2's capabilities to H1 (run on H1)
-hh capabilities show       # display cached capabilities
-hh capabilities route "generate an image"  # preview routing decision
+cofounder capabilities scan       # probe local hardware + models
+cofounder capabilities advertise  # scan + save + notify H1
+cofounder capabilities fetch      # pull H2's capabilities to H1 (run on H1)
+cofounder capabilities show       # display cached capabilities
+cofounder capabilities route "generate an image"  # preview routing decision
 ```
 
 See [Capability routing](/guide/capabilities) for more.
 
 ---
 
-### `hh discover`
+### `cofounder discover`
 
 Browse the community registry of published H2 nodes.
 
 ```bash
-hh discover                          # browse all
-hh discover --gpu                    # nodes with GPU
-hh discover --skill image-gen        # nodes with image gen
-hh discover --provider ollama        # Ollama nodes only
-hh discover --os windows             # Windows Jerrys
-hh discover --json
+cofounder discover                          # browse all
+cofounder discover --gpu                    # nodes with GPU
+cofounder discover --skill image-gen        # nodes with image gen
+cofounder discover --provider ollama        # Ollama nodes only
+cofounder discover --os windows             # Windows Jerrys
+cofounder discover --json
 ```
 
 ---
 
-### `hh notify`
+### `cofounder notify`
 
 Manage **persistent notification webhooks** that fire automatically on every task result.
 
 ```bash
-hh notify add <url>                          # register a webhook
-hh notify add <url> --name "label" --on failure  # failure-only
-hh notify list                               # show all registered webhooks
-hh notify remove <id>                        # unregister by ID prefix
-hh notify test                               # fire test payload to all webhooks
+cofounder notify add <url>                          # register a webhook
+cofounder notify add <url> --name "label" --on failure  # failure-only
+cofounder notify list                               # show all registered webhooks
+cofounder notify remove <id>                        # unregister by ID prefix
+cofounder notify test                               # fire test payload to all webhooks
 ```
 
-Webhooks fire automatically after every `hh send --wait` result — no `--notify` flag needed.
-See [`hh notify` reference](/reference/notify) for full details and payload formats.
+Webhooks fire automatically after every `cofounder send --wait` result — no `--notify` flag needed.
+See [`cofounder notify` reference](/reference/notify) for full details and payload formats.
 
 ---
 
-### `hh publish`
+### `cofounder publish`
 
 Publish your node card to the community registry (anonymized GitHub Gist).
 
 ```bash
-hh publish          # guided flow: description, tags, public/private
-hh publish --dry-run
+cofounder publish          # guided flow: description, tags, public/private
+cofounder publish --dry-run
 ```
 
-See what gets published: `hh capabilities show` — no IP addresses, no API keys, just hardware + skill tags.
+See what gets published: `cofounder capabilities show` — no IP addresses, no API keys, just hardware + skill tags.
 
 ---
 
-### `hh pair`
+### `cofounder pair`
 
 Manage peer connections.
 
 ```bash
-hh pair              # interactive: add/remove/test peers
-hh pair list         # list configured peers
-hh pair test         # test all peers
-hh pair remove <name>
+cofounder pair              # interactive: add/remove/test peers
+cofounder pair list         # list configured peers
+cofounder pair test         # test all peers
+cofounder pair remove <name>
 ```
 
 ---
 
-### `hh doctor`
+### `cofounder doctor`
 
 Diagnose connectivity, config, and setup issues.
 
 ```bash
-hh doctor
+cofounder doctor
 ```
 
 Checks: Node version, Tailscale status, SSH access to peers, gateway health, WOL config, capability file freshness.
 
 ---
 
-### `hh result`
+### `cofounder result`
 
 Mark a pending task as completed or failed. Called by H2 after processing a delegated task.
 
 ```bash
-hh result <id> "output text"
-hh result <id> --fail "error message"
-hh result <id> --output-file /tmp/result.txt
-hh result <id> "done" --webhook-url http://100.x.x.x:38791/result
+cofounder result <id> "output text"
+cofounder result <id> --fail "error message"
+cofounder result <id> --output-file /tmp/result.txt
+cofounder result <id> "done" --webhook-url http://100.x.x.x:38791/result
 ```
 
-See [hh result reference](/reference/result) for full docs.
+See [cofounder result reference](/reference/result) for full docs.
 
 ---
 
-### `hh watch`
+### `cofounder watch`
 
 H2-side task listener daemon. Polls for pending tasks, dispatches them to an executor, and delivers results back to H1.
 
 ```bash
-hh watch                                   # poll every 5s, print pending
-hh watch --exec "node run-task.js"         # auto-dispatch to executor
-hh watch --exec "node run-task.js" --serve-capabilities
-hh watch --once                            # single-pass
-hh watch --interval 10                     # custom poll interval
-hh watch --dry-run                         # detect without executing
-hh watch --json                            # machine-readable output
+cofounder watch                                   # poll every 5s, print pending
+cofounder watch --exec "node run-task.js"         # auto-dispatch to executor
+cofounder watch --exec "node run-task.js" --serve-capabilities
+cofounder watch --once                            # single-pass
+cofounder watch --interval 10                     # custom poll interval
+cofounder watch --dry-run                         # detect without executing
+cofounder watch --json                            # machine-readable output
 ```
 
-See [hh watch reference](/reference/watch) for full docs.
+See [cofounder watch reference](/reference/watch) for full docs.
 
 ---
 
-### `hh heartbeat`
+### `cofounder heartbeat`
 
 Send, show, or record heartbeats between H1 and H2.
 
 ```bash
-hh heartbeat           # show last heartbeat from peer
-hh heartbeat send      # deliver a heartbeat to configured peer
-hh heartbeat record --from GLaDOS --at <iso>
+cofounder heartbeat           # show last heartbeat from peer
+cofounder heartbeat send      # deliver a heartbeat to configured peer
+cofounder heartbeat record --from GLaDOS --at <iso>
 ```
 
 ---
 
-### `hh peers`
+### `cofounder peers`
 
 List all configured peer nodes with cached capability info.
 
 ```bash
-hh peers              # list with cached GPU/model/skill info
-hh peers --ping       # add live Tailscale reachability check
-hh peers --json
+cofounder peers              # list with cached GPU/model/skill info
+cofounder peers --ping       # add live Tailscale reachability check
+cofounder peers --json
 ```
 
-The primary peer is marked with ★. See [hh peers reference](/reference/peers) for full docs.
+The primary peer is marked with ★. See [cofounder peers reference](/reference/peers) for full docs.
 
 ---
 
-### `hh replay`
+### `cofounder replay`
 
 Re-send a previous task by ID or prefix. Creates a new task ID — the original is untouched.
 
 ```bash
-hh replay abc123            # replay by prefix
-hh replay abc123 --peer gpu # override the target peer
-hh replay abc123 --wait     # block until result arrives
-hh replay abc123 --dry-run  # preview without sending
+cofounder replay abc123            # replay by prefix
+cofounder replay abc123 --peer gpu # override the target peer
+cofounder replay abc123 --wait     # block until result arrives
+cofounder replay abc123 --dry-run  # preview without sending
 ```
 
-See [hh replay reference](/reference/replay) for full docs.
+See [cofounder replay reference](/reference/replay) for full docs.
 
 ---
 
-### `hh cancel`
+### `cofounder cancel`
 
 Mark a pending or running task as cancelled.
 
 ```bash
-hh cancel abc123            # cancel by ID prefix
-hh cancel abc123 --force    # cancel even if already terminal
-hh cancel --all-pending     # cancel every pending task
-hh cancel --json
+cofounder cancel abc123            # cancel by ID prefix
+cofounder cancel abc123 --force    # cancel even if already terminal
+cofounder cancel --all-pending     # cancel every pending task
+cofounder cancel --json
 ```
 
-See [hh cancel reference](/reference/cancel) for full docs.
+See [cofounder cancel reference](/reference/cancel) for full docs.
 
 ---
 
-### `hh upgrade`
+### `cofounder upgrade`
 
-Check for newer versions of `his-and-hers` on npm.
+Check for newer versions of `cofounder` on npm.
 
 ```bash
-hh upgrade              # interactive check with upgrade instructions
-hh upgrade --check      # exit 1 if upgrade available (CI-friendly)
-hh upgrade --json
+cofounder upgrade              # interactive check with upgrade instructions
+cofounder upgrade --check      # exit 1 if upgrade available (CI-friendly)
+cofounder upgrade --json
 ```
 
-See [hh upgrade reference](/reference/upgrade) for full docs.
+See [cofounder upgrade reference](/reference/upgrade) for full docs.
 
 ---
 
-### `hh template`
+### `cofounder template`
 
 Save named task templates with `{variable}` placeholders and run them on demand.
 
 ```bash
 # Save a template
-hh template add summarize --task "Summarise this in {lang}: {*}" --peer GLaDOS
+cofounder template add summarize --task "Summarise this in {lang}: {*}" --peer GLaDOS
 
 # List templates
-hh template list
+cofounder template list
 
 # Run a template — named var + positional splat
-hh template run summarize --var lang=English "My long document..."
+cofounder template run summarize --var lang=English "My long document..."
 
 # Run and wait for result
-hh template run summarize --var lang=French --wait "Mon document..."
+cofounder template run summarize --var lang=French --wait "Mon document..."
 
 # Inspect or remove
-hh template show summarize
-hh template remove summarize
+cofounder template show summarize
+cofounder template remove summarize
 ```
 
 Variables: `{varname}` → `--var name=value` · `{1}`, `{2}` → positional args · `{*}` → all args joined.
 
-See [hh template reference](/reference/template) for full docs.
+See [cofounder template reference](/reference/template) for full docs.
 
 ---
 
-### `hh prune`
+### `cofounder prune`
 
-Clean up stale task state files, retry records, and schedule logs from `~/.his-and-hers/`.
+Clean up stale task state files, retry records, and schedule logs from `~/.cofounder/`.
 
 ```bash
-hh prune                             # interactive — removes completed/failed tasks >30d old
-hh prune --dry-run                   # preview without deleting
-hh prune --older-than 7d --force     # no prompt, 7-day cutoff
-hh prune --status failed             # only failed tasks
-hh prune --include-retry --include-logs  # also clean retry + log files
-hh prune --json                      # machine-readable JSON summary
+cofounder prune                             # interactive — removes completed/failed tasks >30d old
+cofounder prune --dry-run                   # preview without deleting
+cofounder prune --older-than 7d --force     # no prompt, 7-day cutoff
+cofounder prune --status failed             # only failed tasks
+cofounder prune --include-retry --include-logs  # also clean retry + log files
+cofounder prune --json                      # machine-readable JSON summary
 ```
 
 Active tasks (`pending`, `running`) are **never** pruned.
 
-See [hh prune reference](/reference/prune) for full docs including JSON schema and scheduled pruning examples.
+See [cofounder prune reference](/reference/prune) for full docs including JSON schema and scheduled pruning examples.
 
 ---
 
-### `hh export`
+### `cofounder export`
 
 Export task history to a Markdown, CSV, or JSON report.
 
 ```bash
-hh export                          # markdown report to stdout
-hh export --format csv             # CSV table
-hh export --format json            # JSON array with summary stats
-hh export --since 7d               # last 7 days only
-hh export --status completed       # filter by status
-hh export --peer GLaDOS            # filter by peer
-hh export --out report.md          # write to file
-hh export --no-output              # omit result text (shorter report)
+cofounder export                          # markdown report to stdout
+cofounder export --format csv             # CSV table
+cofounder export --format json            # JSON array with summary stats
+cofounder export --since 7d               # last 7 days only
+cofounder export --status completed       # filter by status
+cofounder export --peer GLaDOS            # filter by peer
+cofounder export --out report.md          # write to file
+cofounder export --no-output              # omit result text (shorter report)
 ```
 
-See [hh export reference](/reference/export) for full docs.
+See [cofounder export reference](/reference/export) for full docs.
 
 ---
 
-### `hh chat`
+### `cofounder chat`
 
 Interactive multi-turn REPL with a peer node. Context carries forward between turns.
 
 ```bash
-hh chat                            # interactive session with primary peer
-hh chat --peer GLaDOS               # target a specific peer
-hh chat --no-context               # fresh context, no history carry-over
-hh chat --timeout 600              # 10-minute turn timeout
+cofounder chat                            # interactive session with primary peer
+cofounder chat --peer GLaDOS               # target a specific peer
+cofounder chat --no-context               # fresh context, no history carry-over
+cofounder chat --timeout 600              # 10-minute turn timeout
 ```
 
 In-session: `.context` shows context summary · `.clear` resets it · `exit` / Ctrl-C to quit.
 
-See [hh chat reference](/reference/chat) for full docs.
+See [cofounder chat reference](/reference/chat) for full docs.
 
 ---
 
-### `hh completion`
+### `cofounder completion`
 
-Print a shell completion script to stdout. Source it to get tab completion for all `hh` commands.
+Print a shell completion script to stdout. Source it to get tab completion for all `cofounder` commands.
 
 ```bash
-eval "$(hh completion bash)"       # bash (add to ~/.bashrc for permanent)
-eval "$(hh completion zsh)"        # zsh (add to ~/.zshrc for permanent)
-hh completion fish | source        # fish
-hh completion powershell | Out-String | Invoke-Expression   # PowerShell
-hh completion                      # auto-detect current shell
+eval "$(cofounder completion bash)"       # bash (add to ~/.bashrc for permanent)
+eval "$(cofounder completion zsh)"        # zsh (add to ~/.zshrc for permanent)
+cofounder completion fish | source        # fish
+cofounder completion powershell | Out-String | Invoke-Expression   # PowerShell
+cofounder completion                      # auto-detect current shell
 ```
 
-See [hh completion reference](/reference/completion) for full docs.
+See [cofounder completion reference](/reference/completion) for full docs.
 
 ---
 
-### `hh web`
+### `cofounder web`
 
 Launch a local web dashboard. Serves a single-page app with live task feed,
 peer status cards, budget summary, and a send-task form.
 
 ```bash
-hh web                             # start on port 3847, auto-open browser
-hh web --port 8080 --no-open       # custom port, headless
+cofounder web                             # start on port 3847, auto-open browser
+cofounder web --port 8080 --no-open       # custom port, headless
 ```
 
-See [hh web reference](/reference/web) for full docs.
+See [cofounder web reference](/reference/web) for full docs.
 
 ---
 
-### `hh broadcast`
+### `cofounder broadcast`
 
 Send the same task to multiple peer nodes concurrently. All peers fire in parallel;
 optionally wait for every result or stop on the first response.
 
 ```bash
-hh broadcast "run tests"                       # all peers, fire-and-forget
-hh broadcast "code-review diff" --wait         # all peers, wait for results
-hh broadcast "quick check" --peers glados,piper  # specific subset
-hh broadcast "race query" --wait --strategy first  # stop on fastest response
-hh broadcast "analyze data" --json             # machine-readable output
+cofounder broadcast "run tests"                       # all peers, fire-and-forget
+cofounder broadcast "code-review diff" --wait         # all peers, wait for results
+cofounder broadcast "quick check" --peers glados,piper  # specific subset
+cofounder broadcast "race query" --wait --strategy first  # stop on fastest response
+cofounder broadcast "analyze data" --json             # machine-readable output
 ```
 
-See [hh broadcast reference](/reference/broadcast) for full docs.
+See [cofounder broadcast reference](/reference/broadcast) for full docs.
 
 ---
 
 ## Programmatic API
 
-### `@his-and-hers/sdk`
+### `@cofounder/sdk`
 
-The `@his-and-hers/sdk` package exposes the same capabilities as the CLI as a
+The `@cofounder/sdk` package exposes the same capabilities as the CLI as a
 typed Node.js/TypeScript API — no subprocess spawning, no stdout parsing.
 
 ```ts
-import { HH } from "@his-and-hers/sdk";
+import { HH } from "@cofounder/sdk";
 
-const hh = new HH();
+const cf = new Cofounder();
 
 // Fire-and-forget
-const { id } = await hh.send("Run the nightly data sync");
+const { id } = await cofounder.send("Run the nightly data sync");
 
 // Wait for result
-const result = await hh.send("Generate coverage report", { wait: true });
+const result = await cofounder.send("Generate coverage report", { wait: true });
 console.log(result.output);
 
 // Check peer status
-const status = await hh.status();
+const status = await cofounder.status();
 console.log(status.online, status.latencyMs + "ms");
 ```
 
-Install: `npm install @his-and-hers/sdk`
+Install: `npm install @cofounder/sdk`
 
-See [@his-and-hers/sdk reference](/reference/sdk) for the full API.
+See [@cofounder/sdk reference](/reference/sdk) for the full API.

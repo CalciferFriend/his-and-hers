@@ -1,5 +1,5 @@
 # H2 node — Docker image (CPU / generic Linux)
-# Ollama + Node 22 + Tailscale + OpenClaw + his-and-hers
+# Ollama + Node 22 + Tailscale + OpenClaw + cofounder
 #
 # Usage:
 #   docker build -t calcifer-ai/h2 -f docker/h2/Dockerfile .
@@ -39,13 +39,13 @@ RUN curl -fsSL https://ollama.com/install.sh | sh
 # ── OpenClaw ──────────────────────────────────────────────────────────────────
 RUN npm install -g openclaw
 
-# ── his-and-hers CLI ─────────────────────────────────────────────────────────
-RUN npm install -g his-and-hers
+# ── cofounder CLI ─────────────────────────────────────────────────────────
+RUN npm install -g cofounder
 
 # ── Runtime config dirs ───────────────────────────────────────────────────────
-RUN mkdir -p /root/.openclaw /root/.his-and-hers /root/.ollama
+RUN mkdir -p /root/.openclaw /root/.cofounder /root/.ollama
 
-# ── SSH server setup (for hh send over SSH from H1) ─────────────────────────
+# ── SSH server setup (for cofounder send over SSH from H1) ─────────────────────────
 RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh
 RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config
 RUN ssh-keygen -A

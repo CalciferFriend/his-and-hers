@@ -1,6 +1,6 @@
 # Scheduling recurring tasks
 
-`hh schedule` lets you register tasks that automatically delegate to your H2 on
+`cofounder schedule` lets you register tasks that automatically delegate to your H2 on
 a cron schedule — so your heavy-compute work happens on the right machine at the
 right time, without manual intervention.
 
@@ -10,17 +10,17 @@ right time, without manual intervention.
 
 ```bash
 # Generate a daily morning briefing
-hh schedule add --cron "0 8 * * *" "Summarise yesterday's git commits and open GitHub issues"
+cofounder schedule add --cron "0 8 * * *" "Summarise yesterday's git commits and open GitHub issues"
 
 # Weekly review every Monday
-hh schedule add --cron "0 9 * * 1" "Review all TODOs in the codebase and output a prioritised list"
+cofounder schedule add --cron "0 9 * * 1" "Review all TODOs in the codebase and output a prioritised list"
 
 # Check available disk space every hour
-hh schedule add --cron "0 * * * *" "Check disk usage on all mounted volumes and alert if any are above 85%"
+cofounder schedule add --cron "0 * * * *" "Check disk usage on all mounted volumes and alert if any are above 85%"
 ```
 
-That's it. `hh schedule add` installs a real crontab entry — no daemons, no
-extra processes. The system cron fires `hh send` at the right time, which wakes
+That's it. `cofounder schedule add` installs a real crontab entry — no daemons, no
+extra processes. The system cron fires `cofounder send` at the right time, which wakes
 your H2 if needed and delegates the task.
 
 ---
@@ -28,11 +28,11 @@ your H2 if needed and delegates the task.
 ## Viewing and managing schedules
 
 ```bash
-hh schedule list              # all schedules + next-run time
-hh schedule disable <id>      # pause without deleting
-hh schedule enable  <id>      # resume
-hh schedule remove  <id>      # delete + remove crontab entry
-hh schedule run     <id>      # fire immediately (for testing)
+cofounder schedule list              # all schedules + next-run time
+cofounder schedule disable <id>      # pause without deleting
+cofounder schedule enable  <id>      # resume
+cofounder schedule remove  <id>      # delete + remove crontab entry
+cofounder schedule run     <id>      # fire immediately (for testing)
 ```
 
 Schedules are identified by a UUID; `list` shows the first 8 characters.
@@ -57,13 +57,13 @@ If you have multiple H2 nodes, use `--peer` to send to the right one:
 
 ```bash
 # Image processing — target the machine with the GPU
-hh schedule add \
+cofounder schedule add \
   --cron "0 2 * * *" \
   --peer h2-home \
   "Process today's photos: resize, tag with CLIP, generate captions"
 
 # Lightweight work — Pi is fine
-hh schedule add \
+cofounder schedule add \
   --cron "*/15 * * * *" \
   --peer h2-pi \
   "Check RSS feeds for new items and update ~/feeds/latest.json"
@@ -95,28 +95,28 @@ Tip: use [crontab.guru](https://crontab.guru) to validate expressions.
 
 ## Viewing schedule output
 
-Each schedule's `hh send` output is logged to:
+Each schedule's `cofounder send` output is logged to:
 
 ```
-~/.his-and-hers/schedule-logs/<id>.log
+~/.cofounder/schedule-logs/<id>.log
 ```
 
 To view task results interactively:
 
 ```bash
-hh logs --follow            # live tail all tasks
-hh logs --since 24h         # last 24 hours
-hh logs --output            # include result text inline
+cofounder logs --follow            # live tail all tasks
+cofounder logs --since 24h         # last 24 hours
+cofounder logs --output            # include result text inline
 ```
 
 ---
 
 ## Tips
 
-**Test before scheduling.** Run `hh send "<task>"` manually first to make sure
-it works, then schedule it with `hh schedule add`.
+**Test before scheduling.** Run `cofounder send "<task>"` manually first to make sure
+it works, then schedule it with `cofounder schedule add`.
 
-**Use `hh schedule run <id>` to dry-run.** You can always fire a schedule
+**Use `cofounder schedule run <id>` to dry-run.** You can always fire a schedule
 immediately to check it behaves correctly before the cron fires.
 
 **Keep tasks self-contained.** Tasks can't have interactive back-and-forth —
@@ -124,13 +124,13 @@ they should produce a file, send a message, or update a resource autonomously.
 Put output in `~/` paths your agent can find later.
 
 **Watch your budget.** Frequent schedules on cloud providers add up.
-Use `hh budget --week` to review. Route heavy recurring work to local H2:
-`hh send --peer h2-home`.
+Use `cofounder budget --week` to review. Route heavy recurring work to local H2:
+`cofounder send --peer h2-home`.
 
 ---
 
 ## See also
 
-- [`hh schedule` reference](/reference/schedule) — full flag and subcommand docs
-- [`hh logs` reference](/reference/logs) — view task history
+- [`cofounder schedule` reference](/reference/schedule) — full flag and subcommand docs
+- [`cofounder logs` reference](/reference/logs) — view task history
 - [Budget guide](/guide/budget) — cost awareness for scheduled tasks

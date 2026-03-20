@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 /**
- * send-to-agent.js — Agent-to-agent messaging script for his-and-hers
+ * send-to-agent.js — Agent-to-agent messaging script for cofounder
  *
  * Usage:
  *   node send-to-agent.js --url ws://100.x.x.x:18789 --token <token> --message "text"
- *   node send-to-agent.js --config ~/.his-and-hers/config.json --to h2 --message "text"
+ *   node send-to-agent.js --config ~/.cofounder/config.json --to h2 --message "text"
  *
  * Options:
  *   --url      WebSocket URL of target gateway (ws://host:port)
  *   --token    Gateway auth token (or set HH_PEER_TOKEN env var)
  *   --to       Peer role to message (h1|h2) — resolves from config
- *   --config   Path to his-and-hers config.json (default: ~/.his-and-hers/config.json)
+ *   --config   Path to cofounder config.json (default: ~/.cofounder/config.json)
  *   --message  Message text to inject (-m short form)
  *   --mode     Delivery mode: now (default) | next-heartbeat
  *   --timeout  Timeout in ms (default: 10000)
@@ -82,7 +82,7 @@ function hasFlag(...flags) {
 const url = getArg(["--url"]);
 const tokenArg = getArg(["--token"]) ?? process.env.HH_PEER_TOKEN ?? null;
 const toPeer = getArg(["--to"]);
-const configPath = getArg(["--config"]) ?? join(homedir(), ".his-and-hers", "config.json");
+const configPath = getArg(["--config"]) ?? join(homedir(), ".cofounder", "config.json");
 const message = getArg(["--message", "-m"]);
 const mode = getArg(["--mode"]) ?? "now";
 const timeoutMs = parseInt(getArg(["--timeout"]) ?? "10000", 10);

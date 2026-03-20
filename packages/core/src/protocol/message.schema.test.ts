@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
 import {
-  HHMessage,
-  HHTaskMessage,
-  HHResultMessage,
-  HHHeartbeatMessage,
-  HHLatentMessage,
+  CofounderMessage,
+  CofounderTaskMessage,
+  CofounderResultMessage,
+  CofounderHeartbeatMessage,
+  CofounderLatentMessage,
   createTaskMessage,
   createResultMessage,
   createHeartbeatMessage,
@@ -19,9 +19,9 @@ import {
 } from "./message.schema.ts";
 import { randomUUID } from "node:crypto";
 
-describe("HHMessage discriminated union", () => {
+describe("CofounderMessage discriminated union", () => {
   it("parses a task message with typed payload", () => {
-    const msg = HHMessage.parse({
+    const msg = CofounderMessage.parse({
       from: "Calcifer",
       to: "GLaDOS",
       type: "task",
@@ -41,7 +41,7 @@ describe("HHMessage discriminated union", () => {
 
   it("parses a result message with typed payload", () => {
     const taskId = randomUUID();
-    const msg = HHResultMessage.parse({
+    const msg = CofounderResultMessage.parse({
       from: "GLaDOS",
       to: "Calcifer",
       type: "result",
@@ -64,7 +64,7 @@ describe("HHMessage discriminated union", () => {
   });
 
   it("parses a heartbeat message", () => {
-    const msg = HHHeartbeatMessage.parse({
+    const msg = CofounderHeartbeatMessage.parse({
       from: "GLaDOS",
       to: "Calcifer",
       type: "heartbeat",
@@ -84,7 +84,7 @@ describe("HHMessage discriminated union", () => {
   });
 
   it("parses via discriminated union — task", () => {
-    const msg = HHMessage.parse({
+    const msg = CofounderMessage.parse({
       from: "Calcifer",
       to: "GLaDOS",
       type: "task",
@@ -95,7 +95,7 @@ describe("HHMessage discriminated union", () => {
   });
 
   it("parses via discriminated union — wake", () => {
-    const msg = HHMessage.parse({
+    const msg = CofounderMessage.parse({
       from: "Calcifer",
       to: "GLaDOS",
       type: "wake",
@@ -105,7 +105,7 @@ describe("HHMessage discriminated union", () => {
   });
 
   it("parses via discriminated union — error", () => {
-    const msg = HHMessage.parse({
+    const msg = CofounderMessage.parse({
       from: "GLaDOS",
       to: "Calcifer",
       type: "error",
@@ -120,7 +120,7 @@ describe("HHMessage discriminated union", () => {
 
   it("rejects invalid type", () => {
     expect(() =>
-      HHMessage.parse({
+      CofounderMessage.parse({
         from: "A",
         to: "B",
         type: "invalid",
@@ -130,7 +130,7 @@ describe("HHMessage discriminated union", () => {
   });
 
   it("rejects missing required fields", () => {
-    expect(() => HHMessage.parse({})).toThrow();
+    expect(() => CofounderMessage.parse({})).toThrow();
   });
 
   it("fills defaults via factory helpers", () => {
@@ -162,10 +162,10 @@ describe("HHMessage discriminated union", () => {
   });
 });
 
-describe("HHLatentMessage — latent space communication", () => {
+describe("CofounderLatentMessage — latent space communication", () => {
   it("parses a latent message with Vision Wormhole codec", () => {
     const taskId = randomUUID();
-    const msg = HHLatentMessage.parse({
+    const msg = CofounderLatentMessage.parse({
       from: "Calcifer",
       to: "GLaDOS",
       type: "latent",
@@ -194,7 +194,7 @@ describe("HHLatentMessage — latent space communication", () => {
 
   it("parses a latent message with KV cache (LatentMAS path)", () => {
     const taskId = randomUUID();
-    const msg = HHLatentMessage.parse({
+    const msg = CofounderLatentMessage.parse({
       from: "Calcifer",
       to: "GLaDOS",
       type: "latent",
@@ -219,7 +219,7 @@ describe("HHLatentMessage — latent space communication", () => {
 
   it("parses via discriminated union — latent", () => {
     const taskId = randomUUID();
-    const msg = HHMessage.parse({
+    const msg = CofounderMessage.parse({
       from: "Calcifer",
       to: "GLaDOS",
       type: "latent",
@@ -263,7 +263,7 @@ describe("HHLatentMessage — latent space communication", () => {
   it("requires fallback_text field", () => {
     const taskId = randomUUID();
     expect(() =>
-      HHLatentMessage.parse({
+      CofounderLatentMessage.parse({
         from: "Calcifer",
         to: "GLaDOS",
         type: "latent",

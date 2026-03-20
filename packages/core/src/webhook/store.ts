@@ -2,7 +2,7 @@
  * core/webhook/store.ts
  *
  * Persistent CRUD for the inbound webhook registry.
- * Stored at ~/.his-and-hers/webhooks.json
+ * Stored at ~/.cofounder/webhooks.json
  */
 
 import { readFile, writeFile, mkdir } from "node:fs/promises";
@@ -20,12 +20,12 @@ import {
 // ─── Paths ───────────────────────────────────────────────────────────────────
 
 export function getWebhooksPath(baseDir?: string): string {
-  const dir = baseDir ?? join(homedir(), ".his-and-hers");
+  const dir = baseDir ?? join(homedir(), ".cofounder");
   return join(dir, "webhooks.json");
 }
 
 async function ensureBaseDir(baseDir?: string): Promise<void> {
-  const dir = baseDir ?? join(homedir(), ".his-and-hers");
+  const dir = baseDir ?? join(homedir(), ".cofounder");
   await mkdir(dir, { recursive: true });
 }
 

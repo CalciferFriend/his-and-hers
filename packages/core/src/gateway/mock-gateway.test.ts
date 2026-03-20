@@ -220,7 +220,7 @@ describe("MockGateway + result-server round-trip", () => {
     });
   });
 
-  it("captures full HHTaskMessage payload in wake text", async () => {
+  it("captures full CofounderTaskMessage payload in wake text", async () => {
     await withGateway({ token: "tok" }, async (gw) => {
       const payload = JSON.stringify({
         type: "task",
@@ -249,7 +249,7 @@ describe("MockGateway + result-server round-trip", () => {
 describe("MockGateway — pipeline simulation", () => {
   it("receives sequential pipeline steps as separate wakes", async () => {
     await withGateway({ token: "tok" }, async (gw) => {
-      // Simulate how hh pipeline sends steps sequentially
+      // Simulate how cofounder pipeline sends steps sequentially
       const steps = [
         "step:1 — Write tests for auth.ts",
         "step:2 — Review {{previous.output}}",
@@ -268,7 +268,7 @@ describe("MockGateway — pipeline simulation", () => {
 
   it("handles concurrent wakes from cluster broadcast", async () => {
     await withGateway({ token: "tok" }, async (gw) => {
-      // Simulate hh cluster / broadcast sending to multiple peers simultaneously
+      // Simulate cofounder cluster / broadcast sending to multiple peers simultaneously
       const results = await Promise.all([
         wakeAgent({ url: gw.url, token: "tok", text: "peer:alpha task" }),
         wakeAgent({ url: gw.url, token: "tok", text: "peer:beta task" }),

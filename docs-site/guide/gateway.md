@@ -6,7 +6,7 @@ The OpenClaw gateway is the HTTP server that receives tasks and returns results.
 
 ## What the gateway does
 
-- Receives `HHMessage` POSTs from H1 (H2 side) or user CLI (H1 side)
+- Receives `CofounderMessage` POSTs from H1 (H2 side) or user CLI (H1 side)
 - Verifies the gateway token on each request
 - Forwards tasks to the OpenClaw agent runtime
 - Returns results synchronously or via polling
@@ -18,18 +18,18 @@ The gateway is not a web server in the traditional sense — it's a local HTTP i
 
 ## H1's gateway — loopback binding
 
-H1's gateway binds to `127.0.0.1:3737`. It's only accessible from the same machine. The `hh` CLI communicates with it locally.
+H1's gateway binds to `127.0.0.1:3737`. It's only accessible from the same machine. The `cofounder` CLI communicates with it locally.
 
 H1 never exposes its gateway to the network — it initiates outbound connections to H2, not the other way around.
 
 ```
 H1 machine:
-  127.0.0.1:3737 ← hh CLI, agent workflows
+  127.0.0.1:3737 ← cofounder CLI, agent workflows
 ```
 
 ### Config
 
-In `~/.his-and-hers/hh.json`:
+In `~/.cofounder/cofounder.json`:
 
 ```json
 {
@@ -42,7 +42,7 @@ In `~/.his-and-hers/hh.json`:
 }
 ```
 
-The token is generated during `hh onboard`. Don't share it — it's the only auth layer on the gateway.
+The token is generated during `cofounder onboard`. Don't share it — it's the only auth layer on the gateway.
 
 ---
 
@@ -53,7 +53,7 @@ H2's gateway binds to its Tailscale IP (e.g. `100.x.y.z:3737`). Only nodes on th
 ```
 H2 machine:
   100.x.y.z:3737 ← H1 (over Tailscale WireGuard tunnel)
-  127.0.0.1:3737 ← local tools, hh CLI
+  127.0.0.1:3737 ← local tools, cofounder CLI
 ```
 
 ### Config
@@ -79,11 +79,11 @@ H2 machine:
 Default is 3737. To use a different port:
 
 ```bash
-hh onboard --reconfigure-gateway
+cofounder onboard --reconfigure-gateway
 # → Enter gateway port: 4242
 ```
 
-Or edit `hh.json` directly and restart:
+Or edit `cofounder.json` directly and restart:
 
 ```bash
 openclaw gateway stop
@@ -105,7 +105,7 @@ New-NetFirewallRule -DisplayName "His-and-Hers Gateway" `
 
 ## Gateway token
 
-The token authenticates H1's requests to H2. It's a 64-character hex string generated during `hh onboard`. It's stored in the OS keychain, not in plain text config files.
+The token authenticates H1's requests to H2. It's a 64-character hex string generated during `cofounder onboard`. It's stored in the OS keychain, not in plain text config files.
 
 H1 includes the token in every request:
 
@@ -120,7 +120,7 @@ H2 verifies it before processing. Wrong token → 401. Right token, wrong peer I
 ### Regenerating the token
 
 ```bash
-hh onboard --regenerate-token
+cofounder onboard --regenerate-token
 # → New token generated, synced to H2 via SSH
 ```
 
@@ -147,9 +147,9 @@ Response:
 ```
 
 H1 checks this endpoint to determine if H2 is awake and ready. The check happens:
-- Before every `hh send` (skip WOL if healthy)
+- Before every `cofounder send` (skip WOL if healthy)
 - After sending WOL (poll until healthy)
-- On every `hh status` run
+- On every `cofounder status` run
 
 ---
 
@@ -162,7 +162,7 @@ If you need H1's gateway accessible on a network port for external tools (not ty
 socat TCP-LISTEN:3737,bind=100.x.y.z,reuseaddr,fork TCP:127.0.0.1:3737
 ```
 
-The `hh onboard` wizard sets this up automatically if you need it. The pattern is used when you want H1 to also accept inbound connections from tools running elsewhere on your Tailscale network.
+The `cofounder onboard` wizard sets this up automatically if you need it. The pattern is used when you want H1 to also accept inbound connections from tools running elsewhere on your Tailscale network.
 
 ---
 
@@ -176,7 +176,7 @@ If H1 and H2 are both on the same machine (dev/testing):
   "gateway": { "bind": "127.0.0.1", "port": 3737 }
 }
 
-// H2's config (~/.his-and-hers-h2/hh.json)
+// H2's config (~/.cofounder-h2/cofounder.json)
 {
   "gateway": { "bind": "127.0.0.1", "port": 3738 }
 }
@@ -192,8 +192,8 @@ H1's `peers` config points to `127.0.0.1:3738` instead of a Tailscale IP.
 # Check OpenClaw gateway directly
 openclaw gateway status
 
-# Check via hh (includes peer connectivity)
-hh status
+# Check via cofounder (includes peer connectivity)
+cofounder status
 
 # Direct health check (curl)
 curl http://127.0.0.1:3737/health         # H1
@@ -210,5 +210,5 @@ openclaw gateway logs
 openclaw gateway logs --follow
 
 # On Linux (systemd)
-journalctl -u hh-gateway -f
+journalctl -u cofounder-gateway -f
 ```

@@ -1,4 +1,4 @@
-# `hh test` — Reference
+# `cofounder test` — Reference
 
 Run an end-to-end connectivity check against a peer. Useful for verifying
 your setup after onboarding, or diagnosing problems.
@@ -8,7 +8,7 @@ your setup after onboarding, or diagnosing problems.
 ## Synopsis
 
 ```bash
-hh test [--peer <name>] [--json]
+cofounder test [--peer <name>] [--json]
 ```
 
 ---
@@ -24,7 +24,7 @@ hh test [--peer <name>] [--json]
 
 ## What it checks
 
-`hh test` runs three sequential steps:
+`cofounder test` runs three sequential steps:
 
 | Step | What it does | Pass condition |
 |------|-------------|----------------|
@@ -37,7 +37,7 @@ hh test [--peer <name>] [--json]
 ## Default output
 
 ```bash
-$ hh test
+$ cofounder test
 ```
 
 ```
@@ -53,7 +53,7 @@ $ hh test
 ### With a failing step
 
 ```bash
-$ hh test
+$ cofounder test
 ```
 
 ```
@@ -63,7 +63,7 @@ $ hh test
   Step 2 — Gateway health        ✗  connect ECONNREFUSED 100.64.0.2:18790
   Step 3 — Round-trip wake       skipped (gateway unreachable)
   ────────────────────────────────────────
-  1 check failed. H2 may be sleeping — try: hh wake h2-home
+  1 check failed. H2 may be sleeping — try: cofounder wake h2-home
 ```
 
 Exit code is `1` if any step fails.
@@ -73,7 +73,7 @@ Exit code is `1` if any step fails.
 ## JSON output
 
 ```bash
-$ hh test --json
+$ cofounder test --json
 ```
 
 ```json
@@ -92,7 +92,7 @@ $ hh test --json
 Useful for health-check scripts and CI:
 
 ```bash
-hh test --json | jq '.all_passed'
+cofounder test --json | jq '.all_passed'
 # true
 ```
 
@@ -101,8 +101,8 @@ hh test --json | jq '.all_passed'
 ## Targeting a specific peer
 
 ```bash
-hh test --peer h2-pi
-hh test --peer h2-home
+cofounder test --peer h2-pi
+cofounder test --peer h2-home
 ```
 
 ---
@@ -112,14 +112,14 @@ hh test --peer h2-home
 | Symptom | Likely cause | Fix |
 |---------|-------------|-----|
 | Step 1 fails | Tailscale not running on H2, or wrong IP | Check `tailscale status` on both machines |
-| Step 2 fails | Gateway not running or port blocked | Run `hh wake <peer>` or check Windows Firewall |
+| Step 2 fails | Gateway not running or port blocked | Run `cofounder wake <peer>` or check Windows Firewall |
 | Step 3 fails, 1+2 pass | Gateway up but OpenClaw not responding | Restart OpenClaw on H2 |
-| All fail | H2 is off | `hh wake <peer>` to send WOL packet |
+| All fail | H2 is off | `cofounder wake <peer>` to send WOL packet |
 
 ---
 
 ## See also
 
-- [hh status](/reference/status) — high-level status dashboard
-- [hh wake](/reference/wake) — wake a sleeping H2 via WOL
-- [hh logs](/reference/logs) — view task history for debugging
+- [cofounder status](/reference/status) — high-level status dashboard
+- [cofounder wake](/reference/wake) — wake a sleeping H2 via WOL
+- [cofounder logs](/reference/logs) — view task history for debugging

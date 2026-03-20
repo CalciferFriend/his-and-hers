@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { auditList, auditVerify, auditExport } from "./audit.ts";
-import type { AuditEntry } from "@his-and-hers/core";
+import type { AuditEntry } from "@cofounder/core";
 
 // Mock audit module
-vi.mock("@his-and-hers/core", async () => {
-  const actual = await vi.importActual("@his-and-hers/core");
+vi.mock("@cofounder/core", async () => {
+  const actual = await vi.importActual("@cofounder/core");
   return {
     ...actual,
     readAuditLog: vi.fn(),
@@ -17,7 +17,7 @@ vi.mock("node:fs/promises", () => ({
   writeFile: vi.fn(),
 }));
 
-const { readAuditLog, verifyAuditChain } = await import("@his-and-hers/core");
+const { readAuditLog, verifyAuditChain } = await import("@cofounder/core");
 const { writeFile } = await import("node:fs/promises");
 
 describe("audit", () => {

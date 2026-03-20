@@ -11,8 +11,8 @@ H2 is *not* containerised — it's your home PC running Windows with a GPU. Cont
 ### 1. Clone and build
 
 ```bash
-git clone https://github.com/CalciferFriend/his-and-hers
-cd his-and-hers
+git clone https://github.com/CalciferFriend/cofounder
+cd cofounder
 
 # Build the image
 docker build -t calcifer-ai/h1 -f docker/h1/Dockerfile .
@@ -52,11 +52,11 @@ docker run -d \
 # Check gateway health
 docker exec h1 curl -s http://127.0.0.1:18789/health
 
-# Run hh status inside the container
-docker exec -it h1 hh status
+# Run cofounder status inside the container
+docker exec -it h1 cofounder status
 
 # Send a task to H2
-docker exec -it h1 hh send "summarise the latest arxiv ML papers"
+docker exec -it h1 cofounder send "summarise the latest arxiv ML papers"
 ```
 
 ---
@@ -67,7 +67,7 @@ On startup the container:
 
 1. **Tailscale up** — authenticates with `TS_AUTHKEY`, joins your tailnet
 2. **OpenClaw config** — writes `~/.openclaw/openclaw.json` with the gateway token + API key
-3. **HH config** — writes `~/.his-and-hers/config.json` with peer info from env vars
+3. **HH config** — writes `~/.cofounder/config.json` with peer info from env vars
 4. **Gateway start** — boots the OpenClaw gateway on loopback port 18789
 5. **Socat proxy** — forwards `<tailscale-ip>:18789 → 127.0.0.1:18789` so H2 can reach H1
 
@@ -81,7 +81,7 @@ H2 can now send messages to H1's Tailscale IP without any public port exposure.
 |--------|---------|
 | `tailscale-state` | Tailscale machine identity (avoids re-auth on restart) |
 | `h1-openclaw` | OpenClaw config + agent state |
-| `his-and-hers-config` | his-and-hers config (peer info, pairing code, etc.) |
+| `cofounder-config` | cofounder config (peer info, pairing code, etc.) |
 
 ## SSH key for H2
 

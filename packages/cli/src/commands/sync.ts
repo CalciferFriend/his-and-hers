@@ -1,19 +1,19 @@
 /**
- * commands/sync.ts — `hh sync <path>`
+ * commands/sync.ts — `cofounder sync <path>`
  *
  * Push a local path to the H2 peer over Tailscale SSH using rsync.
  * Useful for keeping a working directory in sync before delegating a task,
  * sharing config files, or live-editing code on H2 with `--watch`.
  *
  * Usage:
- *   hh sync ./project            # rsync to ~/project on H2
- *   hh sync ./data --dest /data  # explicit remote destination
- *   hh sync . --dry-run          # preview without touching H2
- *   hh sync ./src --delete       # delete remote files not in local src
- *   hh sync ./workspace --watch  # re-sync on every local file change
- *   hh sync ./repo --peer piper  # target a specific peer
+ *   cofounder sync ./project            # rsync to ~/project on H2
+ *   cofounder sync ./data --dest /data  # explicit remote destination
+ *   cofounder sync . --dry-run          # preview without touching H2
+ *   cofounder sync ./src --delete       # delete remote files not in local src
+ *   cofounder sync ./workspace --watch  # re-sync on every local file change
+ *   cofounder sync ./repo --peer piper  # target a specific peer
  *
- * The `--sync <path>` flag on `hh send` calls this before task dispatch.
+ * The `--sync <path>` flag on `cofounder send` calls this before task dispatch.
  *
  * Phase 7b — Calcifer ✅ (2026-03-15)
  */
@@ -202,7 +202,7 @@ export function watchAndSync(
 export async function sync(localPath: string, opts: SyncOptions = {}): Promise<SyncResult> {
   const config = await loadConfig();
   if (!config) {
-    p.log.error("Not configured. Run `hh onboard` first.");
+    p.log.error("Not configured. Run `cofounder onboard` first.");
     process.exit(1);
   }
 
@@ -211,7 +211,7 @@ export async function sync(localPath: string, opts: SyncOptions = {}): Promise<S
   const resolvedLocal = path.resolve(localPath);
 
   if (!opts.quiet) {
-    p.intro(pc.bgCyan(pc.black(" hh sync ")));
+    p.intro(pc.bgCyan(pc.black(" cofounder sync ")));
   }
 
   // Validate local path

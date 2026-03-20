@@ -4,7 +4,7 @@
  * End-to-end integration tests for the H1 → H2 → H1 task round-trip,
  * exercising the full pipeline without real Tailscale or OpenClaw connections:
  *
- *   1. H1 builds a HHTaskMessage (createTaskMessage)
+ *   1. H1 builds a CofounderTaskMessage (createTaskMessage)
  *   2. H1 starts a result webhook server (startResultServer)
  *   3. "H2" (a mock client) POSTs a ResultWebhookPayload back to H1
  *   4. H1's webhook resolves with the result
@@ -26,8 +26,8 @@ import {
   createResultMessage,
   isTaskMessage,
   isResultMessage,
-  HHTaskMessage,
-  HHResultMessage,
+  CofounderTaskMessage,
+  CofounderResultMessage,
 } from "./protocol/index.ts";
 import { startResultServer, type ResultWebhookPayload } from "./gateway/result-server.ts";
 import { routeTask } from "./routing.ts";
@@ -76,7 +76,7 @@ const TOKEN = "integration-test-token";
 
 // ─── 1. Protocol: task message creation ──────────────────────────────────────
 
-describe("HHTaskMessage creation and validation", () => {
+describe("CofounderTaskMessage creation and validation", () => {
   it("builds a valid task message from/to", () => {
     const msg = createTaskMessage({
       from: H1,
@@ -117,7 +117,7 @@ describe("HHTaskMessage creation and validation", () => {
 
 // ─── 2. Protocol: result message creation ────────────────────────────────────
 
-describe("HHResultMessage creation and validation", () => {
+describe("CofounderResultMessage creation and validation", () => {
   it("builds a valid result message", () => {
     const task = createTaskMessage({ from: H1, to: H2, objective: "noop" });
     const res = createResultMessage({

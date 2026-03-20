@@ -1,5 +1,5 @@
 /**
- * @his-and-hers/sdk — Public type definitions
+ * @cofounder/sdk — Public type definitions
  */
 
 // ── Config shapes (minimal subset the SDK needs) ─────────────────────────────
@@ -28,14 +28,14 @@ export interface SDKConfig {
 // ── HH constructor options ────────────────────────────────────────────────────
 
 export interface HHOptions {
-  /** Override the default config path (~/.his-and-hers/hh.json). */
+  /** Override the default config path (~/.cofounder/cofounder.json). */
   configPath?: string;
   /**
    * Inject a config object directly instead of reading from disk.
    * Useful in tests or when embedding HH with a dynamically generated config.
    */
   config?: SDKConfig;
-  /** Override the base state dir (~/.his-and-hers/state). */
+  /** Override the base state dir (~/.cofounder/state). */
   stateDirOverride?: string;
 }
 
@@ -69,7 +69,7 @@ export interface SendOptions {
    */
   routingHint?: string;
   /**
-   * Constraints appended to the task payload (same as HHTaskPayload.constraints).
+   * Constraints appended to the task payload (same as CofounderTaskPayload.constraints).
    */
   constraints?: string[];
 }

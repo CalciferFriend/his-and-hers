@@ -22,7 +22,7 @@ export type AttachmentPayload = z.infer<typeof AttachmentPayload>;
 
 // ─── Shared base fields ──────────────────────────────────────────────────────
 
-const HHMessageBase = z.object({
+const CofounderMessageBase = z.object({
   version: z.string().default("0.1.0"),
   id: z.string().uuid().default(() => randomUUID()),
   from: z.string(),
@@ -39,7 +39,7 @@ const HHMessageBase = z.object({
 // ─── Typed payload schemas ────────────────────────────────────────────────────
 
 /** Payload for type: "task" — H1 delegates work to H2 */
-export const HHTaskPayload = z.object({
+export const CofounderTaskPayload = z.object({
   objective: z.string(),
   context: z.string().optional(),
   constraints: z.array(z.string()).default([]),
@@ -52,10 +52,10 @@ export const HHTaskPayload = z.object({
    */
   attachments: z.array(AttachmentPayload).default([]),
 });
-export type HHTaskPayload = z.infer<typeof HHTaskPayload>;
+export type CofounderTaskPayload = z.infer<typeof CofounderTaskPayload>;
 
 /** Payload for type: "result" — H2 returns work to H1 */
-export const HHResultPayload = z.object({
+export const CofounderResultPayload = z.object({
   task_id: z.string().uuid(),
   output: z.string(),
   success: z.boolean(),
@@ -65,25 +65,25 @@ export const HHResultPayload = z.object({
   tokens_used: z.number().int().nonnegative().optional(),
   duration_ms: z.number().int().nonnegative().optional(),
 });
-export type HHResultPayload = z.infer<typeof HHResultPayload>;
+export type CofounderResultPayload = z.infer<typeof CofounderResultPayload>;
 
 /** Payload for type: "heartbeat" — periodic liveness ping */
-export const HHHeartbeatPayload = z.object({
+export const CofounderHeartbeatPayload = z.object({
   gateway_healthy: z.boolean(),
   uptime_seconds: z.number().nonnegative(),
   tailscale_ip: z.string(),
   model: z.string().optional(),
   gpu_available: z.boolean().optional(),
 });
-export type HHHeartbeatPayload = z.infer<typeof HHHeartbeatPayload>;
+export type CofounderHeartbeatPayload = z.infer<typeof CofounderHeartbeatPayload>;
 
 /** Payload for type: "handoff" — structured context/state handoff */
-export const HHHandoffPayload = z.object({
+export const CofounderHandoffPayload = z.object({
   handoff_summary: z.string(),
   next_objective: z.string().optional(),
   session_id: z.string().optional(),
 });
-export type HHHandoffPayload = z.infer<typeof HHHandoffPayload>;
+export type CofounderHandoffPayload = z.infer<typeof CofounderHandoffPayload>;
 
 /** Payload for type: "wake" — request peer to wake up */
 export const HHWakePayload = z.object({
@@ -102,7 +102,7 @@ export const HHErrorPayload = z.object({
 export type HHErrorPayload = z.infer<typeof HHErrorPayload>;
 
 /** Payload for type: "latent" — latent space communication via Vision Wormhole or KV cache */
-export const HHLatentPayload = z.object({
+export const CofounderLatentPayload = z.object({
   task_id: z.string().uuid(),
   sender_model: z.string(),
   sender_hidden_dim: z.number().int().positive(),
@@ -125,104 +125,104 @@ export const HHLatentPayload = z.object({
 
   compression_ratio: z.number().positive().optional(), // raw hidden size / compressed size
 });
-export type HHLatentPayload = z.infer<typeof HHLatentPayload>;
+export type CofounderLatentPayload = z.infer<typeof CofounderLatentPayload>;
 
 // ─── Discriminated union variants ────────────────────────────────────────────
 
-export const HHTaskMessage = HHMessageBase.extend({
+export const CofounderTaskMessage = CofounderMessageBase.extend({
   type: z.literal("task"),
-  payload: HHTaskPayload,
+  payload: CofounderTaskPayload,
 });
-export type HHTaskMessage = z.infer<typeof HHTaskMessage>;
+export type CofounderTaskMessage = z.infer<typeof CofounderTaskMessage>;
 
-export const HHResultMessage = HHMessageBase.extend({
+export const CofounderResultMessage = CofounderMessageBase.extend({
   type: z.literal("result"),
-  payload: HHResultPayload,
+  payload: CofounderResultPayload,
 });
-export type HHResultMessage = z.infer<typeof HHResultMessage>;
+export type CofounderResultMessage = z.infer<typeof CofounderResultMessage>;
 
-export const HHHeartbeatMessage = HHMessageBase.extend({
+export const CofounderHeartbeatMessage = CofounderMessageBase.extend({
   type: z.literal("heartbeat"),
-  payload: HHHeartbeatPayload,
+  payload: CofounderHeartbeatPayload,
 });
-export type HHHeartbeatMessage = z.infer<typeof HHHeartbeatMessage>;
+export type CofounderHeartbeatMessage = z.infer<typeof CofounderHeartbeatMessage>;
 
-export const HHHandoffMessage = HHMessageBase.extend({
+export const CofounderHandoffMessage = CofounderMessageBase.extend({
   type: z.literal("handoff"),
-  payload: HHHandoffPayload,
+  payload: CofounderHandoffPayload,
 });
-export type HHHandoffMessage = z.infer<typeof HHHandoffMessage>;
+export type CofounderHandoffMessage = z.infer<typeof CofounderHandoffMessage>;
 
-export const HHWakeMessage = HHMessageBase.extend({
+export const CofounderWakeMessage = CofounderMessageBase.extend({
   type: z.literal("wake"),
   payload: HHWakePayload,
 });
-export type HHWakeMessage = z.infer<typeof HHWakeMessage>;
+export type CofounderWakeMessage = z.infer<typeof CofounderWakeMessage>;
 
-export const HHErrorMessage = HHMessageBase.extend({
+export const CofounderErrorMessage = CofounderMessageBase.extend({
   type: z.literal("error"),
   payload: HHErrorPayload,
 });
-export type HHErrorMessage = z.infer<typeof HHErrorMessage>;
+export type CofounderErrorMessage = z.infer<typeof CofounderErrorMessage>;
 
-export const HHLatentMessage = HHMessageBase.extend({
+export const CofounderLatentMessage = CofounderMessageBase.extend({
   type: z.literal("latent"),
-  payload: HHLatentPayload,
+  payload: CofounderLatentPayload,
 });
-export type HHLatentMessage = z.infer<typeof HHLatentMessage>;
+export type CofounderLatentMessage = z.infer<typeof CofounderLatentMessage>;
 
 // ─── Discriminated union ─────────────────────────────────────────────────────
 
 /**
- * HHMessage — discriminated union on `type`.
+ * CofounderMessage — discriminated union on `type`.
  * Every cross-machine communication is wrapped in this format.
  * Payload type is fully typed per message variant — no more JSON.parse(payload).
  */
-export const HHMessage = z.discriminatedUnion("type", [
-  HHTaskMessage,
-  HHResultMessage,
-  HHHeartbeatMessage,
-  HHHandoffMessage,
-  HHWakeMessage,
-  HHErrorMessage,
-  HHLatentMessage,
+export const CofounderMessage = z.discriminatedUnion("type", [
+  CofounderTaskMessage,
+  CofounderResultMessage,
+  CofounderHeartbeatMessage,
+  CofounderHandoffMessage,
+  CofounderWakeMessage,
+  CofounderErrorMessage,
+  CofounderLatentMessage,
 ]);
-export type HHMessage = z.infer<typeof HHMessage>;
+export type CofounderMessage = z.infer<typeof CofounderMessage>;
 
 // ─── Type guard helpers ───────────────────────────────────────────────────────
 
-export function isTaskMessage(msg: HHMessage): msg is HHTaskMessage {
+export function isTaskMessage(msg: CofounderMessage): msg is CofounderTaskMessage {
   return msg.type === "task";
 }
 
-export function isResultMessage(msg: HHMessage): msg is HHResultMessage {
+export function isResultMessage(msg: CofounderMessage): msg is CofounderResultMessage {
   return msg.type === "result";
 }
 
-export function isHeartbeatMessage(msg: HHMessage): msg is HHHeartbeatMessage {
+export function isHeartbeatMessage(msg: CofounderMessage): msg is CofounderHeartbeatMessage {
   return msg.type === "heartbeat";
 }
 
-export function isHandoffMessage(msg: HHMessage): msg is HHHandoffMessage {
+export function isHandoffMessage(msg: CofounderMessage): msg is CofounderHandoffMessage {
   return msg.type === "handoff";
 }
 
-export function isWakeMessage(msg: HHMessage): msg is HHWakeMessage {
+export function isWakeMessage(msg: CofounderMessage): msg is CofounderWakeMessage {
   return msg.type === "wake";
 }
 
-export function isErrorMessage(msg: HHMessage): msg is HHErrorMessage {
+export function isErrorMessage(msg: CofounderMessage): msg is CofounderErrorMessage {
   return msg.type === "error";
 }
 
-export function isLatentMessage(msg: HHMessage): msg is HHLatentMessage {
+export function isLatentMessage(msg: CofounderMessage): msg is CofounderLatentMessage {
   return msg.type === "latent";
 }
 
 // ─── Factory helpers ──────────────────────────────────────────────────────────
 
-type TaskMessageOpts = Partial<Pick<HHTaskMessage, "turn" | "context_summary" | "budget_remaining" | "wake_required">>;
-type ResultMessageOpts = Partial<Pick<HHResultMessage, "turn" | "done" | "context_summary">>;
+type TaskMessageOpts = Partial<Pick<CofounderTaskMessage, "turn" | "context_summary" | "budget_remaining" | "wake_required">>;
+type ResultMessageOpts = Partial<Pick<CofounderResultMessage, "turn" | "done" | "context_summary">>;
 
 /** Flat-object form for createTaskMessage */
 type CreateTaskMessageFlat = {
@@ -249,46 +249,46 @@ type CreateResultMessageFlat = {
 } & ResultMessageOpts;
 
 /** Build a task message with defaults filled (positional or flat-object form) */
-export function createTaskMessage(from: string, to: string, payload: HHTaskPayload, opts?: TaskMessageOpts): HHTaskMessage;
-export function createTaskMessage(opts: CreateTaskMessageFlat): HHTaskMessage;
+export function createTaskMessage(from: string, to: string, payload: CofounderTaskPayload, opts?: TaskMessageOpts): CofounderTaskMessage;
+export function createTaskMessage(opts: CreateTaskMessageFlat): CofounderTaskMessage;
 export function createTaskMessage(
   fromOrOpts: string | CreateTaskMessageFlat,
   to?: string,
-  payload?: HHTaskPayload,
+  payload?: CofounderTaskPayload,
   opts?: TaskMessageOpts,
-): HHTaskMessage {
+): CofounderTaskMessage {
   if (typeof fromOrOpts === "object") {
     const { from, to: toVal, objective, context, constraints, expected_output, timeout_seconds, ...msgOpts } = fromOrOpts;
-    const p: HHTaskPayload = HHTaskPayload.parse({ objective, context, constraints: constraints ?? [], expected_output, timeout_seconds });
-    return HHTaskMessage.parse({ from, to: toVal, type: "task", payload: p, ...msgOpts });
+    const p: CofounderTaskPayload = CofounderTaskPayload.parse({ objective, context, constraints: constraints ?? [], expected_output, timeout_seconds });
+    return CofounderTaskMessage.parse({ from, to: toVal, type: "task", payload: p, ...msgOpts });
   }
-  return HHTaskMessage.parse({ from: fromOrOpts, to, type: "task", payload, ...opts });
+  return CofounderTaskMessage.parse({ from: fromOrOpts, to, type: "task", payload, ...opts });
 }
 
 /** Build a result message with defaults filled (positional or flat-object form) */
-export function createResultMessage(from: string, to: string, payload: HHResultPayload, opts?: ResultMessageOpts): HHResultMessage;
-export function createResultMessage(opts: CreateResultMessageFlat): HHResultMessage;
+export function createResultMessage(from: string, to: string, payload: CofounderResultPayload, opts?: ResultMessageOpts): CofounderResultMessage;
+export function createResultMessage(opts: CreateResultMessageFlat): CofounderResultMessage;
 export function createResultMessage(
   fromOrOpts: string | CreateResultMessageFlat,
   to?: string,
-  payload?: HHResultPayload,
+  payload?: CofounderResultPayload,
   opts?: ResultMessageOpts,
-): HHResultMessage {
+): CofounderResultMessage {
   if (typeof fromOrOpts === "object") {
     const { from, to: toVal, task_id, output, success, error, artifacts, tokens_used, duration_ms, ...msgOpts } = fromOrOpts;
-    const p: HHResultPayload = HHResultPayload.parse({ task_id, output, success, error, artifacts, tokens_used, duration_ms });
-    return HHResultMessage.parse({ from, to: toVal, type: "result", done: true, payload: p, ...msgOpts });
+    const p: CofounderResultPayload = CofounderResultPayload.parse({ task_id, output, success, error, artifacts, tokens_used, duration_ms });
+    return CofounderResultMessage.parse({ from, to: toVal, type: "result", done: true, payload: p, ...msgOpts });
   }
-  return HHResultMessage.parse({ from: fromOrOpts, to, type: "result", done: true, payload, ...opts });
+  return CofounderResultMessage.parse({ from: fromOrOpts, to, type: "result", done: true, payload, ...opts });
 }
 
 /** Build a heartbeat message */
 export function createHeartbeatMessage(
   from: string,
   to: string,
-  payload: HHHeartbeatPayload,
-): HHHeartbeatMessage {
-  return HHHeartbeatMessage.parse({ from, to, type: "heartbeat", payload });
+  payload: CofounderHeartbeatPayload,
+): CofounderHeartbeatMessage {
+  return CofounderHeartbeatMessage.parse({ from, to, type: "heartbeat", payload });
 }
 
 /** Build a wake message */
@@ -296,18 +296,18 @@ export function createWakeMessage(
   from: string,
   to: string,
   reason?: string,
-): HHWakeMessage {
-  return HHWakeMessage.parse({ from, to, type: "wake", payload: { reason } });
+): CofounderWakeMessage {
+  return CofounderWakeMessage.parse({ from, to, type: "wake", payload: { reason } });
 }
 
 /** Build a latent message */
 export function createLatentMessage(
   from: string,
   to: string,
-  payload: HHLatentPayload,
-  opts?: Partial<Pick<HHLatentMessage, "turn" | "context_summary">>,
-): HHLatentMessage {
-  return HHLatentMessage.parse({ from, to, type: "latent", payload, ...opts });
+  payload: CofounderLatentPayload,
+  opts?: Partial<Pick<CofounderLatentMessage, "turn" | "context_summary">>,
+): CofounderLatentMessage {
+  return CofounderLatentMessage.parse({ from, to, type: "latent", payload, ...opts });
 }
 
 // ─── Latent serialization helpers ────────────────────────────────────────────

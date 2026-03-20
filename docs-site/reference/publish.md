@@ -1,9 +1,9 @@
 ---
-title: "hh publish"
+title: "cofounder publish"
 description: Publish your H2 node's capability card to the community registry.
 ---
 
-# `hh publish` — Reference
+# `cofounder publish` — Reference
 
 Publish an anonymised node card to the community registry so others can discover
 nodes with specific hardware or skills.
@@ -13,7 +13,7 @@ nodes with specific hardware or skills.
 ## Synopsis
 
 ```bash
-hh publish [flags]
+cofounder publish [flags]
 ```
 
 ---
@@ -35,10 +35,10 @@ hh publish [flags]
 ### Normal publish
 
 ```bash
-$ hh publish --description "Beast node, 24 GB VRAM, always on"
+$ cofounder publish --description "Beast node, 24 GB VRAM, always on"
 
 Publishing node card...
-✓  Capabilities loaded from ~/.his-and-hers/capabilities.json
+✓  Capabilities loaded from ~/.cofounder/capabilities.json
 ✓  Card built:
      Name:   h2-beast
      OS:     linux
@@ -47,14 +47,14 @@ Publishing node card...
      WOL:    yes
 ✓  Published to registry (gist: https://gist.github.com/abc123def456)
 
-Your node is now discoverable via `hh discover`.
-To remove it: hh publish --revoke
+Your node is now discoverable via `cofounder discover`.
+To remove it: cofounder publish --revoke
 ```
 
 ### Dry run
 
 ```bash
-$ hh publish --dry-run
+$ cofounder publish --dry-run
 
 Dry run — nothing will be published.
 
@@ -78,7 +78,7 @@ Node card preview:
 ### Revoke
 
 ```bash
-$ hh publish --revoke
+$ cofounder publish --revoke
 
 Removing node card from registry...
 ✓  Card removed (gist deleted)
@@ -90,7 +90,7 @@ Your node is no longer discoverable.
 ## JSON output
 
 ```bash
-$ hh publish --json
+$ cofounder publish --json
 ```
 
 ```json
@@ -120,10 +120,10 @@ $ hh publish --json
 
 ## What gets published
 
-`hh publish` builds a `HHNodeCard` from:
+`cofounder publish` builds a `HHNodeCard` from:
 
-1. `~/.his-and-hers/capabilities.json` — hardware, Ollama models, skill tags
-2. Your `hh.json` config — node name, OS, provider
+1. `~/.cofounder/capabilities.json` — hardware, Ollama models, skill tags
+2. Your `cofounder.json` config — node name, OS, provider
 3. WOL config — whether a MAC address is configured
 
 **What is NOT included:**
@@ -136,12 +136,12 @@ $ hh publish --json
 
 ## Prerequisites
 
-- Run `hh capabilities advertise` first to generate `capabilities.json`
+- Run `cofounder capabilities advertise` first to generate `capabilities.json`
 - A GitHub Personal Access Token with `gist` scope stored in your OS keychain:
 
 ```bash
 # Store token (interactive prompt)
-hh auth github
+cofounder auth github
 # Or set env var
 export GITHUB_TOKEN=ghp_...
 ```
@@ -150,18 +150,18 @@ export GITHUB_TOKEN=ghp_...
 
 ## Auto-refresh
 
-To keep your published card up to date, add `hh publish` to your H2 startup
-sequence alongside `hh capabilities advertise`:
+To keep your published card up to date, add `cofounder publish` to your H2 startup
+sequence alongside `cofounder capabilities advertise`:
 
 ```bash
 # In systemd ExecStart or startup.bat:
-hh capabilities advertise && hh publish
+cofounder capabilities advertise && cofounder publish
 ```
 
 ---
 
 ## See also
 
-- [`hh discover`](/reference/discover) — browse the community registry
-- [`hh capabilities`](/reference/capabilities) — manage your capability profile
+- [`cofounder discover`](/reference/discover) — browse the community registry
+- [`cofounder capabilities`](/reference/capabilities) — manage your capability profile
 - [Protocol: HHCapabilityReport](/protocol/capabilities) — the underlying schema

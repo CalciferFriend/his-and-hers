@@ -1,6 +1,6 @@
-# `hh trace` — Execution Trace Viewer
+# `cofounder trace` — Execution Trace Viewer
 
-`hh trace` displays structured per-step timelines for `hh send` pipeline runs.
+`cofounder trace` displays structured per-step timelines for `cofounder send` pipeline runs.
 Each trace captures the full lifecycle of a task from preflight checks through
 result delivery, with per-step durations and error details.
 
@@ -10,13 +10,13 @@ where WOL wake time is spent, and diagnosing gateway connectivity issues.
 ## Usage
 
 ```bash
-hh trace <task_id>                    # Show timeline for a specific task
-hh trace list                         # List all stored traces
-hh trace list --json                  # Machine-readable list
-hh trace show <task_id>               # Explicit show (same as bare task_id)
-hh trace show <task_id> --json        # Full trace JSON
-hh trace clear <task_id>              # Remove a single trace
-hh trace clear --force                # Wipe all traces without prompting
+cofounder trace <task_id>                    # Show timeline for a specific task
+cofounder trace list                         # List all stored traces
+cofounder trace list --json                  # Machine-readable list
+cofounder trace show <task_id>               # Explicit show (same as bare task_id)
+cofounder trace show <task_id> --json        # Full trace JSON
+cofounder trace clear <task_id>              # Remove a single trace
+cofounder trace clear --force                # Wipe all traces without prompting
 ```
 
 ## What Gets Traced
@@ -58,7 +58,7 @@ Started 10:24:31 UTC  ·  total 14.3s
   ✓  task_complete         14.3s
 ```
 
-## `hh trace list`
+## `cofounder trace list`
 
 ```
   ID         Peer     Objective                    Steps  Duration  Status
@@ -83,29 +83,29 @@ Pass `--json` for machine-readable output:
 ]
 ```
 
-## `hh trace show <id>` / `--json`
+## `cofounder trace show <id>` / `--json`
 
 `--json` outputs the full `TraceLog` object including every `TraceEvent`
 with `step`, `started_at`, `duration_ms`, `ok`, `error`, and `meta` fields.
 
-## `hh trace clear`
+## `cofounder trace clear`
 
 ```bash
-hh trace clear abc123f          # Remove one trace (prompts for confirmation)
-hh trace clear --force          # Wipe everything without prompting
+cofounder trace clear abc123f          # Remove one trace (prompts for confirmation)
+cofounder trace clear --force          # Wipe everything without prompting
 ```
 
 ## Storage
 
-Traces are stored at `~/.his-and-hers/traces/<task_id>.json` (one file per task).
+Traces are stored at `~/.cofounder/traces/<task_id>.json` (one file per task).
 
-Traces are **not** written automatically by default — `hh send` and the SDK
+Traces are **not** written automatically by default — `cofounder send` and the SDK
 call `appendTraceEvent()` / `finalizeTrace()` when `--trace` instrumentation
 is enabled or when `HH_TRACE=1` is set.
 
 ```bash
-HH_TRACE=1 hh send "review this" --peer glados
-hh trace <task_id>
+HH_TRACE=1 cofounder send "review this" --peer glados
+cofounder trace <task_id>
 ```
 
 ## TypeScript API
@@ -120,7 +120,7 @@ import {
   finalizeTrace,
   formatStepLabel,
   renderBar,
-} from "@his-and-hers/core";
+} from "@cofounder/core";
 
 const trace = await loadTrace(taskId);
 console.log(trace.events);
@@ -140,7 +140,7 @@ await finalizeTrace(taskId);
 
 ## Related
 
-- [`hh send`](./send) — task dispatch (supports `HH_TRACE=1`)
-- [`hh doctor`](./doctor) — health diagnostics (preflight checks)
-- [`hh logs`](./logs) — task history viewer
-- [`hh stats`](./stats) — analytics and heatmaps
+- [`cofounder send`](./send) — task dispatch (supports `HH_TRACE=1`)
+- [`cofounder doctor`](./doctor) — health diagnostics (preflight checks)
+- [`cofounder logs`](./logs) — task history viewer
+- [`cofounder stats`](./stats) — analytics and heatmaps

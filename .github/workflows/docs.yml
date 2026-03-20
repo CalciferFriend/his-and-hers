@@ -43,9 +43,9 @@ jobs:
         run: pnpm build
         working-directory: docs-site
         env:
-          # Tells the VitePress config to use /his-and-hers/ base for GitHub Pages.
+          # Tells the VitePress config to use /cofounder/ base for GitHub Pages.
           # If you set a custom domain (CNAME), set this to / instead.
-          VITE_DOCS_BASE: /his-and-hers/
+          VITE_DOCS_BASE: /cofounder/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

@@ -3,15 +3,15 @@
  *
  * H2-side helper to POST stdout chunks to H1's stream server.
  *
- * Used by `hh watch` — as the executor produces stdout, each chunk is
+ * Used by `cofounder watch` — as the executor produces stdout, each chunk is
  * fire-and-forgotten to H1 via this client so the operator can follow
- * progress in real-time with `hh send --wait`.
+ * progress in real-time with `cofounder send --wait`.
  *
  * ## Integration with watch.ts
  *
- *   // Read stream URL from wake message env vars (injected by hh send)
- *   const streamUrl = process.env.HH_STREAM_URL;
- *   const streamToken = process.env.HH_STREAM_TOKEN;
+ *   // Read stream URL from wake message env vars (injected by cofounder send)
+ *   const streamUrl = process.env.COFOUNDER_STREAM_URL;
+ *   const streamToken = process.env.COFOUNDER_STREAM_TOKEN;
  *
  *   // As executor produces stdout:
  *   child.stdout.on("data", (data) => {

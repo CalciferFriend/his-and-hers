@@ -1,4 +1,4 @@
-# docker-compose.yml — his-and-hers
+# docker-compose.yml — cofounder
 #
 # Profiles:
 #   - default (no profile): H1 only
@@ -19,7 +19,7 @@
 # is useful when you want to prototype both sides locally or run a H2
 # in a Linux container on the same Tailscale network.
 
-name: his-and-hers
+name: cofounder
 
 # ─── H1 (orchestrator) ───────────────────────────────────────────────────────
 services:
@@ -65,7 +65,7 @@ services:
     volumes:
       - tailscale-h1:/var/lib/tailscale
       - h1-openclaw:/root/.openclaw
-      - his-and-hers-config:/root/.his-and-hers
+      - cofounder-config:/root/.cofounder
       # Mount SSH key if using SSH to H2:
       # - ./ssh/id_ed25519:/root/.ssh/id_ed25519:ro
 
@@ -121,7 +121,7 @@ services:
     volumes:
       - tailscale-h2:/var/lib/tailscale
       - h2-openclaw:/root/.openclaw
-      - h2-hh-config:/root/.his-and-hers
+      - h2-cofounder-config:/root/.cofounder
       - h2-ollama:/root/.ollama  # persist downloaded models
 
     healthcheck:
@@ -182,7 +182,7 @@ services:
     volumes:
       - tailscale-h2:/var/lib/tailscale
       - h2-openclaw:/root/.openclaw
-      - h2-hh-config:/root/.his-and-hers
+      - h2-cofounder-config:/root/.cofounder
       - h2-ollama:/root/.ollama
 
     healthcheck:
@@ -203,7 +203,7 @@ volumes:
   tailscale-h1:
   tailscale-h2:
   h1-openclaw:
-  his-and-hers-config:
+  cofounder-config:
   h2-openclaw:
-  h2-hh-config:
+  h2-cofounder-config:
   h2-ollama:   # Large volume — Ollama models can be multi-GB

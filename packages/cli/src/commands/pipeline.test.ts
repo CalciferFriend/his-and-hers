@@ -1,5 +1,5 @@
 /**
- * pipeline.test.ts — unit tests for hh pipeline
+ * pipeline.test.ts — unit tests for cofounder pipeline
  *
  * Tests the orchestration logic:
  *   - Inline spec parsing + step execution flow
@@ -17,7 +17,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import * as p from "@clack/prompts";
 import { pipeline } from "./pipeline.ts";
 import * as configStore from "../config/store.ts";
-import * as coreMod from "@his-and-hers/core";
+import * as coreMod from "@cofounder/core";
 import * as tasksState from "../state/tasks.ts";
 import * as peersSelect from "../peers/select.ts";
 import type { HHConfig, PeerNodeConfig } from "../config/schema.ts";
@@ -35,8 +35,8 @@ vi.mock("@clack/prompts", async () => {
 });
 
 vi.mock("../config/store.ts");
-vi.mock("@his-and-hers/core", async () => {
-  const actual = await vi.importActual<typeof import("@his-and-hers/core")>("@his-and-hers/core");
+vi.mock("@cofounder/core", async () => {
+  const actual = await vi.importActual<typeof import("@cofounder/core")>("@cofounder/core");
   return {
     ...actual,
     // Keep pure parsers + interpolation as real implementations.

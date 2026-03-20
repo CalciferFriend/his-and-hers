@@ -1,12 +1,12 @@
 /**
- * core/trace/trace.ts — Structured execution tracing for hh task pipelines
+ * core/trace/trace.ts — Structured execution tracing for cofounder task pipelines
  *
  * Records a timeline of named steps (WOL wake, gateway connect/auth, wake ACK,
  * watch pickup, streaming chunks, result delivery) with per-step durations.
  *
  * Designed for debugging Windows boot-chain issues and general latency analysis.
  *
- * Storage: ~/.his-and-hers/traces/<task_id>.json
+ * Storage: ~/.cofounder/traces/<task_id>.json
  *
  * Phase 16 — Calcifer ✅ (2026-03-16)
  */
@@ -18,12 +18,12 @@ import { z } from "zod";
 
 // ─── Paths ────────────────────────────────────────────────────────────────────
 
-export const TRACE_DIR = join(homedir(), ".his-and-hers", "traces");
+export const TRACE_DIR = join(homedir(), ".cofounder", "traces");
 
 // ─── Step names ──────────────────────────────────────────────────────────────
 
 /**
- * Well-known step names in the his-and-hers task pipeline.
+ * Well-known step names in the cofounder task pipeline.
  * Custom steps can use any string.
  */
 export type TraceStepName =

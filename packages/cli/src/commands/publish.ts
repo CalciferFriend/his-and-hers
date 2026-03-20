@@ -1,12 +1,12 @@
 /**
- * hh publish — publish an anonymised node card to the community registry.
+ * cofounder publish — publish an anonymised node card to the community registry.
  *
  * Uses GitHub Gist as a zero-infrastructure registry. Each published node
  * is a public Gist with:
- *   - description: "[his-and-hers] <role> — <name>, <provider>, <GPU>"
- *   - file: hh-node-card.json  (the anonymised HHNodeCard)
+ *   - description: "[cofounder] <role> — <name>, <provider>, <GPU>"
+ *   - file: cofounder-node-card.json  (the anonymised HHNodeCard)
  *
- * Anyone can browse the registry with: hh discover
+ * Anyone can browse the registry with: cofounder discover
  *
  * Auth: set GITHUB_TOKEN env var, or pass --token. Without a token, publish
  * works anonymously (no editing/deleting later). Most users should set the
@@ -19,8 +19,8 @@ import { join } from "node:path";
 import { existsSync } from "node:fs";
 import { loadConfig } from "../config/store.ts";
 
-const REGISTRY_TAG = "his-and-hers-node";
-const CARD_DIR = join(homedir(), ".his-and-hers");
+const REGISTRY_TAG = "cofounder-node";
+const CARD_DIR = join(homedir(), ".cofounder");
 const CARD_FILE = join(CARD_DIR, "published-card.json");
 
 // ─── Schema ──────────────────────────────────────────────────────────────────
@@ -54,7 +54,7 @@ export interface HHNodeCard {
   wol_supported: boolean;
   /** User-provided tags, e.g. ["rtx3070ti", "comfyui", "rag"] */
   tags: string[];
-  /** Free-form description shown in hh discover */
+  /** Free-form description shown in cofounder discover */
   description?: string;
   /** Gist ID of this card (filled in after first publish) */
   gist_id?: string;
@@ -66,7 +66,7 @@ async function buildNodeCard(
   opts: { tags?: string[]; description?: string; force?: boolean },
 ): Promise<HHNodeCard> {
   const config = await loadConfig();
-  if (!config) throw new Error("No config found — run `hh onboard` first.");
+  if (!config) throw new Error("No config found — run `cofounder onboard` first.");
 
   const node = config.this_node;
   const peer = config.peer_node;
@@ -118,7 +118,7 @@ function gistDescription(card: HHNodeCard): string {
     ? ` — ${card.capabilities.gpu.name}`
     : "";
   const modelAlias = card.provider.alias ?? `${card.provider.kind}/${card.provider.model}`;
-  return `[his-and-hers] ${card.role} node: ${card.name} ${card.emoji ?? ""} · ${modelAlias}${gpu}`;
+  return `[cofounder] ${card.role} node: ${card.name} ${card.emoji ?? ""} · ${modelAlias}${gpu}`;
 }
 
 // ─── GitHub Gist API ─────────────────────────────────────────────────────────
@@ -126,7 +126,7 @@ function gistDescription(card: HHNodeCard): string {
 async function postGist(card: HHNodeCard, token?: string): Promise<{ id: string; url: string }> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    "User-Agent": "his-and-hers-cli",
+    "User-Agent": "cofounder-cli",
     "X-GitHub-Api-Version": "2022-11-28",
   };
   if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -135,7 +135,7 @@ async function postGist(card: HHNodeCard, token?: string): Promise<{ id: string;
     description: gistDescription(card),
     public: true,
     files: {
-      "hh-node-card.json": {
+      "cofounder-node-card.json": {
         content: JSON.stringify({ ...card, tags: [...card.tags, REGISTRY_TAG] }, null, 2),
       },
     },
@@ -165,14 +165,14 @@ async function patchGist(
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
-      "User-Agent": "his-and-hers-cli",
+      "User-Agent": "cofounder-cli",
       "Authorization": `Bearer ${token}`,
       "X-GitHub-Api-Version": "2022-11-28",
     },
     body: JSON.stringify({
       description: gistDescription(card),
       files: {
-        "hh-node-card.json": {
+        "cofounder-node-card.json": {
           content: JSON.stringify({ ...card, tags: [...card.tags, REGISTRY_TAG] }, null, 2),
         },
       },
@@ -255,7 +255,7 @@ export async function publish(opts: {
     console.log(`   ${result.url}`);
     console.log(``);
     console.log(`   Share this URL so others can see your node config.`);
-    console.log(`   Run \`hh discover\` to browse the community registry.`);
-    console.log(`   Run \`hh publish\` again to update your card.`);
+    console.log(`   Run \`cofounder discover\` to browse the community registry.`);
+    console.log(`   Run \`cofounder publish\` again to update your card.`);
   }
 }

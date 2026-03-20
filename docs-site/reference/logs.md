@@ -1,4 +1,4 @@
-# `hh logs` — Reference
+# `cofounder logs` — Reference
 
 View task history, filter by status/peer/time, and follow live updates.
 
@@ -7,7 +7,7 @@ View task history, filter by status/peer/time, and follow live updates.
 ## Synopsis
 
 ```bash
-hh logs [flags]
+cofounder logs [flags]
 ```
 
 ---
@@ -30,7 +30,7 @@ hh logs [flags]
 ## Default output
 
 ```bash
-$ hh logs
+$ cofounder logs
 ```
 
 ```
@@ -48,21 +48,21 @@ task_01j8fzk3   complete   2h ago    h2-pi      "embed this document corpus"
 ## With `--output`
 
 ```bash
-$ hh logs --task task_01j8g1fk --output
+$ cofounder logs --task task_01j8g1fk --output
 ```
 
 ```
 task_01j8g1fk — complete — h2-home — 2m ago
 Tokens: 1,243 in / 312 out — $0.00 (ollama/mistral)
 ──────────────────────────────────────────────────────────────────────────
-# his-and-hers
+# cofounder
 
-his-and-hers is an open protocol for connecting two OpenClaw agents
+cofounder is an open protocol for connecting two OpenClaw agents
 across separate machines. H1 orchestrates; H2 executes.
 
 ## Key points:
 - WOL-based wake when H2 is sleeping
-- HHMessage protocol for cross-machine communication
+- CofounderMessage protocol for cross-machine communication
 - Capability routing (GPU, Ollama, ComfyUI detection)
 - Budget tracking per task and provider
 ```
@@ -72,7 +72,7 @@ across separate machines. H1 orchestrates; H2 executes.
 ## Live follow
 
 ```bash
-$ hh logs --follow
+$ cofounder logs --follow
 ```
 
 ```
@@ -89,7 +89,7 @@ Press `Ctrl+C` to exit follow mode.
 ## JSON output
 
 ```bash
-$ hh logs --json --limit 3
+$ cofounder logs --json --limit 3
 ```
 
 ```json
@@ -122,14 +122,14 @@ $ hh logs --json --limit 3
 | `running` | H2 is executing the task |
 | `complete` | Task finished successfully |
 | `failed` | Error during execution |
-| `timeout` | Exceeded `--timeout` on `hh send --wait` |
+| `timeout` | Exceeded `--timeout` on `cofounder send --wait` |
 | `wol-pending` | Waiting for H2 to boot before dispatch |
 
 ---
 
 ## Task state files
 
-Tasks are stored at `~/.his-and-hers/tasks/<task_id>.json`:
+Tasks are stored at `~/.cofounder/tasks/<task_id>.json`:
 
 ```json
 {
@@ -144,7 +144,7 @@ Tasks are stored at `~/.his-and-hers/tasks/<task_id>.json`:
   "tokens_in": 1243,
   "tokens_out": 312,
   "cost_usd": 0.00,
-  "output": "# his-and-hers\n\nhis-and-hers is an open protocol..."
+  "output": "# cofounder\n\ncofounder is an open protocol..."
 }
 ```
 
@@ -154,25 +154,25 @@ Tasks are stored at `~/.his-and-hers/tasks/<task_id>.json`:
 
 ```bash
 # Only failed tasks
-hh logs --status failed
+cofounder logs --status failed
 
 # Last 24 hours, from h2-pi
-hh logs --since 24h --peer h2-pi
+cofounder logs --since 24h --peer h2-pi
 
 # Last 50 tasks with results
-hh logs --limit 50 --output
+cofounder logs --limit 50 --output
 
 # Failed tasks from the last week
-hh logs --since 7d --status failed --output
+cofounder logs --since 7d --status failed --output
 
 # All tasks for a specific peer, JSON
-hh logs --peer h2-beast --all --json > h2-beast-history.json
+cofounder logs --peer h2-beast --all --json > h2-beast-history.json
 ```
 
 ---
 
 ## See also
 
-- [hh budget](/reference/budget) — cost breakdown per task
-- [hh send](/reference/send) — dispatch tasks
+- [cofounder budget](/reference/budget) — cost breakdown per task
+- [cofounder send](/reference/send) — dispatch tasks
 - [Sending tasks guide](/guide/sending-tasks) — task lifecycle walkthrough

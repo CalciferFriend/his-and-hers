@@ -1,7 +1,7 @@
-# hh-handoff — Cross-Node Handoff Protocol
+# cofounder-handoff — Cross-Node Handoff Protocol
 
-## HHMessage format
-Every cross-machine communication uses the HHMessage envelope:
+## CofounderMessage format
+Every cross-machine communication uses the CofounderMessage envelope:
 
 ```json
 {

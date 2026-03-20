@@ -1,5 +1,5 @@
 /**
- * peers.test.ts — unit tests for `hh peers`
+ * peers.test.ts — unit tests for `cofounder peers`
  *
  * Covers: listing with cached caps, --ping reachability, --json output,
  * multi-peer configs, primary star marker, no-config guard,
@@ -28,7 +28,7 @@ vi.mock("../config/store.ts", () => ({
   loadConfig: mockLoadConfig,
 }));
 
-vi.mock("@his-and-hers/core", () => ({
+vi.mock("@cofounder/core", () => ({
   pingPeer: mockPingPeer,
   loadPeerCapabilities: mockLoadPeerCapabilities,
 }));
@@ -102,7 +102,7 @@ beforeEach(() => {
 // No-config guard
 // ---------------------------------------------------------------------------
 
-describe("hh peers — no config", () => {
+describe("cofounder peers — no config", () => {
   it("exits 1 when config is not found", async () => {
     mockLoadConfig.mockResolvedValue(null);
     await peers();
@@ -120,7 +120,7 @@ describe("hh peers — no config", () => {
 // --json output
 // ---------------------------------------------------------------------------
 
-describe("hh peers --json", () => {
+describe("cofounder peers --json", () => {
   it("outputs a JSON array", async () => {
     const lines: string[] = [];
     vi.spyOn(process.stdout, "write").mockImplementation((s) => {
@@ -218,7 +218,7 @@ describe("hh peers --json", () => {
 // --ping flag
 // ---------------------------------------------------------------------------
 
-describe("hh peers --ping", () => {
+describe("cofounder peers --ping", () => {
   it("calls pingPeer for each configured peer", async () => {
     await peers({ ping: true, json: true });
     expect(mockPingPeer).toHaveBeenCalledWith("100.64.0.50", expect.any(Number));
@@ -268,7 +268,7 @@ describe("hh peers --ping", () => {
 // Multiple peers
 // ---------------------------------------------------------------------------
 
-describe("hh peers — multi-peer config", () => {
+describe("cofounder peers — multi-peer config", () => {
   beforeEach(() => {
     mockGetAllPeers.mockReturnValue([PRIMARY_PEER, SECONDARY_PEER]);
     // capabilities cache keyed to primary peer's name
@@ -325,7 +325,7 @@ describe("hh peers — multi-peer config", () => {
 // Capability cache miss
 // ---------------------------------------------------------------------------
 
-describe("hh peers — no capability cache", () => {
+describe("cofounder peers — no capability cache", () => {
   it("still returns peer list when loadPeerCapabilities resolves null", async () => {
     mockLoadPeerCapabilities.mockResolvedValue(null);
     const lines: string[] = [];
@@ -358,7 +358,7 @@ describe("hh peers — no capability cache", () => {
 // Default emoji fallback
 // ---------------------------------------------------------------------------
 
-describe("hh peers — emoji fallback", () => {
+describe("cofounder peers — emoji fallback", () => {
   it("uses 🤖 when peer has no emoji", async () => {
     const noEmojiPeer = { ...PRIMARY_PEER, emoji: undefined };
     mockGetAllPeers.mockReturnValue([noEmojiPeer]);

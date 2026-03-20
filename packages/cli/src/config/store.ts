@@ -3,22 +3,22 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { HHConfig, type ProviderConfig } from "./schema.ts";
 
-const CONFIG_DIR = join(homedir(), ".his-and-hers");
-const CONFIG_PATH = join(CONFIG_DIR, "hh.json");
+const CONFIG_DIR = join(homedir(), ".cofounder");
+const CONFIG_PATH = join(CONFIG_DIR, "cofounder.json");
 const PROFILES_DIR = join(CONFIG_DIR, "profiles");
 const ACTIVE_PROFILE_PATH = join(CONFIG_DIR, "active-profile.json");
 
 /**
  * Get the active profile name.
  * Priority:
- * 1. HH_PROFILE env var
- * 2. ~/.his-and-hers/active-profile.json
- * 3. "default" (for backward compat with ~/.his-and-hers/config.json)
+ * 1. COFOUNDER_PROFILE env var
+ * 2. ~/.cofounder/active-profile.json
+ * 3. "default" (for backward compat with ~/.cofounder/config.json)
  */
 export async function getActiveProfileName(): Promise<string> {
   // Check env var first
-  if (process.env.HH_PROFILE) {
-    return process.env.HH_PROFILE;
+  if (process.env.COFOUNDER_PROFILE) {
+    return process.env.COFOUNDER_PROFILE;
   }
 
   // Check active-profile.json
@@ -47,9 +47,9 @@ export async function setActiveProfile(name: string): Promise<void> {
 /**
  * Load config from the active profile.
  * Priority:
- * 1. HH_PROFILE env var → ~/.his-and-hers/profiles/<name>.json
- * 2. active-profile.json → ~/.his-and-hers/profiles/<name>.json
- * 3. Backward compat: ~/.his-and-hers/hh.json (treated as "default" profile)
+ * 1. COFOUNDER_PROFILE env var → ~/.cofounder/profiles/<name>.json
+ * 2. active-profile.json → ~/.cofounder/profiles/<name>.json
+ * 3. Backward compat: ~/.cofounder/cofounder.json (treated as "default" profile)
  */
 export async function loadConfig(): Promise<HHConfig | null> {
   const profileName = await getActiveProfileName();
@@ -64,7 +64,7 @@ export async function loadConfig(): Promise<HHConfig | null> {
   }
 
   // Backward compat: if profile is "default" and profiles/<default>.json doesn't exist,
-  // try ~/.his-and-hers/hh.json
+  // try ~/.cofounder/cofounder.json
   if (profileName === "default") {
     try {
       const raw = await readFile(CONFIG_PATH, "utf-8");
@@ -79,9 +79,9 @@ export async function loadConfig(): Promise<HHConfig | null> {
 
 /**
  * Save config to the active profile.
- * Writes to ~/.his-and-hers/profiles/<profile>.json.
+ * Writes to ~/.cofounder/profiles/<profile>.json.
  * For backward compat, if profile is "default" and profiles/<default>.json doesn't exist,
- * writes to ~/.his-and-hers/hh.json.
+ * writes to ~/.cofounder/cofounder.json.
  */
 export async function saveConfig(config: HHConfig): Promise<void> {
   await mkdir(CONFIG_DIR, { recursive: true });
@@ -97,7 +97,7 @@ export async function saveConfig(config: HHConfig): Promise<void> {
     mode: 0o600,
   });
 
-  // Also write to hh.json for backward compat if profile is "default"
+  // Also write to cofounder.json for backward compat if profile is "default"
   if (profileName === "default") {
     await writeFile(CONFIG_PATH, JSON.stringify(safe, null, 2), {
       mode: 0o600,
@@ -111,7 +111,7 @@ export async function saveConfig(config: HHConfig): Promise<void> {
  */
 export async function patchConfig(patch: Partial<HHConfig>): Promise<HHConfig> {
   const existing = await loadConfig();
-  if (!existing) throw new Error("No config found — run hh onboard first");
+  if (!existing) throw new Error("No config found — run cofounder onboard first");
   const merged = HHConfig.parse({ ...existing, ...patch });
   await saveConfig(merged);
   return merged;

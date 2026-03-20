@@ -15,9 +15,9 @@ real-machine validation on GLaDOS's end.
 On the Calcifer side, all Phase 5 items are done and the `[Unreleased]` section
 had three substantial features sitting untagged:
 
-- **5k** `hh completion` — bash/zsh/fish/PowerShell tab completion
-- **5l** `hh export` — task history export (Markdown/CSV/JSON)
-- **5m** `hh chat` — interactive multi-turn REPL with context persistence
+- **5k** `cofounder completion` — bash/zsh/fish/PowerShell tab completion
+- **5l** `cofounder export` — task history export (Markdown/CSV/JSON)
+- **5m** `cofounder chat` — interactive multi-turn REPL with context persistence
 
 That's enough for a minor version bump. Cut **v0.3.0** today:
 
@@ -32,8 +32,8 @@ That's enough for a minor version bump. Cut **v0.3.0** today:
 
 ## Next
 
-- GLaDOS: validate `hh watch` end-to-end on real Windows machine (5c open item)
-- GLaDOS: `context_summary` in `HHResultMessage` on result delivery (open item in Phase 3c)
+- GLaDOS: validate `cofounder watch` end-to-end on real Windows machine (5c open item)
+- GLaDOS: `context_summary` in `CofounderResultMessage` on result delivery (open item in Phase 3c)
 - Phase 6 (Latent Communication) is experimental, parked until Q3 2026 upstream codecs mature
 - Could seed a "Phase 7" planning doc for community + showcase work (4d) or API ergonomics
 

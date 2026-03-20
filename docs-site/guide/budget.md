@@ -1,6 +1,6 @@
 # Budget Tracking
 
-his-and-hers tracks the cost of every task — cloud API tokens and local compute both. `hh budget` shows you where your money is going and advises when to route to local instead of cloud.
+cofounder tracks the cost of every task — cloud API tokens and local compute both. `cofounder budget` shows you where your money is going and advises when to route to local instead of cloud.
 
 ---
 
@@ -23,14 +23,14 @@ Pricing tables are built in for the major providers:
 | Ollama (any) | — | $0.00 | $0.00 |
 | LM Studio (any) | — | $0.00 | $0.00 |
 
-Costs are stored in task state files at `~/.his-and-hers/tasks/`.
+Costs are stored in task state files at `~/.cofounder/tasks/`.
 
 ---
 
-## `hh budget` — daily summary
+## `cofounder budget` — daily summary
 
 ```bash
-hh budget
+cofounder budget
 ```
 
 Output:
@@ -48,7 +48,7 @@ Tasks run:      23 (18 cloud, 5 local)
 Avg task cost:  $0.008 (cloud)
 ───────────────────────────────────────────
 Routing tip: 5 tasks routed to cloud could have run locally.
-             Consider: hh send with --peer h2-home for coding tasks.
+             Consider: cofounder send with --peer h2-home for coding tasks.
 ```
 
 ---
@@ -56,11 +56,11 @@ Routing tip: 5 tasks routed to cloud could have run locally.
 ## Time ranges
 
 ```bash
-hh budget           # today (default)
-hh budget --week    # last 7 days
-hh budget --month   # current calendar month
-hh budget --all     # all time
-hh budget --since 2026-03-01  # custom start date
+cofounder budget           # today (default)
+cofounder budget --week    # last 7 days
+cofounder budget --month   # current calendar month
+cofounder budget --all     # all time
+cofounder budget --since 2026-03-01  # custom start date
 ```
 
 ---
@@ -68,7 +68,7 @@ hh budget --since 2026-03-01  # custom start date
 ## Per-task breakdown
 
 ```bash
-hh budget --tasks
+cofounder budget --tasks
 ```
 
 Output:
@@ -90,7 +90,7 @@ Total: $0.07
 ## JSON output
 
 ```bash
-hh budget --json
+cofounder budget --json
 ```
 
 ```json
@@ -114,7 +114,7 @@ hh budget --json
 
 ## Cost routing
 
-his-and-hers can automatically route tasks to minimize cloud spend. Set thresholds in `hh.json`:
+cofounder can automatically route tasks to minimize cloud spend. Set thresholds in `cofounder.json`:
 
 ```json
 {
@@ -169,7 +169,7 @@ Set a daily budget limit to get notified before you overspend:
 When 80% of the daily limit is reached, H1 logs a warning and can optionally block further cloud tasks:
 
 ```bash
-$ hh send "complex reasoning task"
+$ cofounder send "complex reasoning task"
 ⚠️  Daily budget 82% used ($0.82/$1.00).
    Routing to H2 (local) instead of cloud.
 → Task dispatched to h2-home (Ollama/mistral)
@@ -180,7 +180,7 @@ $ hh send "complex reasoning task"
 ## Per-peer breakdown
 
 ```bash
-hh budget --peer h2-home --week
+cofounder budget --peer h2-home --week
 ```
 
 ```
@@ -200,9 +200,9 @@ Budget data lives in task state files. To reset:
 
 ```bash
 # Archive old tasks (don't delete — you might want them)
-mkdir ~/.his-and-hers/tasks-archive
-mv ~/.his-and-hers/tasks/task_* ~/.his-and-hers/tasks-archive/
+mkdir ~/.cofounder/tasks-archive
+mv ~/.cofounder/tasks/task_* ~/.cofounder/tasks-archive/
 
 # Or start fresh (destructive)
-rm ~/.his-and-hers/tasks/task_*
+rm ~/.cofounder/tasks/task_*
 ```

@@ -4,8 +4,8 @@
     "rootDir": "src",
     "outDir": "dist",
     "paths": {
-      "@his-and-hers/core": ["../core/src/index.ts"],
-      "@his-and-hers/core/*": ["../core/src/*.ts"]
+      "@cofounder/core": ["../core/src/index.ts"],
+      "@cofounder/core/*": ["../core/src/*.ts"]
     }
   },
   "include": ["src/**/*"]

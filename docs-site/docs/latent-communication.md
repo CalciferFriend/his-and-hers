@@ -3,7 +3,7 @@
 > **Status:** Phase 6 — Research preview. Protocol is stable; upstream codec implementations are still maturing.
 > See [Future: Beyond Text](/docs/future) for the vision and research context.
 
-This page is a developer guide for implementing the latent communication layer in his-and-hers. It covers the protocol, the two codec paths (Vision Wormhole and LatentMAS KV cache), the serialization API, capability negotiation, and how to write adapter code that hooks into a local inference server.
+This page is a developer guide for implementing the latent communication layer in cofounder. It covers the protocol, the two codec paths (Vision Wormhole and LatentMAS KV cache), the serialization API, capability negotiation, and how to write adapter code that hooks into a local inference server.
 
 ---
 
@@ -11,7 +11,7 @@ This page is a developer guide for implementing the latent communication layer i
 
 When H1 sends a text task to H2, it compresses its internal reasoning state into a sequence of tokens. H2 rebuilds meaning from those tokens. This works, but it's lossy — alternative reasoning paths, confidence weights, and structural relationships are discarded at the token boundary.
 
-`HHLatentMessage` carries compressed hidden states instead of decoded text. H2 receives the representation directly and continues inference from there, skipping the token round-trip.
+`CofounderLatentMessage` carries compressed hidden states instead of decoded text. H2 receives the representation directly and continues inference from there, skipping the token round-trip.
 
 Two paths are supported, depending on the hardware pair:
 
@@ -24,12 +24,12 @@ Two paths are supported, depending on the hardware pair:
 
 ## Message schema
 
-`HHLatentMessage` is part of the `HHMessage` discriminated union (type: `"latent"`):
+`CofounderLatentMessage` is part of the `CofounderMessage` discriminated union (type: `"latent"`):
 
 ```typescript
-import { HHLatentPayload, createLatentMessage, serializeLatent } from "his-and-hers";
+import { CofounderLatentPayload, createLatentMessage, serializeLatent } from "cofounder";
 
-const payload = HHLatentPayload.parse({
+const payload = CofounderLatentPayload.parse({
   task_id: "550e8400-e29b-41d4-a716-446655440000",
   sender_model: "llama-3.1-70b",
   sender_hidden_dim: 8192,
@@ -51,7 +51,7 @@ const payload = HHLatentPayload.parse({
 });
 
 const msg = createLatentMessage("calcifer", "glados", payload, {
-  context_summary: "Working on his-and-hers Phase 6",
+  context_summary: "Working on cofounder Phase 6",
 });
 ```
 
@@ -64,7 +64,7 @@ Hidden state tensors are serialized as base64-encoded float32 buffers for HTTP t
 ### `serializeLatent(tensor, tokens, dim)`
 
 ```typescript
-import { serializeLatent } from "his-and-hers";
+import { serializeLatent } from "cofounder";
 
 // A Vision Wormhole codec outputs 16 tokens × 512-dim embeddings
 const outputTensor = new Float32Array(16 * 512); // from your codec
@@ -75,7 +75,7 @@ const encoded = serializeLatent(outputTensor, 16, 512);
 ### `deserializeLatent(encoded, tokens, dim)`
 
 ```typescript
-import { deserializeLatent } from "his-and-hers";
+import { deserializeLatent } from "cofounder";
 
 const tensor = deserializeLatent(msg.payload.compressed_latent!, 16, 512);
 // → Float32Array, ready for injection
@@ -94,7 +94,7 @@ The current implementation serializes as float32 (4 bytes/element). When Vision 
 The H1 adapter needs to:
 1. Run the local model through a **partial forward pass** to extract hidden states at a chosen layer
 2. Pass the hidden states through the **Vision Wormhole codec** (a lightweight visual encoder)
-3. Serialize the codec output and build the `HHLatentMessage`
+3. Serialize the codec output and build the `CofounderLatentMessage`
 
 ```typescript
 // packages/core/src/latent/vw-adapter-h1.ts (stub — awaits upstream codec)
@@ -114,7 +114,7 @@ export async function buildLatentPayload(
   codec: VWCodecAdapter,
   senderModel: string,
   senderHiddenDim: number,
-): Promise<HHLatentPayload> {
+): Promise<CofounderLatentPayload> {
   // 1. Extract hidden states from local inference (implementation depends on backend)
   const hiddenStates = await extractHiddenStates(prompt, senderModel);
 
@@ -125,7 +125,7 @@ export async function buildLatentPayload(
 
   const compressionRatio = (layers * seq * dim) / (codec.output_tokens * codec.output_dim);
 
-  return HHLatentPayload.parse({
+  return CofounderLatentPayload.parse({
     task_id: taskId,
     sender_model: senderModel,
     sender_hidden_dim: senderHiddenDim,
@@ -141,7 +141,7 @@ export async function buildLatentPayload(
 
 ### H2 adapter (receiver)
 
-H2 receives the `HHLatentMessage`, decodes the tensor, and injects it into its local model:
+H2 receives the `CofounderLatentMessage`, decodes the tensor, and injects it into its local model:
 
 ```typescript
 // packages/core/src/latent/vw-adapter-h2.ts (stub — awaits upstream codec)
@@ -154,7 +154,7 @@ export interface VWDecoderAdapter {
 }
 
 export async function handleLatentMessage(
-  msg: HHLatentMessage,
+  msg: CofounderLatentMessage,
   decoder: VWDecoderAdapter,
   receiverModel: string,
 ): Promise<string> {
@@ -171,7 +171,7 @@ export async function handleLatentMessage(
     return await decoder.continue();
   } catch (err) {
     // Graceful degradation — log and fall back to text
-    console.warn("[hh latent] Decoder injection failed, using text fallback:", err);
+    console.warn("[cofounder latent] Decoder injection failed, using text fallback:", err);
     return await runTextTask(fallback_text);
   }
 }
@@ -191,7 +191,7 @@ const kvCache = await extractKVCache(
 );
 const encodedKV = Buffer.from(kvCache).toString("base64");
 
-const payload = HHLatentPayload.parse({
+const payload = CofounderLatentPayload.parse({
   task_id: taskId,
   sender_model: "llama-3.1-70b",
   sender_hidden_dim: 8192,
@@ -232,14 +232,14 @@ Nodes advertise latent support in their capability report:
 The routing layer checks peer capabilities before choosing message type:
 
 ```typescript
-import { routeTask } from "his-and-hers";
+import { routeTask } from "cofounder";
 
 const route = await routeTask(task, peerCapabilities);
 // → { type: "latent", codec: "vw-qwen3vl2b-v1" }  if latent supported
 // → { type: "text" }                                 if not
 ```
 
-The `hh send` command exposes two flags:
+The `cofounder send` command exposes two flags:
 
 | Flag | Behaviour |
 |------|-----------|
@@ -248,10 +248,10 @@ The `hh send` command exposes two flags:
 
 ```bash
 # Require latent (fails if GLaDOS can't receive it)
-hh send --latent "summarise this codebase"
+cofounder send --latent "summarise this codebase"
 
 # Prefer latent, fall back silently
-hh send --auto-latent "summarise this codebase"
+cofounder send --auto-latent "summarise this codebase"
 ```
 
 ---
@@ -267,8 +267,8 @@ import {
   serializeLatent,
   deserializeLatent,
   isLatentMessage,
-  HHLatentPayload,
-} from "his-and-hers";
+  CofounderLatentPayload,
+} from "cofounder";
 
 describe("latent round-trip", () => {
   it("serializes and deserializes a mock codec tensor", () => {
@@ -283,8 +283,8 @@ describe("latent round-trip", () => {
     expect(decoded[tokens * dim - 1]).toBeCloseTo(tensor[tokens * dim - 1]);
   });
 
-  it("builds a valid HHLatentMessage with fallback", () => {
-    const payload = HHLatentPayload.parse({
+  it("builds a valid CofounderLatentMessage with fallback", () => {
+    const payload = CofounderLatentPayload.parse({
       task_id: "00000000-0000-0000-0000-000000000001",
       sender_model: "llama-3.1-70b",
       sender_hidden_dim: 8192,
@@ -313,7 +313,7 @@ implementation is planned for Q3 2026), wire it in via the `VWCodecAdapter` inte
 3. Add a corresponding `VWDecoderAdapter` implementation on the H2 side
 4. Open a PR — we'll add it to the built-in codec registry
 
-See [CONTRIBUTING.md](https://github.com/CalciferFriend/his-and-hers/blob/main/CONTRIBUTING.md)
+See [CONTRIBUTING.md](https://github.com/CalciferFriend/cofounder/blob/main/CONTRIBUTING.md)
 for development setup and PR guidelines.
 
 ---
@@ -326,7 +326,7 @@ Planned measurements (see ROADMAP 6f):
 
 | Metric | Method |
 |--------|--------|
-| Round-trip latency | `hh send --latent` vs text on same H1→H2 pair |
+| Round-trip latency | `cofounder send --latent` vs text on same H1→H2 pair |
 | Accuracy | JSON generation, code, math on a structured task suite |
 | Bandwidth | Bytes transmitted per task (gzipped latent vs tokenized text) |
 | Hardware coverage | RTX 3070 Ti, RTX 4090, M2 Mac, Pi 5 |

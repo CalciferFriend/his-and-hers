@@ -89,7 +89,7 @@ fi
 
 # ── 5. Write OpenClaw + HH config ─────────────────────────────────────────────
 echo "[5/6] Writing configs..."
-mkdir -p /root/.openclaw /root/.his-and-hers
+mkdir -p /root/.openclaw /root/.cofounder
 
 # OpenClaw config — bind to Tailscale IP so H1 can reach it
 cat > /root/.openclaw/openclaw.json <<EOF
@@ -112,12 +112,12 @@ cat > /root/.openclaw/openclaw.json <<EOF
 EOF
 
 # Write HH config if not already present (e.g. from mounted volume)
-if [ ! -f /root/.his-and-hers/config.json ]; then
+if [ ! -f /root/.cofounder/config.json ]; then
   TS_HOSTNAME=$(tailscale status --json 2>/dev/null \
     | node -e "const d=require('fs').readFileSync('/dev/stdin','utf8'); try { console.log(JSON.parse(d).Self?.HostName ?? ''); } catch { console.log(''); }" \
     || echo "h2-docker")
 
-  cat > /root/.his-and-hers/config.json <<EOF
+  cat > /root/.cofounder/config.json <<EOF
 {
   "version": "0.1.0",
   "gateway_port": $JERRY_GATEWAY_PORT,
@@ -170,7 +170,7 @@ fi
 
 # ── Advertise capabilities to H1 ─────────────────────────────────────────────
 echo "Scanning and advertising capabilities..."
-hh capabilities advertise 2>/dev/null || true
+cofounder capabilities advertise 2>/dev/null || true
 
 # ── Print ready banner ────────────────────────────────────────────────────────
 MODEL_LIST=$(ollama list 2>/dev/null | tail -n +2 | awk '{print $1}' | tr '\n' ' ' || echo "none")

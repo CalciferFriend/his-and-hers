@@ -1,8 +1,8 @@
 # Research Notes — Latent Agent Communication
 
-Tracking the research landscape driving Phase 6 (Latent Communication) of the his-and-hers protocol.
+Tracking the research landscape driving Phase 6 (Latent Communication) of the cofounder protocol.
 
-As of 2026-03-12, the `HHLatentMessage` type is implemented and ready to use. Implementation depends on upstream codec implementations maturing to production readiness.
+As of 2026-03-12, the `CofounderLatentMessage` type is implemented and ready to use. Implementation depends on upstream codec implementations maturing to production readiness.
 
 ---
 
@@ -18,7 +18,7 @@ As of 2026-03-12, the `HHLatentMessage` type is implemented and ready to use. Im
 **Key Finding:**
 Training-free latent communication across heterogeneous model architectures via visual encoder pathway. A lightweight codec (~100MB) compresses sender hidden states into a format the receiver's visual encoder can parse, enabling cross-architecture latent handoff with ~5ms compression latency and 8KB payload size.
 
-**Relevance to his-and-hers:**
+**Relevance to cofounder:**
 This is the **primary approach** for Phase 6. H1 (Claude Sonnet 4.5) can compress its hidden state via a trained codec, transmit 8KB over Tailscale, and H2 (Qwen3-VL-70B) can inject it via the visual encoder pathway. This eliminates the text bottleneck without requiring model family matching.
 
 **WAN Performance:**
@@ -40,7 +40,7 @@ This is the **primary approach** for Phase 6. H1 (Claude Sonnet 4.5) can compres
 **Key Finding:**
 80% token reduction and higher accuracy on reasoning tasks via KV cache sharing between same-family agents. Requires exact model match (same architecture, same weights). Training-free — works with existing checkpoint weights. Zero information loss via exact state transfer.
 
-**Relevance to his-and-hers:**
+**Relevance to cofounder:**
 This is the **fallback path** for Phase 6 when both H1 and H2 run identical models (e.g., both `llama-3.1-70b`). KV cache serialization enables lossless state handoff without decoding to text.
 
 **WAN Problem:**
@@ -49,7 +49,7 @@ KV cache size scales with sequence length. For 64 latent reasoning steps:
 - Transmission time over 100Mbps Tailscale: **293ms**
 - Vision Wormhole: **8KB** → **0.7ms** (420× faster)
 
-This makes LatentMAS impractical for distributed his-and-hers deployments unless both agents are on same LAN or bandwidth >> 1Gbps. It remains valuable for single-machine multi-agent systems or LAN-local H2 pools.
+This makes LatentMAS impractical for distributed cofounder deployments unless both agents are on same LAN or bandwidth >> 1Gbps. It remains valuable for single-machine multi-agent systems or LAN-local H2 pools.
 
 **Status:** Reference implementation available but not production-optimized for network transport.
 
@@ -65,7 +65,7 @@ This makes LatentMAS impractical for distributed his-and-hers deployments unless
 **Key Finding:**
 KV cache can be transferred across model variants (e.g., Llama 3.1 8B → Llama 3.1 70B) with alignment layers, enabling heterogeneous latent handoff within a model family. Reduces cold-start latency for large models by prefilling KV cache from a smaller model's inference.
 
-**Relevance to his-and-hers:**
+**Relevance to cofounder:**
 Enables **asymmetric H2 pools** where a lightweight H1 (e.g., Claude Haiku) generates the KV cache and hands off to a heavyweight H2 (e.g., Llama 3.1 70B) for continuation. This could reduce H1's compute cost while maintaining H2's reasoning power.
 
 **Status:** Watching for production-ready implementation.
@@ -82,7 +82,7 @@ Enables **asymmetric H2 pools** where a lightweight H1 (e.g., Claude Haiku) gene
 **Key Finding:**
 24× faster inference via latent handoff across heterogeneous models. Compresses intermediate hidden states to 10-20% of original size with minimal accuracy loss. Supports different quantization levels per model (int8 → fp16 → int4).
 
-**Relevance to his-and-hers:**
+**Relevance to cofounder:**
 Pioneering work on cross-architecture latent handoff, but the compression approach is less elegant than Vision Wormhole's visual encoder pathway. The 10-20% compression ratio (vs Vision Wormhole's ~1%) makes it less practical for WAN transport.
 
 **Status:** Paper withdrawn from ICLR. Code remains available but unmaintained.
@@ -99,7 +99,7 @@ Pioneering work on cross-architecture latent handoff, but the compression approa
 **Key Finding:**
 Text-based multi-agent systems (TextMAS) can **reduce** performance vs single-agent baseline on complex reasoning tasks due to information loss during agent-to-agent handoffs. The study shows that brainstorming-style multi-agent frameworks underperform when the task requires preserving dense context (e.g., multi-step math, structured planning).
 
-**Relevance to his-and-hers:**
+**Relevance to cofounder:**
 This paper **validates the need** for latent communication. It demonstrates that text-based agent coordination hits a fundamental bottleneck due to the decode-then-encode information loss. Latent communication (Vision Wormhole, LatentMAS) directly addresses this failure mode by preserving hidden state information density.
 
 **Our Experimental Confirmation:**
@@ -119,7 +119,7 @@ This aligns with the paper's findings. Next experiment will compare TextMAS dist
 
 Production-grade KV cache transfer within a vLLM cluster. Prefill node generates KV cache, decode node continues inference. Same architecture as LatentMAS but optimized for single-datacenter deployment with 10Gbps+ interconnects.
 
-**Takeaway:** KV cache transfer is production-ready for low-latency networks. his-and-hers's Vision Wormhole path targets WAN scenarios where KV cache size is prohibitive.
+**Takeaway:** KV cache transfer is production-ready for low-latency networks. cofounder's Vision Wormhole path targets WAN scenarios where KV cache size is prohibitive.
 
 ---
 
@@ -128,7 +128,7 @@ Production-grade KV cache transfer within a vLLM cluster. Prefill node generates
 
 RDMA-optimized KV cache transfer for multi-GPU inference. Achieves sub-millisecond KV cache migration between GPUs on same host or same rack.
 
-**Takeaway:** Reinforces that KV cache transfer is viable for LAN/datacenter but not WAN. Vision Wormhole's 420× compression advantage becomes critical for distributed his-and-hers deployments.
+**Takeaway:** Reinforces that KV cache transfer is viable for LAN/datacenter but not WAN. Vision Wormhole's 420× compression advantage becomes critical for distributed cofounder deployments.
 
 ---
 
@@ -137,7 +137,7 @@ RDMA-optimized KV cache transfer for multi-GPU inference. Achieves sub-milliseco
 
 Enables distributed attention computation across multiple GPUs by partitioning the sequence and passing KV cache in a ring topology. Solves the memory bottleneck for ultra-long sequences (1M+ tokens).
 
-**Takeaway:** Orthogonal to his-and-hers's use case. Ring-Attention targets single-task parallelism, while his-and-hers targets task-level agent coordination across separate machines.
+**Takeaway:** Orthogonal to cofounder's use case. Ring-Attention targets single-task parallelism, while cofounder targets task-level agent coordination across separate machines.
 
 ---
 
@@ -182,7 +182,7 @@ This confirms the Stanford paper's findings. Text-based multi-agent coordination
 **Speedup:** Vision Wormhole is **25× faster** than LatentMAS over WAN (55ms vs 1400ms).
 
 **Conclusion:**
-LatentMAS is optimal for single-machine or LAN-local multi-agent systems. Vision Wormhole is essential for distributed his-and-hers deployments where H1 and H2 are on separate networks (home PC + EC2, edge + cloud, etc.).
+LatentMAS is optimal for single-machine or LAN-local multi-agent systems. Vision Wormhole is essential for distributed cofounder deployments where H1 and H2 are on separate networks (home PC + EC2, edge + cloud, etc.).
 
 ---
 
@@ -226,7 +226,7 @@ Once codec converges, we'll run the three-way experiment and document results in
 1. **Codec generalization:** Does a Vision Wormhole codec trained on Qwen3-VL-2B → Qwen3-VL-2B transfer to Qwen3-VL-2B → Qwen3-VL-70B?
 2. **Codec staleness:** How often must codecs be retrained as base models evolve?
 3. **Multi-hop latent transfer:** Can H1 → H2 → H1 maintain information density over multiple hops?
-4. **Latent + text hybrid:** Should `HHLatentMessage` include partial text summary alongside compressed latent for human interpretability?
+4. **Latent + text hybrid:** Should `CofounderLatentMessage` include partial text summary alongside compressed latent for human interpretability?
 5. **Adversarial robustness:** Can malicious actors inject crafted latents to manipulate receiver behavior? (Requires study similar to prompt injection research)
 
 ---
@@ -239,7 +239,7 @@ If you're working on:
 - **Benchmarking latent vs text** on real tasks
 - **Production-ready codec inference servers**
 
-Open an issue at [github.com/CalciferFriend/his-and-hers](https://github.com/CalciferFriend/his-and-hers) or join the [Community Discord](https://discord.gg/his-and-hers).
+Open an issue at [github.com/CalciferFriend/cofounder](https://github.com/CalciferFriend/cofounder) or join the [Community Discord](https://discord.gg/cofounder).
 
 ---
 

@@ -1,11 +1,11 @@
 /**
- * commands/config.ts — `hh config` subcommand
+ * commands/config.ts — `cofounder config` subcommand
  *
  * Subcommands:
- *   hh config show          — pretty-print config, redact secrets
- *   hh config get <key>     — read a single key (dot-notation)
- *   hh config set <key> <value> — write a key with auto type coercion
- *   hh config path          — print config file path (machine-readable)
+ *   cofounder config show          — pretty-print config, redact secrets
+ *   cofounder config get <key>     — read a single key (dot-notation)
+ *   cofounder config set <key> <value> — write a key with auto type coercion
+ *   cofounder config path          — print config file path (machine-readable)
  */
 
 import * as p from "@clack/prompts";
@@ -100,7 +100,7 @@ export async function configShow() {
 
   if (!config) {
     p.log.error(
-      `No config found at ${pc.cyan(configPath)}. Run ${pc.bold("hh onboard")} to set up.`,
+      `No config found at ${pc.cyan(configPath)}. Run ${pc.bold("cofounder onboard")} to set up.`,
     );
     return;
   }
@@ -135,7 +135,7 @@ export async function configGet(key: string) {
   const config = await loadConfig();
 
   if (!config) {
-    p.log.error(`No config found. Run ${pc.bold("hh onboard")} first.`);
+    p.log.error(`No config found. Run ${pc.bold("cofounder onboard")} first.`);
     process.exit(1);
   }
 
@@ -157,7 +157,7 @@ export async function configSet(key: string, value: string) {
   const config = await loadConfig();
 
   if (!config) {
-    p.log.error(`No config found. Run ${pc.bold("hh onboard")} first.`);
+    p.log.error(`No config found. Run ${pc.bold("cofounder onboard")} first.`);
     process.exit(1);
   }
 

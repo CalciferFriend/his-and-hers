@@ -1,12 +1,12 @@
 /**
- * commands/heartbeat.ts — `hh heartbeat [send|show]`
+ * commands/heartbeat.ts — `cofounder heartbeat [send|show]`
  *
  * Manage and display heartbeat state for the H1/H2 pair.
  *
  * Subcommands:
- *   hh heartbeat send   — build a HHHeartbeatMessage, deliver via wakeAgent,
+ *   cofounder heartbeat send   — build a CofounderHeartbeatMessage, deliver via wakeAgent,
  *                         record receipt time in config
- *   hh heartbeat show   — display last heartbeat info (default)
+ *   cofounder heartbeat show   — display last heartbeat info (default)
  *
  * The heartbeat payload includes:
  *   - gateway_healthy: whether our local gateway /health is live
@@ -16,9 +16,9 @@
  *   - gpu_available: false on H1 (cloud), potentially true on H2
  *
  * On receipt, the peer's OpenClaw session (GLaDOS/Calcifer) can run
- * `hh heartbeat record --from <name> --at <iso>` to update its own
+ * `cofounder heartbeat record --from <name> --at <iso>` to update its own
  * config's last_heartbeat field. This is the lightweight liveness protocol
- * that `hh status` reads.
+ * that `cofounder status` reads.
  */
 
 import * as p from "@clack/prompts";
@@ -30,7 +30,7 @@ import {
   pingPeer,
   createHeartbeatMessage,
   wakeAgent,
-} from "@his-and-hers/core";
+} from "@cofounder/core";
 
 export type HeartbeatAction = "send" | "show" | "record";
 
@@ -43,7 +43,7 @@ export async function heartbeat(action: HeartbeatAction = "show", opts: Heartbea
   const config = await loadConfig();
 
   if (!config) {
-    p.log.error("No configuration found. Run `hh onboard` first.");
+    p.log.error("No configuration found. Run `cofounder onboard` first.");
     process.exitCode = 1;
     return;
   }
@@ -65,7 +65,7 @@ function showHeartbeat(config: Awaited<ReturnType<typeof loadConfig>>): void {
   const thisNode = config.this_node;
   const peerNode = config.peer_node;
 
-  p.intro(pc.bgCyan(pc.black(" hh heartbeat ")));
+  p.intro(pc.bgCyan(pc.black(" cofounder heartbeat ")));
 
   // This node's last known heartbeat (from pair.last_heartbeat)
   const myLastHb = config.pair?.last_heartbeat;
@@ -87,7 +87,7 @@ function showHeartbeat(config: Awaited<ReturnType<typeof loadConfig>>): void {
     const interval = config.protocol?.heartbeat_interval_seconds ?? 60;
     if (ageSecs > interval * 3) {
       p.log.warn(
-        `Peer heartbeat is ${formatAge(ageSecs)} old — run \`hh heartbeat send\` to check in.`,
+        `Peer heartbeat is ${formatAge(ageSecs)} old — run \`cofounder heartbeat send\` to check in.`,
       );
     } else {
       p.log.success(`Peer is healthy (last seen ${formatAge(ageSecs)} ago).`);
@@ -102,7 +102,7 @@ async function sendHeartbeat(config: Awaited<ReturnType<typeof loadConfig>>) {
   const thisNode = config.this_node;
   const peerNode = config.peer_node;
 
-  p.intro(pc.bgCyan(pc.black(" hh heartbeat send ")));
+  p.intro(pc.bgCyan(pc.black(" cofounder heartbeat send ")));
 
   // 1. Local gateway health
   const gwPort = config.gateway_port ?? 18789;
@@ -130,7 +130,7 @@ async function sendHeartbeat(config: Awaited<ReturnType<typeof loadConfig>>) {
 
   if (!reachable) {
     reachS.stop(pc.yellow(`${peerNode.name} is offline — heartbeat will be queued.`));
-    // Still update our own "sent" timestamp so `hh status` knows we tried
+    // Still update our own "sent" timestamp so `cofounder status` knows we tried
     await patchConfig({
       pair: {
         ...(config.pair ?? {
@@ -169,7 +169,7 @@ async function sendHeartbeat(config: Awaited<ReturnType<typeof loadConfig>>) {
 
   // 6. Deliver via wakeAgent
   if (!peerNode.gateway_token) {
-    p.log.error("Peer gateway token not set. Run `hh pair` to exchange tokens.");
+    p.log.error("Peer gateway token not set. Run `cofounder pair` to exchange tokens.");
     process.exitCode = 1;
     return;
   }
@@ -178,9 +178,9 @@ async function sendHeartbeat(config: Awaited<ReturnType<typeof loadConfig>>) {
   sendS.start("Delivering heartbeat...");
 
   // Format heartbeat as a human-readable + machine-readable wake text so
-  // the peer's OpenClaw session can parse it and run `hh heartbeat record`
+  // the peer's OpenClaw session can parse it and run `cofounder heartbeat record`
   const wakeText =
-    `[HHHeartbeat from ${msg.from}] ` +
+    `[CofounderHeartbeat from ${msg.from}] ` +
     `gateway=${msg.payload.gateway_healthy} ` +
     `uptime=${msg.payload.uptime_seconds}s ` +
     `model=${msg.payload.model ?? "unknown"} ` +

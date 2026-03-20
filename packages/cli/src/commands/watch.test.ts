@@ -1,5 +1,5 @@
 /**
- * watch.test.ts — unit tests for the `hh watch` task listener daemon
+ * watch.test.ts — unit tests for the `cofounder watch` task listener daemon
  *
  * Strategy: mock `listTaskStates` and `updateTaskState` to avoid touching the
  * filesystem, and use `--dry-run` / `--once` to keep tests synchronous.
@@ -48,7 +48,7 @@ function makeTask(overrides: Partial<TaskState> = {}): TaskState {
 
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
-describe("hh watch — dry-run mode", () => {
+describe("cofounder watch — dry-run mode", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockUpdateTaskState.mockResolvedValue({});
@@ -115,7 +115,7 @@ describe("hh watch — dry-run mode", () => {
   });
 });
 
-describe("hh watch — no executor", () => {
+describe("cofounder watch — no executor", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockUpdateTaskState.mockResolvedValue({});
@@ -150,7 +150,7 @@ describe("hh watch — no executor", () => {
   });
 });
 
-describe("hh watch — with executor", () => {
+describe("cofounder watch — with executor", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockUpdateTaskState.mockResolvedValue({});
@@ -190,7 +190,7 @@ describe("hh watch — with executor", () => {
     mockListTaskStates.mockResolvedValue([makeTask()]);
 
     // non-existent binary
-    await watch({ once: true, json: true, exec: "this-binary-does-not-exist-hh" });
+    await watch({ once: true, json: true, exec: "this-binary-does-not-exist-cf" });
 
     // Should have tried to mark running, then reverted to pending
     const statuses = mockUpdateTaskState.mock.calls.map((c) => c[1]?.status ?? c[1]);
@@ -218,7 +218,7 @@ describe("hh watch — with executor", () => {
   });
 });
 
-describe("hh watch — WatchOptions defaults", () => {
+describe("cofounder watch — WatchOptions defaults", () => {
   it("exits immediately on --once with empty task list", async () => {
     mockListTaskStates.mockResolvedValue([]);
     // Should not hang

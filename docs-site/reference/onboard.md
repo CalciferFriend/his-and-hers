@@ -1,4 +1,4 @@
-# `hh onboard` — Reference
+# `cofounder onboard` — Reference
 
 Interactive setup wizard. Configures everything needed to get H1 and H2 talking: role, identity, LLM provider, Tailscale pairing, SSH, Wake-on-LAN, gateway config, Windows AutoLogin, and startup scripts.
 
@@ -7,7 +7,7 @@ Interactive setup wizard. Configures everything needed to get H1 and H2 talking:
 ## Synopsis
 
 ```bash
-hh onboard [flags]
+cofounder onboard [flags]
 ```
 
 ---
@@ -54,7 +54,7 @@ hh onboard [flags]
    - Linux: systemd service
    - macOS: launchd plist
    - Windows: AutoLogin registry + Scheduled Task + Firewall rule
-8. **Capabilities:** runs `hh capabilities advertise`
+8. **Capabilities:** runs `cofounder capabilities advertise`
 
 ---
 
@@ -81,13 +81,13 @@ Used by Docker and CI:
 ## Config files created
 
 ```
-~/.his-and-hers/
-  hh.json                  ← main config (mode 0o600)
+~/.cofounder/
+  cofounder.json                  ← main config (mode 0o600)
   peers/
     <peer-name>.json        ← one per peer (mode 0o600)
 ```
 
-### hh.json structure
+### cofounder.json structure
 
 ```json
 {
@@ -121,21 +121,21 @@ Used by Docker and CI:
 The wizard is non-destructive by default — it reads existing config and only prompts for values that aren't set. To reconfigure a specific section:
 
 ```bash
-hh onboard --reconfigure-provider    # change LLM provider/key
-hh onboard --reconfigure-gateway     # change port or regenerate token
-hh onboard --reconfigure-peer        # update peer IP or SSH key
+cofounder onboard --reconfigure-provider    # change LLM provider/key
+cofounder onboard --reconfigure-gateway     # change port or regenerate token
+cofounder onboard --reconfigure-peer        # update peer IP or SSH key
 ```
 
 To start completely fresh:
 
 ```bash
-hh onboard --reset
-# ⚠️  This deletes ~/.his-and-hers/hh.json and all peer configs
+cofounder onboard --reset
+# ⚠️  This deletes ~/.cofounder/cofounder.json and all peer configs
 ```
 
 ---
 
-## What `hh onboard` doesn't do
+## What `cofounder onboard` doesn't do
 
 - It doesn't install Node.js, Tailscale, or OpenClaw (check those first — see [Prerequisites](/guide/prerequisites))
 - It doesn't pull Ollama models (do that separately with `ollama pull`)

@@ -58,7 +58,7 @@ interface HHServices {
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `version` | `string` | ✓ | Schema version, e.g. `"0.1.0"` |
-| `node` | `string` | ✓ | Node name (from `hh.json`) |
+| `node` | `string` | ✓ | Node name (from `cofounder.json`) |
 | `role` | `"h2"` | ✓ | Always `"h2"` |
 | `hardware` | `string \| null` | – | Profile ID: `"pi5"`, `"rtx-3070-ti"`, `"rtx-4090"`, `"m2-mac"`, or `null` |
 | `os` | `string` | ✓ | OS platform: `"linux"`, `"win32"`, `"darwin"` |
@@ -67,7 +67,7 @@ interface HHServices {
 | `ollama_models` | `HHOllamaModel[]` | ✓ | Models returned by `GET /api/tags` |
 | `services` | `HHServices` | ✓ | Detected inference services |
 | `skill_tags` | `string[]` | ✓ | Tags H1 uses for routing decisions |
-| `custom_notes` | `string \| null` | – | Free-form notes from `hh capabilities advertise --notes` |
+| `custom_notes` | `string \| null` | – | Free-form notes from `cofounder capabilities advertise --notes` |
 | `timestamp` | `string` | ✓ | ISO 8601 datetime of last capability scan |
 
 ### HHGpuInfo
@@ -98,7 +98,7 @@ The capability scanner automatically assigns skill tags based on detected hardwa
 | `summarize` | Any model is running (sufficient for summarization tasks) |
 | `chat:small` | Only 3B or smaller models detected |
 
-Custom tags can be added with `hh capabilities advertise --tags "finetune,custom-skill"`.
+Custom tags can be added with `cofounder capabilities advertise --tags "finetune,custom-skill"`.
 
 ---
 
@@ -171,13 +171,13 @@ Custom tags can be added with `hh capabilities advertise --tags "finetune,custom
 
 | Location | Description |
 |----------|-------------|
-| `~/.his-and-hers/capabilities.json` | H2's own capability report (written by `hh capabilities advertise`) |
-| `~/.his-and-hers/peer-capabilities-<name>.json` | H1's cached copy of a peer's report (written by `hh capabilities fetch`) |
+| `~/.cofounder/capabilities.json` | H2's own capability report (written by `cofounder capabilities advertise`) |
+| `~/.cofounder/peer-capabilities-<name>.json` | H1's cached copy of a peer's report (written by `cofounder capabilities fetch`) |
 
 ---
 
 ## See also
 
-- [`hh capabilities`](/reference/capabilities) — CLI commands: scan, advertise, fetch, route
+- [`cofounder capabilities`](/reference/capabilities) — CLI commands: scan, advertise, fetch, route
 - [Protocol overview](/protocol/overview) — where capability reports fit in the message flow
 - [Hardware overview](/hardware/overview) — hardware profiles and capability tag reference

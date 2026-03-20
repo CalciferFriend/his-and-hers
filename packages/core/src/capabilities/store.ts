@@ -3,8 +3,8 @@
  *
  * Persist and load HHCapabilityReport to/from disk.
  *
- * H2 writes:  ~/.his-and-hers/capabilities.json  (her own report)
- * H1 writes:    ~/.his-and-hers/peer-capabilities.json  (fetched from H2)
+ * H2 writes:  ~/.cofounder/capabilities.json  (her own report)
+ * H1 writes:    ~/.cofounder/peer-capabilities.json  (fetched from H2)
  *
  * Both files are world-readable so the gateway can serve them without
  * extra permissions.
@@ -16,7 +16,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { HHCapabilityReport } from "./registry.schema.ts";
 
-const BASE_DIR = join(homedir(), ".his-and-hers");
+const BASE_DIR = join(homedir(), ".cofounder");
 const SELF_PATH = join(BASE_DIR, "capabilities.json");
 const PEER_PATH = join(BASE_DIR, "peer-capabilities.json");
 

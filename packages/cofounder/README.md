@@ -1,9 +1,9 @@
-# his-and-hers
+# cofounder
 
 > Two agents. Separate machines. One command to wire them.
 
 ```bash
-npx his-and-hers
+npx cofounder
 ```
 
 That's it. The guided wizard handles everything:
@@ -19,4 +19,4 @@ That's it. The guided wizard handles everything:
 
 ---
 
-Full docs: [github.com/CalciferFriend/his-and-hers](https://github.com/CalciferFriend/his-and-hers)
+Full docs: [github.com/CalciferFriend/cofounder](https://github.com/CalciferFriend/cofounder)

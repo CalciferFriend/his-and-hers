@@ -23,9 +23,9 @@ Both machines must be connected to the same Tailscale network (same account or s
 H1 is typically your always-on server, cloud VM, or low-power machine. It orchestrates.
 
 ```bash
-npx his-and-hers
+npx cofounder
 # or
-npm install -g his-and-hers && hh onboard
+npm install -g cofounder && cofounder onboard
 ```
 
 When prompted:
@@ -44,9 +44,9 @@ When prompted:
 H2 is your GPU workstation, gaming PC, Mac Mini, or Raspberry Pi. It executes.
 
 ```bash
-npx his-and-hers
+npx cofounder
 # or
-hh onboard
+cofounder onboard
 ```
 
 When prompted:
@@ -66,7 +66,7 @@ When prompted:
 On H1's machine:
 
 ```bash
-hh status
+cofounder status
 ```
 
 You should see both nodes with a ✓ on Tailscale reachability and gateway health.
@@ -74,7 +74,7 @@ You should see both nodes with a ✓ on Tailscale reachability and gateway healt
 If anything's red, run:
 
 ```bash
-hh doctor
+cofounder doctor
 ```
 
 The doctor checks connectivity, SSH access, gateway config, and WOL setup and tells you exactly what's wrong.
@@ -84,7 +84,7 @@ The doctor checks connectivity, SSH access, gateway config, and WOL setup and te
 ## Step 4 — Send H2 something to do
 
 ```bash
-hh send "write a haiku about distributed systems"
+cofounder send "write a haiku about distributed systems"
 ```
 
 If H2 is asleep, H1 sends a Wake-on-LAN packet and waits. H2 boots, receives the task, works on it, and sends back the result.
@@ -92,7 +92,7 @@ If H2 is asleep, H1 sends a Wake-on-LAN packet and waits. H2 boots, receives the
 Watch it live:
 
 ```bash
-hh logs --follow
+cofounder logs --follow
 ```
 
 ---
@@ -101,6 +101,6 @@ hh logs --follow
 
 - **[How it works](/guide/how-it-works)** — understand the architecture
 - **[LLM providers](/guide/providers)** — connect Ollama, Anthropic, OpenAI, LM Studio
-- **[Sending tasks](/guide/sending-tasks)** — `hh send` flags and options
+- **[Sending tasks](/guide/sending-tasks)** — `cofounder send` flags and options
 - **[Capability routing](/guide/capabilities)** — let H1 route tasks automatically
 - **[Docker](/guide/docker)** — containerized H1 and H2

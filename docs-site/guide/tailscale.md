@@ -70,7 +70,7 @@ If both machines are online and authenticated to the same account, they'll appea
 
 ## Pairing H1 and H2
 
-Once both machines are on the same Tailscale network, give H1 H2's IP during `hh onboard`:
+Once both machines are on the same Tailscale network, give H1 H2's IP during `cofounder onboard`:
 
 ```bash
 # On H2's machine:
@@ -78,11 +78,11 @@ tailscale ip -4
 # → 100.a.b.c  ← give this to H1
 
 # On H1's machine:
-hh onboard
+cofounder onboard
 # → Enter H2's Tailscale IP: 100.a.b.c
 ```
 
-his-and-hers uses the Tailscale IP directly for:
+cofounder uses the Tailscale IP directly for:
 - Gateway API calls (HTTP to `100.a.b.c:3737`)
 - SSH config push
 - WOL reachability check
@@ -163,7 +163,7 @@ Tailscale is up but the OpenClaw gateway isn't running on H2. Check:
 ```bash
 # On H2:
 openclaw gateway status
-hh status
+cofounder status
 ```
 
 **High latency / DERP relay**
@@ -181,6 +181,6 @@ It shouldn't change, but if it does (device re-registered):
 tailscale ip -4
 
 # Update H1's peer config
-# Edit ~/.his-and-hers/peers/h2-home.json → tailscale_ip field
-# Then test: hh status
+# Edit ~/.cofounder/peers/h2-home.json → tailscale_ip field
+# Then test: cofounder status
 ```

@@ -1,4 +1,4 @@
-name: "his-and-hers"
+name: "cofounder"
 description: "Delegate tasks to your H2 agent from CI"
 author: "Anthropic"
 
@@ -14,7 +14,7 @@ inputs:
     required: false
     default: "300"
   hh_config:
-    description: "Base64-encoded config JSON (write to ~/.his-and-hers/config.json)"
+    description: "Base64-encoded config JSON (write to ~/.cofounder/config.json)"
     required: false
 
 outputs:
@@ -31,16 +31,16 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Install his-and-hers
+    - name: Install cofounder
       shell: bash
-      run: npm install -g his-and-hers
+      run: npm install -g cofounder
 
     - name: Write config
       if: inputs.hh_config != ''
       shell: bash
       run: |
-        mkdir -p ~/.his-and-hers
-        echo "${{ inputs.hh_config }}" | base64 -d > ~/.his-and-hers/config.json
+        mkdir -p ~/.cofounder
+        echo "${{ inputs.hh_config }}" | base64 -d > ~/.cofounder/config.json
 
     - name: Run task
       id: hh_run
@@ -49,7 +49,7 @@ runs:
         HH_PEER: ${{ inputs.peer }}
         HH_TIMEOUT: ${{ inputs.timeout }}
       run: |
-        output=$(hh ci "${{ inputs.task }}" --json)
+        output=$(cofounder ci "${{ inputs.task }}" --json)
         echo "result=$(echo $output | jq -r .result | head -c 65535)" >> $GITHUB_OUTPUT
         echo "cost_usd=$(echo $output | jq -r .cost_usd)" >> $GITHUB_OUTPUT
         echo "task_id=$(echo $output | jq -r .task_id)" >> $GITHUB_OUTPUT

@@ -1,7 +1,7 @@
 /**
  * retry.ts — Exponential backoff + retry for transient failures
  *
- * Used by `hh send` to retry on:
+ * Used by `cofounder send` to retry on:
  *   - Gateway not reachable (WS timeout, connection refused)
  *   - Tailscale peer temporarily offline
  *   - Gateway startup delay after WOL
@@ -10,7 +10,7 @@
  *   delay = min(baseDelayMs × 2^(attempt - 1) + jitter, maxDelayMs)
  *
  * Cron safety:
- *   A RetryState file (~/.his-and-hers/retry/<task-id>.json) tracks in-flight
+ *   A RetryState file (~/.cofounder/retry/<task-id>.json) tracks in-flight
  *   retries, so a second cron invocation for the same task doesn't spawn a
  *   duplicate send. The caller should check `getRetryState(taskId)` before
  *   sending and skip if status is "pending" or "completed".
@@ -94,7 +94,7 @@ function sleep(ms: number): Promise<void> {
 
 // ─── Retry state (cron safety) ────────────────────────────────────────────────
 
-const RETRY_STATE_DIR = join(homedir(), ".his-and-hers", "retry");
+const RETRY_STATE_DIR = join(homedir(), ".cofounder", "retry");
 
 export type RetryStatus = "pending" | "failed" | "completed";
 

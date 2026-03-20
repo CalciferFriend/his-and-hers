@@ -21,7 +21,7 @@ describe.sequential("schedule store", () => {
 
   beforeEach(async () => {
     // Create a unique temporary directory for each test
-    testDir = join(tmpdir(), `hh-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    testDir = join(tmpdir(), `cofounder-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
     await mkdir(testDir, { recursive: true });
 
     // Override HOME to point to test directory

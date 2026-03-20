@@ -13,7 +13,7 @@ import { z } from "zod";
 /**
  * A registered inbound webhook.
  *
- * When the hh webhook server receives a POST to `path`, it:
+ * When the cofounder webhook server receives a POST to `path`, it:
  *   1. Verifies the HMAC signature if `secret` is set
  *   2. Interpolates `task_template` with `{{body.*}}`, `{{headers.*}}`, `{{query.*}}`
  *   3. Dispatches the task to `peer` (or auto-routes if omitted)

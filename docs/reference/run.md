@@ -1,19 +1,19 @@
-# hh run — ergonomic task shorthands
+# cofounder run — ergonomic task shorthands
 
-`hh run` provides one-liner shortcuts for the most common one-shot task patterns.
-Instead of crafting a full prompt and `hh send` invocation, use `hh run` for
+`cofounder run` provides one-liner shortcuts for the most common one-shot task patterns.
+Instead of crafting a full prompt and `cofounder send` invocation, use `cofounder run` for
 instant code review, file summarisation, and diff analysis.
 
 ## Subcommands
 
-### `hh run summarise <path>`
+### `cofounder run summarise <path>`
 
 Send a file to H2 for an executive summary and bullet-point breakdown.
 
 ```
-hh run summarise ./meeting-notes.md
-hh run summarise ./report.pdf --peer glados --wait
-hh run summarise ./README.md --prompt "One sentence TLDR"
+cofounder run summarise ./meeting-notes.md
+cofounder run summarise ./report.pdf --peer glados --wait
+cofounder run summarise ./README.md --prompt "One sentence TLDR"
 ```
 
 H2 receives the file as an attachment and returns:
@@ -32,14 +32,14 @@ H2 receives the file as an attachment and returns:
 
 ---
 
-### `hh run review <path>`
+### `cofounder run review <path>`
 
 Send a source file or directory to H2 for structured code review.
 
 ```
-hh run review ./src/commands/send.ts
-hh run review ./packages/core/src --peer glados --wait
-hh run review ./main.go --prompt "Focus on error handling only"
+cofounder run review ./src/commands/send.ts
+cofounder run review ./packages/core/src --peer glados --wait
+cofounder run review ./main.go --prompt "Focus on error handling only"
 ```
 
 H2 returns a structured review covering:
@@ -54,15 +54,15 @@ Verdict: `approve` | `approve-with-nits` | `request-changes`
 
 ---
 
-### `hh run diff [base] [head]`
+### `cofounder run diff [base] [head]`
 
 Capture a `git diff` and send it to H2 for review.
 
 ```
-hh run diff                          # git diff HEAD (working tree + staged)
-hh run diff main                     # git diff main
-hh run diff main feature/my-branch   # git diff main..feature/my-branch
-hh run diff HEAD~3 HEAD --peer glados --wait --stat
+cofounder run diff                          # git diff HEAD (working tree + staged)
+cofounder run diff main                     # git diff main
+cofounder run diff main feature/my-branch   # git diff main..feature/my-branch
+cofounder run diff HEAD~3 HEAD --peer glados --wait --stat
 ```
 
 The diff is embedded directly in the task (no attachment).
@@ -72,16 +72,16 @@ The diff is embedded directly in the task (no attachment).
 
 ---
 
-### `hh run alias <name> [args...]`
+### `cofounder run alias <name> [args...]`
 
 Expand and execute a user-defined alias with optional extra arguments.
 
 ```
-hh run alias pr-review
-hh run alias deploy --wait
+cofounder run alias pr-review
+cofounder run alias deploy --wait
 ```
 
-Equivalent to `hh alias run <name>`. See [`hh alias`](./alias.md).
+Equivalent to `cofounder alias run <name>`. See [`cofounder alias`](./alias.md).
 
 ---
 
@@ -89,21 +89,21 @@ Equivalent to `hh alias run <name>`. See [`hh alias`](./alias.md).
 
 ```bash
 # Summarise a design doc, then review the implementation
-hh run summarise ./docs/design.md --wait
-hh run review ./src/gateway.ts --wait
+cofounder run summarise ./docs/design.md --wait
+cofounder run review ./src/gateway.ts --wait
 
 # Review a PR diff
 git fetch origin
-hh run diff main origin/feature/my-pr --peer glados --wait
+cofounder run diff main origin/feature/my-pr --peer glados --wait
 
 # Diff with stat preview
-hh run diff HEAD~1 HEAD --stat --wait
+cofounder run diff HEAD~1 HEAD --stat --wait
 ```
 
 ---
 
 ## See Also
 
-- [`hh send`](./send.md) — low-level task dispatch
-- [`hh alias`](./alias.md) — user-defined shortcuts
-- [`hh workflow`](./workflow.md) — saved multi-step pipelines
+- [`cofounder send`](./send.md) — low-level task dispatch
+- [`cofounder alias`](./alias.md) — user-defined shortcuts
+- [`cofounder workflow`](./workflow.md) — saved multi-step pipelines

@@ -1,15 +1,15 @@
 /**
- * commands/tag.ts — `hh tag` task tagging & search
+ * commands/tag.ts — `cofounder tag` task tagging & search
  *
  * Label tasks with tags, then filter and search by tag. Tags help organise
  * task history for reporting, debugging, and retrieval.
  *
  * Usage:
- *   hh tag add <id> <tags...> [--note "..."] [--json]
- *   hh tag remove <id> <tags...>
- *   hh tag list [id] [--json]
- *   hh tag search <tag> [--json]
- *   hh tag clear <id> [--force]
+ *   cofounder tag add <id> <tags...> [--note "..."] [--json]
+ *   cofounder tag remove <id> <tags...>
+ *   cofounder tag list [id] [--json]
+ *   cofounder tag search <tag> [--json]
+ *   cofounder tag clear <id> [--force]
  *
  * Phase 17b — Calcifer (2026-03-16)
  */
@@ -24,8 +24,8 @@ import {
   findByTag,
   clearTagRecord,
   validateTag,
-} from "@his-and-hers/core";
-import type { TagRecord } from "@his-and-hers/core";
+} from "@cofounder/core";
+import type { TagRecord } from "@cofounder/core";
 import { listTaskStates } from "../state/tasks.ts";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -190,7 +190,7 @@ export async function tagList(
     if (opts.json) {
       console.log("[]");
     } else {
-      p.log.info("No tagged tasks. Use `hh tag add <id> <tags...>` to start.");
+      p.log.info("No tagged tasks. Use `cofounder tag add <id> <tags...>` to start.");
     }
     return;
   }

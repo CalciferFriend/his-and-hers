@@ -64,10 +64,10 @@ describe("crontab operations", () => {
 
   it("parses HH schedule IDs from crontab", () => {
     const mockCrontab = `
-# HH_SCHEDULE_ID=abc-123
-0 2 * * * hh send "task 1" --no-wait >> ~/.his-and-hers/schedule-logs/abc-123.log 2>&1
-# HH_SCHEDULE_ID=def-456
-0 3 * * * hh send "task 2" --no-wait >> ~/.his-and-hers/schedule-logs/def-456.log 2>&1
+# COFOUNDER_SCHEDULE_ID=abc-123
+0 2 * * * cofounder send "task 1" --no-wait >> ~/.cofounder/schedule-logs/abc-123.log 2>&1
+# COFOUNDER_SCHEDULE_ID=def-456
+0 3 * * * cofounder send "task 2" --no-wait >> ~/.cofounder/schedule-logs/def-456.log 2>&1
 # Some other comment
 0 4 * * * some other command
     `.trim();
@@ -76,8 +76,8 @@ describe("crontab operations", () => {
     const ids: string[] = [];
 
     for (const line of lines) {
-      if (line.startsWith("# HH_SCHEDULE_ID=")) {
-        const id = line.substring("# HH_SCHEDULE_ID=".length).trim();
+      if (line.startsWith("# COFOUNDER_SCHEDULE_ID=")) {
+        const id = line.substring("# COFOUNDER_SCHEDULE_ID=".length).trim();
         ids.push(id);
       }
     }
@@ -89,9 +89,9 @@ describe("crontab operations", () => {
     const id = "test-123";
     const cron = "0 2 * * *";
     const task = "Do something";
-    const marker = `# HH_SCHEDULE_ID=${id}`;
-    const logPath = `~/.his-and-hers/schedule-logs/${id}.log`;
-    const cmd = `hh send "${task}" --no-wait >> ${logPath} 2>&1`;
+    const marker = `# COFOUNDER_SCHEDULE_ID=${id}`;
+    const logPath = `~/.cofounder/schedule-logs/${id}.log`;
+    const cmd = `cofounder send "${task}" --no-wait >> ${logPath} 2>&1`;
     const cronLine = `${cron} ${cmd}`;
 
     expect(marker).toContain(id);
@@ -104,8 +104,8 @@ describe("crontab operations", () => {
     const task = "GPU task";
     const peer = "GLaDOS";
     const id = "test-456";
-    const logPath = `~/.his-and-hers/schedule-logs/${id}.log`;
-    const cmd = `hh send "${task}" --peer ${peer} --no-wait >> ${logPath} 2>&1`;
+    const logPath = `~/.cofounder/schedule-logs/${id}.log`;
+    const cmd = `cofounder send "${task}" --peer ${peer} --no-wait >> ${logPath} 2>&1`;
     const cronLine = `${cron} ${cmd}`;
 
     expect(cronLine).toContain("--peer GLaDOS");
@@ -115,8 +115,8 @@ describe("crontab operations", () => {
     const cron = "0 2 * * *";
     const task = "GPU task";
     const id = "test-789";
-    const logPath = `~/.his-and-hers/schedule-logs/${id}.log`;
-    const cmd = `hh send "${task}" --latent --no-wait >> ${logPath} 2>&1`;
+    const logPath = `~/.cofounder/schedule-logs/${id}.log`;
+    const cmd = `cofounder send "${task}" --latent --no-wait >> ${logPath} 2>&1`;
     const cronLine = `${cron} ${cmd}`;
 
     expect(cronLine).toContain("--latent");
@@ -124,12 +124,12 @@ describe("crontab operations", () => {
 
   it("filters out HH entries from crontab", () => {
     const mockCrontab = `
-# HH_SCHEDULE_ID=abc-123
-0 2 * * * hh send "task 1" --no-wait >> ~/.his-and-hers/schedule-logs/abc-123.log 2>&1
+# COFOUNDER_SCHEDULE_ID=abc-123
+0 2 * * * cofounder send "task 1" --no-wait >> ~/.cofounder/schedule-logs/abc-123.log 2>&1
 # Some other comment
 0 4 * * * some other command
-# HH_SCHEDULE_ID=def-456
-0 3 * * * hh send "task 2" --no-wait >> ~/.his-and-hers/schedule-logs/def-456.log 2>&1
+# COFOUNDER_SCHEDULE_ID=def-456
+0 3 * * * cofounder send "task 2" --no-wait >> ~/.cofounder/schedule-logs/def-456.log 2>&1
     `.trim();
 
     const lines = mockCrontab.split("\n").filter(Boolean);
@@ -137,7 +137,7 @@ describe("crontab operations", () => {
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      if (line.includes("# HH_SCHEDULE_ID=")) {
+      if (line.includes("# COFOUNDER_SCHEDULE_ID=")) {
         // Skip this line and the next (cron command)
         i++;
         continue;

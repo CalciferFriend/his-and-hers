@@ -6,9 +6,9 @@ H2 advertises what it can do — GPU, models, skills. H1 uses that profile to au
 
 ## How it works
 
-1. **H2 scans** its hardware and software: `hh capabilities scan`
-2. **H2 advertises** the profile to H1: `hh capabilities advertise`
-3. **H1 caches** the profile: `~/.his-and-hers/peer-capabilities.json`
+1. **H2 scans** its hardware and software: `cofounder capabilities scan`
+2. **H2 advertises** the profile to H1: `cofounder capabilities advertise`
+3. **H1 caches** the profile: `~/.cofounder/peer-capabilities.json`
 4. **H1 routes** using `routeTask()`: picks the best peer for each task based on keywords and capability tags
 
 This happens automatically on H2 startup. You don't need to configure it manually.
@@ -37,7 +37,7 @@ H2's capability scanner probes:
 ### Scan (probe without saving)
 
 ```bash
-hh capabilities scan
+cofounder capabilities scan
 ```
 
 Output:
@@ -59,12 +59,12 @@ Skill tags: ollama, gpu-inference
 ### Advertise (scan + save + notify H1)
 
 ```bash
-hh capabilities advertise
+cofounder capabilities advertise
 ```
 
 This:
 1. Runs the scan
-2. Writes `~/.his-and-hers/capabilities.json`
+2. Writes `~/.cofounder/capabilities.json`
 3. POSTs the profile to H1's `/capabilities` endpoint (H1 caches it)
 
 Run this on H2 startup (the startup batch script / systemd unit includes it by default).
@@ -73,7 +73,7 @@ Run this on H2 startup (the startup batch script / systemd unit includes it by d
 
 ```bash
 # Run on H1
-hh capabilities fetch
+cofounder capabilities fetch
 # → Fetched capabilities from h2-home (100.x.y.z)
 ```
 
@@ -83,10 +83,10 @@ H1 can also fetch the profile via the `/capabilities` endpoint on H2's gateway.
 
 ```bash
 # On H2: show this node's profile
-hh capabilities show
+cofounder capabilities show
 
 # On H1: show a peer's cached profile
-hh capabilities show --peer h2-home
+cofounder capabilities show --peer h2-home
 ```
 
 Output:
@@ -116,13 +116,13 @@ Output:
 ### Route preview (see where a task would go)
 
 ```bash
-hh capabilities route "generate a product image"
+cofounder capabilities route "generate a product image"
 # → Routing decision: h2-home (skill: gpu-inference, SDXL capable)
 
-hh capabilities route "summarize this document"
+cofounder capabilities route "summarize this document"
 # → Routing decision: h2-pi (skill: summarize, available, low cost)
 
-hh capabilities route "run 70B inference"
+cofounder capabilities route "run 70B inference"
 # → Routing decision: h2-beast (24 GB VRAM, llama3:70b available)
 ```
 
@@ -170,11 +170,11 @@ H2's skill tags are auto-generated from detected capabilities:
 ### Adding custom tags
 
 ```bash
-hh capabilities advertise --tags "my-custom-skill,finetune"
+cofounder capabilities advertise --tags "my-custom-skill,finetune"
 # → Appended to skill_tags in capabilities.json
 ```
 
-Or edit `~/.his-and-hers/capabilities.json` directly and re-advertise.
+Or edit `~/.cofounder/capabilities.json` directly and re-advertise.
 
 ---
 
@@ -185,7 +185,7 @@ H2's capabilities auto-refresh on startup. To manually refresh when you install 
 ```bash
 # On H2 — after pulling a new model
 ollama pull llava:13b
-hh capabilities advertise
+cofounder capabilities advertise
 # → H1 now knows about llava:13b and will route vision tasks here
 ```
 
@@ -196,7 +196,7 @@ hh capabilities advertise
 With multiple peers, H1 picks the best available:
 
 ```bash
-$ hh capabilities route "generate an image"
+$ cofounder capabilities route "generate an image"
 → Checking peers...
   h2-home (RTX 3070 Ti, ComfyUI): ✓ online, image-gen
   h2-beast (RTX 4090, ComfyUI):   ✗ offline (WOL configured)

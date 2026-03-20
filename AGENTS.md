@@ -1,9 +1,9 @@
-# his-and-hers — Agent Guidelines
+# cofounder — Agent Guidelines
 
 ## Project structure
 ```
 packages/core/src/
-  protocol/       — HHMessage, HHHandoff, HHHeartbeat, HHPair (Zod schemas)
+  protocol/       — CofounderMessage, CofounderHandoff, CofounderHeartbeat, CofounderPair (Zod schemas)
   transport/      — tailscale.ts, ssh.ts, wol.ts
   trust/          — pairing.ts, allowlist.ts
   gateway/        — health.ts, bind.ts
@@ -15,7 +15,7 @@ packages/cli/src/
                     gateway_bind, autologin, startup, soul, validate, finalize
   config/         — schema.ts (Zod config schema), store.ts, defaults.ts
 
-packages/skills/  — SKILL.md files: hh-h1, hh-h2, hh-handoff
+packages/skills/  — SKILL.md files: cofounder-h1, cofounder-h2, cofounder-handoff
 templates/        — SOUL.md, IDENTITY.md, AGENTS.md per role
 docs/             — protocol spec + calcifer/glados reference
 ```
@@ -43,7 +43,7 @@ docs/             — protocol spec + calcifer/glados reference
 2. **Tailscale is the network** — no raw IP/port exposure. Both nodes on same tailnet.
 3. **WOL is first-class** — sleeping machines are a core use case, not edge case.
 4. **Credentials in OS keychain** — via keytar. Never in plaintext config files.
-5. **HHMessage is the protocol** — typed Zod envelope for all cross-machine communication.
+5. **CofounderMessage is the protocol** — typed Zod envelope for all cross-machine communication.
 6. **12-step wizard** — mirrors `openclaw onboard`, handles the hard Windows boot chain.
 7. **Pairing code** — 6-digit code, SHA-256 hashed, verified on both sides.
 

@@ -1,4 +1,4 @@
-# `hh send --attach` — File Attachments
+# `cofounder send --attach` — File Attachments
 
 > **Phase 7d** · Owned by Calcifer 🔥 (H1) + GLaDOS 🤖 (H2 injection)
 
@@ -11,19 +11,19 @@ Supported types: **PDF, images** (PNG/JPEG/WebP/GIF), **text, code, Markdown, JS
 
 ```bash
 # Attach a single file
-hh send "Review this report and summarise key findings" --attach ./report.pdf
+cofounder send "Review this report and summarise key findings" --attach ./report.pdf
 
 # Attach multiple files
-hh send "Compare these two charts" --attach chart1.png chart2.png
+cofounder send "Compare these two charts" --attach chart1.png chart2.png
 
 # Attach a code file for review
-hh send "Review this TypeScript module for bugs" --attach src/index.ts
+cofounder send "Review this TypeScript module for bugs" --attach src/index.ts
 
 # Combine with --wait to get the result immediately
-hh send "Describe this image" --attach diagram.webp --wait
+cofounder send "Describe this image" --attach diagram.webp --wait
 
 # Combine with --sync for large workspaces
-hh send "Run the benchmark suite" --sync ./project --attach ./project/results.json --wait
+cofounder send "Run the benchmark suite" --sync ./project --attach ./project/results.json --wait
 ```
 
 ---
@@ -77,7 +77,7 @@ Unknown extensions → `application/octet-stream` (passed through, H2 will attem
 
 ## Protocol
 
-Attachments are embedded in `HHTaskMessage.payload.attachments[]` as base64-encoded
+Attachments are embedded in `CofounderTaskMessage.payload.attachments[]` as base64-encoded
 `AttachmentPayload` objects:
 
 ```ts
@@ -95,7 +95,7 @@ The wake text sent to H2 includes a human-readable summary:
 HH-Attachments: 2 files
   [1] report.pdf (application/pdf, 1.42 MB) [multimodal]
   [2] notes.md (text/markdown, 0.01 MB) [text-inject]
-  H2: decode attachments from HHTaskMessage.payload.attachments[]; inject multimodal types via message API, text types as fenced code blocks.
+  H2: decode attachments from CofounderTaskMessage.payload.attachments[]; inject multimodal types via message API, text types as fenced code blocks.
 ```
 
 ---
@@ -119,7 +119,7 @@ When H2 receives a task with attachments, it should:
 5. After injecting, strip attachments from the wake text (don't re-encode in the response)
 
 ```ts
-import { decodeAttachment, isMultimodalType } from "@his-and-hers/core";
+import { decodeAttachment, isMultimodalType } from "@cofounder/core";
 
 for (const attachment of msg.payload.attachments) {
   const buffer = decodeAttachment(attachment);
@@ -138,7 +138,7 @@ for (const attachment of msg.payload.attachments) {
 ## SDK Usage
 
 ```ts
-import { loadAttachments, formatAttachmentSummary } from "@his-and-hers/core";
+import { loadAttachments, formatAttachmentSummary } from "@cofounder/core";
 
 const { attachments, warnings, errors } = await loadAttachments([
   "./report.pdf",
@@ -154,7 +154,7 @@ for (const warn of warnings) {
   console.warn(warn);
 }
 
-// Attachments are ready to embed in HHTaskPayload
+// Attachments are ready to embed in CofounderTaskPayload
 const payload = {
   objective: "Analyse these documents",
   attachments,
@@ -165,6 +165,6 @@ const payload = {
 
 ## See Also
 
-- [`hh sync`](./sync.md) — push directories to H2 over Tailscale SSH
-- [`hh send`](./cli.md) — full send reference
-- [`@his-and-hers/sdk`](../sdk.md) — programmatic API
+- [`cofounder sync`](./sync.md) — push directories to H2 over Tailscale SSH
+- [`cofounder send`](./cli.md) — full send reference
+- [`@cofounder/sdk`](../sdk.md) — programmatic API

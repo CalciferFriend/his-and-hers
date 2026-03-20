@@ -20,7 +20,7 @@ vi.mock("../peers/select.ts", () => ({
   findPeerByName: vi.fn(),
 }));
 
-vi.mock("@his-and-hers/core", () => ({
+vi.mock("@cofounder/core", () => ({
   verifyAuditChain: vi.fn(),
   readAuditLog: vi.fn(),
   formatCost: vi.fn((n: number) => `$${n.toFixed(4)}`),
@@ -33,7 +33,7 @@ import { listTaskStates } from "../state/tasks.ts";
 import { buildBudgetSummary } from "../state/budget.ts";
 import { loadConfig } from "../config/store.ts";
 import { getAllPeers } from "../peers/select.ts";
-import { verifyAuditChain, readAuditLog, pingPeer, checkGatewayHealth } from "@his-and-hers/core";
+import { verifyAuditChain, readAuditLog, pingPeer, checkGatewayHealth } from "@cofounder/core";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -337,7 +337,7 @@ describe("renderHealthReport", () => {
 
   it("includes the report header", () => {
     const md = renderHealthReport(baseReport);
-    expect(md).toContain("his-and-hers Health Report");
+    expect(md).toContain("cofounder Health Report");
   });
 
   it("includes the time window", () => {
@@ -430,8 +430,8 @@ describe("renderHealthReport", () => {
 
   it("includes footer attribution", () => {
     const md = renderHealthReport(baseReport);
-    expect(md).toContain("hh health-report");
-    expect(md).toContain("CalciferFriend/his-and-hers");
+    expect(md).toContain("cofounder health-report");
+    expect(md).toContain("CalciferFriend/cofounder");
   });
 
   it("omits peer status section when no peers", () => {

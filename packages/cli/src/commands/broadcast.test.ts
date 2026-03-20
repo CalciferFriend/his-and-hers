@@ -1,5 +1,5 @@
 /**
- * broadcast.test.ts — unit tests for hh broadcast
+ * broadcast.test.ts — unit tests for cofounder broadcast
  *
  * We test the pure-logic surface:
  *   - peer resolution from config
@@ -16,7 +16,7 @@ import { describe, it, expect, vi, beforeEach, type MockInstance } from "vitest"
 import * as p from "@clack/prompts";
 import { broadcast } from "./broadcast.ts";
 import * as configStore from "../config/store.ts";
-import * as coreMod from "@his-and-hers/core";
+import * as coreMod from "@cofounder/core";
 import * as tasksState from "../state/tasks.ts";
 import * as peersSelect from "../peers/select.ts";
 import type { HHConfig, PeerNodeConfig } from "../config/schema.ts";
@@ -34,7 +34,7 @@ vi.mock("@clack/prompts", async () => {
 });
 
 vi.mock("../config/store.ts");
-vi.mock("@his-and-hers/core");
+vi.mock("@cofounder/core");
 vi.mock("../state/tasks.ts");
 vi.mock("../peers/select.ts");
 

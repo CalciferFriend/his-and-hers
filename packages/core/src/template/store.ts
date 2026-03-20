@@ -1,14 +1,14 @@
 /**
  * template/store.ts
  *
- * Persistent task template registry — ~/.his-and-hers/templates.json
+ * Persistent task template registry — ~/.cofounder/templates.json
  *
  * Templates are named task patterns with {variable} placeholders that you can
  * run on-demand without retyping the full task string each time.
  *
  * Example:
- *   hh template add summarize --task "Summarise this document: {text}"
- *   hh template run summarize --var text="my long document..."
+ *   cofounder template add summarize --task "Summarise this document: {text}"
+ *   cofounder template run summarize --var text="my long document..."
  *
  * Variables use {varname} syntax. Positional shorthand {1}, {2}, ... is also
  * supported for quick invocations.  {*} expands to all positional args joined
@@ -53,7 +53,7 @@ export const HHTemplateListSchema = z.array(HHTemplateSchema);
 // ─── Paths ───────────────────────────────────────────────────────────────────
 
 function getBaseDir(): string {
-  return join(homedir(), ".his-and-hers");
+  return join(homedir(), ".cofounder");
 }
 
 function getTemplatesPath(): string {

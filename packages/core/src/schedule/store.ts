@@ -1,7 +1,7 @@
 /**
  * schedule/store.ts
  *
- * Load/save/list/add/remove helpers for ~/.his-and-hers/schedules.json
+ * Load/save/list/add/remove helpers for ~/.cofounder/schedules.json
  */
 
 import { readFile, writeFile, mkdir } from "node:fs/promises";
@@ -15,7 +15,7 @@ import type { HHSchedule } from "./schema.ts";
 export type { HHSchedule };
 
 function getBaseDir(): string {
-  return join(homedir(), ".his-and-hers");
+  return join(homedir(), ".cofounder");
 }
 
 function getSchedulesPath(): string {

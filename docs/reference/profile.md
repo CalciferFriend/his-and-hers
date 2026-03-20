@@ -1,6 +1,6 @@
-# hh profile — Named Config Profiles
+# cofounder profile — Named Config Profiles
 
-> **Phase 10a** — Switch between multiple his-and-hers setups (home/work, dev/prod, etc.)
+> **Phase 10a** — Switch between multiple cofounder setups (home/work, dev/prod, etc.)
 
 Users who work with multiple environments often need different node configurations. Named profiles let you maintain separate configs and switch between them instantly.
 
@@ -8,31 +8,31 @@ Users who work with multiple environments often need different node configuratio
 
 ```bash
 # List all profiles (active marked with ★)
-hh profile list
-hh profile list --json
+cofounder profile list
+cofounder profile list --json
 
 # Switch to a different profile
-hh profile use <name>
+cofounder profile use <name>
 
 # Create a new profile
-hh profile create <name>                 # blank profile
-hh profile create <name> --from existing # copy from existing
+cofounder profile create <name>                 # blank profile
+cofounder profile create <name> --from existing # copy from existing
 
 # View profile config (masks gateway tokens)
-hh profile show                 # show active profile
-hh profile show <name>          # show named profile
-hh profile show --json          # machine-readable output
+cofounder profile show                 # show active profile
+cofounder profile show <name>          # show named profile
+cofounder profile show --json          # machine-readable output
 
 # Delete a profile
-hh profile delete <name>        # refuses if active
-hh profile delete <name> --force # force delete even if active
+cofounder profile delete <name>        # refuses if active
+cofounder profile delete <name> --force # force delete even if active
 ```
 
 ## Storage
 
-Profiles are stored in `~/.his-and-hers/profiles/` as `<name>.json` files.
+Profiles are stored in `~/.cofounder/profiles/` as `<name>.json` files.
 
-The active profile is tracked in `~/.his-and-hers/active-profile.json`:
+The active profile is tracked in `~/.cofounder/active-profile.json`:
 
 ```json
 {
@@ -42,11 +42,11 @@ The active profile is tracked in `~/.his-and-hers/active-profile.json`:
 
 ## Priority Order
 
-When loading config, `hh` checks:
+When loading config, `cofounder` checks:
 
 1. **`HH_PROFILE` env var** — Override for the current shell session
-2. **`~/.his-and-hers/active-profile.json`** — Persistent active profile
-3. **`default`** — Backward compat with `~/.his-and-hers/hh.json`
+2. **`~/.cofounder/active-profile.json`** — Persistent active profile
+3. **`default`** — Backward compat with `~/.cofounder/cofounder.json`
 
 ## Environment Variable Override
 
@@ -54,12 +54,12 @@ Set `HH_PROFILE` to temporarily use a different profile without changing the act
 
 ```bash
 # Use "dev" profile for this command only
-HH_PROFILE=dev hh send "Run integration tests"
+HH_PROFILE=dev cofounder send "Run integration tests"
 
 # Use "prod" profile for an entire session
 export HH_PROFILE=prod
-hh send "Deploy latest build"
-hh logs --limit 10
+cofounder send "Deploy latest build"
+cofounder logs --limit 10
 ```
 
 This is useful for:
@@ -73,28 +73,28 @@ This is useful for:
 
 ```bash
 # Start from scratch
-hh profile create work
+cofounder profile create work
 
 # Or copy from your existing default setup
-hh profile create work --from default
+cofounder profile create work --from default
 ```
 
 ### Switch between home and work
 
 ```bash
 # At the office
-hh profile use work
-hh send "Review PR #123"
+cofounder profile use work
+cofounder send "Review PR #123"
 
 # At home
-hh profile use home
-hh send "Train the image model overnight"
+cofounder profile use home
+cofounder send "Train the image model overnight"
 ```
 
 ### Check which profile is active
 
 ```bash
-hh profile list
+cofounder profile list
 ```
 
 Output:
@@ -107,7 +107,7 @@ Output:
 ### Inspect a profile's config
 
 ```bash
-hh profile show work
+cofounder profile show work
 ```
 
 Gateway tokens are automatically masked in the output:
@@ -122,7 +122,7 @@ Gateway tokens are automatically masked in the output:
 ### Delete an old profile
 
 ```bash
-hh profile delete old-setup
+cofounder profile delete old-setup
 ```
 
 If you try to delete the active profile, you'll get an error:
@@ -133,23 +133,23 @@ Switch to another profile first, or use --force
 
 ## Backward Compatibility
 
-If you've been using `~/.his-and-hers/hh.json` before profiles were added:
+If you've been using `~/.cofounder/cofounder.json` before profiles were added:
 
 - It's automatically treated as the `default` profile
-- When you switch to a different profile, the old `hh.json` remains untouched
+- When you switch to a different profile, the old `cofounder.json` remains untouched
 - You can migrate by running:
   ```bash
-  hh profile create work --from default
-  hh profile use work
+  cofounder profile create work --from default
+  cofounder profile use work
   ```
 
 ## JSON Output
 
-All `hh profile` commands support `--json` for scripting and automation:
+All `cofounder profile` commands support `--json` for scripting and automation:
 
 ```bash
-hh profile list --json
-hh profile show work --json
+cofounder profile list --json
+cofounder profile show work --json
 ```
 
 Example:

@@ -1,38 +1,38 @@
-# Devlog — Calcifer — 2026-03-15 — `hh run` + `hh alias` (Phase 8b/8c)
+# Devlog — Calcifer — 2026-03-15 — `cofounder run` + `cofounder alias` (Phase 8b/8c)
 
 ## Context
 
-Sync check cron revealed both `hh run` and `hh alias` were already fully
+Sync check cron revealed both `cofounder run` and `cofounder alias` were already fully
 implemented in the codebase (commands, core store, tests, reference docs) but
 not reflected in ROADMAP and not wired into the completion/sidebar.
 
 ## What shipped
 
-### Phase 8b — `hh run`
+### Phase 8b — `cofounder run`
 
 Three ergonomic task shorthands for the most common one-shot patterns:
 
-- `hh run summarise <path>` — attach a file and request an executive summary
-- `hh run review <path>` — structured code review with approve/nits/reject verdict
-- `hh run diff [<base> [<head>]]` — embed `git diff` output inline, send for review
+- `cofounder run summarise <path>` — attach a file and request an executive summary
+- `cofounder run review <path>` — structured code review with approve/nits/reject verdict
+- `cofounder run diff [<base> [<head>]]` — embed `git diff` output inline, send for review
 
 All three share common flags: `--peer`, `--wait`, `--json`, `--notify`, `--prompt`
 (override the generated task prompt entirely).
 
 `run diff` defaults to `git diff HEAD` with a `--stat` flag for a pre-view.
 
-### Phase 8c — `hh alias`
+### Phase 8c — `cofounder alias`
 
-Persistent shortcut registry at `~/.his-and-hers/aliases.json`.
+Persistent shortcut registry at `~/.cofounder/aliases.json`.
 
-- `hh alias add pr-review "workflow run code-review --peer glados"`
-- `hh alias list / show / run / remove`
-- `aliasRun()` re-invokes the `hh` binary with the stored command + extra args
+- `cofounder alias add pr-review "workflow run code-review --peer glados"`
+- `cofounder alias list / show / run / remove`
+- `aliasRun()` re-invokes the `cofounder` binary with the stored command + extra args
 - `tryRunAlias()` in `index.ts` acts as last-resort fallback for unknown commands
 
 ### Wiring
 
-- `docs-site/.vitepress/config.ts` — sidebar entries for `hh run` and `hh alias`
+- `docs-site/.vitepress/config.ts` — sidebar entries for `cofounder run` and `cofounder alias`
 - `completion.ts` — `run` and `alias` commands added to `COMMANDS` array with
   subcommands + flags so bash/zsh/fish tab completion works
 

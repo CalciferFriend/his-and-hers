@@ -2,7 +2,7 @@
  * SDK task state reader/writer.
  *
  * Mirrors the CLI's state/tasks.ts but lives in the SDK so the SDK has no
- * dependency on @his-and-hers/cli. The state format is identical — both the
+ * dependency on @cofounder/cli. The state format is identical — both the
  * CLI and SDK can read each other's state files.
  */
 
@@ -11,7 +11,7 @@ import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-const DEFAULT_STATE_DIR = join(homedir(), ".his-and-hers", "state", "tasks");
+const DEFAULT_STATE_DIR = join(homedir(), ".cofounder", "state", "tasks");
 
 export type TaskStatus =
   | "pending"

@@ -1,7 +1,7 @@
 /**
- * commands/upgrade.ts — `hh upgrade`
+ * commands/upgrade.ts — `cofounder upgrade`
  *
- * Checks the npm registry for a newer version of the `his-and-hers` package
+ * Checks the npm registry for a newer version of the `cofounder` package
  * and prints upgrade instructions if one is available.
  *
  * Features:
@@ -12,9 +12,9 @@
  *   - Respects NO_UPDATE_NOTIFIER env var (same convention as update-notifier)
  *
  * Usage:
- *   hh upgrade             # Check and print instructions
- *   hh upgrade --check     # Scripted: exit 1 if outdated
- *   hh upgrade --json      # JSON output
+ *   cofounder upgrade             # Check and print instructions
+ *   cofounder upgrade --check     # Scripted: exit 1 if outdated
+ *   cofounder upgrade --json      # JSON output
  */
 
 import * as p from "@clack/prompts";
@@ -43,7 +43,7 @@ function compareSemver(a: string, b: string): number {
 async function fetchLatestVersion(pkg: string): Promise<string> {
   const url = `https://registry.npmjs.org/${encodeURIComponent(pkg)}/latest`;
   const res = await fetch(url, {
-    headers: { "User-Agent": "his-and-hers-cli", Accept: "application/json" },
+    headers: { "User-Agent": "cofounder-cli", Accept: "application/json" },
     signal: AbortSignal.timeout(8_000),
   });
   if (!res.ok) {
@@ -60,7 +60,7 @@ function getLocalVersion(): string {
     // Walk up from this file to find the cli package.json
     const __dir = dirname(fileURLToPath(import.meta.url));
     const req = createRequire(import.meta.url);
-    // Try: CLI package → his-and-hers root package
+    // Try: CLI package → cofounder root package
     for (const rel of ["../../package.json", "../../../package.json", "../../../../package.json"]) {
       try {
         const pkg = req(join(__dir, rel)) as { name?: string; version?: string };
@@ -100,11 +100,11 @@ export async function upgrade(opts: UpgradeOptions = {}): Promise<void> {
     return;
   }
 
-  const PKG_NAME = "his-and-hers";
-  const CHANGELOG_URL = "https://github.com/CalciferFriend/his-and-hers/blob/master/CHANGELOG.md";
+  const PKG_NAME = "cofounder";
+  const CHANGELOG_URL = "https://github.com/CalciferFriend/cofounder/blob/master/CHANGELOG.md";
 
   if (!opts.json && !opts.check) {
-    p.intro(pc.bgMagenta(pc.black(" hh upgrade ")));
+    p.intro(pc.bgMagenta(pc.black(" cofounder upgrade ")));
   }
 
   const currentVersion = getLocalVersion();
@@ -151,7 +151,7 @@ export async function upgrade(opts: UpgradeOptions = {}): Promise<void> {
 
   if (opts.check) {
     if (upToDate) {
-      process.stdout.write(`his-and-hers v${currentVersion} is up to date.\n`);
+      process.stdout.write(`cofounder v${currentVersion} is up to date.\n`);
       process.exit(0);
     } else {
       process.stdout.write(
@@ -169,7 +169,7 @@ export async function upgrade(opts: UpgradeOptions = {}): Promise<void> {
 
   if (upToDate) {
     p.note(
-      `${pc.green("✓")} You're running the latest version of his-and-hers!\n\nNothing to do.`,
+      `${pc.green("✓")} You're running the latest version of cofounder!\n\nNothing to do.`,
       "Up to date"
     );
   } else {

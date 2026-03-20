@@ -1,13 +1,13 @@
-# `hh doctor`
+# `cofounder doctor`
 
-Comprehensive health diagnostics for a his-and-hers node. Checks local and peer connectivity, configuration, and capability freshness — and gives actionable remediation hints when something is wrong.
+Comprehensive health diagnostics for a cofounder node. Checks local and peer connectivity, configuration, and capability freshness — and gives actionable remediation hints when something is wrong.
 
 ## Usage
 
 ```bash
-hh doctor
-hh doctor --peer <name>
-hh doctor --json
+cofounder doctor
+cofounder doctor --peer <name>
+cofounder doctor --json
 ```
 
 ## Flags
@@ -29,7 +29,7 @@ hh doctor --json
 - SSH connectivity
 - Peer gateway health
 - Wake-on-LAN configuration
-- Capability file freshness (`~/.his-and-hers/peer-capabilities.json`)
+- Capability file freshness (`~/.cofounder/peer-capabilities.json`)
 
 ### Summary
 - Pass / Warn / Fail counts
@@ -39,23 +39,23 @@ hh doctor --json
 
 ```bash
 # Full diagnostic for all configured peers
-hh doctor
+cofounder doctor
 
 # Focus on a single peer
-hh doctor --peer glados
+cofounder doctor --peer glados
 
 # Pipe results to jq
-hh doctor --json | jq '.checks[] | select(.status == "fail")'
+cofounder doctor --json | jq '.checks[] | select(.status == "fail")'
 ```
 
 ## Notes
 
-- `hh doctor` is a read-only command — it doesn't modify any configuration.
-- For a quicker connectivity check, see `hh test` (subset of doctor checks, CI-friendly exit codes).
+- `cofounder doctor` is a read-only command — it doesn't modify any configuration.
+- For a quicker connectivity check, see `cofounder test` (subset of doctor checks, CI-friendly exit codes).
 - Capability staleness is flagged when the peer capabilities file is older than 24 hours.
 
 ## See also
 
-- [`hh test`](/reference/test) — subset of checks with CI-friendly exit codes
-- [`hh status`](/reference/status) — live node status at a glance
-- [`hh peers`](/reference/peers) — list all peers with reachability info
+- [`cofounder test`](/reference/test) — subset of checks with CI-friendly exit codes
+- [`cofounder status`](/reference/status) — live node status at a glance
+- [`cofounder peers`](/reference/peers) — list all peers with reachability info

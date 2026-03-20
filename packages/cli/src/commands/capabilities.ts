@@ -1,26 +1,26 @@
 /**
- * commands/capabilities.ts — `hh capabilities`
+ * commands/capabilities.ts — `cofounder capabilities`
  *
  * Manage and query the H2 capability registry.
  *
  * Subcommands:
  *
- *   hh capabilities scan
+ *   cofounder capabilities scan
  *     Probe this machine and print a capability report.
  *     Does NOT save — use `--save` to persist.
  *
- *   hh capabilities advertise
- *     Scan + save to ~/.his-and-hers/capabilities.json.
+ *   cofounder capabilities advertise
+ *     Scan + save to ~/.cofounder/capabilities.json.
  *     H2 should run this after setup and periodically (or via cron).
  *
- *   hh capabilities fetch
+ *   cofounder capabilities fetch
  *     H1 fetches H2's report via the peer gateway (/capabilities endpoint)
- *     or via SSH fallback, saves to ~/.his-and-hers/peer-capabilities.json.
+ *     or via SSH fallback, saves to ~/.cofounder/peer-capabilities.json.
  *
- *   hh capabilities show [--peer]
+ *   cofounder capabilities show [--peer]
  *     Print this node's (or peer's) last known capability report.
  *
- *   hh capabilities route "<task>"
+ *   cofounder capabilities route "<task>"
  *     Show what routing decision would be made for a given task string,
  *     using stored peer capabilities.
  */
@@ -36,8 +36,8 @@ import {
   loadPeerCapabilities,
   isPeerCapabilityStale,
   type HHCapabilityReport,
-} from "@his-and-hers/core";
-import { routeTask } from "@his-and-hers/core";
+} from "@cofounder/core";
+import { routeTask } from "@cofounder/core";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -99,7 +99,7 @@ function formatAge(iso: string): string {
 export async function capabilitiesScan(opts: { save?: boolean; notes?: string } = {}) {
   const config = await loadConfig();
 
-  p.intro(pc.bgCyan(pc.black(" hh capabilities scan ")));
+  p.intro(pc.bgCyan(pc.black(" cofounder capabilities scan ")));
 
   const s = p.spinner();
   s.start("Probing local capabilities...");
@@ -116,9 +116,9 @@ export async function capabilitiesScan(opts: { save?: boolean; notes?: string } 
 
   if (opts.save) {
     await saveCapabilities(report);
-    p.log.success(`Saved → ~/.his-and-hers/capabilities.json`);
+    p.log.success(`Saved → ~/.cofounder/capabilities.json`);
   } else {
-    p.log.info(pc.dim("Use `hh capabilities advertise` to save and share this report."));
+    p.log.info(pc.dim("Use `cofounder capabilities advertise` to save and share this report."));
   }
 
   p.outro("");
@@ -128,11 +128,11 @@ export async function capabilitiesAdvertise(opts: { notes?: string } = {}) {
   const config = await loadConfig();
 
   if (!config) {
-    p.log.error("No configuration found. Run `hh onboard` first.");
+    p.log.error("No configuration found. Run `cofounder onboard` first.");
     return;
   }
 
-  p.intro(pc.bgCyan(pc.black(" hh capabilities advertise ")));
+  p.intro(pc.bgCyan(pc.black(" cofounder capabilities advertise ")));
 
   const s = p.spinner();
   s.start("Scanning capabilities...");
@@ -147,7 +147,7 @@ export async function capabilitiesAdvertise(opts: { notes?: string } = {}) {
   formatReport(report, "Advertising as");
 
   await saveCapabilities(report);
-  p.log.success(`Saved → ~/.his-and-hers/capabilities.json`);
+  p.log.success(`Saved → ~/.cofounder/capabilities.json`);
 
   const skillCount = report.skills.length;
   const modelCount = report.ollama.models.length;
@@ -157,18 +157,18 @@ export async function capabilitiesAdvertise(opts: { notes?: string } = {}) {
       : pc.dim("No skills detected. Your peer will use heuristic routing."),
   );
 
-  p.outro("Done. H1 can now fetch this with `hh capabilities fetch`.");
+  p.outro("Done. H1 can now fetch this with `cofounder capabilities fetch`.");
 }
 
 export async function capabilitiesFetch() {
   const config = await loadConfig();
 
   if (!config) {
-    p.log.error("No configuration found. Run `hh onboard` first.");
+    p.log.error("No configuration found. Run `cofounder onboard` first.");
     return;
   }
 
-  p.intro(pc.bgCyan(pc.black(" hh capabilities fetch ")));
+  p.intro(pc.bgCyan(pc.black(" cofounder capabilities fetch ")));
 
   const peer = config.peer_node;
   const peerPort = peer.gateway_port ?? peer.gateway?.port ?? 18789;
@@ -183,7 +183,7 @@ export async function capabilitiesFetch() {
     if (!res.ok) {
       s.stop(pc.red(`Gateway returned HTTP ${res.status}`));
       p.log.warn("Peer may not have advertised capabilities yet.");
-      p.log.info(`Ask ${peer.name} to run: hh capabilities advertise`);
+      p.log.info(`Ask ${peer.name} to run: cofounder capabilities advertise`);
       p.outro("Fetch failed.");
       return;
     }
@@ -195,36 +195,36 @@ export async function capabilitiesFetch() {
     formatReport(report, `${peer.emoji ?? ""} ${peer.name} capabilities`);
 
     await savePeerCapabilities(report);
-    p.log.success("Saved → ~/.his-and-hers/peer-capabilities.json");
-    p.log.info(pc.dim("`hh send` will now use these capabilities for routing."));
+    p.log.success("Saved → ~/.cofounder/peer-capabilities.json");
+    p.log.info(pc.dim("`cofounder send` will now use these capabilities for routing."));
 
   } catch (err) {
     s.stop(pc.red("Fetch failed"));
     p.log.error(`${err}`);
-    p.log.info(`Try: ssh ${peer.ssh_user}@${peer.tailscale_ip} "cat ~/.his-and-hers/capabilities.json"`);
+    p.log.info(`Try: ssh ${peer.ssh_user}@${peer.tailscale_ip} "cat ~/.cofounder/capabilities.json"`);
   }
 
   p.outro("");
 }
 
 export async function capabilitiesShow(opts: { peer?: boolean } = {}) {
-  p.intro(pc.bgCyan(pc.black(" hh capabilities show ")));
+  p.intro(pc.bgCyan(pc.black(" cofounder capabilities show ")));
 
   if (opts.peer) {
     const report = await loadPeerCapabilities();
     if (!report) {
-      p.log.warn("No peer capability report found. Run `hh capabilities fetch` first.");
+      p.log.warn("No peer capability report found. Run `cofounder capabilities fetch` first.");
       p.outro("");
       return;
     }
     if (isPeerCapabilityStale(report)) {
-      p.log.warn(pc.yellow("⚠ Peer capabilities are stale (>24h). Run `hh capabilities fetch` to refresh."));
+      p.log.warn(pc.yellow("⚠ Peer capabilities are stale (>24h). Run `cofounder capabilities fetch` to refresh."));
     }
     formatReport(report, "Peer capabilities (cached)");
   } else {
     const report = await loadCapabilities();
     if (!report) {
-      p.log.warn("No capability report found. Run `hh capabilities advertise` first.");
+      p.log.warn("No capability report found. Run `cofounder capabilities advertise` first.");
       p.outro("");
       return;
     }
@@ -235,7 +235,7 @@ export async function capabilitiesShow(opts: { peer?: boolean } = {}) {
 }
 
 export async function capabilitiesRoute(task: string) {
-  p.intro(pc.bgCyan(pc.black(" hh capabilities route ")));
+  p.intro(pc.bgCyan(pc.black(" cofounder capabilities route ")));
 
   const peerCaps = await loadPeerCapabilities();
 

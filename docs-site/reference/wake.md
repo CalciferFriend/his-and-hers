@@ -1,4 +1,4 @@
-# `hh wake` — Reference
+# `cofounder wake` — Reference
 
 Send a Wake-on-LAN magic packet to a H2 node and optionally wait for its gateway to come online.
 
@@ -7,7 +7,7 @@ Send a Wake-on-LAN magic packet to a H2 node and optionally wait for its gateway
 ## Synopsis
 
 ```bash
-hh wake [flags]
+cofounder wake [flags]
 ```
 
 ---
@@ -37,16 +37,16 @@ hh wake [flags]
 
 ```bash
 # Send magic packet to default H2 (no wait)
-hh wake
+cofounder wake
 
 # Send and wait for gateway to come online
-hh wake --wait
+cofounder wake --wait
 
 # Target a specific peer, wait, verbose
-hh wake --peer h2-beast --wait --verbose
+cofounder wake --peer h2-beast --wait --verbose
 
 # With custom timeout
-hh wake --peer h2-home --wait --timeout 60
+cofounder wake --peer h2-home --wait --timeout 60
 ```
 
 ---
@@ -54,7 +54,7 @@ hh wake --peer h2-home --wait --timeout 60
 ## Verbose output
 
 ```bash
-$ hh wake --peer h2-beast --wait --verbose
+$ cofounder wake --peer h2-beast --wait --verbose
 → Peer: h2-beast
   MAC:       D8:5E:D3:AA:BB:CC
   Broadcast: 192.168.1.1:9
@@ -75,7 +75,7 @@ $ hh wake --peer h2-beast --wait --verbose
 ## JSON output
 
 ```bash
-$ hh wake --peer h2-beast --wait --json
+$ cofounder wake --peer h2-beast --wait --json
 ```
 
 ```json
@@ -136,5 +136,5 @@ ip link show eth0 | grep ether
 ## See also
 
 - [Wake-on-LAN guide](/guide/wol) — full setup walkthrough
-- [hh send](/reference/send) — WOL happens automatically on `hh send` if H2 is offline
-- [hh status](/reference/status) — check WOL configuration status
+- [cofounder send](/reference/send) — WOL happens automatically on `cofounder send` if H2 is offline
+- [cofounder status](/reference/status) — check WOL configuration status

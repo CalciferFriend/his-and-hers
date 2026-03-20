@@ -1,6 +1,6 @@
 # How it works
 
-his-and-hers is three things wired together: **a transport layer** (Tailscale + SSH + WOL), **a message protocol** (HHMessage), and **an agent runtime** (OpenClaw gateway).
+cofounder is three things wired together: **a transport layer** (Tailscale + SSH + WOL), **a message protocol** (CofounderMessage), and **an agent runtime** (OpenClaw gateway).
 
 ---
 
@@ -10,11 +10,11 @@ his-and-hers is three things wired together: **a transport layer** (Tailscale + 
 ┌──────────────────────────────────────────────────────────────┐
 │  H1 (always-on)                                             │
 │  ┌────────────────┐    ┌──────────────────────────────────┐  │
-│  │  OpenClaw       │    │  his-and-hers CLI               │  │
-│  │  (main agent)  │◄──►│  hh send / hh status / hh logs   │  │
+│  │  OpenClaw       │    │  cofounder CLI               │  │
+│  │  (main agent)  │◄──►│  cofounder send / cofounder status / cofounder logs   │  │
 │  └────────────────┘    └──────────────────────────────────┘  │
 │          │                                                    │
-│          │ HHMessage (JSON over HTTP)                         │
+│          │ CofounderMessage (JSON over HTTP)                         │
 │          ▼                                                    │
 │  ┌────────────────┐                                          │
 │  │  Gateway       │  ← loopback:3737                         │
@@ -45,7 +45,7 @@ his-and-hers is three things wired together: **a transport layer** (Tailscale + 
 
 ## Message flow
 
-### 1. Task dispatch (`hh send`)
+### 1. Task dispatch (`cofounder send`)
 
 ```
 H1                              H2
@@ -55,32 +55,32 @@ H1                              H2
  │  ✓ reachable? → skip WOL        │
  │  ✗ unreachable? → send Magic Packet + poll
  │                                 │
- │  2. build HHTaskMessage         │
+ │  2. build CofounderTaskMessage         │
  │     { id, from, to, payload }   │
  │─────────────────────────────►   │
  │                                 │  3. OpenClaw receives task
  │                                 │     runs it (Ollama / API / skill)
- │  4. HHResultMessage             │
+ │  4. CofounderResultMessage             │
  │◄─────────────────────────────   │
  │     { id, result, cost_usd }    │
  │                                 │
  │  5. save to task state          │
- │     ~/.his-and-hers/tasks/     │
+ │     ~/.cofounder/tasks/     │
 ```
 
 ### 2. Heartbeat
 
-H2 sends a `HHHeartbeatMessage` to H1 every 60 seconds while awake. H1 uses this to track H2's last-seen time and whether it's idle enough to go back to sleep.
+H2 sends a `CofounderHeartbeatMessage` to H1 every 60 seconds while awake. H1 uses this to track H2's last-seen time and whether it's idle enough to go back to sleep.
 
 ### 3. Capability advertisement
 
-On startup, H2 runs `hh capabilities advertise`:
+On startup, H2 runs `cofounder capabilities advertise`:
 
 1. Scans for GPU (nvidia-smi / rocm-smi / Metal)
 2. Lists Ollama models via `/api/tags`
 3. Detects ComfyUI, AUTOMATIC1111, LM Studio, Whisper
-4. Writes `~/.his-and-hers/capabilities.json`
-5. H1 fetches this via `hh capabilities fetch` and caches it as `peer-capabilities.json`
+4. Writes `~/.cofounder/capabilities.json`
+5. H1 fetches this via `cofounder capabilities fetch` and caches it as `peer-capabilities.json`
 
 H1's `routeTask()` then uses these capabilities to decide which H2 to use (if you have multiple) and whether to route locally or to the cloud.
 
@@ -96,7 +96,7 @@ When H1 needs H2 and H2 is offline:
 4. H1 polls H2's gateway health endpoint every 5s, up to 90s
 5. Once H2's gateway responds: task is dispatched normally
 
-H2's BIOS must have WOL enabled. The `hh onboard` wizard provides guidance for this.
+H2's BIOS must have WOL enabled. The `cofounder onboard` wizard provides guidance for this.
 
 ---
 
@@ -115,7 +115,7 @@ H2's BIOS must have WOL enabled. The `hh onboard` wizard provides guidance for t
 H1 can manage multiple H2 nodes. Each peer gets its own config entry:
 
 ```
-~/.his-and-hers/peers/
+~/.cofounder/peers/
   h2-home.json       ← RTX 3070 Ti, Windows PC
   h2-pi.json         ← Raspberry Pi 5, always-on
   h2-beast.json      ← RTX 4090 workstation
@@ -124,6 +124,6 @@ H1 can manage multiple H2 nodes. Each peer gets its own config entry:
 `routeTask()` picks the best peer based on task requirements and peer capabilities. You can also explicitly target a peer:
 
 ```bash
-hh send "70B inference task" --peer h2-beast
-hh send "embedding batch" --peer h2-pi
+cofounder send "70B inference task" --peer h2-beast
+cofounder send "embedding batch" --peer h2-pi
 ```

@@ -34,7 +34,7 @@ const SAMPLE_REPORT = {
 
 async function get(port: number, path: string, token?: string): Promise<Response> {
   const headers: Record<string, string> = {};
-  if (token) headers["x-hh-token"] = token;
+  if (token) headers["x-cofounder-token"] = token;
   return fetch(`http://127.0.0.1:${port}${path}`, { headers });
 }
 

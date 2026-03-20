@@ -1,5 +1,5 @@
 /**
- * commands/schedule.ts — `hh schedule` subcommands
+ * commands/schedule.ts — `cofounder schedule` subcommands
  *
  * Manage recurring task delegation via cron.
  */
@@ -21,7 +21,7 @@ import {
   removeCronEntry,
   validateCron,
   calculateNextRun,
-} from "@his-and-hers/core";
+} from "@cofounder/core";
 import { send } from "./send.ts";
 
 /** Add a new schedule. */
@@ -100,7 +100,7 @@ export async function scheduleList(opts: { json?: boolean }) {
       console.log("[]");
     } else {
       p.log.info("No schedules configured.");
-      p.log.info(pc.dim("Add one with: hh schedule add --cron '0 2 * * *' '<task>'"));
+      p.log.info(pc.dim("Add one with: cofounder schedule add --cron '0 2 * * *' '<task>'"));
     }
     return;
   }
@@ -273,7 +273,7 @@ export async function scheduleRun(idOrPrefix: string) {
   // Update last_run timestamp
   await updateLastRun(schedule.id);
 
-  // Invoke hh send (with notification webhook if configured)
+  // Invoke cofounder send (with notification webhook if configured)
   await send(schedule.task, {
     peer: schedule.peer,
     latent: schedule.latent,

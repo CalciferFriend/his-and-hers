@@ -1,5 +1,5 @@
 # H1 node — Docker image
-# Alpine + Node 22 + Tailscale + OpenClaw + his-and-hers
+# Alpine + Node 22 + Tailscale + OpenClaw + cofounder
 #
 # Usage:
 #   docker build -t calcifer-ai/h1 -f docker/h1/Dockerfile .
@@ -29,11 +29,11 @@ RUN apk add --no-cache tailscale --repository=https://pkgs.tailscale.com/stable/
 # ── OpenClaw ──────────────────────────────────────────────────────────────────
 RUN npm install -g openclaw
 
-# ── his-and-hers CLI ─────────────────────────────────────────────────────────
-RUN npm install -g his-and-hers
+# ── cofounder CLI ─────────────────────────────────────────────────────────
+RUN npm install -g cofounder
 
 # ── Runtime config dir ────────────────────────────────────────────────────────
-RUN mkdir -p /root/.openclaw /root/.his-and-hers
+RUN mkdir -p /root/.openclaw /root/.cofounder
 
 # ── Entrypoint scripts ────────────────────────────────────────────────────────
 COPY docker/h1/entrypoint.sh /entrypoint.sh

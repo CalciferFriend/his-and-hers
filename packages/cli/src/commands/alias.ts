@@ -1,22 +1,22 @@
 /**
- * commands/alias.ts — `hh alias` user-defined CLI shortcuts
+ * commands/alias.ts — `cofounder alias` user-defined CLI shortcuts
  *
- * Aliases map a short name to any `hh` subcommand string, persisted in
- * ~/.his-and-hers/aliases.json. Running `hh alias run <name>` (or simply
- * `hh <name>` via the fallback handler in index.ts) expands the alias and
+ * Aliases map a short name to any `cofounder` subcommand string, persisted in
+ * ~/.cofounder/aliases.json. Running `cofounder alias run <name>` (or simply
+ * `cofounder <name>` via the fallback handler in index.ts) expands the alias and
  * re-invokes the CLI with the stored command.
  *
  * Usage:
- *   hh alias add <name> "<command>" [--desc "..."]
- *   hh alias list [--json]
- *   hh alias show <name> [--json]
- *   hh alias remove <name> [--force]
- *   hh alias run <name> [args...]
+ *   cofounder alias add <name> "<command>" [--desc "..."]
+ *   cofounder alias list [--json]
+ *   cofounder alias show <name> [--json]
+ *   cofounder alias remove <name> [--force]
+ *   cofounder alias run <name> [args...]
  *
  * Example:
- *   hh alias add pr-review "workflow run code-review --peer glados"
- *   hh alias run pr-review
- *   hh alias list
+ *   cofounder alias add pr-review "workflow run code-review --peer glados"
+ *   cofounder alias run pr-review
+ *   cofounder alias list
  *
  * Phase 8c — Calcifer ✅ (2026-03-15)
  */
@@ -24,8 +24,8 @@
 import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { spawnSync } from "node:child_process";
-import { loadAliases, addAlias, removeAlias, findAlias } from "@his-and-hers/core";
-import type { HHAlias } from "@his-and-hers/core";
+import { loadAliases, addAlias, removeAlias, findAlias } from "@cofounder/core";
+import type { HHAlias } from "@cofounder/core";
 
 // ─── alias add ────────────────────────────────────────────────────────────────
 
@@ -64,7 +64,7 @@ export function aliasList(opts: { json?: boolean }): void {
   }
 
   if (aliases.length === 0) {
-    p.log.info("No aliases defined. Use `hh alias add <name> \"<command>\"` to create one.");
+    p.log.info("No aliases defined. Use `cofounder alias add <name> \"<command>\"` to create one.");
     return;
   }
 
@@ -138,17 +138,17 @@ export async function aliasRemove(
 // ─── alias run ────────────────────────────────────────────────────────────────
 
 /**
- * Expand an alias and execute it by re-invoking the `hh` CLI.
+ * Expand an alias and execute it by re-invoking the `cofounder` CLI.
  * Extra args are appended after the alias expansion.
  *
- * e.g.  hh alias run pr-review --json
- *       expands to: hh workflow run code-review --peer glados --json
+ * e.g.  cofounder alias run pr-review --json
+ *       expands to: cofounder workflow run code-review --peer glados --json
  */
 export function aliasRun(name: string, extraArgs: string[]): void {
   const a = findAlias(name);
   if (!a) {
     console.error(pc.red(`Alias "${name}" not found.`));
-    console.error(pc.dim(`  Run \`hh alias list\` to see available aliases.`));
+    console.error(pc.dim(`  Run \`cofounder alias list\` to see available aliases.`));
     process.exitCode = 1;
     return;
   }
@@ -158,10 +158,10 @@ export function aliasRun(name: string, extraArgs: string[]): void {
   const storedTokens = a.command.split(/\s+/).filter(Boolean);
   const argv = [...storedTokens, ...extraArgs];
 
-  console.log(pc.dim(`  → hh ${argv.join(" ")}`));
+  console.log(pc.dim(`  → cofounder ${argv.join(" ")}`));
 
-  // Re-invoke hh with the expanded command
-  const hhBin = process.argv[1]; // path to the hh CLI entry point
+  // Re-invoke cofounder with the expanded command
+  const hhBin = process.argv[1]; // path to the cofounder CLI entry point
   const result = spawnSync(process.execPath, [hhBin, ...argv], {
     stdio: "inherit",
     env: process.env,

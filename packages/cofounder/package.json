@@ -1,17 +1,17 @@
 {
-  "name": "his-and-hers",
+  "name": "cofounder",
   "version": "0.3.0",
-  "description": "Two agents. Separate machines. One command to wire them. — npx his-and-hers",
+  "description": "Two agents. Separate machines. One command to wire them. — npx cofounder",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CalciferFriend/his-and-hers",
-    "directory": "packages/his-and-hers"
+    "url": "https://github.com/CalciferFriend/cofounder",
+    "directory": "packages/cofounder"
   },
-  "homepage": "https://github.com/CalciferFriend/his-and-hers",
+  "homepage": "https://github.com/CalciferFriend/cofounder",
   "bugs": {
-    "url": "https://github.com/CalciferFriend/his-and-hers/issues"
+    "url": "https://github.com/CalciferFriend/cofounder/issues"
   },
   "keywords": [
     "ai",
@@ -33,15 +33,15 @@
   },
   "main": "index.js",
   "bin": {
-    "hh": "index.js",
-    "his-and-hers": "index.js"
+    "cofounder": "index.js",
+    "cofounder": "index.js"
   },
   "files": [
     "index.js",
     "README.md"
   ],
   "dependencies": {
-    "@his-and-hers/cli": "workspace:*"
+    "@cofounder/cli": "workspace:*"
   },
   "scripts": {
     "build": "node build.mjs",

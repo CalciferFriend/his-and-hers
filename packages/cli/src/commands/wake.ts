@@ -1,12 +1,12 @@
 import * as p from "@clack/prompts";
 import { loadConfig } from "../config/store.ts";
-import { wakeAndWait } from "@his-and-hers/core";
+import { wakeAndWait } from "@cofounder/core";
 
 export async function wake() {
   const config = await loadConfig();
 
   if (!config) {
-    p.log.error("No configuration found. Run `hh onboard` first.");
+    p.log.error("No configuration found. Run `cofounder onboard` first.");
     return;
   }
 
@@ -38,6 +38,6 @@ export async function wake() {
   if (success) {
     spinner.stop("H2 is awake and gateway is healthy.");
   } else {
-    spinner.stop("Failed to wake H2 — check WOL config with `hh doctor`.");
+    spinner.stop("Failed to wake H2 — check WOL config with `cofounder doctor`.");
   }
 }

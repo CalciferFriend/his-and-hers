@@ -1,14 +1,14 @@
 /**
- * commands/monitor.ts — `hh monitor`
+ * commands/monitor.ts — `cofounder monitor`
  *
  * Live terminal dashboard for your agent network.
  * Shows peer health, recent tasks, and budget — refreshed every N seconds.
  *
  * Usage:
- *   hh monitor                  # refresh every 5s
- *   hh monitor --interval 10    # refresh every 10s
- *   hh monitor --once           # single snapshot, no loop (useful for scripts)
- *   hh monitor --json           # print snapshot as JSON and exit
+ *   cofounder monitor                  # refresh every 5s
+ *   cofounder monitor --interval 10    # refresh every 10s
+ *   cofounder monitor --once           # single snapshot, no loop (useful for scripts)
+ *   cofounder monitor --json           # print snapshot as JSON and exit
  *
  * Layout:
  *   ┌─ header: node names + current time ─┐
@@ -26,7 +26,7 @@
 
 import pc from "picocolors";
 import { loadConfig } from "../config/store.ts";
-import { pingPeer, checkGatewayHealth } from "@his-and-hers/core";
+import { pingPeer, checkGatewayHealth } from "@cofounder/core";
 import { listTaskStates, type TaskState } from "../state/tasks.ts";
 import { buildBudgetSummary } from "../state/budget.ts";
 import { getAllPeers, type PeerNodeConfig } from "../peers/select.ts";
@@ -201,7 +201,7 @@ export function renderSnapshot(snap: MonitorSnapshot): string {
   const timeStr = new Date(snap.ts).toUTCString().replace("GMT", "UTC");
 
   // ── Header ──
-  const title = ` hh monitor `;
+  const title = ` cofounder monitor `;
   const subtitle = `${snap.this_node.emoji} ${snap.this_node.name} (${snap.this_node.role})`;
   const timeRight = timeStr;
   const gap = w - title.length - subtitle.length - timeRight.length - 2;
@@ -233,7 +233,7 @@ export function renderSnapshot(snap: MonitorSnapshot): string {
   // ── Recent tasks ──
   lines.push(pc.bold(`RECENT TASKS  ${pc.dim("(last 8)")}`));
   if (snap.recent_tasks.length === 0) {
-    lines.push(pc.dim("  No tasks yet — run `hh send` to delegate your first task."));
+    lines.push(pc.dim("  No tasks yet — run `cofounder send` to delegate your first task."));
   } else {
     // Column widths
     const idW = 8;
@@ -303,7 +303,7 @@ export async function monitor(opts: MonitorOptions = {}): Promise<void> {
 
   const config = await loadConfig();
   if (!config) {
-    console.error(pc.red("No configuration found. Run `hh onboard` first."));
+    console.error(pc.red("No configuration found. Run `cofounder onboard` first."));
     process.exit(1);
   }
 

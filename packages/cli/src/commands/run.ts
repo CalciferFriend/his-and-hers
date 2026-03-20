@@ -1,14 +1,14 @@
 /**
- * commands/run.ts — `hh run` ergonomic task shorthands
+ * commands/run.ts — `cofounder run` ergonomic task shorthands
  *
  * A thin dispatch layer for the most common one-shot task patterns.
- * Each subcommand builds a task prompt + options and delegates to `hh send`.
+ * Each subcommand builds a task prompt + options and delegates to `cofounder send`.
  *
  * Usage:
- *   hh run summarise <path> [--peer <name>] [--wait] [--json]
- *   hh run review <path>    [--peer <name>] [--wait] [--json]
- *   hh run diff [<base> [<head>]] [--peer <name>] [--wait] [--json]
- *   hh run alias <name> [args...] (runs a user-defined alias — see `hh alias`)
+ *   cofounder run summarise <path> [--peer <name>] [--wait] [--json]
+ *   cofounder run review <path>    [--peer <name>] [--wait] [--json]
+ *   cofounder run diff [<base> [<head>]] [--peer <name>] [--wait] [--json]
+ *   cofounder run alias <name> [args...] (runs a user-defined alias — see `cofounder alias`)
  *
  * Phase 8b — Calcifer ✅ (2026-03-15)
  */
@@ -19,8 +19,8 @@ import { existsSync } from "node:fs";
 import { resolve, basename } from "node:path";
 import { execSync } from "node:child_process";
 import { send } from "./send.ts";
-import { loadConfig } from "@his-and-hers/core";
-import { routeTask, loadCapabilities } from "@his-and-hers/core";
+import { loadConfig } from "@cofounder/core";
+import { routeTask, loadCapabilities } from "@cofounder/core";
 
 // ─── Shared run options ───────────────────────────────────────────────────────
 
@@ -38,8 +38,8 @@ export interface RunCommonOpts {
  * The file is attached so H2 can see the full content.
  *
  * @example
- *   hh run summarise ./meeting-notes.md
- *   hh run summarise ./report.pdf --peer glados --wait
+ *   cofounder run summarise ./meeting-notes.md
+ *   cofounder run summarise ./report.pdf --peer glados --wait
  */
 export async function runSummarise(
   filePath: string,
@@ -73,8 +73,8 @@ export async function runSummarise(
  * Text/code files are attached; H2 responds with structured review feedback.
  *
  * @example
- *   hh run review ./src/commands/send.ts
- *   hh run review ./packages/core/src --peer glados --wait
+ *   cofounder run review ./src/commands/send.ts
+ *   cofounder run review ./packages/core/src --peer glados --wait
  */
 export async function runReview(
   filePath: string,
@@ -110,10 +110,10 @@ export async function runReview(
  * The diff is embedded directly in the task text (no file attachment needed).
  *
  * @example
- *   hh run diff                          # git diff HEAD
- *   hh run diff main                     # git diff main
- *   hh run diff main feature/my-branch   # git diff main..feature/my-branch
- *   hh run diff HEAD~3 HEAD --peer glados --wait
+ *   cofounder run diff                          # git diff HEAD
+ *   cofounder run diff main                     # git diff main
+ *   cofounder run diff main feature/my-branch   # git diff main..feature/my-branch
+ *   cofounder run diff HEAD~3 HEAD --peer glados --wait
  */
 export async function runDiff(
   opts: RunCommonOpts & {

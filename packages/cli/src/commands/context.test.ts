@@ -1,5 +1,5 @@
 /**
- * context.test.ts — unit tests for `hh context` subcommands
+ * context.test.ts — unit tests for `cofounder context` subcommands
  *
  * Tests: list, show, clear, prune with various scenarios.
  */
@@ -25,7 +25,7 @@ vi.mock("node:fs/promises", () => ({
   writeFile: mockWriteFile,
 }));
 
-vi.mock("@his-and-hers/core/context/store", () => ({
+vi.mock("@cofounder/core/context/store", () => ({
   loadContextEntries: mockLoadContextEntries,
   clearContextEntries: mockClearContextEntries,
 }));
@@ -39,7 +39,7 @@ vi.mock("@clack/prompts", () => ({
 
 // ─── Fixtures ────────────────────────────────────────────────────────────────
 
-import type { ContextEntry } from "@his-and-hers/core/context/store";
+import type { ContextEntry } from "@cofounder/core/context/store";
 
 const ENTRY_1: ContextEntry = {
   task_id: "task-001",
@@ -65,7 +65,7 @@ const origError = console.error;
 
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
-describe("hh context list", () => {
+describe("cofounder context list", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     console.log = vi.fn();
@@ -138,7 +138,7 @@ describe("hh context list", () => {
   });
 });
 
-describe("hh context show", () => {
+describe("cofounder context show", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     console.log = vi.fn();
@@ -192,7 +192,7 @@ describe("hh context show", () => {
   });
 });
 
-describe("hh context clear", () => {
+describe("cofounder context clear", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     console.log = vi.fn();
@@ -229,7 +229,7 @@ describe("hh context clear", () => {
   });
 });
 
-describe("hh context prune", () => {
+describe("cofounder context prune", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     console.log = vi.fn();

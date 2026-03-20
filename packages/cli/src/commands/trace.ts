@@ -1,5 +1,5 @@
 /**
- * cli/commands/trace.ts — hh trace
+ * cli/commands/trace.ts — cofounder trace
  *
  * Display, list, and clear structured execution traces for task pipelines.
  *
@@ -10,9 +10,9 @@
  * Designed to help debug Windows boot-chain issues and general latency analysis.
  *
  * Usage:
- *   hh trace <task_id>           Show trace for a specific task
- *   hh trace list [--json]       List all stored traces
- *   hh trace clear [<task_id>]   Clear one or all traces
+ *   cofounder trace <task_id>           Show trace for a specific task
+ *   cofounder trace list [--json]       List all stored traces
+ *   cofounder trace clear [<task_id>]   Clear one or all traces
  *
  * Phase 16 — Calcifer ✅ (2026-03-16)
  */
@@ -27,7 +27,7 @@ import {
   renderBar,
   TraceLog,
   TraceEvent,
-} from "@his-and-hers/core";
+} from "@cofounder/core";
 
 // ─── Status icons ─────────────────────────────────────────────────────────────
 
@@ -220,10 +220,10 @@ export async function trace(
   secondArg?: string,
 ): Promise<void> {
   // Route by first arg:
-  //   hh trace list                → list
-  //   hh trace clear [<id>]        → clear
-  //   hh trace <task_id>           → show (default)
-  //   hh trace show <task_id>      → show (explicit)
+  //   cofounder trace list                → list
+  //   cofounder trace clear [<id>]        → clear
+  //   cofounder trace <task_id>           → show (default)
+  //   cofounder trace show <task_id>      → show (explicit)
 
   if (!subOrId || subOrId === "list") {
     await cmdList(opts);
@@ -237,7 +237,7 @@ export async function trace(
 
   if (subOrId === "show") {
     if (!secondArg) {
-      p.log.error("Usage: hh trace show <task_id>");
+      p.log.error("Usage: cofounder trace show <task_id>");
       process.exit(1);
       return;
     }

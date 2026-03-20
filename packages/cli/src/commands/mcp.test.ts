@@ -38,8 +38,8 @@ vi.mock("../config/store.ts", () => ({
   }),
 }));
 
-vi.mock("@his-and-hers/core", async (importActual) => {
-  const actual = await importActual<typeof import("@his-and-hers/core")>();
+vi.mock("@cofounder/core", async (importActual) => {
+  const actual = await importActual<typeof import("@cofounder/core")>();
   return {
     ...actual,
     wakeAgent: vi.fn().mockResolvedValue({ ok: true, task_id: "task-abc", message: "queued" }),
@@ -358,8 +358,8 @@ describe("MCP constants", () => {
     expect(MCP_PROTOCOL_VERSION).toBe("2024-11-05");
   });
 
-  it("SERVER_NAME is his-and-hers", () => {
-    expect(SERVER_NAME).toBe("his-and-hers");
+  it("SERVER_NAME is cofounder", () => {
+    expect(SERVER_NAME).toBe("cofounder");
   });
 
   it("SERVER_VERSION is a semver string", () => {

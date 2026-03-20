@@ -1,17 +1,17 @@
 {
-  "name": "@his-and-hers/cli",
+  "name": "@cofounder/cli",
   "version": "0.3.0",
-  "description": "The `hh` CLI \u2014 onboard wizard, pairing, status, wake, and task delegation",
+  "description": "The `cofounder` CLI \u2014 onboard wizard, pairing, status, wake, and task delegation",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CalciferFriend/his-and-hers",
+    "url": "https://github.com/CalciferFriend/cofounder",
     "directory": "packages/cli"
   },
   "main": "dist/index.js",
   "bin": {
-    "hh": "dist/index.js"
+    "cofounder": "dist/index.js"
   },
   "files": [
     "dist"
@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@clack/prompts": "^0.10.0",
-    "@his-and-hers/core": "file:../core",
+    "@cofounder/core": "file:../core",
     "commander": "^13.0.0",
     "keytar": "^7.9.0",
     "picocolors": "^1.1.0",

@@ -1,23 +1,23 @@
 /**
- * commands/audit.ts — `hh audit`
+ * commands/audit.ts — `cofounder audit`
  *
  * View and verify the append-only audit log.
  *
  * Usage:
- *   hh audit list                        → display recent audit log
- *   hh audit list --peer glados          → filter by peer
- *   hh audit list --since 7d             → last 7 days
- *   hh audit list --limit 50             → last 50 entries
- *   hh audit list --json                 → machine-readable
- *   hh audit verify                      → verify hash chain integrity
- *   hh audit export --json               → export full log as JSON
- *   hh audit export --csv                → export as CSV
- *   hh audit export --output file.json   → write to file
+ *   cofounder audit list                        → display recent audit log
+ *   cofounder audit list --peer glados          → filter by peer
+ *   cofounder audit list --since 7d             → last 7 days
+ *   cofounder audit list --limit 50             → last 50 entries
+ *   cofounder audit list --json                 → machine-readable
+ *   cofounder audit verify                      → verify hash chain integrity
+ *   cofounder audit export --json               → export full log as JSON
+ *   cofounder audit export --csv                → export as CSV
+ *   cofounder audit export --output file.json   → write to file
  */
 
 import * as p from "@clack/prompts";
 import pc from "picocolors";
-import { readAuditLog, verifyAuditChain, type AuditEntry } from "@his-and-hers/core";
+import { readAuditLog, verifyAuditChain, type AuditEntry } from "@cofounder/core";
 import { writeFile } from "node:fs/promises";
 
 export interface AuditListOptions {
@@ -60,13 +60,13 @@ export async function auditList(opts: AuditListOptions = {}) {
     }
 
     if (entries.length === 0) {
-      p.intro(pc.bgMagenta(pc.white(" hh audit list ")));
+      p.intro(pc.bgMagenta(pc.white(" cofounder audit list ")));
       p.log.info("No audit entries found.");
       p.outro("Done.");
       return;
     }
 
-    p.intro(pc.bgMagenta(pc.white(" hh audit list ")));
+    p.intro(pc.bgMagenta(pc.white(" cofounder audit list ")));
 
     p.log.info(`${pc.dim("Showing")} ${pc.cyan(String(entries.length))} ${pc.dim("entries")}`);
     p.log.message("");
@@ -106,7 +106,7 @@ export async function auditList(opts: AuditListOptions = {}) {
  */
 export async function auditVerify() {
   try {
-    p.intro(pc.bgMagenta(pc.white(" hh audit verify ")));
+    p.intro(pc.bgMagenta(pc.white(" cofounder audit verify ")));
 
     const entries = await readAuditLog();
 
@@ -159,7 +159,7 @@ export async function auditExport(opts: AuditExportOptions = {}) {
 
     if (opts.output) {
       await writeFile(opts.output, output, "utf-8");
-      p.intro(pc.bgMagenta(pc.white(" hh audit export ")));
+      p.intro(pc.bgMagenta(pc.white(" cofounder audit export ")));
       p.log.success(`Exported ${pc.cyan(String(entries.length))} entries to ${pc.dim(opts.output)}`);
       p.outro("Done.");
     } else {

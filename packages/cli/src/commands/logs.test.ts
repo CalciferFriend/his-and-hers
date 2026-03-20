@@ -1,5 +1,5 @@
 /**
- * logs.test.ts — unit tests for `hh logs`
+ * logs.test.ts — unit tests for `cofounder logs`
  *
  * Tests filter/sort helpers (parseDuration, applyFilters), the JSON output
  * path, and the empty-state path. The clack/prompts and console side-effects
@@ -75,7 +75,7 @@ afterEach(() => {
 // JSON output
 // ---------------------------------------------------------------------------
 
-describe("hh logs --json", () => {
+describe("cofounder logs --json", () => {
   it("prints JSON array of all tasks", async () => {
     const tasks = [
       makeTask({ id: "aaa111", status: "completed" }),
@@ -244,7 +244,7 @@ describe("empty state", () => {
     expect(msgs.some((m) => m.includes("No tasks found"))).toBe(true);
   });
 
-  it("shows hint to run hh send when no tasks at all", async () => {
+  it("shows hint to run cofounder send when no tasks at all", async () => {
     mockListTaskStates.mockResolvedValue([]);
 
     const { log } = await import("@clack/prompts");
@@ -253,7 +253,7 @@ describe("empty state", () => {
 
     const infoCalls = (log.info as ReturnType<typeof vi.fn>).mock.calls;
     const msgs = infoCalls.map((c: unknown[]) => c[0] as string);
-    expect(msgs.some((m) => m.includes("hh send"))).toBe(true);
+    expect(msgs.some((m) => m.includes("cofounder send"))).toBe(true);
   });
 
   it("shows filter-match empty when tasks exist but none match filter", async () => {
@@ -268,8 +268,8 @@ describe("empty state", () => {
     const msgs = infoCalls.map((c: unknown[]) => c[0] as string);
     // No tasks match "failed" — should say "No tasks found"
     expect(msgs.some((m) => m.includes("No tasks found"))).toBe(true);
-    // But should NOT show the "hh send" hint (tasks do exist)
-    expect(msgs.some((m) => m.includes("hh send"))).toBe(false);
+    // But should NOT show the "cofounder send" hint (tasks do exist)
+    expect(msgs.some((m) => m.includes("cofounder send"))).toBe(false);
   });
 });
 

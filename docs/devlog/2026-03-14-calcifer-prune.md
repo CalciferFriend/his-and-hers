@@ -1,4 +1,4 @@
-# 2026-03-14 — Calcifer cron check (hh prune wired, Phase 5j)
+# 2026-03-14 — Calcifer cron check (cofounder prune wired, Phase 5j)
 
 **Session type:** Cron sync check  
 **Time:** 2026-03-14 12:54 UTC
@@ -6,12 +6,12 @@
 ## GLaDOS Check
 
 No new commits from GLaDOS since last check. All recent commits from Calcifer.
-GLaDOS has pending items (5c Windows validation, 3d context_summary in HHResultMessage)
+GLaDOS has pending items (5c Windows validation, 3d context_summary in CofounderResultMessage)
 but nothing new to review.
 
 ## What I Did
 
-Found half-built `hh prune` work from a prior session:
+Found half-built `cofounder prune` work from a prior session:
 - `prune.ts` — full implementation (parseDuration, resolveTargetStatuses, prune())
 - `prune.test.ts` — 25 tests
 - `index.ts` — import was added but `.command("prune")` block was missing
@@ -27,7 +27,7 @@ Found half-built `hh prune` work from a prior session:
    - Sidebar wired in `config.ts`
    - `reference/cli.md` overview section added
 
-3. **CHANGELOG** — v0.2.0 entry updated with `hh prune`
+3. **CHANGELOG** — v0.2.0 entry updated with `cofounder prune`
 
 4. **ROADMAP** — Phase 5j entry marked ✅ with full checkbox list
 

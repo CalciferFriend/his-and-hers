@@ -1,15 +1,15 @@
 /**
  * workflow/store.ts
  *
- * Persistent workflow registry — ~/.his-and-hers/workflows.json
+ * Persistent workflow registry — ~/.cofounder/workflows.json
  *
  * Workflows are saved, named pipeline specs that you can run on-demand without
  * retyping the full pipeline definition. Supports both inline specs and stored
  * step arrays.
  *
  * Example:
- *   hh workflow add review "glados:write tests -> piper:review {{previous.output}}"
- *   hh workflow run review
+ *   cofounder workflow add review "glados:write tests -> piper:review {{previous.output}}"
+ *   cofounder workflow run review
  *
  * Phase 8a — Calcifer ✅ (2026-03-15)
  */
@@ -67,7 +67,7 @@ export const HHWorkflowListSchema = z.array(HHWorkflowSchema);
 // ─── Paths ───────────────────────────────────────────────────────────────────
 
 function getBaseDir(): string {
-  return join(homedir(), ".his-and-hers");
+  return join(homedir(), ".cofounder");
 }
 
 function getWorkflowsPath(): string {
@@ -112,7 +112,7 @@ export async function addWorkflow(input: AddWorkflowInput): Promise<HHWorkflow> 
   if (existing) {
     throw new Error(
       `Workflow "${input.name}" already exists (id: ${existing.id.slice(0, 8)}). ` +
-        `Remove it first with: hh workflow remove ${input.name}`,
+        `Remove it first with: cofounder workflow remove ${input.name}`,
     );
   }
 

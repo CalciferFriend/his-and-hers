@@ -1,5 +1,5 @@
 /**
- * replay.test.ts — unit tests for `hh replay`
+ * replay.test.ts — unit tests for `cofounder replay`
  *
  * Tests the resolveTask helper (via spying on state), dry-run flow, peer
  * override logic, and error paths. The actual `send()` call is mocked so
@@ -69,7 +69,7 @@ beforeEach(() => {
 // Tests
 // ---------------------------------------------------------------------------
 
-describe("hh replay — no config", () => {
+describe("cofounder replay — no config", () => {
   it("prints error and sets exitCode when config missing", async () => {
     mockLoadConfig.mockResolvedValue(null);
     await replay("abc123");
@@ -78,7 +78,7 @@ describe("hh replay — no config", () => {
   });
 });
 
-describe("hh replay — task not found", () => {
+describe("cofounder replay — task not found", () => {
   it("prints error and sets exitCode when task ID not found", async () => {
     mockLoadTaskState.mockResolvedValue(null);
     mockListTaskStates.mockResolvedValue([]);
@@ -88,7 +88,7 @@ describe("hh replay — task not found", () => {
   });
 });
 
-describe("hh replay — exact match", () => {
+describe("cofounder replay — exact match", () => {
   it("calls send() with the original objective when task found by exact ID", async () => {
     mockLoadTaskState.mockResolvedValue(TASK);
     await replay("abc123def456");
@@ -108,7 +108,7 @@ describe("hh replay — exact match", () => {
   });
 });
 
-describe("hh replay — prefix match", () => {
+describe("cofounder replay — prefix match", () => {
   it("falls back to prefix scan when exact match returns null", async () => {
     mockLoadTaskState.mockResolvedValue(null);
     mockListTaskStates.mockResolvedValue([TASK]);
@@ -126,7 +126,7 @@ describe("hh replay — prefix match", () => {
   });
 });
 
-describe("hh replay — peer override", () => {
+describe("cofounder replay — peer override", () => {
   it("passes overridden peer to send()", async () => {
     mockLoadTaskState.mockResolvedValue(TASK);
     await replay("abc123def456", { peer: "gpu-rig" });
@@ -135,7 +135,7 @@ describe("hh replay — peer override", () => {
   });
 });
 
-describe("hh replay — --wait flag", () => {
+describe("cofounder replay — --wait flag", () => {
   it("passes wait=true to send()", async () => {
     mockLoadTaskState.mockResolvedValue(TASK);
     await replay("abc123def456", { wait: true, waitTimeoutSeconds: "120" });
@@ -145,7 +145,7 @@ describe("hh replay — --wait flag", () => {
   });
 });
 
-describe("hh replay — dry-run", () => {
+describe("cofounder replay — dry-run", () => {
   it("does not call send() when --dry-run is set", async () => {
     mockLoadTaskState.mockResolvedValue(TASK);
     await replay("abc123def456", { dryRun: true });
@@ -193,7 +193,7 @@ describe("hh replay — dry-run", () => {
   });
 });
 
-describe("hh replay — notify passthrough", () => {
+describe("cofounder replay — notify passthrough", () => {
   it("passes notify URL to send()", async () => {
     mockLoadTaskState.mockResolvedValue(TASK);
     await replay("abc123def456", { notify: "https://discord.com/api/webhooks/123/abc" });
@@ -202,7 +202,7 @@ describe("hh replay — notify passthrough", () => {
   });
 });
 
-describe("hh replay — task with no constraints", () => {
+describe("cofounder replay — task with no constraints", () => {
   it("sends just the objective when constraints array is empty", async () => {
     const simpleTask: TaskState = { ...TASK, constraints: [] };
     mockLoadTaskState.mockResolvedValue(simpleTask);

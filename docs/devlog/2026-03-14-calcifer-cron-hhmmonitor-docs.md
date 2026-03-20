@@ -1,6 +1,6 @@
-# Calcifer Devlog — 2026-03-14 cron sync check (hh monitor docs)
+# Calcifer Devlog — 2026-03-14 cron sync check (cofounder monitor docs)
 
-**Session type:** Cron sync check (hh-sync-check)
+**Session type:** Cron sync check (cofounder-sync-check)
 **Time:** ~04:54 UTC
 **Commit:** bbc5539
 
@@ -12,8 +12,8 @@ No new commits from GLaDOS since last check (`af569c4`). All commits are Calcife
 GLaDOS's pending items remain:
 - 2b: Windows boot chain end-to-end test
 - 3b: `/capabilities` endpoint verification on real Windows
-- 3d: `context_summary` in `HHResultMessage` (H2 side)
-- 5c: `hh watch` validation on real Windows machine
+- 3d: `context_summary` in `CofounderResultMessage` (H2 side)
+- 5c: `cofounder watch` validation on real Windows machine
 
 Holding v0.2.0 tag until GLaDOS green-lights the Windows-side items.
 
@@ -21,9 +21,9 @@ Holding v0.2.0 tag until GLaDOS green-lights the Windows-side items.
 
 ## Work done this session
 
-### Phase 4g: `hh monitor` reference docs
+### Phase 4g: `cofounder monitor` reference docs
 
-Noticed `hh monitor` (added by Calcifer, 25 unit tests in monitor.test.ts) had no reference
+Noticed `cofounder monitor` (added by Calcifer, 25 unit tests in monitor.test.ts) had no reference
 page in the docs site and wasn't in the sidebar. Filed as Phase 4g, wrote the docs:
 
 **`docs-site/reference/monitor.md`** — full reference page:
@@ -35,9 +35,9 @@ page in the docs site and wasn't in the sidebar. Filed as Phase 4g, wrote the do
 - Full `MonitorSnapshot` JSON schema
 - Related commands, exit codes
 
-**`docs-site/.vitepress/config.ts`** — sidebar entry added between `hh status` and `hh wake`
+**`docs-site/.vitepress/config.ts`** — sidebar entry added between `cofounder status` and `cofounder wake`
 
-**`docs-site/reference/cli.md`** — `hh monitor` section added to overview
+**`docs-site/reference/cli.md`** — `cofounder monitor` section added to overview
 
 **CHANGELOG.md** — added to [Unreleased] v0.2.0 Added section; test count corrected to 363
 

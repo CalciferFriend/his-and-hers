@@ -3,13 +3,13 @@
  *
  * Lightweight HTTP server H1 (Calcifer 🔥) starts when waiting for a result.
  * H2 (GLaDOS 🤖) POSTs to this endpoint when a task completes — eliminating
- * the polling latency of `hh send --wait`.
+ * the polling latency of `cofounder send --wait`.
  *
  * ## How it works
  *
  *   H1                                          H2
  *   ─────                                        ─────
- *   hh send --wait  →  starts result server       receives wakeAgent msg
+ *   cofounder send --wait  →  starts result server       receives wakeAgent msg
  *   POST /result (port auto-selected)             processes task
  *   ←── delivery URL included in wake msg        calls: POST <h1-webhook-url>/result
  *   server receives result, resolves              closes its task state, done
@@ -126,12 +126,12 @@ export async function startResultServer(opts: ResultServerOptions): Promise<Resu
       }
 
       // Token authentication — accept X-HH-Token header or Authorization: Bearer <token>
-      const hhToken = req.headers["x-hh-token"];
+      const cfToken = req.headers["x-cofounder-token"];
       const bearerHeader = req.headers["authorization"];
       const bearerToken = typeof bearerHeader === "string" && bearerHeader.startsWith("Bearer ")
         ? bearerHeader.slice(7)
         : null;
-      const incoming = hhToken ?? bearerToken;
+      const incoming = cfToken ?? bearerToken;
       if (!incoming || incoming !== token) {
         res.writeHead(401, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ error: "unauthorized" }));

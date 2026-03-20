@@ -1,21 +1,21 @@
-# HHMessage Protocol Specification
+# CofounderMessage Protocol Specification
 
 Version: 0.1.0
 
 ## Overview
 
-HHMessage is the open protocol envelope for cross-machine agent communication in his-and-hers. Every message between H1 and H2 nodes is wrapped in this format.
+CofounderMessage is the open protocol envelope for cross-machine agent communication in cofounder. Every message between H1 and H2 nodes is wrapped in this format.
 
 ## Message envelope
 
 ```typescript
-interface HHMessage {
+interface CofounderMessage {
   version: string;           // Protocol version (semver)
   id: string;                // UUID v4
   from: string;              // Sender node name
   to: string;                // Recipient node name
   turn: number;              // Conversation turn counter (0-indexed)
-  type: HHMessageType;       // Message type
+  type: CofounderMessageType;       // Message type
   payload: string;           // Task description or result content
   context_summary: string | null;  // Background context for the recipient
   budget_remaining: number | null; // Token/cost budget remaining
@@ -56,10 +56,10 @@ Turns increment with each message in the conversation. A new task starts at turn
 
 ## Task handoff format
 
-For structured delegation, use the HHHandoff schema:
+For structured delegation, use the CofounderHandoff schema:
 
 ```typescript
-interface HHHandoff {
+interface CofounderHandoff {
   task_id: string;           // UUID v4
   from_role: "h1" | "h2";
   to_role": "h2";
@@ -76,7 +76,7 @@ interface HHHandoff {
 ## Heartbeat format
 
 ```typescript
-interface HHHeartbeat {
+interface CofounderHeartbeat {
   from: string;
   role: "h1" | "h2";
   tailscale_ip: string;
@@ -89,11 +89,11 @@ interface HHHeartbeat {
 
 ## Wake flow
 
-1. H1 creates HHMessage with `wake_required: true`
+1. H1 creates CofounderMessage with `wake_required: true`
 2. H1 sends WOL magic packet to H2's MAC via UDP broadcast
 3. H1 polls H2's Tailscale IP (ping every 2s, up to 60 attempts)
 4. Once Tailscale ping succeeds, H1 polls H2's gateway `/health` endpoint
-5. Once gateway is healthy, H1 sends the HHMessage via SSH or gateway API
+5. Once gateway is healthy, H1 sends the CofounderMessage via SSH or gateway API
 6. H2 processes the task and replies
 
 ## Shutdown flow
@@ -111,9 +111,9 @@ Nodes establish trust via a one-time 6-digit pairing code:
 1. H1 generates a 6-digit code and displays it
 2. The code is SHA-256 hashed and stored in H1's config
 3. H2 receives the code out-of-band (user types it in)
-4. H2's `hh pair --code <code>` verifies against H1's stored hash
+4. H2's `cofounder pair --code <code>` verifies against H1's stored hash
 5. Both nodes exchange Tailscale IPs and SSH key fingerprints
-6. Pair state is written to both nodes' `hh.json`
+6. Pair state is written to both nodes' `cofounder.json`
 
 ## Transport
 

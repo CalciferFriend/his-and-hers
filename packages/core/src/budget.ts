@@ -2,7 +2,7 @@
  * core/budget.ts — Per-peer cost caps and budget enforcement
  *
  * Enables setting daily/monthly USD limits per peer with warn or block actions.
- * Integrates with hh send to check budget before dispatching.
+ * Integrates with cofounder send to check budget before dispatching.
  */
 
 import { z } from "zod";
@@ -13,7 +13,7 @@ import { join } from "node:path";
 import { listTaskStates } from "../../sdk/src/state.ts";
 
 function getBudgetPath() {
-  return join(homedir(), ".his-and-hers", "budget.json");
+  return join(homedir(), ".cofounder", "budget.json");
 }
 
 export const BudgetConfig = z.object({
@@ -57,7 +57,7 @@ export async function loadBudgets(): Promise<BudgetRegistry> {
  */
 export async function saveBudgets(budgets: BudgetRegistry): Promise<void> {
   const budgetPath = getBudgetPath();
-  await mkdir(join(homedir(), ".his-and-hers"), { recursive: true });
+  await mkdir(join(homedir(), ".cofounder"), { recursive: true });
   await writeFile(budgetPath, JSON.stringify(budgets, null, 2), "utf-8");
 }
 

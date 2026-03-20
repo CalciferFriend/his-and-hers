@@ -1,7 +1,7 @@
 /**
  * commands/schedule.test.ts
  *
- * Unit tests for the `hh schedule` CLI commands.
+ * Unit tests for the `cofounder schedule` CLI commands.
  * All filesystem + crontab side-effects are mocked.
  */
 
@@ -85,8 +85,8 @@ const {
   mockCalculateNextRun: vi.fn(),
 }));
 
-vi.mock("@his-and-hers/core", async (importActual) => {
-  const actual = await importActual<typeof import("@his-and-hers/core")>();
+vi.mock("@cofounder/core", async (importActual) => {
+  const actual = await importActual<typeof import("@cofounder/core")>();
   return {
     ...actual,
     loadSchedules: mockLoadSchedules,

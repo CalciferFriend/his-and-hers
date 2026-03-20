@@ -2,7 +2,7 @@ import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { sshExec } from "@his-and-hers/core";
+import { sshExec } from "@cofounder/core";
 import { isCancelled, type WizardContext } from "../context.ts";
 
 const execFileAsync = promisify(execFile);
@@ -24,7 +24,7 @@ async function runElevatedPS(script: string, timeoutMs = 30_000): Promise<{ ok: 
     if (msg.includes("Access") || msg.includes("privilege") || msg.includes("Unauthorized")) {
       try {
         // Write script to a temp file and launch via Start-Process with -Verb RunAs
-        const tmpScript = `$env:TEMP\\hh-autologin-${Date.now()}.ps1`;
+        const tmpScript = `$env:TEMP\\cofounder-autologin-${Date.now()}.ps1`;
         await execFileAsync("powershell", [
           "-NoProfile", "-Command",
           `Set-Content -Path '${tmpScript}' -Value @'\n${script}\n'@; Start-Process powershell -ArgumentList '-NoProfile -File ${tmpScript}' -Verb RunAs -Wait`,
@@ -136,7 +136,7 @@ export async function stepAutologin(ctx: Partial<WizardContext>): Promise<Partia
     {
       username: () => p.text({
         message: "Windows username",
-        placeholder: process.env["USERNAME"] ?? "YourUsername",
+        initialValue: process.env["USERNAME"] ?? "",
         validate: (v) => { if (!v.trim()) return "Username is required"; },
       }),
       password: () => p.password({

@@ -1,5 +1,5 @@
 {
-  "name": "his-and-hers-root",
+  "name": "cofounder-root",
   "private": true,
   "version": "0.3.0",
   "description": "Two agents. Separate machines. One command to wire them.",
@@ -7,7 +7,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CalciferFriend/his-and-hers"
+    "url": "https://github.com/CalciferFriend/cofounder"
   },
   "engines": {
     "node": ">=22.0.0"

@@ -11,13 +11,13 @@ import { tmpdir } from "node:os";
 
 // ─── Path override (point TRACE_DIR at a temp dir) ───────────────────────────
 
-const tmpTraceDir = join(tmpdir(), `hh-trace-test-${process.pid}`);
+const tmpTraceDir = join(tmpdir(), `cofounder-trace-test-${process.pid}`);
 
 vi.mock("node:os", async (importOriginal) => {
   const actual = await importOriginal<typeof import("node:os")>();
   return {
     ...actual,
-    homedir: () => join(actual.tmpdir(), `hh-trace-test-${process.pid}`, "home"),
+    homedir: () => join(actual.tmpdir(), `cofounder-trace-test-${process.pid}`, "home"),
   };
 });
 
@@ -36,7 +36,7 @@ import {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 async function cleanDir() {
-  const dir = join(tmpdir(), `hh-trace-test-${process.pid}`, "home", ".his-and-hers", "traces");
+  const dir = join(tmpdir(), `cofounder-trace-test-${process.pid}`, "home", ".cofounder", "traces");
   try {
     const { readdir } = await import("node:fs/promises");
     const files = await readdir(dir);
@@ -227,8 +227,8 @@ describe("trace store", () => {
 
   it("listTraces skips malformed JSON files gracefully", async () => {
     const { homedir } = await import("node:os");
-    const badPath = join(homedir(), ".his-and-hers", "traces", "bad.json");
-    await mkdir(join(homedir(), ".his-and-hers", "traces"), { recursive: true });
+    const badPath = join(homedir(), ".cofounder", "traces", "bad.json");
+    await mkdir(join(homedir(), ".cofounder", "traces"), { recursive: true });
     await writeFile(badPath, "{ this is not valid json }", "utf8");
     const traces = await listTraces();
     expect(Array.isArray(traces)).toBe(true);

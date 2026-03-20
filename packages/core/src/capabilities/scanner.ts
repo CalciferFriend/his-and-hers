@@ -170,7 +170,7 @@ async function inferSkills(
 /**
  * Detect Vision Wormhole codec files on disk.
  *
- * Convention: codecs live at ~/.his-and-hers/codecs/<id>.pt or <id>.gguf.
+ * Convention: codecs live at ~/.cofounder/codecs/<id>.pt or <id>.gguf.
  * Codec filename must match the pattern: "vw-<arch>-v<n>" (e.g. vw-qwen3vl2b-v1).
  *
  * This is forward-looking: no production codecs exist yet (Phase 6 / experimental).
@@ -180,7 +180,7 @@ async function probeLatentCodecs(): Promise<string[]> {
   const { readdir } = await import("node:fs/promises");
   const { join } = await import("node:path");
   const { homedir } = await import("node:os");
-  const codecDir = join(homedir(), ".his-and-hers", "codecs");
+  const codecDir = join(homedir(), ".cofounder", "codecs");
   try {
     const files = await readdir(codecDir);
     const CODEC_RE = /^(vw-[\w]+-v\d+)\.(pt|gguf|bin|safetensors)$/;

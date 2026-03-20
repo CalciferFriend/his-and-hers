@@ -1,7 +1,7 @@
 /**
  * SDK config reader.
  *
- * Reads ~/.his-and-hers/hh.json (or a custom path) and returns a minimal
+ * Reads ~/.cofounder/cofounder.json (or a custom path) and returns a minimal
  * SDKConfig. We intentionally avoid importing the full Zod schema from the
  * CLI package to keep the SDK dependency surface small — a best-effort parse
  * is fine since the CLI's onboard wizard produces well-formed configs.
@@ -12,7 +12,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import type { SDKConfig, SDKPeerConfig } from "./types.ts";
 
-export const DEFAULT_CONFIG_PATH = join(homedir(), ".his-and-hers", "hh.json");
+export const DEFAULT_CONFIG_PATH = join(homedir(), ".cofounder", "cofounder.json");
 
 // Raw shape of the config on disk (we only care about what we need)
 interface RawConfig {
@@ -52,7 +52,7 @@ function parsePeer(raw: RawConfig["peer_node"]): SDKPeerConfig | null {
 }
 
 /**
- * Load and parse the hh config file.
+ * Load and parse the cofounder config file.
  * Returns null if the file does not exist or is unparseable.
  */
 export async function loadConfig(configPath?: string): Promise<SDKConfig | null> {

@@ -3,10 +3,10 @@
  *
  * H1 keeps a rolling window of the last N task summaries per peer.
  * On the next outbound task message, the recent summaries are serialized
- * into `HHTaskMessage.context_summary` so H2 has multi-turn context
+ * into `CofounderTaskMessage.context_summary` so H2 has multi-turn context
  * without requiring a full session transcript.
  *
- * Storage: ~/.his-and-hers/context/<peer-name>.json
+ * Storage: ~/.cofounder/context/<peer-name>.json
  * Format:  JSON array of ContextEntry, capped at MAX_ENTRIES (newest last).
  */
 
@@ -14,7 +14,7 @@ import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-const CONTEXT_DIR = join(homedir(), ".his-and-hers", "context");
+const CONTEXT_DIR = join(homedir(), ".cofounder", "context");
 const MAX_ENTRIES = 10;
 
 export interface ContextEntry {
@@ -69,7 +69,7 @@ export async function loadContextEntries(peerName: string): Promise<ContextEntry
  * Build a single condensed context string from the last `limit` entries.
  * Returns null if there are no stored entries (first task — no prior context).
  *
- * The returned string is suitable for `HHTaskMessage.context_summary`.
+ * The returned string is suitable for `CofounderTaskMessage.context_summary`.
  *
  * @deprecated Use `buildContextSummary(task, result)` for on-the-fly summaries,
  *   or `loadContextSummary(peerName, limit)` to read from stored peer history.
@@ -94,7 +94,7 @@ export async function loadContextSummary(
  *
  * @param task   - The original task description sent to H2
  * @param result - The output/result returned by H2 (may be empty)
- * @returns A compact summary string suitable for `HHTaskMessage.context_summary`
+ * @returns A compact summary string suitable for `CofounderTaskMessage.context_summary`
  *
  * @example
  * const summary = buildContextSummary(

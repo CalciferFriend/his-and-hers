@@ -3,7 +3,7 @@
 > *"We do not have organs of communication. Our brains can display our thoughts to the outside world, thereby achieving communication."*
 > — Cixin Liu, The Dark Forest
 
-Today, his-and-hers speaks text. H1 sends a prompt. H2 sends back a completion. That works — and it's how every multi-agent system in production works right now.
+Today, cofounder speaks text. H1 sends a prompt. H2 sends back a completion. That works — and it's how every multi-agent system in production works right now.
 
 But text is a lossy compression of thought.
 
@@ -43,24 +43,24 @@ Neither paper ships a production transport layer. That's the gap we're positione
 
 ---
 
-## The HHLatentMessage vision
+## The CofounderLatentMessage vision
 
-The HHMessage protocol today carries text payloads:
+The CofounderMessage protocol today carries text payloads:
 
 ```typescript
 // Today
-type HHTaskMessage = {
+type CofounderTaskMessage = {
   type: "task";
   payload: string;        // a prompt
   context_summary?: string; // prior context as text
 };
 ```
 
-A future `HHLatentMessage` carries continuous representations:
+A future `CofounderLatentMessage` carries continuous representations:
 
 ```typescript
 // Tomorrow
-type HHLatentMessage = {
+type CofounderLatentMessage = {
   type: "latent_task";
   format: "interlat_v1" | "kv_cache" | "embedding";
   layers_computed: number;       // how far H1 got before handing off
@@ -74,8 +74,8 @@ type HHLatentMessage = {
 The protocol negotiates capability at pairing time:
 
 ```
-H1 → H2: HHPair (capabilities: ["latent_interlat_v1", "kv_cache"])
-H2 → H1: HHPairAck (accepted: ["latent_interlat_v1"])
+H1 → H2: CofounderPair (capabilities: ["latent_interlat_v1", "kv_cache"])
+H2 → H1: CofounderPairAck (accepted: ["latent_interlat_v1"])
 ```
 
 If H2 doesn't support latent communication, H1 falls back to text transparently. The routing layer handles this automatically.
@@ -90,8 +90,8 @@ If H2 doesn't support latent communication, H1 falls back to text transparently.
 
 | Step | Description | Notes |
 |------|-------------|-------|
-| 6a | `HHLatentMessage` schema (Zod) | Discriminated union extension |
-| 6b | Capability negotiation at pair time | `latent_interlat_v1` token in HHPair |
+| 6a | `CofounderLatentMessage` schema (Zod) | Discriminated union extension |
+| 6b | Capability negotiation at pair time | `latent_interlat_v1` token in CofounderPair |
 | 6c | Hidden state serialization | Float32 → gzip → base64 for HTTP transport |
 | 6d | Interlat adapter (H1 side) | Hook into OpenClaw inference for mid-layer extraction |
 | 6e | Interlat adapter (H2 side) | Accept latent input, continue from hidden state |
@@ -125,7 +125,7 @@ But "same machine" imposes hard constraints:
 - Redundancy: a crash takes both agents down
 - Ownership: you can't run your H1 on a VPS and lend your H2's GPU cycles to a friend
 
-his-and-hers is specifically about **cross-machine, cross-network agent communication**. The Tailscale tunnel is load-bearing. The WOL mechanism matters. The async result delivery exists because H2 might be asleep.
+cofounder is specifically about **cross-machine, cross-network agent communication**. The Tailscale tunnel is load-bearing. The WOL mechanism matters. The async result delivery exists because H2 might be asleep.
 
 The latent communication layer adds a high-bandwidth, low-loss channel on top of that existing transport — it doesn't replace the separation constraint. It makes the separation cheaper.
 
@@ -147,7 +147,7 @@ The latent communication layer adds a high-bandwidth, low-loss channel on top of
 
 If you're working in this space — implementing Interlat adapters, experimenting with KV sharing, or building on LatentMAS — we want to hear from you.
 
-Open an issue on [GitHub](https://github.com/CalciferFriend/his-and-hers) or join the [Community Discord](https://discord.gg/his-and-hers).
+Open an issue on [GitHub](https://github.com/CalciferFriend/cofounder) or join the [Community Discord](https://discord.gg/cofounder).
 
 The transport layer is being built now. The signal running through it will get stranger and more powerful over time.
 

@@ -1,6 +1,6 @@
-# H&H Use Case Templates
+# Cofounder Use Case Templates
 
-Pre-built templates to get you started with his-and-hers. Each template includes:
+Pre-built templates to get you started with cofounder. Each template includes:
 - SOUL.md configuration for both H1 and H2
 - README with use case description
 - Example code demonstrating the pattern
@@ -36,13 +36,13 @@ H1 orchestrates complex goals, H2 executes autonomous tasks.
 
 ```bash
 # List available templates
-hh templates list
+cofounder templates list
 
 # View template details
-hh templates show gpu-inference
+cofounder templates show gpu-inference
 
 # Initialize from template
-hh templates init gpu-inference
+cofounder templates init gpu-inference
 ```
 
 ## Creating Your Own Template

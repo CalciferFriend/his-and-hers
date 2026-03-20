@@ -4,7 +4,7 @@
  * Lightweight H1-side streaming chunk receiver.
  *
  * While H2 processes a delegated task, it periodically POSTs stdout chunks
- * back here so `hh send --wait` can display partial output in real-time —
+ * back here so `cofounder send --wait` can display partial output in real-time —
  * instead of waiting silently until the task finishes.
  *
  * ## How it works
@@ -131,13 +131,13 @@ export async function startStreamServer(
       }
 
       // Token authentication
-      const hhToken = req.headers["x-hh-token"];
+      const cfToken = req.headers["x-cofounder-token"];
       const bearerHeader = req.headers["authorization"];
       const bearerToken =
         typeof bearerHeader === "string" && bearerHeader.startsWith("Bearer ")
           ? bearerHeader.slice(7)
           : null;
-      const incoming = hhToken ?? bearerToken;
+      const incoming = cfToken ?? bearerToken;
       if (!incoming || incoming !== token) {
         res.writeHead(401, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ error: "unauthorized" }));

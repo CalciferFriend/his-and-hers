@@ -71,7 +71,7 @@ ollama pull codellama          # code tasks
 ollama pull whisper            # or install standalone whisper
 ```
 
-### 4. Install OpenClaw + his-and-hers
+### 4. Install OpenClaw + cofounder
 
 ```powershell
 # Install Node.js 22+
@@ -80,11 +80,11 @@ winget install OpenJS.NodeJS.LTS
 # Install OpenClaw
 npm install -g openclaw
 
-# Install his-and-hers
-npm install -g his-and-hers
+# Install cofounder
+npm install -g cofounder
 
 # Run setup wizard
-hh onboard
+cofounder onboard
 # → Select role: H2
 # → Provider: Ollama (auto-detected)
 ```
@@ -93,10 +93,10 @@ hh onboard
 
 ```powershell
 # Scan and save capabilities so H1 can route intelligently
-hh capabilities advertise
+cofounder capabilities advertise
 
 # Verify
-hh capabilities show
+cofounder capabilities show
 ```
 
 Expected output:
@@ -112,7 +112,7 @@ Skills: ollama, gpu-inference
 **Option A — Scheduled Task (recommended):**
 
 ```powershell
-# hh onboard creates this automatically, but manual fallback:
+# cofounder onboard creates this automatically, but manual fallback:
 $action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c start-gateway.bat"
 $trigger = New-ScheduledTaskTrigger -AtLogon
 Register-ScheduledTask -TaskName "OpenClaw Gateway" -Action $action -Trigger $trigger -RunLevel Highest
@@ -142,7 +142,7 @@ Find your MAC:
 Get-NetAdapter | Select Name, MacAddress
 ```
 
-Tell H1 about it during `hh onboard`, or update config:
+Tell H1 about it during `cofounder onboard`, or update config:
 ```json
 {
   "this_node": {

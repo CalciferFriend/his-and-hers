@@ -1,36 +1,36 @@
-# `@his-and-hers/sdk`
+# `@cofounder/sdk`
 
-Programmatic Node.js/TypeScript API for **his-and-hers**. Use it when you want to dispatch tasks, stream results, or query peer status from your own code — without shelling out to the CLI.
+Programmatic Node.js/TypeScript API for **cofounder**. Use it when you want to dispatch tasks, stream results, or query peer status from your own code — without shelling out to the CLI.
 
 ## Installation
 
 ```bash
-npm install @his-and-hers/sdk
+npm install @cofounder/sdk
 # or
-pnpm add @his-and-hers/sdk
+pnpm add @cofounder/sdk
 ```
 
-`@his-and-hers/sdk` requires Node.js ≥ 22 and an existing `hh.json` config (created by `hh onboard`).
+`@cofounder/sdk` requires Node.js ≥ 22 and an existing `cofounder.json` config (created by `cofounder onboard`).
 
 ---
 
 ## Quick Start
 
 ```ts
-import { HH } from "@his-and-hers/sdk";
+import { HH } from "@cofounder/sdk";
 
-const hh = new HH();
+const cf = new Cofounder();
 
 // Fire-and-forget — returns task id immediately
-const { id } = await hh.send("Summarise the weekly diff and post it to Discord.");
+const { id } = await cofounder.send("Summarise the weekly diff and post it to Discord.");
 console.log("Dispatched:", id);
 
 // Wait for result
-const result = await hh.send("Generate test coverage report", { wait: true });
+const result = await cofounder.send("Generate test coverage report", { wait: true });
 console.log(result.output);
 
 // Stream partial output while waiting
-const result = await hh.send("Write a 2,000-word short story", {
+const result = await cofounder.send("Write a 2,000-word short story", {
   wait: true,
   onChunk: (chunk) => process.stdout.write(chunk),
 });
@@ -38,25 +38,25 @@ const result = await hh.send("Write a 2,000-word short story", {
 
 ---
 
-## `new HH(options?)`
+## `new Cofounder(options?)`
 
 Creates an HH client instance.
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `configPath` | `string` | `~/.his-and-hers/hh.json` | Override config file path |
+| `configPath` | `string` | `~/.cofounder/cofounder.json` | Override config file path |
 | `config` | `SDKConfig` | — | Inject config directly (skips disk read; useful in tests) |
-| `stateDirOverride` | `string` | `~/.his-and-hers/state` | Override state directory |
+| `stateDirOverride` | `string` | `~/.cofounder/state` | Override state directory |
 
 ```ts
-// Default — reads ~/.his-and-hers/hh.json
-const hh = new HH();
+// Default — reads ~/.cofounder/cofounder.json
+const cf = new Cofounder();
 
 // Custom path
-const hh = new HH({ configPath: "/etc/hh/config.json" });
+const cf = new Cofounder({ configPath: "/etc/cofounder/config.json" });
 
 // Injected config (no disk I/O — ideal for tests)
-const hh = new HH({
+const cf = new Cofounder({
   config: {
     this_node: { name: "calcifer", tailscale_ip: "100.1.2.3" },
     peer_node: { name: "glados", tailscale_ip: "100.5.5.5", gateway_port: 18790, gateway_token: "..." },
@@ -66,36 +66,36 @@ const hh = new HH({
 
 ---
 
-## `createHH(options?)`
+## `createCofounder(options?)`
 
-Factory function — equivalent to `new HH(options)`.
+Factory function — equivalent to `new Cofounder(options)`.
 
 ```ts
-import { createHH } from "@his-and-hers/sdk";
-const hh = createHH();
+import { createHH } from "@cofounder/sdk";
+const cf = createCofounder();
 ```
 
 ---
 
-## `hh.config()`
+## `cf.config()`
 
 Load and return the parsed config. Throws if config is missing.
 
 ```ts
-const cfg = await hh.config();
+const cfg = await cf.config();
 console.log(cfg.this_node.name, "→", cfg.peer_node.name);
 ```
 
-**Throws:** `Error: his-and-hers config not found at ...` if the config file doesn't exist and no config was injected.
+**Throws:** `Error: cofounder config not found at ...` if the config file doesn't exist and no config was injected.
 
 ---
 
-## `hh.send(objective, options?)`
+## `cofounder.send(objective, options?)`
 
 Dispatch a task to a peer node.
 
 ```ts
-const result = await hh.send("Run nightly benchmarks");
+const result = await cofounder.send("Run nightly benchmarks");
 ```
 
 ### Options
@@ -128,23 +128,23 @@ interface SendResult {
 
 ```ts
 // Fire-and-forget
-const { id } = await hh.send("Index the new data files");
+const { id } = await cofounder.send("Index the new data files");
 
 // Wait for result with 10-minute timeout
-const result = await hh.send("Train small LoRA on dataset", {
+const result = await cofounder.send("Train small LoRA on dataset", {
   wait: true,
   timeoutMs: 600_000,
 });
 
 // Route to a specific peer
-const result = await hh.send("Run GPU diffusion job", {
+const result = await cofounder.send("Run GPU diffusion job", {
   peer: "glados",
   wait: true,
   routingHint: "gpu",
 });
 
 // Stream output while waiting
-await hh.send("Write detailed architecture doc", {
+await cofounder.send("Write detailed architecture doc", {
   wait: true,
   onChunk: (c) => process.stdout.write(c),
 });
@@ -152,12 +152,12 @@ await hh.send("Write detailed architecture doc", {
 
 ---
 
-## `hh.status(options?)`
+## `cofounder.status(options?)`
 
 Check peer reachability and gateway health.
 
 ```ts
-const status = await hh.status();
+const status = await cofounder.status();
 // { online: true, gatewayHealthy: true, peer: { name: "glados", ... }, latencyMs: 12 }
 ```
 
@@ -180,12 +180,12 @@ interface StatusResult {
 
 ---
 
-## `hh.ping(options?)`
+## `cf.ping(options?)`
 
 Lightweight reachability probe (Tailscale ping only, no gateway check).
 
 ```ts
-const { reachable, latencyMs } = await hh.ping();
+const { reachable, latencyMs } = await cf.ping();
 ```
 
 ### Options
@@ -197,12 +197,12 @@ const { reachable, latencyMs } = await hh.ping();
 
 ---
 
-## `hh.peers()`
+## `cf.peers()`
 
 List all configured peers.
 
 ```ts
-const peers = await hh.peers();
+const peers = await cf.peers();
 // [{ name: "glados", primary: true, tailscale_ip: "100.5.5.5", gateway_port: 18790, ... }]
 ```
 
@@ -221,12 +221,12 @@ interface PeerInfo {
 
 ---
 
-## `hh.tasks(options?)`
+## `cf.tasks(options?)`
 
-List local task history (reads from `~/.his-and-hers/state/tasks/`).
+List local task history (reads from `~/.cofounder/state/tasks/`).
 
 ```ts
-const tasks = await hh.tasks({ status: "completed", limit: 10 });
+const tasks = await cf.tasks({ status: "completed", limit: 10 });
 ```
 
 ### Options
@@ -257,12 +257,12 @@ interface TaskSummary {
 
 ---
 
-## `hh.getTask(id)`
+## `cf.getTask(id)`
 
 Look up a single task by full UUID or prefix.
 
 ```ts
-const task = await hh.getTask("7fe36af8");
+const task = await cf.getTask("7fe36af8");
 if (!task) console.log("Not found");
 ```
 
@@ -270,12 +270,12 @@ Returns `TaskSummary | null`.
 
 ---
 
-## `hh.waitFor(id, options?)`
+## `cf.waitFor(id, options?)`
 
 Poll until a task reaches a terminal status.
 
 ```ts
-const task = await hh.waitFor("7fe36af8", { timeoutMs: 60_000, intervalMs: 2_000 });
+const task = await cf.waitFor("7fe36af8", { timeoutMs: 60_000, intervalMs: 2_000 });
 ```
 
 | Option | Type | Default | Description |
@@ -293,12 +293,12 @@ All methods throw on unrecoverable errors (no `process.exit`). Wrap in try/catch
 
 ```ts
 try {
-  const result = await hh.send("Heavy job", { wait: true });
+  const result = await cofounder.send("Heavy job", { wait: true });
 } catch (err) {
   if (err.message.includes("config not found")) {
-    console.error("Run `hh onboard` first");
+    console.error("Run `cofounder onboard` first");
   } else if (err.message.includes("Failed to deliver")) {
-    console.error("Peer unreachable — check `hh status`");
+    console.error("Peer unreachable — check `cofounder status`");
   } else {
     throw err;
   }
@@ -323,7 +323,7 @@ import type {
   PingResult,
   TaskSummary,
   TasksOptions,
-} from "@his-and-hers/sdk";
+} from "@cofounder/sdk";
 ```
 
 ---
@@ -333,12 +333,12 @@ import type {
 Use `config` injection to avoid disk I/O in tests:
 
 ```ts
-import { createHH } from "@his-and-hers/sdk";
+import { createHH } from "@cofounder/sdk";
 import { vi } from "vitest";
 
-vi.mock("@his-and-hers/core"); // mock transport
+vi.mock("@cofounder/core"); // mock transport
 
-const hh = createHH({
+const cf = createCofounder({
   config: {
     this_node: { name: "test-h1", tailscale_ip: "100.0.0.1" },
     peer_node: { name: "test-h2", tailscale_ip: "100.0.0.2", gateway_port: 18789, gateway_token: "secret" },
@@ -350,7 +350,7 @@ const hh = createHH({
 
 ## Related
 
-- [`hh send`](/reference/send) — CLI equivalent of `hh.send()`
-- [`hh status`](/reference/status) — CLI equivalent of `hh.status()`
-- [`hh logs`](/reference/logs) — CLI equivalent of `hh.tasks()`
-- [`hh chat`](/reference/chat) — interactive multi-turn REPL (CLI only)
+- [`cofounder send`](/reference/send) — CLI equivalent of `cofounder.send()`
+- [`cofounder status`](/reference/status) — CLI equivalent of `cofounder.status()`
+- [`cofounder logs`](/reference/logs) — CLI equivalent of `cf.tasks()`
+- [`cofounder chat`](/reference/chat) — interactive multi-turn REPL (CLI only)

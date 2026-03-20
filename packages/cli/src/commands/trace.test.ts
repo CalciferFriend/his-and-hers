@@ -6,7 +6,7 @@
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// ─── Mock @his-and-hers/core ──────────────────────────────────────────────────
+// ─── Mock @cofounder/core ──────────────────────────────────────────────────
 
 const mockTrace = {
   task_id: "abc123",
@@ -71,8 +71,8 @@ const mockTraceWithFailure = {
   ],
 };
 
-vi.mock("@his-and-hers/core", async (importActual) => {
-  const actual = await importActual<typeof import("@his-and-hers/core")>();
+vi.mock("@cofounder/core", async (importActual) => {
+  const actual = await importActual<typeof import("@cofounder/core")>();
   return {
     ...actual,
     loadTrace: vi.fn(),
@@ -100,13 +100,13 @@ import {
   listTraces,
   clearTrace,
   clearAllTraces,
-} from "@his-and-hers/core";
+} from "@cofounder/core";
 import * as p from "@clack/prompts";
 import { trace } from "./trace.ts";
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
-describe("hh trace — show", () => {
+describe("cofounder trace — show", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
@@ -163,7 +163,7 @@ describe("hh trace — show", () => {
   });
 });
 
-describe("hh trace — list", () => {
+describe("cofounder trace — list", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(console, "log").mockImplementation(() => {});
@@ -205,7 +205,7 @@ describe("hh trace — list", () => {
   });
 });
 
-describe("hh trace — clear", () => {
+describe("cofounder trace — clear", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(process, "exit").mockImplementation(() => undefined as never);

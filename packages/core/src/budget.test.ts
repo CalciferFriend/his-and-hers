@@ -16,7 +16,7 @@ import {
 } from "./budget.ts";
 import type { TaskState } from "../../sdk/src/state.ts";
 
-const testDir = join(tmpdir(), `hh-budget-test-${process.pid}`);
+const testDir = join(tmpdir(), `cofounder-budget-test-${process.pid}`);
 
 // Mock the homedir to use our test directory
 vi.mock("node:os", async (importOriginal) => {
@@ -61,8 +61,8 @@ describe("loadBudgets", () => {
   });
 
   it("returns empty array on malformed JSON", async () => {
-    const path = join(testDir, ".his-and-hers", "budget.json");
-    await mkdir(join(testDir, ".his-and-hers"), { recursive: true });
+    const path = join(testDir, ".cofounder", "budget.json");
+    await mkdir(join(testDir, ".cofounder"), { recursive: true });
     await writeFile(path, "invalid json", "utf-8");
 
     const budgets = await loadBudgets();
