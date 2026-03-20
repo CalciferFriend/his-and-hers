@@ -20,6 +20,10 @@ import {
   canRunFastMode,
   type FastOnboardOptions
 } from "../wizard/defaults.ts";
+import { getTailscaleStatus, getTailscalePeers, isTailscaleInstalled } from "@cofounder/core";
+import { readFile, writeFile, mkdir } from "node:fs/promises";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 
 // ── Animated intro ─────────────────────────────────────────────────────────
 
@@ -229,11 +233,16 @@ export interface OnboardOptions {
   name?: string;
   model?: string;
   peer?: string;
+  peerSshUser?: string;
+  peerSshKey?: string;
+  peerOs?: "linux" | "windows" | "macos";
+  wolMac?: string;
+  wolBroadcastIp?: string;
 }
 
 export async function onboard(options: OnboardOptions = {}) {
-  // Fast onboarding mode (--yes)
-  if (options.yes) {
+  // Fast onboarding mode: explicit --yes OR no TTY (AI agent / piped input)
+  if (options.yes || !process.stdin.isTTY) {
     return await fastOnboard(options);
   }
 
@@ -291,64 +300,137 @@ export async function onboard(options: OnboardOptions = {}) {
 }
 
 /**
- * Fast onboarding mode - non-interactive setup with sane defaults
- * Usage: cofounder onboard --yes --role=h1 --name=Alice --model=sonnet
+ * Fast onboarding mode — fully non-interactive for AI agents and --yes.
+ *
+ * No @clack/prompts interactive calls (select, confirm, text).
+ * Auto-detects Tailscale info, installs soul templates, writes config.
+ *
+ * Usage:
+ *   cofounder onboard --yes --role=h1
+ *   cofounder onboard --yes --role=h1 --peer=glados --peer-ssh-user=nicol --peer-ssh-key=~/.ssh/id_ed25519
+ *   cofounder onboard --yes --role=h2 --peer=calcifer --wol-mac=D8:5E:D3:04:18:B4
+ *
+ * Also triggers automatically when stdin is not a TTY (e.g. AI agent execution).
  */
 async function fastOnboard(options: OnboardOptions) {
-  p.intro(pc.bgCyan(pc.black(" cofounder fast onboard ")));
+  const log = (msg: string) => console.log(msg);
+
+  log(`${pc.bgCyan(pc.black(" cofounder fast onboard "))} (non-interactive mode)`);
 
   // Validate options
   const errors = validateFastOnboardOptions(options as FastOnboardOptions);
   if (errors.length > 0) {
-    p.log.error(errors.join("\n"));
-    p.outro(pc.red("Fast onboard failed. Use --role=h1 or --role=h2"));
+    log(pc.red(errors.join("\n")));
+    log(pc.red("Fast onboard failed. Use --role=h1 or --role=h2"));
     process.exit(1);
   }
 
-  // Check prerequisites
+  // ── Prerequisites (non-interactive — just check and fail) ──────────────
   const prereqCheck = await canRunFastMode();
   if (!prereqCheck.ok) {
-    p.log.error(prereqCheck.reason || "Prerequisites not met");
-    p.outro(pc.red("Fast onboard failed"));
+    log(pc.red(prereqCheck.reason || "Prerequisites not met"));
     process.exit(1);
   }
 
-  // Create default context
-  const spinner = p.spinner();
-  spinner.start("Configuring with defaults...");
+  // ── Tailscale info (replaces interactive stepWelcome) ──────────────────
+  const nodeVersion = process.version;
+  const nodeMajor = parseInt(nodeVersion.slice(1), 10);
+  log(`${pc.green("✓")} Node.js ${nodeVersion}`);
 
+  const tsInstalled = await isTailscaleInstalled();
+  if (!tsInstalled) {
+    log(pc.red("✗ Tailscale not installed. Install Tailscale and re-run."));
+    process.exit(1);
+  }
+
+  const ts = await getTailscaleStatus();
+  if (!ts.online) {
+    log(pc.red("✗ Tailscale installed but not connected. Run: tailscale up"));
+    process.exit(1);
+  }
+  log(`${pc.green("✓")} Tailscale online as ${pc.cyan(ts.hostname)} (${ts.tailscaleIP})`);
+
+  // ── Build context from defaults + CLI flags ────────────────────────────
   let ctx = createDefaultContext(options as FastOnboardOptions);
+  ctx = {
+    ...ctx,
+    nodeVersion,
+    openclawInstalled: true, // already checked by canRunFastMode
+    tailscaleOnline: true,
+    tailscaleHostname: ts.hostname,
+    tailscaleIP: ts.tailscaleIP,
+  };
 
-  // Run minimal required steps
+  // If peer hostname is provided, resolve its Tailscale IP from peers list
+  if (ctx.peerTailscaleHostname && !ctx.peerTailscaleIP) {
+    const peers = await getTailscalePeers();
+    const peerEntry = peers.find(
+      (peer) => peer.hostname.toLowerCase().startsWith(ctx.peerTailscaleHostname!.toLowerCase())
+    );
+    if (peerEntry) {
+      ctx.peerTailscaleIP = peerEntry.tailscaleIP;
+      // Auto-detect peer OS from Tailscale if not explicitly provided
+      if (!options.peerOs && peerEntry.os) {
+        ctx.peerOS = peerEntry.os === "windows" ? "windows" : peerEntry.os === "macOS" ? "macos" : "linux";
+      }
+      log(`${pc.green("✓")} Peer ${pc.cyan(ctx.peerTailscaleHostname)} resolved to ${peerEntry.tailscaleIP} (${peerEntry.os})`);
+    } else {
+      log(pc.yellow(`⚠ Peer "${ctx.peerTailscaleHostname}" not found in Tailscale network`));
+    }
+  }
+
+  log(`${pc.green("✓")} Role: ${pc.cyan(ctx.role || "unknown")}, Name: ${pc.cyan(ctx.name || "unknown")}`);
+
+  // ── Gateway bind (already non-interactive — uses spinners only) ────────
   try {
-    // Step 1: Welcome (just gather system info, no prompts)
-    ctx = await stepWelcome(ctx);
-
-    // Skip steps 2-3 (role, identity) - already set via defaults
-    spinner.message("Configuring gateway...");
-
-    // Step 7: Gateway bind (auto-configure based on role)
     ctx = await stepGatewayBind(ctx);
+  } catch (err) {
+    log(pc.yellow(`⚠ Gateway config: ${err}`));
+  }
 
-    // Step 11: Soul templates (install defaults)
-    spinner.message("Installing templates...");
-    ctx = await stepSoul(ctx);
+  // ── Soul templates (auto-install, no confirm) ──────────────────────────
+  try {
+    const role = ctx.role!;
+    const thisDir = dirname(fileURLToPath(import.meta.url));
+    const templatesDir = join(thisDir, "..", "..", "..", "..", "templates");
+    const targetDir = join(process.env.HOME ?? process.env.USERPROFILE ?? "~", ".cofounder");
+    const files = ["SOUL.md", "IDENTITY.md", "AGENTS.md"];
 
-    // Step 13: Finalize (write config, skip pairing code for now)
-    spinner.message("Writing config...");
+    await mkdir(targetDir, { recursive: true });
+
+    let installed = 0;
+    for (const file of files) {
+      const src = join(templatesDir, role, file);
+      try {
+        const content = await readFile(src, "utf-8");
+        const personalized = content
+          .replace(/\*\*H1\*\*/g, role === "h1" ? `**${ctx.name}**` : "**H1**")
+          .replace(/\*\*H2\*\*/g, role === "h2" ? `**${ctx.name}**` : "**H2**");
+        await writeFile(join(targetDir, file), personalized);
+        installed++;
+      } catch { /* template file not found — skip */ }
+    }
+    ctx.soulTemplateCopied = installed > 0;
+    log(`${pc.green("✓")} ${installed} template(s) installed to ${targetDir}`);
+  } catch {
+    ctx.soulTemplateCopied = false;
+    log(pc.yellow("⚠ Could not install soul templates"));
+  }
+
+  // ── Finalize (already non-interactive — writes config, prints summary) ─
+  try {
     ctx = await stepFinalize(ctx);
-
-    spinner.stop("Configuration complete!");
-
-    // Success message
-    p.log.success(`Node configured as ${pc.cyan(ctx.role || "unknown")} - ${pc.cyan(ctx.name || "unknown")}`);
-    p.log.info(`To pair with a remote node, exchange pairing codes or run ${pc.cyan("cofounder pair --code <code>")}`);
-    p.outro(`Run ${pc.cyan("cofounder status")} to check configuration`);
-
-  } catch (error) {
-    spinner.stop("Failed");
-    p.log.error(String(error));
-    p.outro(pc.red("Fast onboard failed"));
+  } catch (err) {
+    log(pc.red(`Failed to write config: ${err}`));
     process.exit(1);
   }
+
+  log("");
+  log(pc.green(`Node configured as ${ctx.role} — ${ctx.name}`));
+  if (ctx.peerTailscaleHostname) {
+    log(`Peer: ${ctx.peerTailscaleHostname} (${ctx.peerTailscaleIP || "IP not resolved"})`);
+  } else {
+    log(`No peer configured. Run ${pc.cyan("cofounder pair --code <code>")} to pair later.`);
+  }
+  log(`Run ${pc.cyan("cofounder status")} to check configuration.`);
 }

@@ -135,6 +135,11 @@ program
   .option("--name <name>", "Agent name (default: system hostname)")
   .option("--model <model>", "LLM model (default: claude-sonnet-4.5)")
   .option("--peer <hostname>", "Peer Tailscale hostname (optional, can pair later)")
+  .option("--peer-ssh-user <user>", "SSH username on the peer machine")
+  .option("--peer-ssh-key <path>", "Path to SSH private key for the peer")
+  .option("--peer-os <os>", "Peer OS: linux, windows, or macos (default: linux)")
+  .option("--wol-mac <mac>", "Peer MAC address for Wake-on-LAN")
+  .option("--wol-broadcast-ip <ip>", "Broadcast IP for WOL magic packet")
   .action(onboard);
 
 program

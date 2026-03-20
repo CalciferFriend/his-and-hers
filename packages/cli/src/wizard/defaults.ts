@@ -14,6 +14,11 @@ export interface FastOnboardOptions {
   name?: string;
   model?: string;
   peer?: string;
+  peerSshUser?: string;
+  peerSshKey?: string;
+  peerOs?: "linux" | "windows" | "macos";
+  wolMac?: string;
+  wolBroadcastIp?: string;
 }
 
 /**
@@ -48,17 +53,19 @@ export function createDefaultContext(opts: FastOnboardOptions = {}): Partial<Wiz
     peerBindMode: role === "h1" ? "tailscale" : "loopback",
     peerGatewayPort: 18789,
 
-    // WOL defaults (skip for now, can configure later)
-    wolEnabled: false,
+    // WOL defaults
+    wolEnabled: !!(opts.wolMac),
+    wolMAC: opts.wolMac || "",
+    wolBroadcastIP: opts.wolBroadcastIp || "",
     wolTimeoutSeconds: 120,
     wolPollIntervalSeconds: 2,
 
-    // Peer connection defaults (skip initial config - pair later with code)
+    // Peer connection defaults
     peerTailscaleHostname: opts.peer || "",
     peerTailscaleIP: "",
-    peerSSHUser: "",
-    peerSSHKeyPath: "",
-    peerOS: "linux",
+    peerSSHUser: opts.peerSshUser || "",
+    peerSSHKeyPath: opts.peerSshKey || "",
+    peerOS: opts.peerOs || "linux",
 
     // Skip optional steps
     windowsAutologinConfigured: false,
