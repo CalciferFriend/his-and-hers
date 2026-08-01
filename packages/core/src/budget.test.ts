@@ -328,8 +328,12 @@ describe("checkBudget", () => {
   it("filters tasks by time window", async () => {
     await addBudget({ peer: "glados", daily_usd: 10, action: "warn" });
 
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
+    // Mock current time to avoid month-boundary flakiness (use 15th of current month)
+    const mockNow = new Date(2026, 7, 15); // Aug 15, 2026
+    vi.useFakeTimers();
+    vi.setSystemTime(mockNow);
+
+    const yesterday = new Date(2026, 7, 14); // Aug 14, 2026
 
     vi.mocked(listTaskStates).mockResolvedValue([
       {
@@ -348,5 +352,7 @@ describe("checkBudget", () => {
     const result = await checkBudget("glados", 0);
     expect(result.spent_today).toBe(0);
     expect(result.spent_month).toBe(10);
+
+    vi.useRealTimers();
   });
 });

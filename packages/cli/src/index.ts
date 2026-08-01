@@ -51,6 +51,11 @@ import {
   templateRun,
   templateRemove,
 } from "./commands/template.ts";
+import {
+  useCasesList,
+  useCasesShow,
+  useCasesInit,
+} from "./commands/use-cases.ts";
 import { web } from "./commands/web.ts";
 import { broadcast } from "./commands/broadcast.ts";
 import { pipeline } from "./commands/pipeline.ts";
@@ -777,6 +782,31 @@ templateCmd
   .description("Remove a saved template by name or id prefix")
   .option("--force", "Skip confirmation prompt")
   .action((name: string, opts: { force?: boolean }) => templateRemove(name, opts));
+
+// ─── cofounder use-cases ────────────────────────────────────────────────────────────
+
+const useCasesCmd = program
+  .command("use-cases")
+  .description("Browse and initialize starter templates for common cofounder patterns");
+
+useCasesCmd
+  .command("list")
+  .alias("ls")
+  .description("List all available use case templates")
+  .option("--json", "Output as JSON")
+  .action((opts: { json?: boolean }) => useCasesList(opts));
+
+useCasesCmd
+  .command("show <name>")
+  .description("Show detailed information about a use case template")
+  .option("--json", "Output as JSON")
+  .action((name: string, opts: { json?: boolean }) => useCasesShow(name, opts));
+
+useCasesCmd
+  .command("init <name>")
+  .description("Initialize a use case template (copies README and examples to ~/.openclaw)")
+  .option("--force", "Overwrite existing files without prompting")
+  .action((name: string, opts: { force?: boolean }) => useCasesInit(name, opts));
 
 // ── cofounder web ────────────────────────────────────────────────────────────────────
 program

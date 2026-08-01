@@ -135,6 +135,12 @@ export const COMMANDS: CompletionCommand[] = [
     flags: ["--task", "--peer", "--timeout", "--notify", "--desc", "--var", "--wait", "--force", "--json"],
   },
   {
+    name: "use-cases",
+    description: "Browse and initialize starter templates for common cofounder patterns",
+    subcommands: ["list", "show", "init"],
+    flags: ["--json", "--force"],
+  },
+  {
     name: "export",
     description: "Export task history to markdown, CSV, or JSON",
     flags: ["--format", "--out", "--since", "--status", "--peer", "--no-output"],
