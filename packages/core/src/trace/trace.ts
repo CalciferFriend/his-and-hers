@@ -11,7 +11,7 @@
  * Phase 16 — Calcifer ✅ (2026-03-16)
  */
 
-import { readFile, writeFile, readdir, unlink, mkdir, stat } from "node:fs/promises";
+import { readFile, writeFile, readdir, unlink, mkdir } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { z } from "zod";

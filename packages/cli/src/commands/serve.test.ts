@@ -167,8 +167,8 @@ import {
   broadcastSSEServe,
 } from "./serve.ts";
 
-let serverProcess: ReturnType<typeof createServer> | null = null;
-let serverClose: (() => void) | null = null;
+let _serverProcess: ReturnType<typeof createServer> | null = null;
+let _serverClose: (() => void) | null = null;
 
 // Instead of calling serve() (which blocks forever), we extract the router
 // by monkey-patching createServer. We re-implement the test server here using

@@ -6,12 +6,12 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { join } from "node:path";
-import { mkdir, writeFile, readFile, unlink } from "node:fs/promises";
+import { mkdir, writeFile, unlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 
 // ─── Path override (point TRACE_DIR at a temp dir) ───────────────────────────
 
-const tmpTraceDir = join(tmpdir(), `cofounder-trace-test-${process.pid}`);
+const _tmpTraceDir = join(tmpdir(), `cofounder-trace-test-${process.pid}`);
 
 vi.mock("node:os", async (importOriginal) => {
   const actual = await importOriginal<typeof import("node:os")>();
