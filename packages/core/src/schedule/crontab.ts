@@ -157,7 +157,7 @@ export function calculateNextRun(cron: string): Date {
     throw new Error("Invalid cron expression");
   }
 
-  const [minute, hour, day, month, weekday] = parts;
+  const [minute, hour, _day, _month, _weekday] = parts;
   const now = new Date();
 
   // Start with current time + 1 minute
