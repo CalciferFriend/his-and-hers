@@ -12,7 +12,7 @@
  * network I/O here, just the orchestration logic.
  */
 
-import { describe, it, expect, vi, beforeEach, type MockInstance } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import * as p from "@clack/prompts";
 import { broadcast } from "./broadcast.ts";
 import * as configStore from "../config/store.ts";

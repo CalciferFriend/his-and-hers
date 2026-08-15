@@ -29,7 +29,7 @@
  */
 
 import { randomUUID } from "node:crypto";
-import { getTailscaleStatus, pingPeer as tsPingPeer, waitForPeer } from "@cofounder/core";
+import { pingPeer as tsPingPeer } from "@cofounder/core";
 import {
   wakeAgent,
   checkGatewayHealth,

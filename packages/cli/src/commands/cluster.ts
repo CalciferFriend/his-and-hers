@@ -42,7 +42,7 @@ export interface ClustersJsonOutput {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 /** Load clusters map from config, defaulting to empty. */
-async function loadClusters(): Promise<{ clusters: Record<string, string[]>; allPeerNames: string[] }> {
+async function _loadClusters(): Promise<{ clusters: Record<string, string[]>; allPeerNames: string[] }> {
   const config = await loadConfig();
   if (!config) throw new Error("No config found. Run `cofounder onboard` first.");
   const clusters: Record<string, string[]> = config.clusters ?? {};

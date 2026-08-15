@@ -52,9 +52,7 @@ import * as p from "@clack/prompts";
 import { loadConfig } from "../config/store.ts";
 import {
   listTaskStates,
-  loadTaskState,
   updateTaskState,
-  type TaskState,
   type TaskStatus,
 } from "../state/tasks.ts";
 import { buildBudgetSummary } from "../state/budget.ts";
@@ -139,10 +137,6 @@ function unauthorized(res: ServerResponse): void {
 
 function notFound(res: ServerResponse, msg = "Not found"): void {
   json(res, 404, { error: msg });
-}
-
-function methodNotAllowed(res: ServerResponse): void {
-  json(res, 405, { error: "Method not allowed" });
 }
 
 function readonlyError(res: ServerResponse): void {

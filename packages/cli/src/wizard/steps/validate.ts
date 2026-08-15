@@ -122,7 +122,7 @@ export async function stepValidate(ctx: Partial<WizardContext>): Promise<Partial
 
   // Step 5: Summary
   const allPassed = results.filter((r) => !r.skip).every((r) => r.pass);
-  const skipped = results.filter((r) => r.skip).length;
+  const _skipped = results.filter((r) => r.skip).length;
   const failed = results.filter((r) => !r.pass && !r.skip);
 
   p.log.info("");

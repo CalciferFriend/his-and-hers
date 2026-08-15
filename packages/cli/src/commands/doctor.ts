@@ -77,7 +77,7 @@ function icon(status: CheckStatus): string {
   }
 }
 
-function statusLabel(status: CheckStatus): string {
+function _statusLabel(status: CheckStatus): string {
   switch (status) {
     case "pass": return pc.green("pass");
     case "warn": return pc.yellow("warn");

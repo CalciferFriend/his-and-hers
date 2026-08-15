@@ -26,7 +26,6 @@ import {
   formatStepLabel,
   renderBar,
   TraceLog,
-  TraceEvent,
 } from "@cofounder/core";
 
 // ─── Status icons ─────────────────────────────────────────────────────────────

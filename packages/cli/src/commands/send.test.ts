@@ -9,7 +9,7 @@
  * All network I/O (tailscale, gateway, wakeAgent) is mocked.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // ---------------------------------------------------------------------------
 // Hoisted mocks — must be declared before any imports

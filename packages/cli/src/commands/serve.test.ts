@@ -5,10 +5,8 @@
  * No mocked network — we want to verify routing, auth, and JSON shapes.
  */
 
-import { describe, it, expect, beforeAll, afterAll, vi, beforeEach } from "vitest";
-import { createServer, type Server } from "node:http";
-import { randomBytes } from "node:crypto";
-import { IncomingMessage, ServerResponse } from "node:http";
+import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
+import { createServer } from "node:http";
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 

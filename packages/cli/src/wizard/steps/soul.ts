@@ -62,7 +62,7 @@ export async function stepSoul(ctx: Partial<WizardContext>): Promise<Partial<Wiz
 
     spinner.stop(`${pc.green("✓")} Templates installed to ${targetDir}`);
     return { ...ctx, soulTemplateCopied: true };
-  } catch (err) {
+  } catch (_err) {
     spinner.stop(`${pc.yellow("!")} Could not install templates.`);
     return { ...ctx, soulTemplateCopied: false };
   }

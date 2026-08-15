@@ -82,7 +82,6 @@ import {
   aliasShow,
   aliasRemove,
   aliasRun,
-  tryRunAlias,
 } from "./commands/alias.ts";
 import { stats } from "./commands/stats.ts";
 import { release } from "./commands/release.ts";

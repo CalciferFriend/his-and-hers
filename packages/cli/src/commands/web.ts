@@ -18,15 +18,15 @@
  */
 
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
-import { readFile, readdir, watch as fsWatch } from "node:fs/promises";
+import { watch as fsWatch } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import pc from "picocolors";
 import { loadConfig } from "../config/store.ts";
-import { listTaskStates, type TaskState, type TaskStatus } from "../state/tasks.ts";
+import { listTaskStates, type TaskState } from "../state/tasks.ts";
 import { buildBudgetSummary } from "../state/budget.ts";
-import { checkGatewayHealth, pingPeer } from "@cofounder/core";
+import { checkGatewayHealth } from "@cofounder/core";
 import { getAllPeers } from "../peers/select.ts";
 import { createTaskState } from "../state/tasks.ts";
 import { wakeAgent, createTaskMessage, loadContextSummary, withRetry } from "@cofounder/core";
@@ -632,7 +632,7 @@ async function handleRequest(
         return;
       }
 
-      const { getAllPeers, getPeer } = await import("../peers/select.ts");
+      const { getPeer } = await import("../peers/select.ts");
       const targetPeer = peerName
         ? getPeer(config, peerName)
         : getPeer(config);

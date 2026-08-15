@@ -18,7 +18,6 @@ import { join } from "node:path";
 import {
   loadContextEntries,
   clearContextEntries,
-  type ContextEntry,
 } from "@cofounder/core/context/store";
 import { writeFile } from "node:fs/promises";
 

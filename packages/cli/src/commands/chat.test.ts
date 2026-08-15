@@ -120,7 +120,7 @@ function makeReadlineInterface(responses: string[]): EventEmitter & {
       return responses[callCount++];
     }),
     close: vi.fn(),
-    on: vi.fn((event: string, cb: () => void) => {
+    on: vi.fn((event: string, _cb: () => void) => {
       if (event === "close") {
         // Save callback for manual triggering if needed
       }

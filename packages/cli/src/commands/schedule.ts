@@ -15,7 +15,6 @@ import {
   disableSchedule,
   updateLastRun,
   updateNextRun,
-  type HHSchedule,
   type AddScheduleInput,
   installCronEntry,
   removeCronEntry,

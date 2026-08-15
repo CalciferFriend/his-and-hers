@@ -13,7 +13,6 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import type { EventEmitter } from "node:events";
 
 // ─── Hoist mock fns ──────────────────────────────────────────────────────────
 
@@ -90,7 +89,7 @@ const PEER = {
 };
 
 /** Build a minimal EventEmitter-style mock for startStreamServer */
-function makeStreamHandle(chunks: string[] = [], answer = "") {
+function makeStreamHandle(chunks: string[] = []) {
   const listeners: Record<string, ((v: unknown) => void)[]> = {};
   const handle = {
     url: "http://localhost:19999/stream/test",

@@ -145,6 +145,7 @@ function termWidth(): number {
 
 function pad(s: string, n: number): string {
   // Visible length (strip ANSI escape sequences for padding math)
+  // eslint-disable-next-line no-control-regex -- intentional ANSI escape stripping
   const visible = s.replace(/\x1b\[[0-9;]*m/g, "");
   const diff = n - visible.length;
   return diff > 0 ? s + " ".repeat(diff) : s;

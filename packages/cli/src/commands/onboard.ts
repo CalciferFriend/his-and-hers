@@ -91,6 +91,7 @@ function sleep(ms: number): Promise<void> {
 }
 
 function center(text: string, cols: number): string {
+  // eslint-disable-next-line no-control-regex -- intentional ANSI escape stripping
   const stripped = text.replace(/\x1B\[[0-9;]*m/g, "");
   const pad = Math.max(0, Math.floor((cols - stripped.length) / 2));
   return " ".repeat(pad) + text;
@@ -350,13 +351,11 @@ async function conversationalOnboard(options: OnboardOptions) {
   log(`Tailscale:  ${tsInstalled ? "installed" : "NOT INSTALLED — install from https://tailscale.com"}`);
 
   let tsHostname = "";
-  let tsIP = "";
   let tsPeers: Array<{ hostname: string; tailscaleIP: string; os: string; online: boolean }> = [];
 
   if (tsInstalled) {
     const ts = await getTailscaleStatus();
     tsHostname = ts.hostname;
-    tsIP = ts.tailscaleIP;
     log(`This node:  ${ts.hostname} (${ts.tailscaleIP}) — ${ts.online ? "online" : "OFFLINE"}`);
 
     if (ts.online) {
@@ -495,7 +494,6 @@ async function fastOnboard(options: OnboardOptions) {
 
   // ── Tailscale info (replaces interactive stepWelcome) ──────────────────
   const nodeVersion = process.version;
-  const nodeMajor = parseInt(nodeVersion.slice(1), 10);
   log(`${pc.green("✓")} Node.js ${nodeVersion}`);
 
   const tsInstalled = await isTailscaleInstalled();

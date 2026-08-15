@@ -1,7 +1,7 @@
 import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { loadConfig } from "../config/store.ts";
-import { pingPeer, getTailscaleStatus } from "@cofounder/core";
+import { pingPeer } from "@cofounder/core";
 import { checkGatewayHealth } from "@cofounder/core";
 
 export async function status() {

@@ -22,7 +22,7 @@
  *   - --output-file: writes result text to a file
  */
 
-import { send, type SendOptions } from "./send.ts";
+import { type SendOptions } from "./send.ts";
 import { loadConfig } from "../config/store.ts";
 import { getPeer } from "../peers/select.ts";
 import { pollTaskCompletion } from "../state/tasks.ts";
@@ -59,7 +59,7 @@ export async function ci(task: string, opts: CiOptions = {}) {
     if (peerName) {
       try {
         peer = getPeer(config, peerName);
-      } catch (err) {
+      } catch {
         if (opts.json) {
           console.log(
             JSON.stringify(
@@ -76,7 +76,7 @@ export async function ci(task: string, opts: CiOptions = {}) {
     }
 
     // Prepare send options
-    const sendOpts: SendOptions = {
+    const _sendOpts: SendOptions = {
       wait: true,
       waitTimeoutSeconds: timeoutSeconds,
       peer: peerName,

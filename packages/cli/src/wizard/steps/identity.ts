@@ -1,6 +1,6 @@
 import * as p from "@clack/prompts";
 import { ROLE_DEFAULTS } from "../../config/defaults.ts";
-import { isCancelled, type WizardContext } from "../context.ts";
+import { type WizardContext } from "../context.ts";
 
 export async function stepIdentity(ctx: Partial<WizardContext>): Promise<Partial<WizardContext>> {
   const role = ctx.role!;

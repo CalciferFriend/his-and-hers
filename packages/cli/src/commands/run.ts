@@ -13,14 +13,11 @@
  * Phase 8b — Calcifer ✅ (2026-03-15)
  */
 
-import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { existsSync } from "node:fs";
 import { resolve, basename } from "node:path";
 import { execSync } from "node:child_process";
 import { send } from "./send.ts";
-import { loadConfig } from "@cofounder/core";
-import { routeTask, loadCapabilities } from "@cofounder/core";
 
 // ─── Shared run options ───────────────────────────────────────────────────────
 

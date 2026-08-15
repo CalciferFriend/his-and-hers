@@ -25,7 +25,7 @@ import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { spawnSync } from "node:child_process";
 import { loadAliases, addAlias, removeAlias, findAlias } from "@cofounder/core";
-import type { HHAlias } from "@cofounder/core";
+
 
 // ─── alias add ────────────────────────────────────────────────────────────────
 

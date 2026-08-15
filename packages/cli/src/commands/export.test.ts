@@ -12,7 +12,6 @@ import {
   renderMarkdown,
   renderCsv,
   renderJson,
-  type ExportOptions,
 } from "./export.ts";
 import type { TaskState } from "../state/tasks.ts";
 

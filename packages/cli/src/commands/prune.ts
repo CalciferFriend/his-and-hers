@@ -18,7 +18,7 @@
 
 import * as p from "@clack/prompts";
 import pc from "picocolors";
-import { readFile, readdir, unlink, stat, truncate } from "node:fs/promises";
+import { readFile, readdir, unlink, stat } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";

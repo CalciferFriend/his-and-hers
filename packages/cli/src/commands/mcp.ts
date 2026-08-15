@@ -50,7 +50,7 @@ import {
   listTaskStates,
   pollTaskCompletion,
 } from "../state/tasks.ts";
-import { getAllPeers, getPeer } from "../peers/select.ts";
+import { getAllPeers } from "../peers/select.ts";
 import { loadPeerCapabilities } from "@cofounder/core";
 
 // ─── JSON-RPC 2.0 Types ───────────────────────────────────────────────────────
@@ -567,7 +567,6 @@ async function toolBroadcast(
     : undefined;
   const strategy = args.strategy === "first" ? "first" : "all";
   const shouldWait = Boolean(args.wait);
-  const timeout = typeof args.timeout === "number" ? args.timeout : 120;
 
   const config = await loadConfig();
   if (!config) return errorResult("No cofounder config found. Run `cofounder onboard` first.");

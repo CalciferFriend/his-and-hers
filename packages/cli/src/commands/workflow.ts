@@ -32,7 +32,6 @@ import {
   findWorkflow,
   recordWorkflowRun,
   workflowToPipelineDefinition,
-  type HHWorkflow,
 } from "@cofounder/core";
 import { parsePipelineSpec, parsePipelineFile } from "@cofounder/core";
 import { pipeline } from "./pipeline.ts";
@@ -292,7 +291,7 @@ async function runWorkflowDefinition(
   def: ReturnType<typeof workflowToPipelineDefinition>,
   opts: { timeout?: string; json?: boolean },
 ): Promise<void> {
-  const { writeFileSync, mkdirSync } = await import("node:fs");
+  const { writeFileSync } = await import("node:fs");
   const { join } = await import("node:path");
   const { tmpdir } = await import("node:os");
   const { randomUUID } = await import("node:crypto");

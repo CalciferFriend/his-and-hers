@@ -35,16 +35,16 @@
 import { readFileSync, existsSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { createRequire } from "node:module";
+// createRequire used dynamically in catch block below
 // ws may be in a workspace package node_modules; try a few paths
 let WebSocket;
 try {
   ({ default: WebSocket } = await import("ws"));
 } catch {
   // Walk up workspace to find ws
-  const { createRequire } = await import("node:module");
-  const { fileURLToPath } = await import("node:url");
-  const { dirname, join: pathJoin } = await import("node:path");
+  const { createRequire: _createRequire } = await import("node:module");
+  const { fileURLToPath: _fileURLToPath } = await import("node:url");
+  const { dirname: _dirname, join: _pathJoin } = await import("node:path");
   const candidates = [
     new URL("./packages/core/node_modules/ws/index.js", import.meta.url),
     new URL("./node_modules/ws/index.js", import.meta.url),

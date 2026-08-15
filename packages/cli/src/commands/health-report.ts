@@ -33,7 +33,7 @@ import {
   checkGatewayHealth,
 } from "@cofounder/core";
 import { loadConfig } from "../config/store.ts";
-import { getAllPeers, findPeerByName } from "../peers/select.ts";
+import { getAllPeers } from "../peers/select.ts";
 import { listTaskStates, type TaskState } from "../state/tasks.ts";
 import { buildBudgetSummary } from "../state/budget.ts";
 

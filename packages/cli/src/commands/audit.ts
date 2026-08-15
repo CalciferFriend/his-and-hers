@@ -72,7 +72,6 @@ export async function auditList(opts: AuditListOptions = {}) {
     p.log.message("");
 
     for (const entry of entries) {
-      const timestamp = new Date(entry.ts).toLocaleString();
       const eventColor =
         entry.event === "task_sent"
           ? pc.blue

@@ -198,7 +198,7 @@ function buildTasksPerDay(tasks: TaskState[], days: number): { date: string; cou
 }
 
 function buildHourlyHeatmap(tasks: TaskState[]): number[] {
-  const buckets = new Array(24).fill(0);
+  const buckets = Array.from({ length: 24 }, () => 0);
   for (const t of tasks) {
     const hour = new Date(t.created_at).getHours();
     buckets[hour]++;

@@ -10,14 +10,13 @@
  *   - SyncResult shape: ok/error fields on success and failure
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import * as path from "node:path";
 import * as fs from "node:fs";
 import {
   buildRsyncArgs,
   defaultRemoteDest,
   parseRsyncStats,
-  runRsync,
   watchAndSync,
   type SyncOptions,
   type SyncResult,
@@ -184,14 +183,7 @@ Total bytes received: 134
 
 describe("runRsync", () => {
   it("returns code=0 and output on success", async () => {
-    // We can't actually run rsync in unit tests — mock the child_process module
-    const { spawn } = await import("node:child_process");
-    const mockSpawn = vi.fn().mockReturnValue({
-      stdout: { on: (ev: string, cb: (d: Buffer) => void) => ev === "data" && cb(Buffer.from("Number of regular files transferred: 3\n")) },
-      stderr: { on: (_: string, __: unknown) => {} },
-      on: (ev: string, cb: (code: number) => void) => ev === "close" && cb(0),
-    });
-
+    // We can't actually run rsync in unit tests — just verify buildRsyncArgs output
     // Build args manually to verify shape
     const args = buildRsyncArgs("/tmp/foo", "~/foo", mockPeer, { dryRun: true });
     expect(args).toContain("--dry-run");

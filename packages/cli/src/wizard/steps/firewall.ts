@@ -65,7 +65,7 @@ async function addRuleLocal(port: number): Promise<{ ok: boolean; error?: string
         `Start-Process cmd -ArgumentList '/c ${cmd.replace(/"/g, '\\"')}' -Verb RunAs -Wait`,
       ], { timeout: 30_000 });
       return { ok: true };
-    } catch (err2: unknown) {
+    } catch (_err2: unknown) {
       return { ok: false, error: msg };
     }
   }
