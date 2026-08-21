@@ -10,7 +10,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
   loadWorkflows,
-  saveWorkflows,
   addWorkflow,
   removeWorkflow,
   findWorkflow,

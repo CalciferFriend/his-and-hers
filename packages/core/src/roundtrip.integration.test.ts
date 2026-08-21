@@ -20,14 +20,12 @@
  * binds to 127.0.0.1 on an ephemeral port — real HTTP but loopback only.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   createTaskMessage,
   createResultMessage,
   isTaskMessage,
   isResultMessage,
-  CofounderTaskMessage,
-  CofounderResultMessage,
 } from "./protocol/index.ts";
 import { startResultServer, type ResultWebhookPayload } from "./gateway/result-server.ts";
 import { routeTask } from "./routing.ts";

@@ -1,10 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import {
   loadSchedules,
-  saveSchedules,
   addSchedule,
   findSchedule,
   removeSchedule,
@@ -12,7 +11,6 @@ import {
   disableSchedule,
   updateLastRun,
   updateNextRun,
-  type HHSchedule,
 } from "./store.ts";
 
 describe.sequential("schedule store", () => {

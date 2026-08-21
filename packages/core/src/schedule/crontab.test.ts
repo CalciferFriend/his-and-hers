@@ -1,11 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   validateCron,
   calculateNextRun,
-  installCronEntry,
-  removeCronEntry,
-  listHHCronEntries,
-  readCrontab,
 } from "./crontab.ts";
 
 describe("crontab validation", () => {

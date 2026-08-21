@@ -13,7 +13,6 @@ import {
   removeTemplate,
   findTemplate,
   loadTemplates,
-  saveTemplates,
   extractPlaceholders,
   substituteVars,
 } from "./store.ts";

@@ -1,13 +1,11 @@
 import { describe, it, expect } from "vitest";
 import {
   CofounderMessage,
-  CofounderTaskMessage,
   CofounderResultMessage,
   CofounderHeartbeatMessage,
   CofounderLatentMessage,
   createTaskMessage,
   createResultMessage,
-  createHeartbeatMessage,
   createWakeMessage,
   createLatentMessage,
   isTaskMessage,

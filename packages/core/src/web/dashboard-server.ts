@@ -14,8 +14,6 @@
  */
 
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
-import { homedir } from "node:os";
-import { join } from "node:path";
 import { readAuditLog } from "../audit/audit.ts";
 import { listTaskStates, type TaskState } from "../../../sdk/src/state.ts";
 import { loadConfig } from "../../../sdk/src/config.ts";
