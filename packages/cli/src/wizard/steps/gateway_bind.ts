@@ -83,7 +83,7 @@ export async function stepGatewayBind(ctx: Partial<WizardContext>): Promise<Part
       };
       await patchLocalOpenClawConfig(bindPatch);
       s.stop(pc.green(`✓ openclaw.json updated (bind=${thisBindMode})`));
-    } catch (_err) {
+    } catch {
       s.stop(pc.yellow("⚠ Could not update local openclaw.json — update manually if needed"));
       p.log.warn(`Path: ${localOpenClawConfigPath()}`);
     }
@@ -178,7 +178,7 @@ export async function stepGatewayBind(ctx: Partial<WizardContext>): Promise<Part
         ).catch(() => { /* restart is best-effort */ });
 
         s.stop(pc.green(`✓ Peer gateway updated and restarted (bind=tailnet, trustedProxies +${ctx.tailscaleIP})`));
-      } catch (_err) {
+      } catch {
         s.stop(pc.yellow("⚠ Could not update peer gateway via SSH — update manually"));
         p.log.warn("On the H2 machine, set: gateway.bind = 'tailnet', gateway.trustedProxies includes this node's Tailscale IP");
       }
