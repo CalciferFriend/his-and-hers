@@ -6,7 +6,7 @@
  * We mock listTaskStates to avoid touching ~/.cofounder at test time.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { buildBudgetSummary, budgetRoutingAdvice, type BudgetSummary } from "./budget.ts";
 import type { TaskState } from "./tasks.ts";
 
@@ -179,7 +179,6 @@ describe("buildBudgetSummary — cloud tokens + costs", () => {
     ]);
 
     // Inject model on the task to simulate ollama routing
-    const tasks = await mockListTasks();
     // Since we can't set model via TaskState type directly (it's computed from
     // task.model || param), we verify the logic path for local model detection
     // by testing tasks with 'ollama' prefix in model field at the raw level.

@@ -6,7 +6,7 @@
  * Phase 8d — Calcifer ✅ (2026-03-15)
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import { MockGateway } from "./mock-gateway.ts";
 import { wakeAgent } from "./wake.ts";
 

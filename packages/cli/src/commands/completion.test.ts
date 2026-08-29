@@ -156,7 +156,6 @@ describe("generatePowerShell", () => {
 
 describe("detectShell", () => {
   const originalShell = process.env["SHELL"];
-  const originalPlatform = process.platform;
 
   afterEach(() => {
     if (originalShell === undefined) {
@@ -253,14 +252,10 @@ describe("COMMANDS registry", () => {
 describe("completion()", () => {
   let stdoutData = "";
   let stderrData = "";
-  let originalWrite: typeof process.stdout.write;
-  let originalErrWrite: typeof process.stderr.write;
 
   beforeEach(() => {
     stdoutData = "";
     stderrData = "";
-    originalWrite = process.stdout.write.bind(process.stdout);
-    originalErrWrite = process.stderr.write.bind(process.stderr);
     vi.spyOn(process.stdout, "write").mockImplementation((chunk) => {
       stdoutData += chunk.toString();
       return true;

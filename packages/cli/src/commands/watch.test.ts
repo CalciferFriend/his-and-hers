@@ -5,7 +5,7 @@
  * filesystem, and use `--dry-run` / `--once` to keep tests synchronous.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // ─── Hoist mock fns so they're available before module evaluation ────────────
 

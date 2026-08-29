@@ -430,10 +430,6 @@ describe("createChunkStreamer", () => {
       timeoutMs: 5_000,
     });
 
-    const seqs: number[] = [];
-    // Intercept via low-level event
-    const origEmit = handle.emit.bind(handle);
-    handle.on("chunk", () => {}); // ensure listener attached
 
     const streamer = createChunkStreamer(handle.url, TOKEN, TASK_ID);
     streamer.push("a");

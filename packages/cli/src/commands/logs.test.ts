@@ -52,7 +52,6 @@ function makeTask(overrides: Partial<TaskState> & { id: string }): TaskState {
   } as TaskState;
 }
 
-const NOW = new Date("2026-03-15T12:00:00Z").getTime();
 
 // ---------------------------------------------------------------------------
 // Import under test (after mocks are wired)

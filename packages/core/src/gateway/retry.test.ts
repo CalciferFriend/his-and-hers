@@ -2,13 +2,9 @@
  * retry.test.ts — Unit tests for Phase 5e exponential backoff + retry
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { withRetry, cronRetryDecision, setRetryState, clearRetryState, getRetryState, nextRetryAt } from "../retry.ts";
-import { rm } from "node:fs/promises";
-import { join } from "node:path";
-import { homedir } from "node:os";
 
-const RETRY_DIR = join(homedir(), ".cofounder", "retry");
 
 describe("withRetry", () => {
   it("returns result on first success", async () => {

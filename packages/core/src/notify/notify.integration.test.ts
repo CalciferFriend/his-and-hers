@@ -15,10 +15,8 @@ import type { AddressInfo } from "node:net";
 import { deliverNotification, type NotificationContext } from "./notify.ts";
 import {
   addNotifyWebhook,
-  filterWebhooksByEvent,
   getActiveWebhooks,
   loadNotifyWebhooks,
-  saveNotifyWebhooks,
 } from "./config.ts";
 
 // ─── Shared test context ─────────────────────────────────────────────────────
@@ -181,7 +179,6 @@ describe("deliverNotification — payload shape", () => {
   it("truncates very long output to ≤ 1000 chars in Discord embed", async () => {
     const longOutput = "x".repeat(2000);
     const ctx: NotificationContext = { ...baseCtx, output: longOutput };
-    const discordUrl = `${serverUrl}/discord/api/webhooks/0/test`;
 
     // We can't really hit a Discord URL here, but we can test via generic:
     await deliverNotification(`${serverUrl}/webhook`, ctx);

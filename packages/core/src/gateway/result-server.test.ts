@@ -2,7 +2,7 @@
  * result-server.test.ts — Unit tests for Phase 5d webhook result server
  */
 
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { startResultServer, type ResultWebhookPayload } from "./result-server.ts";
 
 // Minimal HTTP POST helper (no external deps)

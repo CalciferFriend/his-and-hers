@@ -28,7 +28,7 @@ import { parse as parseUrl } from "node:url";
 import { loadWebhooks, recordWebhookTrigger, findWebhookByPath } from "./store.ts";
 import { interpolateTemplate } from "./interpolate.ts";
 import { verifyHmacSignature } from "./hmac.ts";
-import type { WebhookRequestContext, WebhookDeliveryResult, HHWebhook } from "./schema.ts";
+import type { WebhookRequestContext, WebhookDeliveryResult } from "./schema.ts";
 
 export const DEFAULT_WEBHOOK_PORT = 3848;
 
